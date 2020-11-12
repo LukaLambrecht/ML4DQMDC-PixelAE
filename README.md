@@ -12,4 +12,12 @@ The scripts autoencoder.ipynb and autoencoder_iterative.ipynb are used to train 
 General remarks:  
 - All the example notebooks are in the main folder, while most of the functionality is situated in the utils folder. This folder contains notebooks that only contain functions, no executing code. These functions are imported in the example notebooks by doing %run utils/(notebook_name).ipynb.
 - I was planning to put some example data files (the output of read_and_write_data.ipynb) in the data folder, but the files are too big for github. So you'll have to run that script yourself.
-- Some of the example notebooks contain cells that I haven't used in a long time, and that will probably not run or not make sense, but that I did not want to delete yet. It should be indicated in the comments where that is the case.
+- Some of the example notebooks contain cells that I haven't used in a long time, and that will probably not run or not make sense, but that I did not want to delete yet. It should be indicated in the comments where that is the case.  
+  
+To get the notebooks running in SWAN:  
+- Log in to SWAN.
+- Click on the leftmost icon on the top right ('new terminal').
+- Navigate to where you want this repository (the starting place is your CERNBox home directory).
+- Paste this command: git clone https://github.com/LukaLambrecht/SudokuSolver.git (or however you usually clone a repository).
+- Exit the terminal.
+- The folder should now be where you cloned it, and you can open and run the notebooks in it in SWAN.
