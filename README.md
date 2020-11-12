@@ -18,6 +18,6 @@ To get the notebooks running in SWAN:
 - Log in to SWAN.
 - Click on the leftmost icon on the top right ('new terminal').
 - Navigate to where you want this repository (the starting place is your CERNBox home directory).
-- Paste this command: git clone https://github.com/LukaLambrecht/SudokuSolver.git (or however you usually clone a repository).
+- Paste this command: git clone https://github.com/LukaLambrecht/ML4DQM-DC.git (or however you usually clone a repository).
 - Exit the terminal.
 - The folder should now be where you cloned it, and you can open and run the notebooks in it in SWAN.
