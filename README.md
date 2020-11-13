@@ -14,7 +14,12 @@ General remarks:
 - I was planning to put some example data files (the output of read_and_write_data.ipynb) in the data folder, but the files are too big for github. So you'll have to run that script yourself.
 - Some of the example notebooks contain cells that I haven't used in a long time, and that will probably not run or not make sense, but that I did not want to delete yet. It should be indicated in the comments where that is the case.  
   
-To get the notebooks running in SWAN:  
+To get the notebooks running in SWAN (preferred method):  
+- Log in to SWAN.
+- Go to Projects.
+- Click the cloud icon that says 'Download Project from git'
+- Paste the following url: https://github.com/LukaLambrecht/ML4DQM-DC.git.  
+(alternative method):
 - Log in to SWAN.
 - Click on the leftmost icon on the top right ('new terminal').
 - Navigate to where you want this repository (the starting place is your CERNBox home directory).
