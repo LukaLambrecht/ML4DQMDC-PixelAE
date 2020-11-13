@@ -18,7 +18,8 @@ To get the notebooks running in SWAN (preferred method):
 - Log in to SWAN.
 - Go to Projects.
 - Click the cloud icon that says 'Download Project from git'
-- Paste the following url: https://github.com/LukaLambrecht/ML4DQM-DC.git.  
+- Paste the following url: https://github.com/LukaLambrecht/ML4DQM-DC.git. 
+
 (alternative method):
 - Log in to SWAN.
 - Click on the leftmost icon on the top right ('new terminal').
