@@ -112,45 +112,57 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#csv-utils">csv utils</a></li>
+            <li><a href="#get_data_dirsyear2017erasdim1">get_data_dirs(year='2017',eras=[],dim=1)</a></li>
+            <li><a href="#get_csv_filesinputdir">get_csv_files(inputdir)</a></li>
+            <li><a href="#sort_filenamesfilelist">sort_filenames(filelist)</a></li>
+            <li><a href="#read_csvcsv_file">read_csv(csv_file)</a></li>
+            <li><a href="#read_and_merge_csvcsv_fileshistnamesrunnbs">read_and_merge_csv(csv_files,histnames=[],runnbs=[])</a></li>
+            <li><a href="#write_skimmed_csvhistnamesyearerasall">write_skimmed_csv(histnames,year,eras=['all'])</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
 <h1 id="csv-utils">csv utils</h1>
-<p>## get_data_dirs(year='2017',eras=[],dim=1)<br />
-<strong>yield all data directories</strong><br />
-   note that the location of the data is hard-coded;<br />
-   this function might break for newer or later reprocessings of the data.<br />
-   - year is a string, either '2017' or '2018'<br />
-   - era is a list containing a selection of era names<br />
-   (default empty list = all eras)<br />
-   - dim is either 1 or 2 (for 1D or 2D plots)  </p>
-<p>## get_csv_files(inputdir)<br />
-<strong>yields paths to all csv files in input directory</strong><br />
-   note that the output paths consist of input_dir/filename<br />
-   this function is only meant for 1-level down searching,<br />
-   i.e. the .csv files listed directly under input_dir.  </p>
-<p>## sort_filenames(filelist)<br />
-<strong>sort filenames in numerical order (e.g. 2 before 10)</strong><br />
-   note that the number is supposed to be in ..._<number>.<extension> format  </p>
-<p>## read_csv(csv_file)<br />
-<strong>read csv file into pandas dataframe</strong><br />
-   csv_file is the path to the csv file to be read  </p>
-<p>## read_and_merge_csv(csv_files,histnames=[],runnbs=[])<br />
-<strong>read and merge list of csv files into a single df</strong><br />
-   csv_files is a list of paths to files to merge into a df<br />
-   histnames is a list of the types of histograms to keep (default: all)<br />
-   runnbs is a list of run numbers to keep (default: all)  </p>
-<p>## write_skimmed_csv(histnames,year,eras=['all'])<br />
-<strong>read all available data for a given year/era and make a file per histogram type</strong><br />
-   input arguments:<br />
-   - histnames: list of histogram names for which to make a separate file<br />
-   - year: data-taking year (in string format)<br />
-   - eras: data-taking eras for which to make a separate file (in string format)<br />
-   use 'all' to make a file with all eras merged, i.e. a full data taking year<br />
-   output:<br />
-   - one csv file per year/era and per histogram type<br />
-   note: this function can take quite a while to run!  </p></div>
+<hr />
+<h2 id="get_data_dirsyear2017erasdim1">get_data_dirs(year='2017',eras=[],dim=1)</h2>
+<p><strong>yield all data directories</strong><br />
+note that the location of the data is hard-coded;<br />
+this function might break for newer or later reprocessings of the data.<br />
+- year is a string, either '2017' or '2018'<br />
+- era is a list containing a selection of era names<br />
+(default empty list = all eras)<br />
+- dim is either 1 or 2 (for 1D or 2D plots)  </p>
+<hr />
+<h2 id="get_csv_filesinputdir">get_csv_files(inputdir)</h2>
+<p><strong>yields paths to all csv files in input directory</strong><br />
+note that the output paths consist of input_dir/filename<br />
+this function is only meant for 1-level down searching,<br />
+i.e. the .csv files listed directly under input_dir.  </p>
+<hr />
+<h2 id="sort_filenamesfilelist">sort_filenames(filelist)</h2>
+<p><strong>sort filenames in numerical order (e.g. 2 before 10)</strong><br />
+note that the number is supposed to be in ..._<number>.<extension> format  </p>
+<hr />
+<h2 id="read_csvcsv_file">read_csv(csv_file)</h2>
+<p><strong>read csv file into pandas dataframe</strong><br />
+csv_file is the path to the csv file to be read  </p>
+<hr />
+<h2 id="read_and_merge_csvcsv_fileshistnamesrunnbs">read_and_merge_csv(csv_files,histnames=[],runnbs=[])</h2>
+<p><strong>read and merge list of csv files into a single df</strong><br />
+csv_files is a list of paths to files to merge into a df<br />
+histnames is a list of the types of histograms to keep (default: all)<br />
+runnbs is a list of run numbers to keep (default: all)  </p>
+<hr />
+<h2 id="write_skimmed_csvhistnamesyearerasall">write_skimmed_csv(histnames,year,eras=['all'])</h2>
+<p><strong>read all available data for a given year/era and make a file per histogram type</strong><br />
+input arguments:<br />
+- histnames: list of histogram names for which to make a separate file<br />
+- year: data-taking year (in string format)<br />
+- eras: data-taking eras for which to make a separate file (in string format)<br />
+use 'all' to make a file with all eras merged, i.e. a full data taking year<br />
+output:<br />
+- one csv file per year/era and per histogram type<br />
+note: this function can take quite a while to run!  </p></div>
         </div>
 
         <footer class="col-md-12">

@@ -112,113 +112,151 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#generate-data-utils">generate data utils</a></li>
+            <li><a href="#goodnoisenbins-fstdnone">goodnoise(nbins, fstd=None)</a></li>
+            <li><a href="#badnoisenbinsfstdnone">badnoise(nbins,fstd=None)</a></li>
+            <li><a href="#whitenoisenbinsfstdnone">whitenoise(nbins,fstd=None)</a></li>
+            <li><a href="#random_licohists">random_lico(hists)</a></li>
+            <li><a href="#smootherinarrayhalfwidth">smoother(inarray,halfwidth)</a></li>
+            <li><a href="#mse_correlation_vectorhistsindex">mse_correlation_vector(hists,index)</a></li>
+            <li><a href="#moments_correlation_vectormomentsindex">moments_correlation_vector(moments,index)</a></li>
+            <li><a href="#plot_data_and_gennplotdatahistgenhistfignamefigpng">plot_data_and_gen(nplot,datahist,genhist,figname='fig.png')</a></li>
+            <li><a href="#plot_seed_and_genseedhistgenhistfignamefigpng">plot_seed_and_gen(seedhist,genhist,figname='fig.png')</a></li>
+            <li><a href="#plot_noisenoisehiststdnonefignamefigpng">plot_noise(noise,histstd=None,figname='fig.png')</a></li>
+            <li><a href="#fourier_noise_on_meanhistsoutfilenamefignamenresamples0nonnegativetrue">fourier_noise_on_mean(hists,outfilename='',figname='',nresamples=0,nonnegative=True)</a></li>
+            <li><a href="#fourier_noisehistsoutfilenamefignamenresamples1nonnegativetruestdfactor15">fourier_noise(hists,outfilename='',figname='',nresamples=1,nonnegative=True,stdfactor=15.)</a></li>
+            <li><a href="#upsample_hist_sethistsntargetfourierstdfactor15fignamef">upsample_hist_set(hists,ntarget,fourierstdfactor=15.,figname='f')</a></li>
+            <li><a href="#white_noisehistsfignamestdfactor15">white_noise(hists,figname='',stdfactor=15.)</a></li>
+            <li><a href="#resample_bin_per_binhistsoutfilenamefignamenresamples0nonnegativetruesmoothinghalfwidth2">resample_bin_per_bin(hists,outfilename='',figname='',nresamples=0,nonnegative=True,smoothinghalfwidth=2)</a></li>
+            <li><a href="#resample_similar_bin_per_bin-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_bin_per_bin( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</a></li>
+            <li><a href="#resample_similar_fourier_noise-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_fourier_noise( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</a></li>
+            <li><a href="#resample_similar_lico-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_lico( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</a></li>
+            <li><a href="#mc_samplinghists-nmc10000-nresamples10">mc_sampling(hists, nMC=10000 , nresamples=10)</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
 <h1 id="generate-data-utils">generate data utils</h1>
-<p>## goodnoise(nbins, fstd=None)<br />
-   generate one sample of 'good' noise consisting of fourier components<br />
-   input args:<br />
-   - nbins: number of bins, length of noise array to be sampled<br />
-   - fstd: an array of length nbins used for scaling of the amplitude of the noise<br />
-   bin-by-bin.<br />
-   output:<br />
-   - numpy array of length nbins containing the noise  </p>
-<p>## badnoise(nbins,fstd=None)<br />
-   generate one sample of 'bad' noise consisting of fourier components<br />
-   (higher frequency and amplitude than 'good' noise)<br />
-   input args and output: simlar to goodnoise<br />
-   WARNING: NOT NECESSARILY REPRESENTATIVE OF ANOMALIES TO BE EXPECTED, DO NOT USE  </p>
-<p>## whitenoise(nbins,fstd=None)<br />
-   generate one sample of white noise (uncorrelated between bins)<br />
-   input args and output: similar to goodnoise  </p>
-<p>## random_lico(hists)<br />
-   generate one linear combination of histograms with random coefficients in (0,1) summing to 1<br />
-   input args:<br />
-   - numpy array of shape (nhists,nbins), the rows of which will be linearly combined<br />
-   output:<br />
-   - numpy array of shape (nbins), containing the new histogram  </p>
-<p>## smoother(inarray,halfwidth)<br />
-   smooth the rows of a 2D array using the 2*halfwidth+1 surrounding values.  </p>
-<p>## mse_correlation_vector(hists,index)<br />
-   calculate mse of a histogram at given index wrt all other histograms<br />
-   input args:<br />
-   - hists: numpy array of shape (nhists,nbins) containing the histograms<br />
-   - index: the index (must be in (0,len(hists)-1)) of the histogram in question<br />
-   output:<br />
-   - numpy array of length nhists containing mse of the indexed histogram with respect to all other histograms<br />
-   WARNING: can be slow if called many times on a large collection of histograms with many bins.  </p>
-<p>## moments_correlation_vector(moments,index)<br />
-   calculate moment distance of hist at index wrt all other hists<br />
-   very similar to mse_correlation_vector but using histogram moments instead of full histograms for speed-up  </p>
-<p>## plot_data_and_gen(nplot,datahist,genhist,figname='fig.png')<br />
-   plot a couple of random examples from rhist (data), ghist (resampled 'good') and bhist (resampled 'bad')<br />
-   input arguments:<br />
-   - nplot: integer, maximum number of examples to plot<br />
-   - datahist, genhist: numpy arrays of shape (nhists,nbins)<br />
-   - figname: name of figure to plot  </p>
-<p>## plot_seed_and_gen(seedhist,genhist,figname='fig.png')<br />
-   plot a couple of random examples from rhist (data), ghist (resampled 'good') and bhist (resampled 'bad')<br />
-   input arguments:<br />
-   - datahist, genhist: numpy arrays of shape (nhists,nbins)<br />
-   - figname: name of figure to plot  </p>
-<p>## plot_noise(noise,histstd=None,figname='fig.png')<br />
-   plot histograms in noise (numpy array of shape (nhists,nbins))<br />
-   optional argument histstd plots +- histstd as boundaries  </p>
-<p>## fourier_noise_on_mean(hists,outfilename='',figname='',nresamples=0,nonnegative=True)<br />
-   apply fourier noise on the bin-per-bin mean histogram,<br />
-   with amplitude scaling based on bin-per-bin std histogram.<br />
-   input args:<br />
-   - hists: numpy array of shape (nhists,nbins) used for determining mean and std<br />
-   - outfilename: path to csv file to write results to (default: no writing)<br />
-   - figname: path to figure plotting examples (default: no plotting)<br />
-   - nresamples: number of samples to draw (default: number of input histograms / 10)<br />
-   - nonnegative: boolean whether to set all bins to minimum zero after applying noise<br />
-   MOSTLY SUITABLE AS HELP FUNCTION FOR RESAMPLE_SIMILAR_FOURIER_NOISE, NOT AS GENERATOR IN ITSELF  </p>
-<p>## fourier_noise(hists,outfilename='',figname='',nresamples=1,nonnegative=True,stdfactor=15.)<br />
-   apply fourier noise on random histograms with simple flat amplitude scaling.<br />
-   input args:<br />
-   - hists: numpy array of shape (nhists,nbins) used for seeding<br />
-   - outfilename: path to csv file to write results to (default: no writing)<br />
-   - figname: path to figure plotting examples (default: no plotting)<br />
-   - nresamples: number of samples to draw per input histogram<br />
-   - nonnegative: boolean whether to set all bins to minimum zero after applying noise<br />
-   - stdfactor: factor to scale magnitude of noise (larger factor = smaller noise)  </p>
-<p>## upsample_hist_set(hists,ntarget,fourierstdfactor=15.,figname='f')<br />
-   (no valid documentation found)  </p>
-<p>## white_noise(hists,figname='',stdfactor=15.)<br />
-   apply white noise to the histograms in hists.<br />
-   input args:<br />
-   - hists: np array (nhists,nbins) containing input histograms<br />
-   - figname: path to figure plotting examples (default: no plotting)<br />
-   - stdfactor: scaling factor of white noise amplitude (higher factor = smaller noise)  </p>
-<p>## resample_bin_per_bin(hists,outfilename='',figname='',nresamples=0,nonnegative=True,smoothinghalfwidth=2)<br />
-   do resampling from bin-per-bin probability distributions<br />
-   input args:<br />
-   - hists: np array (nhists,nbins) containing the histograms to draw new samples from<br />
-   - outfilename: path to csv file to write results to (default: no writing)<br />
-   - figname: path to figure plotting examples (default: no plotting)<br />
-   - nresamples: number of samples to draw (default: 1/10 of number of input histograms)<br />
-   - nonnegative: boolean whether or not to put all bins to minimum zero after applying noise<br />
-   - smoothinghalfwidth: halfwidth of smoothing procedure to apply on the result (default: no smoothing)  </p>
-<p>## resample_similar_bin_per_bin( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,<br />
-   (no valid documentation found)  </p>
-<p>## resample_similar_fourier_noise( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,<br />
-   (no valid documentation found)  </p>
-<p>## resample_similar_lico( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,<br />
-   (no valid documentation found)  </p>
-<p>## mc_sampling(hists, nMC=10000 , nresamples=10)<br />
-<strong>resampling of a histogram using MC methods</strong><br />
+<hr />
+<h2 id="goodnoisenbins-fstdnone">goodnoise(nbins, fstd=None)</h2>
+<p>generate one sample of 'good' noise consisting of fourier components<br />
+input args:<br />
+- nbins: number of bins, length of noise array to be sampled<br />
+- fstd: an array of length nbins used for scaling of the amplitude of the noise<br />
+bin-by-bin.<br />
+output:<br />
+- numpy array of length nbins containing the noise  </p>
+<hr />
+<h2 id="badnoisenbinsfstdnone">badnoise(nbins,fstd=None)</h2>
+<p>generate one sample of 'bad' noise consisting of fourier components<br />
+(higher frequency and amplitude than 'good' noise)<br />
+input args and output: simlar to goodnoise<br />
+WARNING: NOT NECESSARILY REPRESENTATIVE OF ANOMALIES TO BE EXPECTED, DO NOT USE  </p>
+<hr />
+<h2 id="whitenoisenbinsfstdnone">whitenoise(nbins,fstd=None)</h2>
+<p>generate one sample of white noise (uncorrelated between bins)<br />
+input args and output: similar to goodnoise  </p>
+<hr />
+<h2 id="random_licohists">random_lico(hists)</h2>
+<p>generate one linear combination of histograms with random coefficients in (0,1) summing to 1<br />
+input args:<br />
+- numpy array of shape (nhists,nbins), the rows of which will be linearly combined<br />
+output:<br />
+- numpy array of shape (nbins), containing the new histogram  </p>
+<hr />
+<h2 id="smootherinarrayhalfwidth">smoother(inarray,halfwidth)</h2>
+<p>smooth the rows of a 2D array using the 2*halfwidth+1 surrounding values.  </p>
+<hr />
+<h2 id="mse_correlation_vectorhistsindex">mse_correlation_vector(hists,index)</h2>
+<p>calculate mse of a histogram at given index wrt all other histograms<br />
+input args:<br />
+- hists: numpy array of shape (nhists,nbins) containing the histograms<br />
+- index: the index (must be in (0,len(hists)-1)) of the histogram in question<br />
+output:<br />
+- numpy array of length nhists containing mse of the indexed histogram with respect to all other histograms<br />
+WARNING: can be slow if called many times on a large collection of histograms with many bins.  </p>
+<hr />
+<h2 id="moments_correlation_vectormomentsindex">moments_correlation_vector(moments,index)</h2>
+<p>calculate moment distance of hist at index wrt all other hists<br />
+very similar to mse_correlation_vector but using histogram moments instead of full histograms for speed-up  </p>
+<hr />
+<h2 id="plot_data_and_gennplotdatahistgenhistfignamefigpng">plot_data_and_gen(nplot,datahist,genhist,figname='fig.png')</h2>
+<p>plot a couple of random examples from rhist (data), ghist (resampled 'good') and bhist (resampled 'bad')<br />
+input arguments:<br />
+- nplot: integer, maximum number of examples to plot<br />
+- datahist, genhist: numpy arrays of shape (nhists,nbins)<br />
+- figname: name of figure to plot  </p>
+<hr />
+<h2 id="plot_seed_and_genseedhistgenhistfignamefigpng">plot_seed_and_gen(seedhist,genhist,figname='fig.png')</h2>
+<p>plot a couple of random examples from rhist (data), ghist (resampled 'good') and bhist (resampled 'bad')<br />
+input arguments:<br />
+- datahist, genhist: numpy arrays of shape (nhists,nbins)<br />
+- figname: name of figure to plot  </p>
+<hr />
+<h2 id="plot_noisenoisehiststdnonefignamefigpng">plot_noise(noise,histstd=None,figname='fig.png')</h2>
+<p>plot histograms in noise (numpy array of shape (nhists,nbins))<br />
+optional argument histstd plots +- histstd as boundaries  </p>
+<hr />
+<h2 id="fourier_noise_on_meanhistsoutfilenamefignamenresamples0nonnegativetrue">fourier_noise_on_mean(hists,outfilename='',figname='',nresamples=0,nonnegative=True)</h2>
+<p>apply fourier noise on the bin-per-bin mean histogram,<br />
+with amplitude scaling based on bin-per-bin std histogram.<br />
+input args:<br />
+- hists: numpy array of shape (nhists,nbins) used for determining mean and std<br />
+- outfilename: path to csv file to write results to (default: no writing)<br />
+- figname: path to figure plotting examples (default: no plotting)<br />
+- nresamples: number of samples to draw (default: number of input histograms / 10)<br />
+- nonnegative: boolean whether to set all bins to minimum zero after applying noise<br />
+MOSTLY SUITABLE AS HELP FUNCTION FOR RESAMPLE_SIMILAR_FOURIER_NOISE, NOT AS GENERATOR IN ITSELF  </p>
+<hr />
+<h2 id="fourier_noisehistsoutfilenamefignamenresamples1nonnegativetruestdfactor15">fourier_noise(hists,outfilename='',figname='',nresamples=1,nonnegative=True,stdfactor=15.)</h2>
+<p>apply fourier noise on random histograms with simple flat amplitude scaling.<br />
+input args:<br />
+- hists: numpy array of shape (nhists,nbins) used for seeding<br />
+- outfilename: path to csv file to write results to (default: no writing)<br />
+- figname: path to figure plotting examples (default: no plotting)<br />
+- nresamples: number of samples to draw per input histogram<br />
+- nonnegative: boolean whether to set all bins to minimum zero after applying noise<br />
+- stdfactor: factor to scale magnitude of noise (larger factor = smaller noise)  </p>
+<hr />
+<h2 id="upsample_hist_sethistsntargetfourierstdfactor15fignamef">upsample_hist_set(hists,ntarget,fourierstdfactor=15.,figname='f')</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="white_noisehistsfignamestdfactor15">white_noise(hists,figname='',stdfactor=15.)</h2>
+<p>apply white noise to the histograms in hists.<br />
+input args:<br />
+- hists: np array (nhists,nbins) containing input histograms<br />
+- figname: path to figure plotting examples (default: no plotting)<br />
+- stdfactor: scaling factor of white noise amplitude (higher factor = smaller noise)  </p>
+<hr />
+<h2 id="resample_bin_per_binhistsoutfilenamefignamenresamples0nonnegativetruesmoothinghalfwidth2">resample_bin_per_bin(hists,outfilename='',figname='',nresamples=0,nonnegative=True,smoothinghalfwidth=2)</h2>
+<p>do resampling from bin-per-bin probability distributions<br />
+input args:<br />
+- hists: np array (nhists,nbins) containing the histograms to draw new samples from<br />
+- outfilename: path to csv file to write results to (default: no writing)<br />
+- figname: path to figure plotting examples (default: no plotting)<br />
+- nresamples: number of samples to draw (default: 1/10 of number of input histograms)<br />
+- nonnegative: boolean whether or not to put all bins to minimum zero after applying noise<br />
+- smoothinghalfwidth: halfwidth of smoothing procedure to apply on the result (default: no smoothing)  </p>
+<hr />
+<h2 id="resample_similar_bin_per_bin-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_bin_per_bin( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="resample_similar_fourier_noise-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_fourier_noise( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="resample_similar_lico-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_lico( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="mc_samplinghists-nmc10000-nresamples10">mc_sampling(hists, nMC=10000 , nresamples=10)</h2>
+<p><strong>resampling of a histogram using MC methods</strong><br />
 <strong>(Marek's method)</strong><br />
-   Drawing random points from a space defined by the range of the histogram in all axes.<br />
-   Points are "accepted" if the fall under the sampled histogram:<br />
-   f(x) - sampled distribution<br />
-   x_r, y_r -&gt; randomly sampled point<br />
-   if y_r&lt;=f(x_r), fill the new distribution at bin corresponding to x_r with weight:<br />
-   weight = (sum of input hist)/(#mc points accepted)<br />
-   this is equal to<br />
-   weight = (MC space volume)/(# all MC points)  </p></div>
+Drawing random points from a space defined by the range of the histogram in all axes.<br />
+Points are "accepted" if the fall under the sampled histogram:<br />
+f(x) - sampled distribution<br />
+x_r, y_r -&gt; randomly sampled point<br />
+if y_r&lt;=f(x_r), fill the new distribution at bin corresponding to x_r with weight:<br />
+weight = (sum of input hist)/(#mc points accepted)<br />
+this is equal to<br />
+weight = (MC space volume)/(# all MC points)  </p></div>
         </div>
 
         <footer class="col-md-12">
