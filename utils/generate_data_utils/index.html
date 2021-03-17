@@ -127,9 +127,9 @@
             <li><a href="#upsample_hist_sethistsntargetfourierstdfactor15fignamef">upsample_hist_set(hists,ntarget,fourierstdfactor=15.,figname='f')</a></li>
             <li><a href="#white_noisehistsfignamestdfactor15">white_noise(hists,figname='',stdfactor=15.)</a></li>
             <li><a href="#resample_bin_per_binhistsoutfilenamefignamenresamples0nonnegativetruesmoothinghalfwidth2">resample_bin_per_bin(hists,outfilename='',figname='',nresamples=0,nonnegative=True,smoothinghalfwidth=2)</a></li>
-            <li><a href="#resample_similar_bin_per_bin-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_bin_per_bin( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</a></li>
-            <li><a href="#resample_similar_fourier_noise-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_fourier_noise( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</a></li>
-            <li><a href="#resample_similar_lico-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_lico( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</a></li>
+            <li><a href="#resample_similar_bin_per_bin-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue-keeppercentage1">resample_similar_bin_per_bin( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True, keeppercentage=1.)</a></li>
+            <li><a href="#resample_similar_fourier_noise-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue-keeppercentage1">resample_similar_fourier_noise( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True, keeppercentage=1.)</a></li>
+            <li><a href="#resample_similar_lico-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue-keeppercentage1">resample_similar_lico( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True, keeppercentage=1.)</a></li>
             <li><a href="#mc_samplinghists-nmc10000-nresamples10">mc_sampling(hists, nMC=10000 , nresamples=10)</a></li>
     </ul>
 </div></div>
@@ -237,14 +237,39 @@ input args:<br />
 - nonnegative: boolean whether or not to put all bins to minimum zero after applying noise<br />
 - smoothinghalfwidth: halfwidth of smoothing procedure to apply on the result (default: no smoothing)  </p>
 <hr />
-<h2 id="resample_similar_bin_per_bin-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_bin_per_bin( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</h2>
-<p>(no valid documentation found)  </p>
+<h2 id="resample_similar_bin_per_bin-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue-keeppercentage1">resample_similar_bin_per_bin( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True, keeppercentage=1.)</h2>
+<p>resample from bin-per-bin probability distributions, but only from similar looking histograms.<br />
+input args:<br />
+- allhists: np array (nhists,nbins) containing all available histograms (to determine mean)<br />
+- selhists: np array (nhists,nbins) conataining selected histograms used as seeds (e.g. 'good' histograms)<br />
+- outfilename: path of csv file to write results to (default: no writing)<br />
+- figname: path to figure plotting examples (default: no plotting)<br />
+- nresamples: number of samples per input histogram in selhists<br />
+- nonnegative: boolean whether or not to put all bins to minimum zero after applying noise<br />
+- keeppercentage: percentage (between 1 and 100) of histograms in allhists to use per input histogram  </p>
 <hr />
-<h2 id="resample_similar_fourier_noise-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_fourier_noise( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</h2>
-<p>(no valid documentation found)  </p>
+<h2 id="resample_similar_fourier_noise-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue-keeppercentage1">resample_similar_fourier_noise( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True, keeppercentage=1.)</h2>
+<p>apply fourier noise on mean histogram,<br />
+where the mean is determined from a set of similar-looking histograms<br />
+input args:<br />
+- allhists: np array (nhists,nbins) containing all available histograms (to determine mean)<br />
+- selhists: np array (nhists,nbins) conataining selected histograms used as seeds (e.g. 'good' histograms)<br />
+- outfilename: path of csv file to write results to (default: no writing)<br />
+- figname: path to figure plotting examples (default: no plotting)<br />
+- nresamples: number of samples per input histogram in selhists<br />
+- nonnegative: boolean whether or not to put all bins to minimum zero after applying noise<br />
+- keeppercentage: percentage (between 1 and 100) of histograms in allhists to use per input histogram  </p>
 <hr />
-<h2 id="resample_similar_lico-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_lico( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</h2>
-<p>(no valid documentation found)  </p>
+<h2 id="resample_similar_lico-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue-keeppercentage1">resample_similar_lico( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True, keeppercentage=1.)</h2>
+<p>take linear combinations of similar histograms<br />
+input arguments:<br />
+- allhists: 2D np array (nhists,nbins) with all available histograms, used to take linear combinations<br />
+- selhists: 2D np array (nhists,nbins) with selected hists used for seeding (e.g. 'good' histograms)<br />
+- outfilename: path to csv file to write result to (default: no writing)<br />
+- figname: path to figure plotting examples (defautl: no plotting)<br />
+- nresamples: number of combinations to make per input histogram<br />
+- nonnegative: boolean whether to make all final histograms nonnegative<br />
+- keeppercentage: percentage (between 0. and 100.) of histograms in allhists to use per input histogram  </p>
 <hr />
 <h2 id="mc_samplinghists-nmc10000-nresamples10">mc_sampling(hists, nMC=10000 , nresamples=10)</h2>
 <p><strong>resampling of a histogram using MC methods</strong><br />
