@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>histstructure - Documentation for the ML4DQM/DC notebooks</title>
+        <title>ae combine utils - Documentation for the ML4DQM/DC notebooks</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -49,39 +49,39 @@
                                 <ul class="dropdown-menu">
                                     
 <li class="active">
-    <a href="./">histstructure</a>
+    <a href="./">ae combine utils</a>
 </li>
                                     
 <li >
-    <a href="../autoencoder_utils/">mseTop10(y_true, y_pred)</a>
+    <a href="../autoencoder_utils/">autoencoder utils</a>
 </li>
                                     
 <li >
-    <a href="../clustering_utils/">fitfunction</a>
+    <a href="../clustering_utils/">clustering utils</a>
 </li>
                                     
 <li >
-    <a href="../csv_utils/">get_data_dirs(year='2017',eras=[],dim=1)</a>
+    <a href="../csv_utils/">csv utils</a>
 </li>
                                     
 <li >
-    <a href="../dataframe_utils/">get_histnames(df)</a>
+    <a href="../dataframe_utils/">dataframe utils</a>
 </li>
                                     
 <li >
-    <a href="../generate_data_utils/">goodnoise(nbins, fstd=None)</a>
+    <a href="../generate_data_utils/">generate data utils</a>
 </li>
                                     
 <li >
-    <a href="../hist_utils/">rebinhists(hists,factor)</a>
+    <a href="../hist_utils/">hist utils</a>
 </li>
                                     
 <li >
-    <a href="../json_utils/">loadjson( jsonfile )</a>
+    <a href="../json_utils/">json utils</a>
 </li>
                                     
 <li >
-    <a href="../plot_utils/">plot_hists(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1),</a>
+    <a href="../plot_utils/">plot utils</a>
 </li>
                                 </ul>
                             </li>
@@ -111,56 +111,50 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#histstructure">histstructure</a></li>
-            <li><a href="#initself">init(self)</a></li>
-            <li><a href="#createselfyearhistnamesjsonselectornonehighstatonlyfalsedcsononlyfalse">create(self,year,histnames,jsonselector=None,highstatonly=False,dcsononly=False)</a></li>
-            <li><a href="#get_golden_maskself">get_golden_mask(self)</a></li>
-            <li><a href="#get_golden_indicesself">get_golden_indices(self)</a></li>
-            <li><a href="#get_perrun_indicesself">get_perrun_indices(self)</a></li>
-        <li class="main "><a href="#get_mse_arrayhiststructvalkeydims">get_mse_array(histstruct,valkey,dims=[])</a></li>
-        <li class="main "><a href="#fitseminormalhiststructvalkeydimsfitnewtruesavefitfalse">fitseminormal(histstruct,valkey,dims=[],fitnew=True,savefit=False)</a></li>
-        <li class="main "><a href="#fitgaussiankdehiststructvalkeydimsmaxnpoints-1">fitgaussiankde(histstruct,valkey,dims=[],maxnpoints=-1)</a></li>
-        <li class="main "><a href="#plotfit2dhiststructvalkeydimsfitfuncdoinitialplottrueonlycontourfalserangestd30">plotfit2d(histstruct,valkey,dims,fitfunc,doinitialplot=True,onlycontour=False,rangestd=30)</a></li>
-        <li class="main "><a href="#msenormalizer">msenormalizer</a></li>
-            <li><a href="#initself_1">init(self)</a></li>
-            <li><a href="#fitselfarray">fit(self,array)</a></li>
-            <li><a href="#applyselfarray">apply(self,array)</a></li>
+        <li class="main active"><a href="#ae-combine-utils">ae combine utils</a></li>
+            <li><a href="#histstructure">histstructure</a></li>
+            <li><a href="#get_mse_arrayhiststructvalkeydims">get_mse_array(histstruct,valkey,dims=[])</a></li>
+            <li><a href="#fitseminormalhiststructvalkeydimsfitnewtruesavefitfalse">fitseminormal(histstruct,valkey,dims=[],fitnew=True,savefit=False)</a></li>
+            <li><a href="#fitgaussiankdehiststructvalkeydimsmaxnpoints-1">fitgaussiankde(histstruct,valkey,dims=[],maxnpoints=-1)</a></li>
+            <li><a href="#plotfit2dhiststructvalkeydimsfitfuncdoinitialplottrueonlycontourfalserangestd30">plotfit2d(histstruct,valkey,dims,fitfunc,doinitialplot=True,onlycontour=False,rangestd=30)</a></li>
+            <li><a href="#msenormalizer">msenormalizer</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="histstructure">histstructure</h1>
+<h1 id="ae-combine-utils">ae combine utils</h1>
+<h2 id="histstructure">histstructure</h2>
 <p>(no valid documentation found)  </p>
-<h2 id="initself"><strong>init</strong>(self)</h2>
+<h3 id="initself"><strong>init</strong>(self)</h3>
 <p>(no valid documentation found)  </p>
-<h2 id="createselfyearhistnamesjsonselectornonehighstatonlyfalsedcsononlyfalse">create(self,year,histnames,jsonselector=None,highstatonly=False,dcsononly=False)</h2>
+<h3 id="createselfyearhistnamesjsonselectornonehighstatonlyfalsedcsononlyfalse">create(self,year,histnames,jsonselector=None,highstatonly=False,dcsononly=False)</h3>
 <p><strong>create the histstructure given the arguments provided</strong><br />
 most arguments are self-explanatory<br />
 remarks:<br />
 - if jsonselector is None, no selection will be done on run/ls number, i.e. all runs and lumisections are kept<br />
 - if jsonselector contains a single negative run number as key, templates will be used (e.g. averaging the dataset) instead of actual ls from the data<br />
 for example, if jsonselector = {"-15":[[-1]]}, the dataset will be split in 15 parts and each part will be averaged to yield a single histogram (per type)  </p>
-<h2 id="get_golden_maskself">get_golden_mask(self)</h2>
+<h3 id="get_golden_maskself">get_golden_mask(self)</h3>
 <p>return a boolean mask on the lumisections whether or not they belong to the golden json  </p>
-<h2 id="get_golden_indicesself">get_golden_indices(self)</h2>
+<h3 id="get_golden_indicesself">get_golden_indices(self)</h3>
 <p>return an array of indices of lumisections that belong to the golden json  </p>
-<h2 id="get_perrun_indicesself">get_perrun_indices(self)</h2>
+<h3 id="get_perrun_indicesself">get_perrun_indices(self)</h3>
 <p>return a list of arrays of indices of lumisections, one element in the list represents one run  </p>
-<h1 id="get_mse_arrayhiststructvalkeydims">get_mse_array(histstruct,valkey,dims=[])</h1>
+<h2 id="get_mse_arrayhiststructvalkeydims">get_mse_array(histstruct,valkey,dims=[])</h2>
 <p>(no valid documentation found)  </p>
-<h1 id="fitseminormalhiststructvalkeydimsfitnewtruesavefitfalse">fitseminormal(histstruct,valkey,dims=[],fitnew=True,savefit=False)</h1>
+<h2 id="fitseminormalhiststructvalkeydimsfitnewtruesavefitfalse">fitseminormal(histstruct,valkey,dims=[],fitnew=True,savefit=False)</h2>
 <p>(no valid documentation found)  </p>
-<h1 id="fitgaussiankdehiststructvalkeydimsmaxnpoints-1">fitgaussiankde(histstruct,valkey,dims=[],maxnpoints=-1)</h1>
+<h2 id="fitgaussiankdehiststructvalkeydimsmaxnpoints-1">fitgaussiankde(histstruct,valkey,dims=[],maxnpoints=-1)</h2>
 <p>(no valid documentation found)  </p>
-<h1 id="plotfit2dhiststructvalkeydimsfitfuncdoinitialplottrueonlycontourfalserangestd30">plotfit2d(histstruct,valkey,dims,fitfunc,doinitialplot=True,onlycontour=False,rangestd=30)</h1>
+<h2 id="plotfit2dhiststructvalkeydimsfitfuncdoinitialplottrueonlycontourfalserangestd30">plotfit2d(histstruct,valkey,dims,fitfunc,doinitialplot=True,onlycontour=False,rangestd=30)</h2>
 <p>(no valid documentation found)  </p>
-<h1 id="msenormalizer">msenormalizer</h1>
+<h2 id="msenormalizer">msenormalizer</h2>
 <p>(no valid documentation found)  </p>
-<h2 id="initself_1"><strong>init</strong>(self)</h2>
+<h3 id="initself_1"><strong>init</strong>(self)</h3>
 <p>(no valid documentation found)  </p>
-<h2 id="fitselfarray">fit(self,array)</h2>
+<h3 id="fitselfarray">fit(self,array)</h3>
 <p>(no valid documentation found)  </p>
-<h2 id="applyselfarray">apply(self,array)</h2>
+<h3 id="applyselfarray">apply(self,array)</h3>
 <p>(no valid documentation found)  </p></div>
         </div>
 

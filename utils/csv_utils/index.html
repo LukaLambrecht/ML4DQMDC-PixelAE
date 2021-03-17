@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>get_data_dirs(year='2017',eras=[],dim=1) - Documentation for the ML4DQM/DC notebooks</title>
+        <title>csv utils - Documentation for the ML4DQM/DC notebooks</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -49,39 +49,39 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../ae_combine_utils/">histstructure</a>
+    <a href="../ae_combine_utils/">ae combine utils</a>
 </li>
                                     
 <li >
-    <a href="../autoencoder_utils/">mseTop10(y_true, y_pred)</a>
+    <a href="../autoencoder_utils/">autoencoder utils</a>
 </li>
                                     
 <li >
-    <a href="../clustering_utils/">fitfunction</a>
+    <a href="../clustering_utils/">clustering utils</a>
 </li>
                                     
 <li class="active">
-    <a href="./">get_data_dirs(year='2017',eras=[],dim=1)</a>
+    <a href="./">csv utils</a>
 </li>
                                     
 <li >
-    <a href="../dataframe_utils/">get_histnames(df)</a>
+    <a href="../dataframe_utils/">dataframe utils</a>
 </li>
                                     
 <li >
-    <a href="../generate_data_utils/">goodnoise(nbins, fstd=None)</a>
+    <a href="../generate_data_utils/">generate data utils</a>
 </li>
                                     
 <li >
-    <a href="../hist_utils/">rebinhists(hists,factor)</a>
+    <a href="../hist_utils/">hist utils</a>
 </li>
                                     
 <li >
-    <a href="../json_utils/">loadjson( jsonfile )</a>
+    <a href="../json_utils/">json utils</a>
 </li>
                                     
 <li >
-    <a href="../plot_utils/">plot_hists(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1),</a>
+    <a href="../plot_utils/">plot utils</a>
 </li>
                                 </ul>
                             </li>
@@ -111,17 +111,19 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#get_data_dirsyear2017erasdim1">get_data_dirs(year='2017',eras=[],dim=1)</a></li>
-        <li class="main "><a href="#get_csv_filesinputdir">get_csv_files(inputdir)</a></li>
-        <li class="main "><a href="#sort_filenamesfilelist">sort_filenames(filelist)</a></li>
-        <li class="main "><a href="#read_csvcsv_file">read_csv(csv_file)</a></li>
-        <li class="main "><a href="#read_and_merge_csvcsv_fileshistnamesrunnbs">read_and_merge_csv(csv_files,histnames=[],runnbs=[])</a></li>
-        <li class="main "><a href="#write_skimmed_csvhistnamesyearerasall">write_skimmed_csv(histnames,year,eras=['all'])</a></li>
+        <li class="main active"><a href="#csv-utils">csv utils</a></li>
+            <li><a href="#get_data_dirsyear2017erasdim1">get_data_dirs(year='2017',eras=[],dim=1)</a></li>
+            <li><a href="#get_csv_filesinputdir">get_csv_files(inputdir)</a></li>
+            <li><a href="#sort_filenamesfilelist">sort_filenames(filelist)</a></li>
+            <li><a href="#read_csvcsv_file">read_csv(csv_file)</a></li>
+            <li><a href="#read_and_merge_csvcsv_fileshistnamesrunnbs">read_and_merge_csv(csv_files,histnames=[],runnbs=[])</a></li>
+            <li><a href="#write_skimmed_csvhistnamesyearerasall">write_skimmed_csv(histnames,year,eras=['all'])</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="get_data_dirsyear2017erasdim1">get_data_dirs(year='2017',eras=[],dim=1)</h1>
+<h1 id="csv-utils">csv utils</h1>
+<h2 id="get_data_dirsyear2017erasdim1">get_data_dirs(year='2017',eras=[],dim=1)</h2>
 <p><strong>yield all data directories</strong><br />
 note that the location of the data is hard-coded;<br />
 this function might break for newer or later reprocessings of the data.<br />
@@ -129,23 +131,23 @@ this function might break for newer or later reprocessings of the data.<br />
 - era is a list containing a selection of era names<br />
 (default empty list = all eras)<br />
 - dim is either 1 or 2 (for 1D or 2D plots)  </p>
-<h1 id="get_csv_filesinputdir">get_csv_files(inputdir)</h1>
+<h2 id="get_csv_filesinputdir">get_csv_files(inputdir)</h2>
 <p><strong>yields paths to all csv files in input directory</strong><br />
 note that the output paths consist of input_dir/filename<br />
 this function is only meant for 1-level down searching,<br />
 i.e. the .csv files listed directly under input_dir.  </p>
-<h1 id="sort_filenamesfilelist">sort_filenames(filelist)</h1>
+<h2 id="sort_filenamesfilelist">sort_filenames(filelist)</h2>
 <p><strong>sort filenames in numerical order (e.g. 2 before 10)</strong><br />
 note that the number is supposed to be in ..._<number>.<extension> format  </p>
-<h1 id="read_csvcsv_file">read_csv(csv_file)</h1>
+<h2 id="read_csvcsv_file">read_csv(csv_file)</h2>
 <p><strong>read csv file into pandas dataframe</strong><br />
 csv_file is the path to the csv file to be read  </p>
-<h1 id="read_and_merge_csvcsv_fileshistnamesrunnbs">read_and_merge_csv(csv_files,histnames=[],runnbs=[])</h1>
+<h2 id="read_and_merge_csvcsv_fileshistnamesrunnbs">read_and_merge_csv(csv_files,histnames=[],runnbs=[])</h2>
 <p><strong>read and merge list of csv files into a single df</strong><br />
 csv_files is a list of paths to files to merge into a df<br />
 histnames is a list of the types of histograms to keep (default: all)<br />
 runnbs is a list of run numbers to keep (default: all)  </p>
-<h1 id="write_skimmed_csvhistnamesyearerasall">write_skimmed_csv(histnames,year,eras=['all'])</h1>
+<h2 id="write_skimmed_csvhistnamesyearerasall">write_skimmed_csv(histnames,year,eras=['all'])</h2>
 <p><strong>read all available data for a given year/era and make a file per histogram type</strong><br />
 input arguments:<br />
 - histnames: list of histogram names for which to make a separate file<br />

@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>plot_hists(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1), - Documentation for the ML4DQM/DC notebooks</title>
+        <title>plot utils - Documentation for the ML4DQM/DC notebooks</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -49,39 +49,39 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../ae_combine_utils/">histstructure</a>
+    <a href="../ae_combine_utils/">ae combine utils</a>
 </li>
                                     
 <li >
-    <a href="../autoencoder_utils/">mseTop10(y_true, y_pred)</a>
+    <a href="../autoencoder_utils/">autoencoder utils</a>
 </li>
                                     
 <li >
-    <a href="../clustering_utils/">fitfunction</a>
+    <a href="../clustering_utils/">clustering utils</a>
 </li>
                                     
 <li >
-    <a href="../csv_utils/">get_data_dirs(year='2017',eras=[],dim=1)</a>
+    <a href="../csv_utils/">csv utils</a>
 </li>
                                     
 <li >
-    <a href="../dataframe_utils/">get_histnames(df)</a>
+    <a href="../dataframe_utils/">dataframe utils</a>
 </li>
                                     
 <li >
-    <a href="../generate_data_utils/">goodnoise(nbins, fstd=None)</a>
+    <a href="../generate_data_utils/">generate data utils</a>
 </li>
                                     
 <li >
-    <a href="../hist_utils/">rebinhists(hists,factor)</a>
+    <a href="../hist_utils/">hist utils</a>
 </li>
                                     
 <li >
-    <a href="../json_utils/">loadjson( jsonfile )</a>
+    <a href="../json_utils/">json utils</a>
 </li>
                                     
 <li class="active">
-    <a href="./">plot_hists(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1),</a>
+    <a href="./">plot utils</a>
 </li>
                                 </ul>
                             </li>
@@ -111,45 +111,47 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#plot_histshistlistcolorlistlabellisttransparency1xlims0-1">plot_hists(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1),</a></li>
-        <li class="main "><a href="#plot_hists_multihistlistcolorlistlabellisttransparency1xlims0-1">plot_hists_multi(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1),</a></li>
-        <li class="main "><a href="#plot_hists_from_dfdfhisttypenhists">plot_hists_from_df(df,histtype,nhists)</a></li>
-        <li class="main "><a href="#plot_setssetlistfignoneaxnonecolorlistlabellisttransparencylistxlims0-1">plot_sets(setlist,fig=None,ax=None,colorlist=[],labellist=[],transparencylist=[],xlims=(0,-1),</a></li>
-        <li class="main "><a href="#plot_anomaloushistlistlshighlight-1hrange-1">plot_anomalous(histlist,ls,highlight=-1,hrange=-1)</a></li>
-        <li class="main "><a href="#plot_momentsmomentslsdimsfignoneaxnonemarkersize10">plot_moments(moments,ls,dims,fig=None,ax=None,markersize=10)</a></li>
-        <li class="main "><a href="#plot_distancedistslsnonermlargest0doplottrue">plot_distance(dists,ls=None,rmlargest=0.,doplot=True,</a></li>
-        <li class="main "><a href="#plot_lossdata-xlimsnone">plot_loss(data, xlims=None,</a></li>
-        <li class="main "><a href="#plot_msemsermlargest0doplottrue">plot_mse(mse,rmlargest=0.,doplot=True,</a></li>
-        <li class="main "><a href="#plot_score_dist-scores-labels-nbins20-normalizefalse">plot_score_dist( scores, labels, nbins=20, normalize=False,</a></li>
+        <li class="main active"><a href="#plot-utils">plot utils</a></li>
+            <li><a href="#plot_histshistlistcolorlistlabellisttransparency1xlims0-1">plot_hists(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1),</a></li>
+            <li><a href="#plot_hists_multihistlistcolorlistlabellisttransparency1xlims0-1">plot_hists_multi(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1),</a></li>
+            <li><a href="#plot_hists_from_dfdfhisttypenhists">plot_hists_from_df(df,histtype,nhists)</a></li>
+            <li><a href="#plot_setssetlistfignoneaxnonecolorlistlabellisttransparencylistxlims0-1">plot_sets(setlist,fig=None,ax=None,colorlist=[],labellist=[],transparencylist=[],xlims=(0,-1),</a></li>
+            <li><a href="#plot_anomaloushistlistlshighlight-1hrange-1">plot_anomalous(histlist,ls,highlight=-1,hrange=-1)</a></li>
+            <li><a href="#plot_momentsmomentslsdimsfignoneaxnonemarkersize10">plot_moments(moments,ls,dims,fig=None,ax=None,markersize=10)</a></li>
+            <li><a href="#plot_distancedistslsnonermlargest0doplottrue">plot_distance(dists,ls=None,rmlargest=0.,doplot=True,</a></li>
+            <li><a href="#plot_lossdata-xlimsnone">plot_loss(data, xlims=None,</a></li>
+            <li><a href="#plot_msemsermlargest0doplottrue">plot_mse(mse,rmlargest=0.,doplot=True,</a></li>
+            <li><a href="#plot_score_dist-scores-labels-nbins20-normalizefalse">plot_score_dist( scores, labels, nbins=20, normalize=False,</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="plot_histshistlistcolorlistlabellisttransparency1xlims0-1">plot_hists(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1),</h1>
+<h1 id="plot-utils">plot utils</h1>
+<h2 id="plot_histshistlistcolorlistlabellisttransparency1xlims0-1">plot_hists(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1),</h2>
 <p>(no valid documentation found)  </p>
-<h1 id="plot_hists_multihistlistcolorlistlabellisttransparency1xlims0-1">plot_hists_multi(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1),</h1>
+<h2 id="plot_hists_multihistlistcolorlistlabellisttransparency1xlims0-1">plot_hists_multi(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1),</h2>
 <p>(no valid documentation found)  </p>
-<h1 id="plot_hists_from_dfdfhisttypenhists">plot_hists_from_df(df,histtype,nhists)</h1>
+<h2 id="plot_hists_from_dfdfhisttypenhists">plot_hists_from_df(df,histtype,nhists)</h2>
 <p><strong>plot a number of histograms in a dataframe</strong><br />
 - df is the dataframe from which to plot<br />
 - histtype is the name of the histogram type (e.g. 'chargeInner_PXLayer_1')<br />
 - nhists is the number of histograms to plot  </p>
-<h1 id="plot_setssetlistfignoneaxnonecolorlistlabellisttransparencylistxlims0-1">plot_sets(setlist,fig=None,ax=None,colorlist=[],labellist=[],transparencylist=[],xlims=(0,-1),</h1>
+<h2 id="plot_setssetlistfignoneaxnonecolorlistlabellisttransparencylistxlims0-1">plot_sets(setlist,fig=None,ax=None,colorlist=[],labellist=[],transparencylist=[],xlims=(0,-1),</h2>
 <p>(no valid documentation found)  </p>
-<h1 id="plot_anomaloushistlistlshighlight-1hrange-1">plot_anomalous(histlist,ls,highlight=-1,hrange=-1)</h1>
+<h2 id="plot_anomaloushistlistlshighlight-1hrange-1">plot_anomalous(histlist,ls,highlight=-1,hrange=-1)</h2>
 <p>histlist and ls are a list of histograms and corresponding lumisection numbers<br />
 lsnumber is the lumisection number of the histogram to highlight<br />
 hrange is the number of histograms before and after lsnumber to plot (default: whole run)  </p>
-<h1 id="plot_momentsmomentslsdimsfignoneaxnonemarkersize10">plot_moments(moments,ls,dims,fig=None,ax=None,markersize=10)</h1>
+<h2 id="plot_momentsmomentslsdimsfignoneaxnonemarkersize10">plot_moments(moments,ls,dims,fig=None,ax=None,markersize=10)</h2>
 <p>moments is an (nhists,nmoments) array<br />
 dims is a tuple of two or three values between 0 and nmoments-1  </p>
-<h1 id="plot_distancedistslsnonermlargest0doplottrue">plot_distance(dists,ls=None,rmlargest=0.,doplot=True,</h1>
+<h2 id="plot_distancedistslsnonermlargest0doplottrue">plot_distance(dists,ls=None,rmlargest=0.,doplot=True,</h2>
 <p>(no valid documentation found)  </p>
-<h1 id="plot_lossdata-xlimsnone">plot_loss(data, xlims=None,</h1>
+<h2 id="plot_lossdata-xlimsnone">plot_loss(data, xlims=None,</h2>
 <p>(no valid documentation found)  </p>
-<h1 id="plot_msemsermlargest0doplottrue">plot_mse(mse,rmlargest=0.,doplot=True,</h1>
+<h2 id="plot_msemsermlargest0doplottrue">plot_mse(mse,rmlargest=0.,doplot=True,</h2>
 <p>(no valid documentation found)  </p>
-<h1 id="plot_score_dist-scores-labels-nbins20-normalizefalse">plot_score_dist( scores, labels, nbins=20, normalize=False,</h1>
+<h2 id="plot_score_dist-scores-labels-nbins20-normalizefalse">plot_score_dist( scores, labels, nbins=20, normalize=False,</h2>
 <p>(no valid documentation found)  </p></div>
         </div>
 
