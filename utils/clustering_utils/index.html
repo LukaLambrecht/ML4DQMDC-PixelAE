@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>fitfunction - Documentation for the ML4DQM/DC notebooks</title>
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC notebooks</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="../..">Home</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Utils <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../ae_combine_utils/">histstructure</a>
+</li>
+                                    
+<li >
+    <a href="../autoencoder_utils/">mseTop10(y_true, y_pred)</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">fitfunction</a>
+</li>
+                                    
+<li >
+    <a href="../csv_utils/">get_data_dirs(year='2017',eras=[],dim=1)</a>
+</li>
+                                    
+<li >
+    <a href="../dataframe_utils/">get_histnames(df)</a>
+</li>
+                                    
+<li >
+    <a href="../generate_data_utils/">goodnoise(nbins, fstd=None)</a>
+</li>
+                                    
+<li >
+    <a href="../hist_utils/">rebinhists(hists,factor)</a>
+</li>
+                                    
+<li >
+    <a href="../json_utils/">loadjson( jsonfile )</a>
+</li>
+                                    
+<li >
+    <a href="../plot_utils/">plot_hists(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1),</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../autoencoder_utils/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../csv_utils/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#fitfunction">fitfunction</a></li>
+            <li><a href="#initselfpoints">init(self,points)</a></li>
+            <li><a href="#pdfselfpoints">pdf(self,points)</a></li>
+            <li><a href="#pdfgridselfgrid">pdfgrid(self,grid)</a></li>
+        <li class="main "><a href="#lognormalfitfunction">lognormal(fitfunction)</a></li>
+            <li><a href="#initselfpoints_1">init(self,points)</a></li>
+            <li><a href="#pdfselfpoints_1">pdf(self,points)</a></li>
+            <li><a href="#pdfgridselfgrid_1">pdfgrid(self,grid)</a></li>
+        <li class="main "><a href="#exponentialfitfunction">exponential(fitfunction)</a></li>
+            <li><a href="#initselfpoints_2">init(self,points)</a></li>
+            <li><a href="#pdfselfpoints_2">pdf(self,points)</a></li>
+            <li><a href="#pdfgridselfgrid_2">pdfgrid(self,grid)</a></li>
+        <li class="main "><a href="#seminormalfitfunction">seminormal(fitfunction)</a></li>
+            <li><a href="#initselfpoints_3">init(self,points=[])</a></li>
+            <li><a href="#pdfselfpoints_3">pdf(self,points)</a></li>
+            <li><a href="#pdfgridselfgrid_3">pdfgrid(self,grid)</a></li>
+            <li><a href="#saveselfpath">save(self,path)</a></li>
+            <li><a href="#loadselfpath">load(self,path)</a></li>
+        <li class="main "><a href="#gaussiankdefitfunction">gaussiankde(fitfunction)</a></li>
+            <li><a href="#initselfpointsbwdefault">init(self,points=[],bw='default')</a></li>
+            <li><a href="#pdfselfpoints_4">pdf(self,points)</a></li>
+            <li><a href="#pdfgridselfgrid_4">pdfgrid(self,grid)</a></li>
+        <li class="main "><a href="#vecdistmomentsindex">vecdist(moments,index)</a></li>
+        <li class="main "><a href="#costhetadistmomentsindex">costhetadist(moments,index)</a></li>
+        <li class="main "><a href="#avgnndistmomentsindexnn">avgnndist(moments,index,nn)</a></li>
+        <li class="main "><a href="#getavgnndisthistsnmomentsxminxmaxnbinsnneighbours">getavgnndist(hists,nmoments,xmin,xmax,nbins,nneighbours)</a></li>
+        <li class="main "><a href="#filteranomalousdfnmoments3rmouterflowtruermlargest0doplottrue">filteranomalous(df,nmoments=3,rmouterflow=True,rmlargest=0.,doplot=True,)</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="fitfunction">fitfunction</h1>
+<p><strong>abstract base class for all fit functions</strong><br />
+all other fit functions inherit from fitfunction and overload its functions<br />
+no concrete fitting procedure is implemented,<br />
+but some basic checks on dimensionality are performed  </p>
+<h2 id="initselfpoints"><strong>init</strong>(self,points)</h2>
+<p>(no valid documentation found)  </p>
+<h2 id="pdfselfpoints">pdf(self,points)</h2>
+<p><strong>get the pdf (probability density function) value at given points</strong><br />
+points is a 2D numpy array of shape (npoints,ndims)<br />
+the output is a 1D array of shape (npoints)  </p>
+<h2 id="pdfgridselfgrid">pdfgrid(self,grid)</h2>
+<p><strong>get the pdf (probability density function) value at a given grid</strong><br />
+(only applicable to 2D case!)<br />
+grid is a np array of shape (nx,ny,2)<br />
+containing the x- and y-values in its first and second depth-wise dimension respectively.<br />
+the grid is typically (but not necessarily) created via:<br />
+x,y = np.mgrid[<xrange>,<yrange>]<br />
+grid = np.dstack(x,y)  </p>
+<h1 id="lognormalfitfunction">lognormal(fitfunction)</h1>
+<p>(no valid documentation found)  </p>
+<h2 id="initselfpoints_1"><strong>init</strong>(self,points)</h2>
+<p>points is a np array of shape (npoints,ndims)  </p>
+<h2 id="pdfselfpoints_1">pdf(self,points)</h2>
+<p>(no valid documentation found)  </p>
+<h2 id="pdfgridselfgrid_1">pdfgrid(self,grid)</h2>
+<p>(no valid documentation found)  </p>
+<h1 id="exponentialfitfunction">exponential(fitfunction)</h1>
+<p>(no valid documentation found)  </p>
+<h2 id="initselfpoints_2"><strong>init</strong>(self,points)</h2>
+<p>points is a np array of shape (npoints,ndims)  </p>
+<h2 id="pdfselfpoints_2">pdf(self,points)</h2>
+<p>(no valid documentation found)  </p>
+<h2 id="pdfgridselfgrid_2">pdfgrid(self,grid)</h2>
+<p>(no valid documentation found)  </p>
+<h1 id="seminormalfitfunction">seminormal(fitfunction)</h1>
+<p>this is not strictly speaking a probability distribution,<br />
+only the first quadrant of the result of fitting a normal distribution<br />
+to the data + its mirror image wrt the origin  </p>
+<h2 id="initselfpoints_3"><strong>init</strong>(self,points=[])</h2>
+<p>(no valid documentation found)  </p>
+<h2 id="pdfselfpoints_3">pdf(self,points)</h2>
+<p>(no valid documentation found)  </p>
+<h2 id="pdfgridselfgrid_3">pdfgrid(self,grid)</h2>
+<p>(no valid documentation found)  </p>
+<h2 id="saveselfpath">save(self,path)</h2>
+<p>(no valid documentation found)  </p>
+<h2 id="loadselfpath">load(self,path)</h2>
+<p>(no valid documentation found)  </p>
+<h1 id="gaussiankdefitfunction">gaussiankde(fitfunction)</h1>
+<p>wrapper for scipy.stats.gaussian_kde (gaussian kernel density estimation)  </p>
+<h2 id="initselfpointsbwdefault"><strong>init</strong>(self,points=[],bw='default')</h2>
+<p>(no valid documentation found)  </p>
+<h2 id="pdfselfpoints_4">pdf(self,points)</h2>
+<p>(no valid documentation found)  </p>
+<h2 id="pdfgridselfgrid_4">pdfgrid(self,grid)</h2>
+<p>(no valid documentation found)  </p>
+<h1 id="vecdistmomentsindex">vecdist(moments,index)</h1>
+<p>does not work well if there are outliers which dominate the distance  </p>
+<h1 id="costhetadistmomentsindex">costhetadist(moments,index)</h1>
+<p>works more or less but not all bad points have small values,<br />
+allows to identify problematic regions but not individual LS  </p>
+<h1 id="avgnndistmomentsindexnn">avgnndist(moments,index,nn)</h1>
+<p>seems to work well for the runs tested!  </p>
+<h1 id="getavgnndisthistsnmomentsxminxmaxnbinsnneighbours">getavgnndist(hists,nmoments,xmin,xmax,nbins,nneighbours)</h1>
+<p>(no valid documentation found)  </p>
+<h1 id="filteranomalousdfnmoments3rmouterflowtruermlargest0doplottrue">filteranomalous(df,nmoments=3,rmouterflow=True,rmlargest=0.,doplot=True,)</h1>
+<p>(no valid documentation found)  </p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

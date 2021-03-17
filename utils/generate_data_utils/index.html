@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>goodnoise(nbins, fstd=None) - Documentation for the ML4DQM/DC notebooks</title>
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC notebooks</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="../..">Home</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Utils <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../ae_combine_utils/">histstructure</a>
+</li>
+                                    
+<li >
+    <a href="../autoencoder_utils/">mseTop10(y_true, y_pred)</a>
+</li>
+                                    
+<li >
+    <a href="../clustering_utils/">fitfunction</a>
+</li>
+                                    
+<li >
+    <a href="../csv_utils/">get_data_dirs(year='2017',eras=[],dim=1)</a>
+</li>
+                                    
+<li >
+    <a href="../dataframe_utils/">get_histnames(df)</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">goodnoise(nbins, fstd=None)</a>
+</li>
+                                    
+<li >
+    <a href="../hist_utils/">rebinhists(hists,factor)</a>
+</li>
+                                    
+<li >
+    <a href="../json_utils/">loadjson( jsonfile )</a>
+</li>
+                                    
+<li >
+    <a href="../plot_utils/">plot_hists(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1),</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../dataframe_utils/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../hist_utils/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#goodnoisenbins-fstdnone">goodnoise(nbins, fstd=None)</a></li>
+        <li class="main "><a href="#badnoisenbinsfstdnone">badnoise(nbins,fstd=None)</a></li>
+        <li class="main "><a href="#whitenoisenbinsfstdnone">whitenoise(nbins,fstd=None)</a></li>
+        <li class="main "><a href="#random_licohists">random_lico(hists)</a></li>
+        <li class="main "><a href="#smootherinarrayhalfwidth">smoother(inarray,halfwidth)</a></li>
+        <li class="main "><a href="#mse_correlation_vectorhistsindex">mse_correlation_vector(hists,index)</a></li>
+        <li class="main "><a href="#moments_correlation_vectormomentsindex">moments_correlation_vector(moments,index)</a></li>
+        <li class="main "><a href="#plot_data_and_gennplotdatahistgenhistfignamefigpng">plot_data_and_gen(nplot,datahist,genhist,figname='fig.png')</a></li>
+        <li class="main "><a href="#plot_seed_and_genseedhistgenhistfignamefigpng">plot_seed_and_gen(seedhist,genhist,figname='fig.png')</a></li>
+        <li class="main "><a href="#plot_noisenoisehiststdnonefignamefigpng">plot_noise(noise,histstd=None,figname='fig.png')</a></li>
+        <li class="main "><a href="#fourier_noise_on_meanhistsoutfilenamefignamenresamples0nonnegativetrue">fourier_noise_on_mean(hists,outfilename='',figname='',nresamples=0,nonnegative=True)</a></li>
+        <li class="main "><a href="#fourier_noisehistsoutfilenamefignamenresamples1nonnegativetruestdfactor15">fourier_noise(hists,outfilename='',figname='',nresamples=1,nonnegative=True,stdfactor=15.)</a></li>
+        <li class="main "><a href="#upsample_hist_sethistsntargetfourierstdfactor15fignamef">upsample_hist_set(hists,ntarget,fourierstdfactor=15.,figname='f')</a></li>
+        <li class="main "><a href="#white_noisehistsfignamestdfactor15">white_noise(hists,figname='',stdfactor=15.)</a></li>
+        <li class="main "><a href="#resample_bin_per_binhistsoutfilenamefignamenresamples0nonnegativetruesmoothinghalfwidth2">resample_bin_per_bin(hists,outfilename='',figname='',nresamples=0,nonnegative=True,smoothinghalfwidth=2)</a></li>
+        <li class="main "><a href="#resample_similar_bin_per_bin-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_bin_per_bin( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</a></li>
+        <li class="main "><a href="#resample_similar_fourier_noise-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_fourier_noise( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</a></li>
+        <li class="main "><a href="#resample_similar_lico-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_lico( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</a></li>
+        <li class="main "><a href="#mc_samplinghists-nmc10000-nresamples10">mc_sampling(hists, nMC=10000 , nresamples=10)</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="goodnoisenbins-fstdnone">goodnoise(nbins, fstd=None)</h1>
+<p>generate one sample of 'good' noise consisting of fourier components<br />
+input args:<br />
+- nbins: number of bins, length of noise array to be sampled<br />
+- fstd: an array of length nbins used for scaling of the amplitude of the noise<br />
+bin-by-bin.<br />
+output:<br />
+- numpy array of length nbins containing the noise  </p>
+<h1 id="badnoisenbinsfstdnone">badnoise(nbins,fstd=None)</h1>
+<p>generate one sample of 'bad' noise consisting of fourier components<br />
+(higher frequency and amplitude than 'good' noise)<br />
+input args and output: simlar to goodnoise<br />
+WARNING: NOT NECESSARILY REPRESENTATIVE OF ANOMALIES TO BE EXPECTED, DO NOT USE  </p>
+<h1 id="whitenoisenbinsfstdnone">whitenoise(nbins,fstd=None)</h1>
+<p>generate one sample of white noise (uncorrelated between bins)<br />
+input args and output: similar to goodnoise  </p>
+<h1 id="random_licohists">random_lico(hists)</h1>
+<p>generate one linear combination of histograms with random coefficients in (0,1) summing to 1<br />
+input args:<br />
+- numpy array of shape (nhists,nbins), the rows of which will be linearly combined<br />
+output:<br />
+- numpy array of shape (nbins), containing the new histogram  </p>
+<h1 id="smootherinarrayhalfwidth">smoother(inarray,halfwidth)</h1>
+<p>smooth the rows of a 2D array using the 2*halfwidth+1 surrounding values.  </p>
+<h1 id="mse_correlation_vectorhistsindex">mse_correlation_vector(hists,index)</h1>
+<p>calculate mse of a histogram at given index wrt all other histograms<br />
+input args:<br />
+- hists: numpy array of shape (nhists,nbins) containing the histograms<br />
+- index: the index (must be in (0,len(hists)-1)) of the histogram in question<br />
+output:<br />
+- numpy array of length nhists containing mse of the indexed histogram with respect to all other histograms<br />
+WARNING: can be slow if called many times on a large collection of histograms with many bins.  </p>
+<h1 id="moments_correlation_vectormomentsindex">moments_correlation_vector(moments,index)</h1>
+<p>calculate moment distance of hist at index wrt all other hists<br />
+very similar to mse_correlation_vector but using histogram moments instead of full histograms for speed-up  </p>
+<h1 id="plot_data_and_gennplotdatahistgenhistfignamefigpng">plot_data_and_gen(nplot,datahist,genhist,figname='fig.png')</h1>
+<p>plot a couple of random examples from rhist (data), ghist (resampled 'good') and bhist (resampled 'bad')<br />
+input arguments:<br />
+- nplot: integer, maximum number of examples to plot<br />
+- datahist, genhist: numpy arrays of shape (nhists,nbins)<br />
+- figname: name of figure to plot  </p>
+<h1 id="plot_seed_and_genseedhistgenhistfignamefigpng">plot_seed_and_gen(seedhist,genhist,figname='fig.png')</h1>
+<p>plot a couple of random examples from rhist (data), ghist (resampled 'good') and bhist (resampled 'bad')<br />
+input arguments:<br />
+- datahist, genhist: numpy arrays of shape (nhists,nbins)<br />
+- figname: name of figure to plot  </p>
+<h1 id="plot_noisenoisehiststdnonefignamefigpng">plot_noise(noise,histstd=None,figname='fig.png')</h1>
+<p>plot histograms in noise (numpy array of shape (nhists,nbins))<br />
+optional argument histstd plots +- histstd as boundaries  </p>
+<h1 id="fourier_noise_on_meanhistsoutfilenamefignamenresamples0nonnegativetrue">fourier_noise_on_mean(hists,outfilename='',figname='',nresamples=0,nonnegative=True)</h1>
+<p>apply fourier noise on the bin-per-bin mean histogram,<br />
+with amplitude scaling based on bin-per-bin std histogram.<br />
+input args:<br />
+- hists: numpy array of shape (nhists,nbins) used for determining mean and std<br />
+- outfilename: path to csv file to write results to (default: no writing)<br />
+- figname: path to figure plotting examples (default: no plotting)<br />
+- nresamples: number of samples to draw (default: number of input histograms / 10)<br />
+- nonnegative: boolean whether to set all bins to minimum zero after applying noise<br />
+MOSTLY SUITABLE AS HELP FUNCTION FOR RESAMPLE_SIMILAR_FOURIER_NOISE, NOT AS GENERATOR IN ITSELF  </p>
+<h1 id="fourier_noisehistsoutfilenamefignamenresamples1nonnegativetruestdfactor15">fourier_noise(hists,outfilename='',figname='',nresamples=1,nonnegative=True,stdfactor=15.)</h1>
+<p>apply fourier noise on random histograms with simple flat amplitude scaling.<br />
+input args:<br />
+- hists: numpy array of shape (nhists,nbins) used for seeding<br />
+- outfilename: path to csv file to write results to (default: no writing)<br />
+- figname: path to figure plotting examples (default: no plotting)<br />
+- nresamples: number of samples to draw per input histogram<br />
+- nonnegative: boolean whether to set all bins to minimum zero after applying noise<br />
+- stdfactor: factor to scale magnitude of noise (larger factor = smaller noise)  </p>
+<h1 id="upsample_hist_sethistsntargetfourierstdfactor15fignamef">upsample_hist_set(hists,ntarget,fourierstdfactor=15.,figname='f')</h1>
+<p>(no valid documentation found)  </p>
+<h1 id="white_noisehistsfignamestdfactor15">white_noise(hists,figname='',stdfactor=15.)</h1>
+<p>apply white noise to the histograms in hists.<br />
+input args:<br />
+- hists: np array (nhists,nbins) containing input histograms<br />
+- figname: path to figure plotting examples (default: no plotting)<br />
+- stdfactor: scaling factor of white noise amplitude (higher factor = smaller noise)  </p>
+<h1 id="resample_bin_per_binhistsoutfilenamefignamenresamples0nonnegativetruesmoothinghalfwidth2">resample_bin_per_bin(hists,outfilename='',figname='',nresamples=0,nonnegative=True,smoothinghalfwidth=2)</h1>
+<p>do resampling from bin-per-bin probability distributions<br />
+input args:<br />
+- hists: np array (nhists,nbins) containing the histograms to draw new samples from<br />
+- outfilename: path to csv file to write results to (default: no writing)<br />
+- figname: path to figure plotting examples (default: no plotting)<br />
+- nresamples: number of samples to draw (default: 1/10 of number of input histograms)<br />
+- nonnegative: boolean whether or not to put all bins to minimum zero after applying noise<br />
+- smoothinghalfwidth: halfwidth of smoothing procedure to apply on the result (default: no smoothing)  </p>
+<h1 id="resample_similar_bin_per_bin-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_bin_per_bin( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</h1>
+<p>(no valid documentation found)  </p>
+<h1 id="resample_similar_fourier_noise-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_fourier_noise( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</h1>
+<p>(no valid documentation found)  </p>
+<h1 id="resample_similar_lico-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue">resample_similar_lico( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,</h1>
+<p>(no valid documentation found)  </p>
+<h1 id="mc_samplinghists-nmc10000-nresamples10">mc_sampling(hists, nMC=10000 , nresamples=10)</h1>
+<p><strong>resampling of a histogram using MC methods</strong><br />
+<strong>(Marek's method)</strong><br />
+Drawing random points from a space defined by the range of the histogram in all axes.<br />
+Points are "accepted" if the fall under the sampled histogram:<br />
+f(x) - sampled distribution<br />
+x_r, y_r -&gt; randomly sampled point<br />
+if y_r&lt;=f(x_r), fill the new distribution at bin corresponding to x_r with weight:<br />
+weight = (sum of input hist)/(#mc points accepted)<br />
+this is equal to<br />
+weight = (MC space volume)/(# all MC points)  </p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
