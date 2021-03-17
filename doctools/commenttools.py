@@ -47,7 +47,7 @@ class DefComment(Comment):
         super( DefComment, self ).__init__( rawtext )
         self.defname = defname
 
-    def format( self, level=1 ):
+    def format( self, level=2 ):
         ### implement total formatting specific for function or class definition comments
         self.mdtext = self.rawtext
         self.strip_whitespace()
@@ -61,6 +61,7 @@ class DefComment(Comment):
             lines[i] = line
         self.mdtext = '\n'.join(lines)
         self.mdtext = '#'*level+' '+self.defname+'\n'+self.mdtext
+        if level==2: self.mdtext = '- - -  \n' + self.mdtext
         self.mdtext = self.mdtext.replace('\n','  \n')
 
 
@@ -77,22 +78,29 @@ class CommentCollection(object):
         f = open(filename,'r')
         lines = f.readlines()
         f.close()
+        # strip tabs and spaces but store some indentation info
+        levels = [2]*len(lines)
+        for i,line in enumerate(lines):
+            if( line[0]==' ' or line[0]=='\t' ): levels[i] = 3
+            lines[i] = line.strip(' ').strip('\t')
         # scan for 'def' or 'class' keywords at the beginning of a line
         for i,line in enumerate(lines):
-            level = 1
-            if( line[0]==' ' or line[0]=='\t' ): level = 2
-            line = line.strip(' ').strip('\t')
             if( line[:3]=='def' or line[:5]=='class' ):
+                j = i
+                # special treatment for definitions spread over multiple lines
+                while (line.count('(')!=line.count(')')):
+                    j += 1
+                    line = line.rstrip('\n') + ' ' + lines[j]
                 # format the definition name
                 defname = line.replace('def ','').replace('class ','').strip(':\n')
                 # add all consecutive lines that start with a '#' character
                 rawtext = ''
-                while lines[i+1].strip(' ').strip('\t')[0]=='#':
-                    rawtext += lines[i+1]
-                    i += 1
+                while lines[j+1].strip(' ').strip('\t')[0]=='#':
+                    rawtext += lines[j+1]
+                    j += 1
                 if rawtext=='': rawtext = '(no valid documentation found)'
                 defcomment = DefComment( defname, rawtext )
-                defcomment.format( level=level )
+                defcomment.format( level=levels[i] )
                 self.comments.append( defcomment ) 
 
 

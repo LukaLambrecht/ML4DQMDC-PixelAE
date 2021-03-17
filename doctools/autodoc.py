@@ -4,7 +4,7 @@
 
 import sys
 import os
-import commenttools
+import mdfiletools
 
 # define the top level directory of the project
 topdir = os.path.abspath('..')
@@ -31,10 +31,4 @@ for codedir in codedirs:
     pyfiles = ([f for f in os.listdir(thiscodedir) 
                 if os.path.splitext(f)[1]=='.py'])
     for pyfile in pyfiles:
-        comments = commenttools.CommentCollection()
-        comments.read_defcomments_from_file(os.path.join(thiscodedir,pyfile))
-        mdfile = os.path.join(thisdocdir,pyfile.replace('.py','.md'))
-        with open(mdfile,'w') as f:
-            for c in comments.get_comments():
-                f.write(str(c)+'  \n  \n')
-        
+        mdfiletools.py_to_md( pyfile, thiscodedir, pyfile.replace('.py','.md'), thisdocdir)
