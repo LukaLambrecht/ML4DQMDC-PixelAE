@@ -112,50 +112,58 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#ae-combine-utils">ae combine utils</a></li>
-            <li><a href="#histstructure">histstructure</a></li>
-            <li><a href="#get_mse_arrayhiststructvalkeydims">get_mse_array(histstruct,valkey,dims=[])</a></li>
-            <li><a href="#fitseminormalhiststructvalkeydimsfitnewtruesavefitfalse">fitseminormal(histstruct,valkey,dims=[],fitnew=True,savefit=False)</a></li>
-            <li><a href="#fitgaussiankdehiststructvalkeydimsmaxnpoints-1">fitgaussiankde(histstruct,valkey,dims=[],maxnpoints=-1)</a></li>
-            <li><a href="#plotfit2dhiststructvalkeydimsfitfuncdoinitialplottrueonlycontourfalserangestd30">plotfit2d(histstruct,valkey,dims,fitfunc,doinitialplot=True,onlycontour=False,rangestd=30)</a></li>
-            <li><a href="#msenormalizer">msenormalizer</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
 <h1 id="ae-combine-utils">ae combine utils</h1>
-<h2 id="histstructure">histstructure</h2>
-<p>(no valid documentation found)  </p>
-<h3 id="initself"><strong>init</strong>(self)</h3>
-<p>(no valid documentation found)  </p>
-<h3 id="createselfyearhistnamesjsonselectornonehighstatonlyfalsedcsononlyfalse">create(self,year,histnames,jsonselector=None,highstatonly=False,dcsononly=False)</h3>
-<p><strong>create the histstructure given the arguments provided</strong><br />
-most arguments are self-explanatory<br />
-remarks:<br />
-- if jsonselector is None, no selection will be done on run/ls number, i.e. all runs and lumisections are kept<br />
-- if jsonselector contains a single negative run number as key, templates will be used (e.g. averaging the dataset) instead of actual ls from the data<br />
-for example, if jsonselector = {"-15":[[-1]]}, the dataset will be split in 15 parts and each part will be averaged to yield a single histogram (per type)  </p>
-<h3 id="get_golden_maskself">get_golden_mask(self)</h3>
-<p>return a boolean mask on the lumisections whether or not they belong to the golden json  </p>
-<h3 id="get_golden_indicesself">get_golden_indices(self)</h3>
-<p>return an array of indices of lumisections that belong to the golden json  </p>
-<h3 id="get_perrun_indicesself">get_perrun_indices(self)</h3>
-<p>return a list of arrays of indices of lumisections, one element in the list represents one run  </p>
-<h2 id="get_mse_arrayhiststructvalkeydims">get_mse_array(histstruct,valkey,dims=[])</h2>
-<p>(no valid documentation found)  </p>
-<h2 id="fitseminormalhiststructvalkeydimsfitnewtruesavefitfalse">fitseminormal(histstruct,valkey,dims=[],fitnew=True,savefit=False)</h2>
-<p>(no valid documentation found)  </p>
-<h2 id="fitgaussiankdehiststructvalkeydimsmaxnpoints-1">fitgaussiankde(histstruct,valkey,dims=[],maxnpoints=-1)</h2>
-<p>(no valid documentation found)  </p>
-<h2 id="plotfit2dhiststructvalkeydimsfitfuncdoinitialplottrueonlycontourfalserangestd30">plotfit2d(histstruct,valkey,dims,fitfunc,doinitialplot=True,onlycontour=False,rangestd=30)</h2>
-<p>(no valid documentation found)  </p>
-<h2 id="msenormalizer">msenormalizer</h2>
-<p>(no valid documentation found)  </p>
-<h3 id="initself_1"><strong>init</strong>(self)</h3>
-<p>(no valid documentation found)  </p>
-<h3 id="fitselfarray">fit(self,array)</h3>
-<p>(no valid documentation found)  </p>
-<h3 id="applyselfarray">apply(self,array)</h3>
-<p>(no valid documentation found)  </p></div>
+<pre><code>## histstructure  
+(no valid documentation found)
+
+    ### __init__(self)  
+    (no valid documentation found)
+
+    ### create(self,year,histnames,jsonselector=None,highstatonly=False,dcsononly=False)  
+    **create the histstructure given the arguments provided**  
+    most arguments are self-explanatory  
+    remarks:  
+    - if jsonselector is None, no selection will be done on run/ls number, i.e. all runs and lumisections are kept  
+    - if jsonselector contains a single negative run number as key, templates will be used (e.g. averaging the dataset) instead of actual ls from the data  
+    for example, if jsonselector = {"-15":[[-1]]}, the dataset will be split in 15 parts and each part will be averaged to yield a single histogram (per type)
+
+    ### get_golden_mask(self)  
+    return a boolean mask on the lumisections whether or not they belong to the golden json
+
+    ### get_golden_indices(self)  
+    return an array of indices of lumisections that belong to the golden json
+
+    ### get_perrun_indices(self)  
+    return a list of arrays of indices of lumisections, one element in the list represents one run
+
+## get_mse_array(histstruct,valkey,dims=[])  
+(no valid documentation found)
+
+## fitseminormal(histstruct,valkey,dims=[],fitnew=True,savefit=False)  
+(no valid documentation found)
+
+## fitgaussiankde(histstruct,valkey,dims=[],maxnpoints=-1)  
+(no valid documentation found)
+
+## plotfit2d(histstruct,valkey,dims,fitfunc,doinitialplot=True,onlycontour=False,rangestd=30)  
+(no valid documentation found)
+
+## msenormalizer  
+(no valid documentation found)
+
+    ### __init__(self)  
+    (no valid documentation found)
+
+    ### fit(self,array)  
+    (no valid documentation found)
+
+    ### apply(self,array)  
+    (no valid documentation found)
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">
