@@ -21,7 +21,7 @@ input arguments
 - overwrite: boolean whether to overwrite outputfile if it exists (default: throw exception)  
   
 - - -    
-## injson_single( run, lumi, jsondict )  
+## injson\_single( run, lumi, jsondict )  
 **helper function for injson, only for internal use**  
 input arguments:  
 - run and lumi are integers  
@@ -41,31 +41,31 @@ output:
 boolean or array of booleans (depending on run and lumi)  
   
 - - -    
-## isgolden(run,lumi)  
+## isgolden(run, lumi)  
 **find if a run and lumi combination is in the golden json file**  
 input arguments:  
 - run and lumi: either integers or (equally long) arrays of integers  
   
 - - -    
-## isdcson(run,lumi)  
+## isdcson(run, lumi)  
 **find if a run and lumi combination is in DCS-only json file**  
 input arguments:  
 - run and lumi: either integers or (equally long) arrays of integers  
   
 - - -    
-## ispixelgood(run,lumi)  
+## ispixelgood(run, lumi)  
 **find if a run and lumi combination is in the json with good pixel flag**  
 note: this json was custom generated in run regisitry and not official!  
   
 - - -    
-## ispixelbad(run,lumi)  
+## ispixelbad(run, lumi)  
 **find if a run and lumi combination is in the json with bad pixel flag**  
 note: this json was custom generated in run registry and not official!  
 note: not simply the negation of ispixelgood! json has more relaxed conditions on DCS-like criteria.  
   
 - - -    
-## plainlist_to_rangelist( plainlist )  
-**helper function for tuplelist_to_jsondict, only for internal use**  
+## plainlist\_to\_rangelist( plainlist )  
+**helper function for tuplelist\_to\_jsondict, only for internal use**  
 input arguments:  
 - plainlist: a list of integers in increasing order, must have length >= 2  
 output:  
@@ -73,19 +73,19 @@ output:
 example: [1,2,3,5,6] -> [ [1,3], [5,6] ]  
   
 - - -    
-## rangelist_to_plainlist( rangelist )  
-**inverse function of plainlist_to_rangelist, for internal use only**  
+## rangelist\_to\_plainlist( rangelist )  
+**inverse function of plainlist\_to\_rangelist, for internal use only**  
   
 - - -    
-## tuplelist_to_jsondict( tuplelist )  
+## tuplelist\_to\_jsondict( tuplelist )  
 **convert a list of tuples of format (run number, [lumisection numbers]) to json dict**  
   
 - - -    
-## jsondict_to_tuplelist( jsondict )  
-**inverse function of tuplelist_to_jsondict**  
+## jsondict\_to\_tuplelist( jsondict )  
+**inverse function of tuplelist\_to\_jsondict**  
   
 - - -    
-## get_lcs( jsonlist )  
+## get\_lcs( jsonlist )  
 **return a jsondict object that is the largest common subset (LCS) between the jsondict objects in jsonlist**  
 input arguments:  
 - jsonlist: a list of dicts in the conventional json format,  

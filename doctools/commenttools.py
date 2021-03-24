@@ -33,6 +33,10 @@ class Comment(object):
         self.mdtext = '\n'.join(lines)
         self.mdtext = self.mdtext.strip('\n')
 
+    def escape_underscores( self ):
+        ### replace uncerscores by their escaped version
+        self.mdtext = self.mdtext.replace('_','\_')
+
     def get_lines( self ):
         return self.mdtext.split('\n')
 
@@ -51,6 +55,7 @@ class DefComment(Comment):
         ### implement total formatting specific for function or class definition comments
         self.mdtext = self.rawtext
         self.strip_whitespace()
+        self.escape_underscores()
         lines = self.get_lines()
         for i,line in enumerate(lines):
             if line[:3]=='###':
@@ -60,6 +65,7 @@ class DefComment(Comment):
                 line = line.strip('# ')
             lines[i] = line
         self.mdtext = '\n'.join(lines)
+        self.defname = self.defname.replace('_','\_')
         self.mdtext = '#'*level+' '+self.defname+'\n'+self.mdtext
         if level==2: self.mdtext = '- - -  \n' + self.mdtext
         self.mdtext = self.mdtext.replace('\n','  \n')

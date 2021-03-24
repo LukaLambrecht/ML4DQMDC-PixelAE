@@ -2,6 +2,7 @@
 # some tools for fomatting markdown files #
 ###########################################
 
+import sys
 import os
 import commenttools
 
@@ -31,3 +32,9 @@ def py_to_md( pyfilename, pyfiledir, mdfilename, mdfiledir ):
         f.write(title)
         for c in comments.get_comments():
             f.write(str(c)+'  \n  \n')
+
+if __name__=='__main__':
+
+    pyfile = os.path.abspath(sys.argv[1])
+    pyfiledir,pyfilename = os.path.split(pyfile)
+    py_to_md(pyfilename,pyfiledir,'test.md','.')

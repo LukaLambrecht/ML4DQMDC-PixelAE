@@ -34,4 +34,5 @@ To get the tutorial notebooks running in SWAN (preferred method):
 - Exit the terminal.
 - The folder should now be where you cloned it, and you can open and run the notebooks in it in SWAN.  
 
-Further documentation: 
+Further documentation:  
+- documentation for all the class definitions and functions in the relevant code directories: https://LukaLambrecht.github.io/ML4DQM-DC/ (note: this documentation is generated automatically from comments in the code and currently not yet in perfect shape, both regarding content and layout) 
