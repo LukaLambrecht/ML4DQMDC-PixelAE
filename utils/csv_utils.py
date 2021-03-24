@@ -21,7 +21,7 @@ importlib.reload(dfu)
 ### some functions that point to the data directories (hard-coded for now!)
 # example usage of these functions: see function write_skimmed_csv within this same notebook
 
-def get_data_dirs(year='2017',eras=[],dim=1):
+def get_data_dirs(year='2017', eras=[], dim=1):
     ### yield all data directories
     # note that the location of the data is hard-coded;
     # this function might break for newer or later reprocessings of the data.
@@ -72,7 +72,7 @@ def read_csv(csv_file):
     return df
 
 
-def read_and_merge_csv(csv_files,histnames=[],runnbs=[]):
+def read_and_merge_csv(csv_files, histnames=[], runnbs=[]):
     ### read and merge list of csv files into a single df
     # csv_files is a list of paths to files to merge into a df
     # histnames is a list of the types of histograms to keep (default: all)
@@ -91,7 +91,7 @@ def read_and_merge_csv(csv_files,histnames=[],runnbs=[]):
     return df
 
 
-def write_skimmed_csv(histnames,year,eras=['all']):
+def write_skimmed_csv(histnames, year, eras=['all']):
     ### read all available data for a given year/era and make a file per histogram type
     # input arguments:
     # - histnames: list of histogram names for which to make a separate file
@@ -119,11 +119,6 @@ def write_skimmed_csv(histnames,year,eras=['all']):
             seldf = dfu.select_histnames(temp,[histname])
             histname = histname.replace(' ','_')
             seldf.to_csv('DF'+year+erasuffix+'_'+histname+'.csv')
-
-
-
-
-
 
 
 

@@ -24,16 +24,25 @@ importlib.reload(plot_utils)
 ### define loss functions
 
 def mseTop10(y_true, y_pred):
+    ### MSE top 10 loss function for autoencoder training
+    # input arguments:
+    # - y_true and y_pred: two numpy arrays of equal shape,
+    #   typically a histogram and its autoencoder reconstruction.
+    #   if two-dimensional, the arrays are assumed to have shape (nhists,nbins)!
+    # output:
+    # - mean squared error between y_true and y_pred,
+    #   where only the 10 bins with largest squared error are taken into account.
+    #   if y_true and y_pred are 2D arrays, this function returns 1D array (mseTop10 for each histogram)
     top_values, _ = tf.nn.top_k(K.square(y_pred - y_true), k=10, sorted=True)
     mean=K.mean(top_values, axis=-1)
     return mean
 
 def mseTop10Raw(y_true, y_pred):
-    # same as above but without using tf or K
+    ### same as mseTop10 but without using tf or K
     # the version including tf or K seemed to cause randomly dying kernels, no clear reason could be found,
     # but it was solved using this loss function instead.
-    # verified that it gives exactly the same output as the function above on some random arrays
-    # does only work for arrays with 2D shapes, not for (nbins,)
+    # verified that it gives exactly the same output as the function above on some random arrays.
+    # contrary to mseTop10, this function only works for arrays with 2D shapes (so shape (nhists,nbins)), not for (nbins,).
     sqdiff = np.power(y_true-y_pred,2)
     sqdiff[:,::-1].sort()
     sqdiff = sqdiff[:,:10]
@@ -41,7 +50,7 @@ def mseTop10Raw(y_true, y_pred):
     return mean
 
 def mseTopNRaw(y_true, y_pred, n=10):
-    # generalization of the above
+    ### generalization of mseTop10Raw to any number of bins to take into account
     sqdiff = np.power(y_true-y_pred,2)
     sqdiff[:,::-1].sort()
     sqdiff = sqdiff[:,:n]
@@ -50,11 +59,20 @@ def mseTopNRaw(y_true, y_pred, n=10):
 
 # attempts to use chi2 instead of mse, so far no good results, but keep for reference
 def chiSquared(y_true, y_pred):
+    ### chi2 loss functionfor autoencoder training
+    # input arguments:
+    # - y_true and y_pred: two numpy arrays of equal shape,
+    #   typically a histogram and its autoencoder reconstruction.
+    #   if two-dimensional, the arrays are assumed to have shape (nhists,nbins)!
+    # output:
+    # - relative mean squared error between y_true and y_pred,
+    #   if y_true and y_pred are 2D arrays, this function returns 1D array (chiSquared for each histogram)
     normdiffsq = np.divide(K.square(y_pred - y_true),y_true)
     chi2 = K.sum(normdiffsq,axis=-1)
     return chi2
 
 def chiSquaredTop10(y_true, y_pred):
+    ### same as chiSquared but take into account only 10 largest values in averaging.
     normdiffsq = np.divide(K.square(y_pred - y_true),y_true)
     top_values,_ = tf.nn.top_k(normdiffsq,k=10,sorted=True)
     chi2 = K.sum(top_values,axis=-1)
@@ -65,7 +83,29 @@ def chiSquaredTop10(y_true, y_pred):
 
 ### get roc curve and auc score in case labels are known
 
-def get_roc(scores, labels, mode='classic', doplot=True):
+def calculate_roc(scores, labels, scoreax):
+    ### calculate a roc curve
+    # input arguments:
+    # - scores is a 1D numpy array containing output scores of any algorithm
+    # - labels is a 1D numpy array (equally long as scores) containing labels
+    #   note that 1 for signal and 0 for background is assumed!
+    #   this convention is only used to define what scores belong to signal or background;
+    #   the scores itself can be anything (not limited to (0,1)), 
+    #   as long as the target for signal is higher than the target for background
+    # - scoreax is an array of score thresholds for which to compute the signal and background efficiency,
+    #   assumed to be sorted in increasing order (i.e. from loose to tight)
+    # output:
+    # tuple of two np arrays (signal efficiency and background efficiency)
+    nsig = np.sum(labels)
+    nback = np.sum(1-labels)
+    sig_eff = np.zeros(len(scoreax))
+    bkg_eff = np.zeros(len(scoreax))
+    for i,scorethreshold in enumerate(scoreax):
+        sig_eff[i] = np.sum(np.where((labels==1) & (scores>scorethreshold),1,0))/nsig
+        bkg_eff[i] = np.sum(np.where((labels==0) & (scores>scorethreshold),1,0))/nback
+    return (sig_eff,bkg_eff)
+
+def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic'):
     ### make a ROC curve
     # input arguments:
     # - scores is a 1D numpy array containing output scores of any algorithm
@@ -74,31 +114,40 @@ def get_roc(scores, labels, mode='classic', doplot=True):
     #   this convention is only used to define what scores belong to signal or background;
     #   the scores itself can be anything (not limited to (0,1)), 
     #   as long as the target for signal is higher than the target for background
-    # - mode: how to plot the roc curve; options are:
-    #         - 'classic' = signal efficiency afo background efficiency
+    # - mode: how to determine the points where to calculate signal and background efficiencies; options are:
+    #         - 'lin': np.linspace between min and max score
+    #         - 'geom': np. geomspace between min and max score
+    #         - 'full': one point per score instance
+    # - npoints: number of points where to calculate the signal and background efficiencies
+    #   (ignored if mode is 'full')
+    # - doprint: boolean whether to print score thresholds and corresponding signal and background efficiencies
     # - doplot: boolean whether to make a plot or simply return the auc.
+    # - plotmode: how to plot the roc curve; options are:
+    #         - 'classic' = signal efficiency afo background efficiency
     
-    nsig = np.sum(labels)
-    nback = np.sum(1-labels)
+    if not mode in ['lin','geom','full']:
+        raise Exception('ERROR in autoencoder_utils.py / get_roc: mode {} not recognized'.format(mode))
     
-    # set score threshold range
-    scoremin = np.amin(scores)-1e-7
-    # if minimum score is below zero, shift everything up (needed for geomspace)
-    if scoremin < 0.: 
-        scores = scores - scoremin + 1.
-        scoremin = 1.
-    scoremax = np.amax(scores)+1e-7
+    if mode=='full':
+        scoreax = np.sort(scores)
+    elif mode=='lin':
+        scoremin = np.amin(scores)-1e-7
+        scoremax = np.amax(scores)+1e-7
+        scoreax = np.linspace(scoremin,scoremax,num=npoints)
+    elif mode=='geom':
+        scoremin = np.amin(scores)-1e-7
+        # if minimum score is below zero, shift everything up (needed for geomspace)
+        if scoremin < 0.: 
+            scores = scores - scoremin + 1.
+            scoremin = 1.
+        scoremax = np.amax(scores)+1e-7
+        scoreax = np.geomspace(scoremin,scoremax,num=npoints)
     
-    scorerange = np.geomspace(scoremin,scoremax,num=100)
-    sig_eff = np.zeros(len(scorerange))
-    bkg_eff = np.zeros(len(scorerange))
-    
-    # loop over thresholds
-    print('--- making ROC curve ---')
-    for i,scorethreshold in enumerate(scorerange):
-        sig_eff[i] = np.sum(np.where((labels==1) & (scores>scorethreshold),1,0))/nsig
-        bkg_eff[i] = np.sum(np.where((labels==0) & (scores>scorethreshold),1,0))/nback
-        print('  threshold: {:.4f}, signal: {:.4f}, background: {:.4f}'.format(scorethreshold,sig_eff[i],bkg_eff[i]))
+    (sig_eff,bkg_eff) = calculate_roc( scores, labels, scoreax )
+    if doprint:
+        print('calculating roc curve:')
+        for i in range(len(scoreax)):
+            print('  threshold: {:.4f}, signal: {:.4f}, background: {:.4f}'.format(scoreax[i],sig_eff[i],bkg_eff[i]))
     
     # note: sig_eff = signal efficiency = tp = true positive = signal flagged as signal
     # note: bkg_eff = background efficiency = fp = false positive = background flagged as signal
@@ -106,10 +155,9 @@ def get_roc(scores, labels, mode='classic', doplot=True):
     tn = 1 - bkg_eff # background marked as background
     
     # calculate auc
-    if mode=='classic':
+    if plotmode=='classic':
         auc = np.trapz(sig_eff[::-1],bkg_eff[::-1])
         if not doplot: return auc
-    
         # make plot
         fig,ax = plt.subplots()
         ax.scatter(bkg_eff,sig_eff)
@@ -141,16 +189,17 @@ def get_roc(scores, labels, mode='classic', doplot=True):
     
     return auc
 
-def get_roc_from_hists(hists, labels, predicted_hists, mode='classic', doplot=True):
+def get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic'):
     ### make a ROC curve without manually calculating the scores
-    # the output score is the mse between the histograms and their reconstruction
-    # hists and predicted_hists are 2D numpy arrays of shape (nhistograms,nbins)
-    # other arguments: see get_roc
+    # the output score is the mseTop10Raw between the histograms and their reconstruction
+    # - input arguments:
+    # - hists and predicted_hists are 2D numpy arrays of shape (nhistograms,nbins)
+    # - other arguments: see get_roc
 
     # determine mse
     mse = mseTop10Raw(hists, predicted_hists)
     # score equals mse, since larger mse = more signal-like (signal=anomalies)
-    return get_roc(mse,labels,mode,doplot)
+    return get_roc(mse,labels,mode=mode,npoints=npoints,doprint=doprint,doplot=doplot,plotmode=plotmode)
 
 def get_confusion_matrix(scores, labels, wp):
     ### plot a confusion matrix
@@ -223,9 +272,6 @@ def getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10):
     autoencoder.compile(optimizer=opt, loss=loss)
     autoencoder.summary()
     return autoencoder
-
-
-
 
 def train_simple_autoencoder(hists,nepochs=-1,modelname=''):
     ### create and train a very simple keras model

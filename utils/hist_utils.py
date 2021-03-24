@@ -23,7 +23,7 @@ importlib.reload(plot_utils)
 
 ### rebinning of histograms
 
-def rebinhists(hists,factor):
+def rebinhists(hists, factor):
     ### perform rebinning on a set of histograms
     # hists is a numpy array of shape (nhistograms,nbins)
     # factor is the rebinning factor, which must be a divisor of nbins.
@@ -45,7 +45,7 @@ def normalizehists(hists):
 
 ### averaging a collection of histograms (e.g. for template definition)
 
-def averagehists(hists,nout):
+def averagehists(hists, nout):
     ### partition hists (of shape (nhistograms,nbins)) into nout parts and take the average histogram of each part
     avghists = np.zeros((nout,hists.shape[1]))
     nsub = int(len(hists)/nout)
@@ -60,7 +60,7 @@ def averagehists(hists,nout):
 
 ### functions for calculating moments of a histogram
 
-def moment(bins,counts,order):
+def moment(bins, counts, order):
     ### get n-th central moment of a histogram
     # - bins is a 1D or 2D np array holding the bin centers
     #   (shape (nbins) or (nhistograms,nbins))
@@ -79,15 +79,15 @@ def moment(bins,counts,order):
         return np.nan_to_num(np.max(counts,axis=1))
     return np.nan_to_num(np.divide(np.sum(np.multiply(counts,np.power(bins,order)),axis=1,dtype=np.float),np.sum(counts,axis=1)))
 
-def histmean(bins,counts):
-    ### special case of moment calculation
+def histmean(bins, counts):
+    ### special case of moment calculation (with order=1)
     return moment(bins,counts,1)
 
-def histrms(bins,counts):
+def histrms(bins, counts):
     ### special case of moment calculation
     return np.power(moment(bins,counts,2)-np.power(moment(bins,counts,1),2),0.5)
 
-def histmoments(bins,counts,orders):
+def histmoments(bins, counts, orders):
     ### apply moment calculation for a list of orders
     # the return type is a numpy array of shape (nhistograms,nmoments)
     moments = np.zeros((len(counts),len(orders)))
@@ -101,7 +101,7 @@ def histmoments(bins,counts,orders):
 ### higher level function for automatic preprocessing of data
 
 def preparedatafromnpy(dataname, rebinningfactor=1, donormalize=True, doplot=False):
-    # read a .npy file and output the histograms
+    ### read a .npy file and output the histograms
     
     hist = np.load(dataname,allow_pickle=False)
     # preprocessing of the data: rebinning and normalizing
@@ -119,17 +119,14 @@ def preparedatafromnpy(dataname, rebinningfactor=1, donormalize=True, doplot=Fal
         
     return rhist
 
-def preparedatafromdf(df, returnrunls=False, onlygolden=False, rebinningfactor=1, donormalize=True, doplot=False):
+def preparedatafromdf(df, returnrunls=False, rebinningfactor=1, donormalize=False, doplot=False):
     # prepare the data contained in a dataframe in the form of a numpy array
     # args:
-    # - returnrunls: wether to return only a histogram array or 1D arrays of run and lumisection numbers as well
-    # - onlygolden: if True, only lumisections in the golden json file are kept
+    # - returnrunls: boolean whether to return a tuple of (histograms, run numbers, lumisection numbers).
+    #   (default: return only histograms)
     # - rebinningfactor: an integer number to downsample the histograms in the dataframe
     # - donormalize: if True, data are normalized
     # - doplot: if True, some example plots are made showing the histograms
-    
-    if onlygolden:
-        df = dataframe_utils.select_golden(df)
 
     # preprocessing of the data: rebinning and normalizing
     (hist,runnbs,lsnbs) = dataframe_utils.get_hist_values(df)
@@ -157,18 +154,18 @@ def preparedatafromdf(df, returnrunls=False, onlygolden=False, rebinningfactor=1
     if returnrunls: return (rhist,runnbs,lsnbs)
     else: return rhist
 
-def preparedatafromcsv(dataname, returnrunls=False, onlygolden=False, rebinningfactor=1, donormalize=True, doplot=False):
-    # prepare the data contained in a dataframe csv file in the form of a numpy array
+def preparedatafromcsv(dataname, returnrunls=False, rebinningfactor=1, donormalize=True, doplot=False):
+    ### prepare the data contained in a dataframe csv file in the form of a numpy array
     # args:
     # - returnrunls: wether to return only a histogram array or 1D arrays of run and lumisection numbers as well
-    # - onlygolden: if True, only lumisections in the golden json file are kept
     # - rebinningfactor: an integer number to downsample the histograms in the dataframe
+    # - donormalize: if True, data are normalized
     # - doplot: if True, some example plots are made showing the histograms
 
     # read data
     df = csv_utils.read_csv(dataname)
     # prepare data from df
-    return preparedatafromdf(df, returnrunls=returnrunls,onlygolden=onlygolden,rebinningfactor=rebinningfactor,donormalize=donormalize,doplot=doplot)
+    return preparedatafromdf(df, returnrunls=returnrunls,rebinningfactor=rebinningfactor,donormalize=donormalize,doplot=doplot)
 
 
 

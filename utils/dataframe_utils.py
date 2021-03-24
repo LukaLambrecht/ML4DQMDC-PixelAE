@@ -31,7 +31,7 @@ def get_histnames(df):
             histnamelist.append(val)
     return histnamelist
     
-def select_histnames(df,histnames):
+def select_histnames(df, histnames):
     ### keep only a subset of histograms in a df
     # histnames is a list of histogram names to keep in the df.
     df = df[df['hname'].isin(histnames)]
@@ -50,7 +50,7 @@ def get_runs(df):
             runlist.append(val)
     return runlist
 
-def select_runs(df,runnbs):
+def select_runs(df, runnbs):
     ### keep only a subset of runs in a df
     # runnbs is a list of run numbers to keep in the df.
     df = df[df['fromrun'].isin(runnbs)]
@@ -69,7 +69,7 @@ def get_ls(df):
         lslist.append(val)
     return lslist
 
-def select_ls(df,lsnbs):
+def select_ls(df, lsnbs):
     ### keep only a subset of lumisection numbers in a df
     # lsnbs is a list of lumisection numbers to keep in the df.
     # note: no check is done on the run number!
@@ -86,13 +86,13 @@ def get_runsls(df):
         runslslist[i] = (run,get_ls(select_runs(df,[run])))
     return json_utils.tuplelist_to_jsondict( runslslist )
 
-def select_json(df,jsonfile):
+def select_json(df, jsonfile):
     ### keep only lumisections that are in the given json file
     dfres = df[ json_utils.injson(df['fromrun'].values,df['fromlumi'].values,jsonfile=jsonfile) ]
     dfres.reset_index(drop=True,inplace=True)
     return dfres
 
-def select_runsls(df,jsondict):
+def select_runsls(df, jsondict):
     ### equivalent to select_json but using a pre-loaded json dict instead of a json file on disk
     dfres = df[ json_utils.injson(df['fromrun'].values,df['fromlumi'].values,jsondict=jsondict) ]
     dfres.reset_index(drop=True,inplace=True)
@@ -139,11 +139,12 @@ def select_pixelbad(df):
 
 # getter and selector for sufficient statistics
 
-def get_highstat(df,entries_to_bins_ratio=100):
+def get_highstat(df, entries_to_bins_ratio=100):
     ### return a select object of runs and ls of histograms with high statistics
     return get_runsls(df[df['entries']/df['Xbins']>entries_to_bins_ratio])
 
-def select_highstat(df,entries_to_bins_ratio=100):
+def select_highstat(df, entries_to_bins_ratio=100):
+    ### keep only lumisection in df with high statistics
     return select_runsls(df,get_highstat(df,entries_to_bins_ratio))
 
 

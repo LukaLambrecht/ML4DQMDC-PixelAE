@@ -98,7 +98,7 @@ def injson( run, lumi, jsonfile=None, jsondict=None ):
     return res
 
 
-def isgolden(run,lumi):
+def isgolden(run, lumi):
     ### find if a run and lumi combination is in the golden json file
     # input arguments:
     # - run and lumi: either integers or (equally long) arrays of integers
@@ -115,7 +115,7 @@ def isgolden(run,lumi):
     return injson(run,lumi,jsonfile=jsonloc2017) + injson(run,lumi,jsonfile=jsonloc2018)
 
 
-def isdcson(run,lumi):
+def isdcson(run, lumi):
     ### find if a run and lumi combination is in DCS-only json file
     # input arguments:
     # - run and lumi: either integers or (equally long) arrays of integers
@@ -127,7 +127,7 @@ def isdcson(run,lumi):
     return injson(run,lumi,jsonfile=jsonloc2017) + injson(run,lumi,jsonfile=jsonloc2018)
 
 
-def ispixelgood(run,lumi):
+def ispixelgood(run, lumi):
     ### find if a run and lumi combination is in the json with good pixel flag
     # note: this json was custom generated in run regisitry and not official!
     
@@ -136,7 +136,7 @@ def ispixelgood(run,lumi):
     return injson(run,lumi,jsonfile=jsonloc2017)
 
 
-def ispixelbad(run,lumi):
+def ispixelbad(run, lumi):
     ### find if a run and lumi combination is in the json with bad pixel flag
     # note: this json was custom generated in run registry and not official!
     # note: not simply the negation of ispixelgood! json has more relaxed conditions on DCS-like criteria.

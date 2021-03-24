@@ -17,8 +17,8 @@ import numpy as np
 
 # functions for plotting 
       
-def plot_hists(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1),
-              title=None,xaxtitle=None,yaxtitle=None):
+def plot_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1),
+              title=None, xaxtitle=None, yaxtitle=None):
     ### plot some histograms (in histlist) in one figure using specified colors and/or labels
     # - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))
     # - colorlist is a list or array containing colors (in string format)
@@ -43,11 +43,10 @@ def plot_hists(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1),
     if title is not None: ax.set_title(title)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
-    plt.show()
     return (fig,ax)
     
-def plot_hists_multi(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1),
-                    title=None,xaxtitle=None,yaxtitle=None):
+def plot_hists_multi(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1),
+                    title=None, xaxtitle=None, yaxtitle=None):
     ### plot many histograms (in histlist) in one figure using specified colors and/or labels
     # - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))
     # - colorlist is a list or array containing numbers to be mapped to colors
@@ -74,10 +73,9 @@ def plot_hists_multi(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,
     if title is not None: ax.set_title(title)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
-    plt.show()
     return (fig,ax)
     
-def plot_hists_from_df(df,histtype,nhists):
+def plot_hists_from_df(df, histtype, nhists):
     ### plot a number of histograms in a dataframe
     # - df is the dataframe from which to plot
     # - histtype is the name of the histogram type (e.g. 'chargeInner_PXLayer_1')
@@ -88,8 +86,8 @@ def plot_hists_from_df(df,histtype,nhists):
     val = get_hist_values(dfs)[0]
     plot_hists(val)
     
-def plot_sets(setlist,fig=None,ax=None,colorlist=[],labellist=[],transparencylist=[],xlims=(0,-1),
-             title=None,xaxtitle=None,yaxtitle=None):
+def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], xlims=(0,-1),
+             title=None, xaxtitle=None, yaxtitle=None):
     ### plot multiple sets of histograms to compare the shapes
     # - setlist is a list of 2D numpy arrays containing histograms
     # - fig and ax: a pyplot figure and axis object (if one of both is none a new figure is created)
@@ -121,7 +119,7 @@ def plot_sets(setlist,fig=None,ax=None,colorlist=[],labellist=[],transparencylis
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
     return (fig,ax)
 
-def plot_anomalous(histlist,ls,highlight=-1,hrange=-1):
+def plot_anomalous(histlist, ls, highlight=-1, hrange=-1):
     # histlist and ls are a list of histograms and corresponding lumisection numbers
     # lsnumber is the lumisection number of the histogram to highlight
     # hrange is the number of histograms before and after lsnumber to plot (default: whole run)
@@ -144,10 +142,9 @@ def plot_anomalous(histlist,ls,highlight=-1,hrange=-1):
         xlims = (0,len(lshist))
         xax = np.linspace(xlims[0],xlims[1],num=len(lshist))
         ax.step(xax,lshist,color='black',linewidth=2)
-    plt.show()
     return (fig,ax)
 
-def plot_moments(moments,ls,dims,fig=None,ax=None,markersize=10):
+def plot_moments(moments, ls, dims, fig=None, ax=None, markersize=10):
     # moments is an (nhists,nmoments) array
     # dims is a tuple of two or three values between 0 and nmoments-1
     from mpl_toolkits.mplot3d import Axes3D # specific import
@@ -165,12 +162,11 @@ def plot_moments(moments,ls,dims,fig=None,ax=None,markersize=10):
         ax.set_xlabel('moment '+str(dims[0]+1))
         ax.set_ylabel('moment '+str(dims[1]+1))
         ax.set_zlabel('moment '+str(dims[2]+1))
-    plt.show()
     return (fig,ax)
 
 
-def plot_distance(dists,ls=None,rmlargest=0.,doplot=True,
-                 title=None,xaxtitle='lumisection number',yaxtitle='distance metric'):
+def plot_distance(dists, ls=None, rmlargest=0., doplot=True,
+                 title=None, xaxtitle='lumisection number', yaxtitle='distance metric'):
     
     if ls is None: ls = np.arange(0,len(dists))
         
@@ -203,7 +199,7 @@ def plot_distance(dists,ls=None,rmlargest=0.,doplot=True,
 ### plot model loss as a function of training epoch
 # credits to Francesco for this function
 def plot_loss(data, xlims=None,
-              title=None,xaxtitle='epoch',yaxtitle='loss'):
+              title=None, xaxtitle='epoch', yaxtitle='loss'):
     ### plot the training and validation loss
     # data is the object returned by the .fit method when called upon a keras model
     # e.g. history = <your autoencoder>.fit(<training params>)
@@ -222,8 +218,8 @@ def plot_loss(data, xlims=None,
     
 ### plot an array of mse values and get the mean and std value
 # credits to Francesco for this function
-def plot_mse(mse,rmlargest=0.,doplot=True,
-            title=None,xaxtitle='lumisection number',yaxtitle='mse'):
+def plot_mse(mse, rmlargest=0., doplot=True,
+            title=None, xaxtitle='lumisection number', yaxtitle='mse'):
     ### plot the mse's and return the mean and std
     # input args:
     # - mse is a 1D numpy array of mse scores
@@ -233,11 +229,11 @@ def plot_mse(mse,rmlargest=0.,doplot=True,
     (obj1,obj2) = plot_distance(mse,rmlargest=rmlargest,doplot=doplot,title=title,xaxtitle=xaxtitle,yaxtitle=yaxtitle)
     return (obj1,obj2)
 
-### make a plot showing the distributions of the output scores for signal and background
 
 def plot_score_dist( scores, labels, nbins=20, normalize=False,
                         title='output score distributions for signal and background',
-                        xaxtitle='output score',yaxtitle=None):
+                        xaxtitle='output score', yaxtitle=None):
+    ### make a plot showing the distributions of the output scores for signal and background
     minscore = np.min(scores)
     maxscore = np.max(scores)
     scorebins = np.linspace(minscore,maxscore,num=nbins+1)
@@ -258,6 +254,65 @@ def plot_score_dist( scores, labels, nbins=20, normalize=False,
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
     ax.legend()
     plt.show()
+    return (fig,ax)
+
+def plot_fit_2d( points, fitfunc=None, logprob=False, onlycontour=False, xlims=5, ylims=5, onlypositive=False,
+               xaxtitle=None, yaxtitle=None ):
+    ### make a scatter plot of a 2D point cloud with fitted contour
+    # input arguments:
+    # - points: a numpy array of shape (npoints,ndims)
+    # - fitfunc: an object of type CloudFitter (see src/cloudfitters) 
+    #   or any other object that implements a pdf(points) method
+    # - logprob: boolean whether to plot log probability or normal probability
+    # - onlycontour: a boolean whether to draw only the fit or include the data points
+    # - xlims and ylims: tuples of (low,high)
+    #   note: can be an integer, in which case the range will be determined automatically
+    #         from the formula low = mean-xlims*std, high = mean+xlims*std,
+    #         where mean and std are determined from the points array.
+    # - onlypositive: overrides previous argument to set lower bound of plotting range at 0 in both dimensions.
+    # - xaxtitle and yaxtitle: titles for axes.
+    
+    # set plotting ranges and step sizes
+    if( isinstance(xlims,int) ):
+        xmean = np.mean(points[:,0])
+        xstd = np.std(points[:,0])
+        xlims = (xmean-xlims*xstd,xmean+xlims*xstd)
+    if( isinstance(ylims,int) ):
+        ymean = np.mean(points[:,1])
+        ystd = np.std(points[:,1])
+        ylims = (ymean-ylims*ystd,ymean+ylims*ystd)
+    if onlypositive:
+        xlims = (0,xlims[1])
+        ylims = (0,ylims[1])
+    xstep = (xlims[1]-xlims[0])/100.
+    ystep = (ylims[1]-ylims[0])/100.
+        
+    (fig,ax) = plt.subplots()
+    
+    if fitfunc is not None:
+        
+        # make a grid of points and evaluate the fitfunc
+        x,y = np.mgrid[xlims[0]:xlims[1]:xstep,ylims[0]:ylims[1]:ystep]
+        gridpoints = np.transpose(np.vstack((np.ravel(x),np.ravel(y))))
+        evalpoints = fitfunc.pdf(gridpoints)
+        if logprob: evalpoints = np.log(evalpoints)
+        z = np.reshape(evalpoints,x.shape)
+
+        # make a plot of probability contours
+        contourplot = ax.contourf(x, y, z, 30)
+        plt.colorbar(contourplot)
+        
+    if not onlycontour:
+        
+        # make a plot of the data points
+        ax.plot(points[:,0],points[:,1],'.b',markersize=2)
+    
+    ax.set_xlim(xlims)
+    ax.set_ylim(ylims)
+    if xaxtitle is not None: ax.set_xlabel(xaxtitle)
+    if yaxtitle is not None: ax.set_ylabel(yaxtitle)
+    ax.ticklabel_format(axis='both', style='sci', scilimits=(0,0))
+    
     return (fig,ax)
 
 
