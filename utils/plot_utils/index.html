@@ -44,6 +44,55 @@
                             <li >
                                 <a href="../..">Home</a>
                             </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Src <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../src/HistStruct/">HistStruct</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">Classifiers</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../src/classifiers/AutoEncoder/">AutoEncoder</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/HistogramClassifier/">HistogramClassifier</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">Cloudfitters</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../src/cloudfitters/CloudFitter/">CloudFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/ExponentialFitter/">ExponentialFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/LogNormalFitter/">LogNormalFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/SeminormalFitter/">SeminormalFitter</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
                             <li class="dropdown active">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Utils <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
@@ -112,23 +161,24 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#plot-utils">plot utils</a></li>
-            <li><a href="#plot_histshistlistcolorlistlabellisttransparency1xlims0-1-titlenonexaxtitlenoneyaxtitlenone">plot_hists(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1), title=None,xaxtitle=None,yaxtitle=None)</a></li>
-            <li><a href="#plot_hists_multihistlistcolorlistlabellisttransparency1xlims0-1-titlenonexaxtitlenoneyaxtitlenone">plot_hists_multi(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1), title=None,xaxtitle=None,yaxtitle=None)</a></li>
-            <li><a href="#plot_hists_from_dfdfhisttypenhists">plot_hists_from_df(df,histtype,nhists)</a></li>
-            <li><a href="#plot_setssetlistfignoneaxnonecolorlistlabellisttransparencylistxlims0-1-titlenonexaxtitlenoneyaxtitlenone">plot_sets(setlist,fig=None,ax=None,colorlist=[],labellist=[],transparencylist=[],xlims=(0,-1), title=None,xaxtitle=None,yaxtitle=None)</a></li>
-            <li><a href="#plot_anomaloushistlistlshighlight-1hrange-1">plot_anomalous(histlist,ls,highlight=-1,hrange=-1)</a></li>
-            <li><a href="#plot_momentsmomentslsdimsfignoneaxnonemarkersize10">plot_moments(moments,ls,dims,fig=None,ax=None,markersize=10)</a></li>
-            <li><a href="#plot_distancedistslsnonermlargest0doplottrue-titlenonexaxtitlelumisection-numberyaxtitledistance-metric">plot_distance(dists,ls=None,rmlargest=0.,doplot=True, title=None,xaxtitle='lumisection number',yaxtitle='distance metric')</a></li>
-            <li><a href="#plot_lossdata-xlimsnone-titlenonexaxtitleepochyaxtitleloss">plot_loss(data, xlims=None, title=None,xaxtitle='epoch',yaxtitle='loss')</a></li>
-            <li><a href="#plot_msemsermlargest0doplottrue-titlenonexaxtitlelumisection-numberyaxtitlemse">plot_mse(mse,rmlargest=0.,doplot=True, title=None,xaxtitle='lumisection number',yaxtitle='mse')</a></li>
-            <li><a href="#plot_score_dist-scores-labels-nbins20-normalizefalse-titleoutput-score-distributions-for-signal-and-background-xaxtitleoutput-scoreyaxtitlenone">plot_score_dist( scores, labels, nbins=20, normalize=False, title='output score distributions for signal and background', xaxtitle='output score',yaxtitle=None)</a></li>
+            <li><a href="#plot95histshistlist-colorlist-labellist-transparency1-xlims0-1-titlenone-xaxtitlenone-yaxtitlenone">plot_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1), title=None, xaxtitle=None, yaxtitle=None)</a></li>
+            <li><a href="#plot95hists95multihistlist-colorlist-labellist-transparency1-xlims0-1-titlenone-xaxtitlenone-yaxtitlenone">plot_hists_multi(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1), title=None, xaxtitle=None, yaxtitle=None)</a></li>
+            <li><a href="#plot95hists95from95dfdf-histtype-nhists">plot_hists_from_df(df, histtype, nhists)</a></li>
+            <li><a href="#plot95setssetlist-fignone-axnone-colorlist-labellist-transparencylist-xlims0-1-titlenone-xaxtitlenone-yaxtitlenone">plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], xlims=(0,-1), title=None, xaxtitle=None, yaxtitle=None)</a></li>
+            <li><a href="#plot95anomaloushistlist-ls-highlight-1-hrange-1">plot_anomalous(histlist, ls, highlight=-1, hrange=-1)</a></li>
+            <li><a href="#plot95momentsmoments-ls-dims-fignone-axnone-markersize10">plot_moments(moments, ls, dims, fig=None, ax=None, markersize=10)</a></li>
+            <li><a href="#plot95distancedists-lsnone-rmlargest0-doplottrue-titlenone-xaxtitlelumisection-number-yaxtitledistance-metric">plot_distance(dists, ls=None, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='distance metric')</a></li>
+            <li><a href="#plot95lossdata-xlimsnone-titlenone-xaxtitleepoch-yaxtitleloss">plot_loss(data, xlims=None, title=None, xaxtitle='epoch', yaxtitle='loss')</a></li>
+            <li><a href="#plot95msemse-rmlargest0-doplottrue-titlenone-xaxtitlelumisection-number-yaxtitlemse">plot_mse(mse, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='mse')</a></li>
+            <li><a href="#plot95score95dist-scores-labels-nbins20-normalizefalse-titleoutput-score-distributions-for-signal-and-background-xaxtitleoutput-score-yaxtitlenone">plot_score_dist( scores, labels, nbins=20, normalize=False, title='output score distributions for signal and background', xaxtitle='output score', yaxtitle=None)</a></li>
+            <li><a href="#plot95fit952d-points-fitfuncnone-logprobfalse-onlycontourfalse-xlims5-ylims5-onlypositivefalse-xaxtitlenone-yaxtitlenone">plot_fit_2d( points, fitfunc=None, logprob=False, onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, yaxtitle=None )</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
 <h1 id="plot-utils">plot utils</h1>
 <hr />
-<h2 id="plot_histshistlistcolorlistlabellisttransparency1xlims0-1-titlenonexaxtitlenoneyaxtitlenone">plot_hists(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1), title=None,xaxtitle=None,yaxtitle=None)</h2>
+<h2 id="plot95histshistlist-colorlist-labellist-transparency1-xlims0-1-titlenone-xaxtitlenone-yaxtitlenone">plot_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1), title=None, xaxtitle=None, yaxtitle=None)</h2>
 <p><strong>plot some histograms (in histlist) in one figure using specified colors and/or labels</strong><br />
 - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))<br />
 - colorlist is a list or array containing colors (in string format)<br />
@@ -136,53 +186,68 @@ note: it can also be a single string representing a color (in pyplot), then all 
 - labellist is a list or array containing labels for in legend<br />
 output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it  </p>
 <hr />
-<h2 id="plot_hists_multihistlistcolorlistlabellisttransparency1xlims0-1-titlenonexaxtitlenoneyaxtitlenone">plot_hists_multi(histlist,colorlist=[],labellist=[],transparency=1,xlims=(0,-1), title=None,xaxtitle=None,yaxtitle=None)</h2>
+<h2 id="plot95hists95multihistlist-colorlist-labellist-transparency1-xlims0-1-titlenone-xaxtitlenone-yaxtitlenone">plot_hists_multi(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1), title=None, xaxtitle=None, yaxtitle=None)</h2>
 <p><strong>plot many histograms (in histlist) in one figure using specified colors and/or labels</strong><br />
 - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))<br />
 - colorlist is a list or array containing numbers to be mapped to colors<br />
 - labellist is a list or array containing labels for in legend<br />
 output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it  </p>
 <hr />
-<h2 id="plot_hists_from_dfdfhisttypenhists">plot_hists_from_df(df,histtype,nhists)</h2>
+<h2 id="plot95hists95from95dfdf-histtype-nhists">plot_hists_from_df(df, histtype, nhists)</h2>
 <p><strong>plot a number of histograms in a dataframe</strong><br />
 - df is the dataframe from which to plot<br />
 - histtype is the name of the histogram type (e.g. 'chargeInner_PXLayer_1')<br />
 - nhists is the number of histograms to plot  </p>
 <hr />
-<h2 id="plot_setssetlistfignoneaxnonecolorlistlabellisttransparencylistxlims0-1-titlenonexaxtitlenoneyaxtitlenone">plot_sets(setlist,fig=None,ax=None,colorlist=[],labellist=[],transparencylist=[],xlims=(0,-1), title=None,xaxtitle=None,yaxtitle=None)</h2>
+<h2 id="plot95setssetlist-fignone-axnone-colorlist-labellist-transparencylist-xlims0-1-titlenone-xaxtitlenone-yaxtitlenone">plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], xlims=(0,-1), title=None, xaxtitle=None, yaxtitle=None)</h2>
 <p><strong>plot multiple sets of histograms to compare the shapes</strong><br />
 - setlist is a list of 2D numpy arrays containing histograms<br />
 - fig and ax: a pyplot figure and axis object (if one of both is none a new figure is created)<br />
 - title is a string that will be used as the title for the ax object<br />
 other parameters are lists of which each element applies to one list of histograms  </p>
 <hr />
-<h2 id="plot_anomaloushistlistlshighlight-1hrange-1">plot_anomalous(histlist,ls,highlight=-1,hrange=-1)</h2>
+<h2 id="plot95anomaloushistlist-ls-highlight-1-hrange-1">plot_anomalous(histlist, ls, highlight=-1, hrange=-1)</h2>
 <p>histlist and ls are a list of histograms and corresponding lumisection numbers<br />
 lsnumber is the lumisection number of the histogram to highlight<br />
 hrange is the number of histograms before and after lsnumber to plot (default: whole run)  </p>
 <hr />
-<h2 id="plot_momentsmomentslsdimsfignoneaxnonemarkersize10">plot_moments(moments,ls,dims,fig=None,ax=None,markersize=10)</h2>
+<h2 id="plot95momentsmoments-ls-dims-fignone-axnone-markersize10">plot_moments(moments, ls, dims, fig=None, ax=None, markersize=10)</h2>
 <p>moments is an (nhists,nmoments) array<br />
 dims is a tuple of two or three values between 0 and nmoments-1  </p>
 <hr />
-<h2 id="plot_distancedistslsnonermlargest0doplottrue-titlenonexaxtitlelumisection-numberyaxtitledistance-metric">plot_distance(dists,ls=None,rmlargest=0.,doplot=True, title=None,xaxtitle='lumisection number',yaxtitle='distance metric')</h2>
+<h2 id="plot95distancedists-lsnone-rmlargest0-doplottrue-titlenone-xaxtitlelumisection-number-yaxtitledistance-metric">plot_distance(dists, ls=None, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='distance metric')</h2>
 <p>(no valid documentation found)  </p>
 <hr />
-<h2 id="plot_lossdata-xlimsnone-titlenonexaxtitleepochyaxtitleloss">plot_loss(data, xlims=None, title=None,xaxtitle='epoch',yaxtitle='loss')</h2>
+<h2 id="plot95lossdata-xlimsnone-titlenone-xaxtitleepoch-yaxtitleloss">plot_loss(data, xlims=None, title=None, xaxtitle='epoch', yaxtitle='loss')</h2>
 <p><strong>plot the training and validation loss</strong><br />
 data is the object returned by the .fit method when called upon a keras model<br />
 e.g. history = <your autoencoder>.fit(<training params>)<br />
 plot_loss(history,'a title')  </p>
 <hr />
-<h2 id="plot_msemsermlargest0doplottrue-titlenonexaxtitlelumisection-numberyaxtitlemse">plot_mse(mse,rmlargest=0.,doplot=True, title=None,xaxtitle='lumisection number',yaxtitle='mse')</h2>
+<h2 id="plot95msemse-rmlargest0-doplottrue-titlenone-xaxtitlelumisection-number-yaxtitlemse">plot_mse(mse, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='mse')</h2>
 <p><strong>plot the mse's and return the mean and std</strong><br />
 input args:<br />
 - mse is a 1D numpy array of mse scores<br />
 - doplot: boolean whether to make a plot or simply return mean and std<br />
 - rmlargest: fraction of largest mse's to remove (to avoid being too sensitive to outliers)  </p>
 <hr />
-<h2 id="plot_score_dist-scores-labels-nbins20-normalizefalse-titleoutput-score-distributions-for-signal-and-background-xaxtitleoutput-scoreyaxtitlenone">plot_score_dist( scores, labels, nbins=20, normalize=False, title='output score distributions for signal and background', xaxtitle='output score',yaxtitle=None)</h2>
-<p>(no valid documentation found)  </p></div>
+<h2 id="plot95score95dist-scores-labels-nbins20-normalizefalse-titleoutput-score-distributions-for-signal-and-background-xaxtitleoutput-score-yaxtitlenone">plot_score_dist( scores, labels, nbins=20, normalize=False, title='output score distributions for signal and background', xaxtitle='output score', yaxtitle=None)</h2>
+<p><strong>make a plot showing the distributions of the output scores for signal and background</strong>  </p>
+<hr />
+<h2 id="plot95fit952d-points-fitfuncnone-logprobfalse-onlycontourfalse-xlims5-ylims5-onlypositivefalse-xaxtitlenone-yaxtitlenone">plot_fit_2d( points, fitfunc=None, logprob=False, onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, yaxtitle=None )</h2>
+<p><strong>make a scatter plot of a 2D point cloud with fitted contour</strong><br />
+input arguments:<br />
+- points: a numpy array of shape (npoints,ndims)<br />
+- fitfunc: an object of type CloudFitter (see src/cloudfitters)<br />
+or any other object that implements a pdf(points) method<br />
+- logprob: boolean whether to plot log probability or normal probability<br />
+- onlycontour: a boolean whether to draw only the fit or include the data points<br />
+- xlims and ylims: tuples of (low,high)<br />
+note: can be an integer, in which case the range will be determined automatically<br />
+from the formula low = mean-xlims<em>std, high = mean+xlims</em>std,<br />
+where mean and std are determined from the points array.<br />
+- onlypositive: overrides previous argument to set lower bound of plotting range at 0 in both dimensions.<br />
+- xaxtitle and yaxtitle: titles for axes.  </p></div>
         </div>
 
         <footer class="col-md-12">

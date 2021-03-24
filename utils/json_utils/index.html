@@ -44,6 +44,55 @@
                             <li >
                                 <a href="../..">Home</a>
                             </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Src <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../src/HistStruct/">HistStruct</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">Classifiers</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../src/classifiers/AutoEncoder/">AutoEncoder</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/HistogramClassifier/">HistogramClassifier</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">Cloudfitters</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../src/cloudfitters/CloudFitter/">CloudFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/ExponentialFitter/">ExponentialFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/LogNormalFitter/">LogNormalFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/SeminormalFitter/">SeminormalFitter</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
                             <li class="dropdown active">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Utils <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
@@ -114,17 +163,17 @@
         <li class="main active"><a href="#json-utils">json utils</a></li>
             <li><a href="#loadjson-jsonfile">loadjson( jsonfile )</a></li>
             <li><a href="#writejson-jsondict-outputfile-overwritefalse">writejson( jsondict, outputfile, overwrite=False )</a></li>
-            <li><a href="#injson_single-run-lumi-jsondict">injson_single( run, lumi, jsondict )</a></li>
+            <li><a href="#injson95single-run-lumi-jsondict">injson_single( run, lumi, jsondict )</a></li>
             <li><a href="#injson-run-lumi-jsonfilenone-jsondictnone">injson( run, lumi, jsonfile=None, jsondict=None )</a></li>
-            <li><a href="#isgoldenrunlumi">isgolden(run,lumi)</a></li>
-            <li><a href="#isdcsonrunlumi">isdcson(run,lumi)</a></li>
-            <li><a href="#ispixelgoodrunlumi">ispixelgood(run,lumi)</a></li>
-            <li><a href="#ispixelbadrunlumi">ispixelbad(run,lumi)</a></li>
-            <li><a href="#plainlist_to_rangelist-plainlist">plainlist_to_rangelist( plainlist )</a></li>
-            <li><a href="#rangelist_to_plainlist-rangelist">rangelist_to_plainlist( rangelist )</a></li>
-            <li><a href="#tuplelist_to_jsondict-tuplelist">tuplelist_to_jsondict( tuplelist )</a></li>
-            <li><a href="#jsondict_to_tuplelist-jsondict">jsondict_to_tuplelist( jsondict )</a></li>
-            <li><a href="#get_lcs-jsonlist">get_lcs( jsonlist )</a></li>
+            <li><a href="#isgoldenrun-lumi">isgolden(run, lumi)</a></li>
+            <li><a href="#isdcsonrun-lumi">isdcson(run, lumi)</a></li>
+            <li><a href="#ispixelgoodrun-lumi">ispixelgood(run, lumi)</a></li>
+            <li><a href="#ispixelbadrun-lumi">ispixelbad(run, lumi)</a></li>
+            <li><a href="#plainlist95to95rangelist-plainlist">plainlist_to_rangelist( plainlist )</a></li>
+            <li><a href="#rangelist95to95plainlist-rangelist">rangelist_to_plainlist( rangelist )</a></li>
+            <li><a href="#tuplelist95to95jsondict-tuplelist">tuplelist_to_jsondict( tuplelist )</a></li>
+            <li><a href="#jsondict95to95tuplelist-jsondict">jsondict_to_tuplelist( jsondict )</a></li>
+            <li><a href="#get95lcs-jsonlist">get_lcs( jsonlist )</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -149,7 +198,7 @@ input arguments<br />
 - outputfile: output file to be written, extension '.json' will be appended automatically<br />
 - overwrite: boolean whether to overwrite outputfile if it exists (default: throw exception)  </p>
 <hr />
-<h2 id="injson_single-run-lumi-jsondict">injson_single( run, lumi, jsondict )</h2>
+<h2 id="injson95single-run-lumi-jsondict">injson_single( run, lumi, jsondict )</h2>
 <p><strong>helper function for injson, only for internal use</strong><br />
 input arguments:<br />
 - run and lumi are integers<br />
@@ -167,26 +216,26 @@ note: either jsonfile or jsondict must not be None!<br />
 output:<br />
 boolean or array of booleans (depending on run and lumi)  </p>
 <hr />
-<h2 id="isgoldenrunlumi">isgolden(run,lumi)</h2>
+<h2 id="isgoldenrun-lumi">isgolden(run, lumi)</h2>
 <p><strong>find if a run and lumi combination is in the golden json file</strong><br />
 input arguments:<br />
 - run and lumi: either integers or (equally long) arrays of integers  </p>
 <hr />
-<h2 id="isdcsonrunlumi">isdcson(run,lumi)</h2>
+<h2 id="isdcsonrun-lumi">isdcson(run, lumi)</h2>
 <p><strong>find if a run and lumi combination is in DCS-only json file</strong><br />
 input arguments:<br />
 - run and lumi: either integers or (equally long) arrays of integers  </p>
 <hr />
-<h2 id="ispixelgoodrunlumi">ispixelgood(run,lumi)</h2>
+<h2 id="ispixelgoodrun-lumi">ispixelgood(run, lumi)</h2>
 <p><strong>find if a run and lumi combination is in the json with good pixel flag</strong><br />
 note: this json was custom generated in run regisitry and not official!  </p>
 <hr />
-<h2 id="ispixelbadrunlumi">ispixelbad(run,lumi)</h2>
+<h2 id="ispixelbadrun-lumi">ispixelbad(run, lumi)</h2>
 <p><strong>find if a run and lumi combination is in the json with bad pixel flag</strong><br />
 note: this json was custom generated in run registry and not official!<br />
 note: not simply the negation of ispixelgood! json has more relaxed conditions on DCS-like criteria.  </p>
 <hr />
-<h2 id="plainlist_to_rangelist-plainlist">plainlist_to_rangelist( plainlist )</h2>
+<h2 id="plainlist95to95rangelist-plainlist">plainlist_to_rangelist( plainlist )</h2>
 <p><strong>helper function for tuplelist_to_jsondict, only for internal use</strong><br />
 input arguments:<br />
 - plainlist: a list of integers in increasing order, must have length &gt;= 2<br />
@@ -194,16 +243,16 @@ output:<br />
 - a list lists representing ranges<br />
 example: [1,2,3,5,6] -&gt; [ [1,3], [5,6] ]  </p>
 <hr />
-<h2 id="rangelist_to_plainlist-rangelist">rangelist_to_plainlist( rangelist )</h2>
+<h2 id="rangelist95to95plainlist-rangelist">rangelist_to_plainlist( rangelist )</h2>
 <p><strong>inverse function of plainlist_to_rangelist, for internal use only</strong>  </p>
 <hr />
-<h2 id="tuplelist_to_jsondict-tuplelist">tuplelist_to_jsondict( tuplelist )</h2>
+<h2 id="tuplelist95to95jsondict-tuplelist">tuplelist_to_jsondict( tuplelist )</h2>
 <p><strong>convert a list of tuples of format (run number, [lumisection numbers]) to json dict</strong>  </p>
 <hr />
-<h2 id="jsondict_to_tuplelist-jsondict">jsondict_to_tuplelist( jsondict )</h2>
+<h2 id="jsondict95to95tuplelist-jsondict">jsondict_to_tuplelist( jsondict )</h2>
 <p><strong>inverse function of tuplelist_to_jsondict</strong>  </p>
 <hr />
-<h2 id="get_lcs-jsonlist">get_lcs( jsonlist )</h2>
+<h2 id="get95lcs-jsonlist">get_lcs( jsonlist )</h2>
 <p><strong>return a jsondict object that is the largest common subset (LCS) between the jsondict objects in jsonlist</strong><br />
 input arguments:<br />
 - jsonlist: a list of dicts in the conventional json format,<br />

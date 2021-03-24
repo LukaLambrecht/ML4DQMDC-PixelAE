@@ -44,6 +44,55 @@
                             <li >
                                 <a href="../..">Home</a>
                             </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Src <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../src/HistStruct/">HistStruct</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">Classifiers</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../src/classifiers/AutoEncoder/">AutoEncoder</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/HistogramClassifier/">HistogramClassifier</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">Cloudfitters</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../src/cloudfitters/CloudFitter/">CloudFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/ExponentialFitter/">ExponentialFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/LogNormalFitter/">LogNormalFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/SeminormalFitter/">SeminormalFitter</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
                             <li class="dropdown active">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Utils <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
@@ -112,11 +161,7 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#clustering-utils">clustering utils</a></li>
-            <li><a href="#fitfunction">fitfunction</a></li>
-            <li><a href="#lognormalfitfunction">lognormal(fitfunction)</a></li>
-            <li><a href="#exponentialfitfunction">exponential(fitfunction)</a></li>
-            <li><a href="#seminormalfitfunction">seminormal(fitfunction)</a></li>
-            <li><a href="#gaussiankdefitfunction">gaussiankde(fitfunction)</a></li>
+            <li><a href="#dummy">dummy()</a></li>
             <li><a href="#vecdistmomentsindex">vecdist(moments,index)</a></li>
             <li><a href="#costhetadistmomentsindex">costhetadist(moments,index)</a></li>
             <li><a href="#avgnndistmomentsindexnn">avgnndist(moments,index,nn)</a></li>
@@ -128,77 +173,18 @@
 
 <h1 id="clustering-utils">clustering utils</h1>
 <hr />
-<h2 id="fitfunction">fitfunction</h2>
-<p><strong>abstract base class for all fit functions</strong><br />
-all other fit functions inherit from fitfunction and overload its functions<br />
-no concrete fitting procedure is implemented,<br />
-but some basic checks on dimensionality are performed  </p>
-<h3 id="initselfpoints"><strong>init</strong>(self,points)</h3>
-<p>(no valid documentation found)  </p>
-<h3 id="pdfselfpoints">pdf(self,points)</h3>
-<p><strong>get the pdf (probability density function) value at given points</strong><br />
-points is a 2D numpy array of shape (npoints,ndims)<br />
-the output is a 1D array of shape (npoints)  </p>
-<h3 id="pdfgridselfgrid">pdfgrid(self,grid)</h3>
-<p><strong>get the pdf (probability density function) value at a given grid</strong><br />
-(only applicable to 2D case!)<br />
-grid is a np array of shape (nx,ny,2)<br />
-containing the x- and y-values in its first and second depth-wise dimension respectively.<br />
-the grid is typically (but not necessarily) created via:<br />
-x,y = np.mgrid[<xrange>,<yrange>]<br />
-grid = np.dstack(x,y)  </p>
-<hr />
-<h2 id="lognormalfitfunction">lognormal(fitfunction)</h2>
-<p>(no valid documentation found)  </p>
-<h3 id="initselfpoints_1"><strong>init</strong>(self,points)</h3>
-<p>points is a np array of shape (npoints,ndims)  </p>
-<h3 id="pdfselfpoints_1">pdf(self,points)</h3>
-<p>(no valid documentation found)  </p>
-<h3 id="pdfgridselfgrid_1">pdfgrid(self,grid)</h3>
-<p>(no valid documentation found)  </p>
-<hr />
-<h2 id="exponentialfitfunction">exponential(fitfunction)</h2>
-<p>(no valid documentation found)  </p>
-<h3 id="initselfpoints_2"><strong>init</strong>(self,points)</h3>
-<p>points is a np array of shape (npoints,ndims)  </p>
-<h3 id="pdfselfpoints_2">pdf(self,points)</h3>
-<p>(no valid documentation found)  </p>
-<h3 id="pdfgridselfgrid_2">pdfgrid(self,grid)</h3>
-<p>(no valid documentation found)  </p>
-<hr />
-<h2 id="seminormalfitfunction">seminormal(fitfunction)</h2>
-<p>this is not strictly speaking a probability distribution,<br />
-only the first quadrant of the result of fitting a normal distribution<br />
-to the data + its mirror image wrt the origin  </p>
-<h3 id="initselfpoints_3"><strong>init</strong>(self,points=[])</h3>
-<p>(no valid documentation found)  </p>
-<h3 id="pdfselfpoints_3">pdf(self,points)</h3>
-<p>(no valid documentation found)  </p>
-<h3 id="pdfgridselfgrid_3">pdfgrid(self,grid)</h3>
-<p>(no valid documentation found)  </p>
-<h3 id="saveselfpath">save(self,path)</h3>
-<p>(no valid documentation found)  </p>
-<h3 id="loadselfpath">load(self,path)</h3>
-<p>(no valid documentation found)  </p>
-<hr />
-<h2 id="gaussiankdefitfunction">gaussiankde(fitfunction)</h2>
-<p>wrapper for scipy.stats.gaussian_kde (gaussian kernel density estimation)  </p>
-<h3 id="initselfpointsbwdefault"><strong>init</strong>(self,points=[],bw='default')</h3>
-<p>(no valid documentation found)  </p>
-<h3 id="pdfselfpoints_4">pdf(self,points)</h3>
-<p>(no valid documentation found)  </p>
-<h3 id="pdfgridselfgrid_4">pdfgrid(self,grid)</h3>
-<p>(no valid documentation found)  </p>
+<h2 id="dummy">dummy()</h2>
+<p><strong>general remark: the functions in this script are currently not supported anymore</strong><br />
+please ignore clustering_utils for now, it will probably be removed or completely reworked  </p>
 <hr />
 <h2 id="vecdistmomentsindex">vecdist(moments,index)</h2>
-<p>does not work well if there are outliers which dominate the distance  </p>
+<p>(no valid documentation found)  </p>
 <hr />
 <h2 id="costhetadistmomentsindex">costhetadist(moments,index)</h2>
-<p>works more or less but not all bad points have small values,<br />
-allows to identify problematic regions but not individual LS  </p>
+<p>(no valid documentation found)  </p>
 <hr />
 <h2 id="avgnndistmomentsindexnn">avgnndist(moments,index,nn)</h2>
-<p>seems to work well for the runs tested!  </p>
+<p>(no valid documentation found)  </p>
 <hr />
 <h2 id="getavgnndisthistsnmomentsxminxmaxnbinsnneighbours">getavgnndist(hists,nmoments,xmin,xmax,nbins,nneighbours)</h2>
 <p>(no valid documentation found)  </p>

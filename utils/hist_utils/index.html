@@ -44,6 +44,55 @@
                             <li >
                                 <a href="../..">Home</a>
                             </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Src <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../src/HistStruct/">HistStruct</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">Classifiers</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../src/classifiers/AutoEncoder/">AutoEncoder</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/HistogramClassifier/">HistogramClassifier</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">Cloudfitters</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../src/cloudfitters/CloudFitter/">CloudFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/ExponentialFitter/">ExponentialFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/LogNormalFitter/">LogNormalFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/SeminormalFitter/">SeminormalFitter</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
                             <li class="dropdown active">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Utils <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
@@ -112,23 +161,23 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#hist-utils">hist utils</a></li>
-            <li><a href="#rebinhistshistsfactor">rebinhists(hists,factor)</a></li>
+            <li><a href="#rebinhistshists-factor">rebinhists(hists, factor)</a></li>
             <li><a href="#normalizehistshists">normalizehists(hists)</a></li>
-            <li><a href="#averagehistshistsnout">averagehists(hists,nout)</a></li>
-            <li><a href="#momentbinscountsorder">moment(bins,counts,order)</a></li>
-            <li><a href="#histmeanbinscounts">histmean(bins,counts)</a></li>
-            <li><a href="#histrmsbinscounts">histrms(bins,counts)</a></li>
-            <li><a href="#histmomentsbinscountsorders">histmoments(bins,counts,orders)</a></li>
+            <li><a href="#averagehistshists-nout">averagehists(hists, nout)</a></li>
+            <li><a href="#momentbins-counts-order">moment(bins, counts, order)</a></li>
+            <li><a href="#histmeanbins-counts">histmean(bins, counts)</a></li>
+            <li><a href="#histrmsbins-counts">histrms(bins, counts)</a></li>
+            <li><a href="#histmomentsbins-counts-orders">histmoments(bins, counts, orders)</a></li>
             <li><a href="#preparedatafromnpydataname-rebinningfactor1-donormalizetrue-doplotfalse">preparedatafromnpy(dataname, rebinningfactor=1, donormalize=True, doplot=False)</a></li>
-            <li><a href="#preparedatafromdfdf-returnrunlsfalse-onlygoldenfalse-rebinningfactor1-donormalizetrue-doplotfalse">preparedatafromdf(df, returnrunls=False, onlygolden=False, rebinningfactor=1, donormalize=True, doplot=False)</a></li>
-            <li><a href="#preparedatafromcsvdataname-returnrunlsfalse-onlygoldenfalse-rebinningfactor1-donormalizetrue-doplotfalse">preparedatafromcsv(dataname, returnrunls=False, onlygolden=False, rebinningfactor=1, donormalize=True, doplot=False)</a></li>
+            <li><a href="#preparedatafromdfdf-returnrunlsfalse-rebinningfactor1-donormalizefalse-doplotfalse">preparedatafromdf(df, returnrunls=False, rebinningfactor=1, donormalize=False, doplot=False)</a></li>
+            <li><a href="#preparedatafromcsvdataname-returnrunlsfalse-rebinningfactor1-donormalizetrue-doplotfalse">preparedatafromcsv(dataname, returnrunls=False, rebinningfactor=1, donormalize=True, doplot=False)</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
 <h1 id="hist-utils">hist utils</h1>
 <hr />
-<h2 id="rebinhistshistsfactor">rebinhists(hists,factor)</h2>
+<h2 id="rebinhistshists-factor">rebinhists(hists, factor)</h2>
 <p><strong>perform rebinning on a set of histograms</strong><br />
 hists is a numpy array of shape (nhistograms,nbins)<br />
 factor is the rebinning factor, which must be a divisor of nbins.  </p>
@@ -136,10 +185,10 @@ factor is the rebinning factor, which must be a divisor of nbins.  </p>
 <h2 id="normalizehistshists">normalizehists(hists)</h2>
 <p><strong>perform normalization (i.e. sum of bin contents equals one for each histogram)</strong>  </p>
 <hr />
-<h2 id="averagehistshistsnout">averagehists(hists,nout)</h2>
+<h2 id="averagehistshists-nout">averagehists(hists, nout)</h2>
 <p><strong>partition hists (of shape (nhistograms,nbins)) into nout parts and take the average histogram of each part</strong>  </p>
 <hr />
-<h2 id="momentbinscountsorder">moment(bins,counts,order)</h2>
+<h2 id="momentbins-counts-order">moment(bins, counts, order)</h2>
 <p><strong>get n-th central moment of a histogram</strong><br />
 - bins is a 1D or 2D np array holding the bin centers<br />
 (shape (nbins) or (nhistograms,nbins))<br />
@@ -148,34 +197,34 @@ factor is the rebinning factor, which must be a divisor of nbins.  </p>
 - order is the order of the moment to calculate<br />
 (0 = maximum, 1 = mean value)  </p>
 <hr />
-<h2 id="histmeanbinscounts">histmean(bins,counts)</h2>
+<h2 id="histmeanbins-counts">histmean(bins, counts)</h2>
+<p><strong>special case of moment calculation (with order=1)</strong>  </p>
+<hr />
+<h2 id="histrmsbins-counts">histrms(bins, counts)</h2>
 <p><strong>special case of moment calculation</strong>  </p>
 <hr />
-<h2 id="histrmsbinscounts">histrms(bins,counts)</h2>
-<p><strong>special case of moment calculation</strong>  </p>
-<hr />
-<h2 id="histmomentsbinscountsorders">histmoments(bins,counts,orders)</h2>
+<h2 id="histmomentsbins-counts-orders">histmoments(bins, counts, orders)</h2>
 <p><strong>apply moment calculation for a list of orders</strong><br />
 the return type is a numpy array of shape (nhistograms,nmoments)  </p>
 <hr />
 <h2 id="preparedatafromnpydataname-rebinningfactor1-donormalizetrue-doplotfalse">preparedatafromnpy(dataname, rebinningfactor=1, donormalize=True, doplot=False)</h2>
-<p>read a .npy file and output the histograms  </p>
+<p><strong>read a .npy file and output the histograms</strong>  </p>
 <hr />
-<h2 id="preparedatafromdfdf-returnrunlsfalse-onlygoldenfalse-rebinningfactor1-donormalizetrue-doplotfalse">preparedatafromdf(df, returnrunls=False, onlygolden=False, rebinningfactor=1, donormalize=True, doplot=False)</h2>
+<h2 id="preparedatafromdfdf-returnrunlsfalse-rebinningfactor1-donormalizefalse-doplotfalse">preparedatafromdf(df, returnrunls=False, rebinningfactor=1, donormalize=False, doplot=False)</h2>
 <p>prepare the data contained in a dataframe in the form of a numpy array<br />
 args:<br />
-- returnrunls: wether to return only a histogram array or 1D arrays of run and lumisection numbers as well<br />
-- onlygolden: if True, only lumisections in the golden json file are kept<br />
+- returnrunls: boolean whether to return a tuple of (histograms, run numbers, lumisection numbers).<br />
+(default: return only histograms)<br />
 - rebinningfactor: an integer number to downsample the histograms in the dataframe<br />
 - donormalize: if True, data are normalized<br />
 - doplot: if True, some example plots are made showing the histograms  </p>
 <hr />
-<h2 id="preparedatafromcsvdataname-returnrunlsfalse-onlygoldenfalse-rebinningfactor1-donormalizetrue-doplotfalse">preparedatafromcsv(dataname, returnrunls=False, onlygolden=False, rebinningfactor=1, donormalize=True, doplot=False)</h2>
-<p>prepare the data contained in a dataframe csv file in the form of a numpy array<br />
+<h2 id="preparedatafromcsvdataname-returnrunlsfalse-rebinningfactor1-donormalizetrue-doplotfalse">preparedatafromcsv(dataname, returnrunls=False, rebinningfactor=1, donormalize=True, doplot=False)</h2>
+<p><strong>prepare the data contained in a dataframe csv file in the form of a numpy array</strong><br />
 args:<br />
 - returnrunls: wether to return only a histogram array or 1D arrays of run and lumisection numbers as well<br />
-- onlygolden: if True, only lumisections in the golden json file are kept<br />
 - rebinningfactor: an integer number to downsample the histograms in the dataframe<br />
+- donormalize: if True, data are normalized<br />
 - doplot: if True, some example plots are made showing the histograms  </p></div>
         </div>
 
