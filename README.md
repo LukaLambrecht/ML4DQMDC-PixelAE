@@ -24,13 +24,13 @@ To get the tutorial notebooks running in SWAN (preferred method):
 - Log in to SWAN.
 - Go to Projects.
 - Click the cloud icon that says 'Download Project from git'
-- Paste the following url: https://github.com/LukaLambrecht/ML4DQM-DC.git. 
+- Paste the following url: https://github.com/LukaLambrecht/ML4DQM-DC.git. Disclaimer: the code as described here is currently in the 'dev' branch, not 'master'. This method to get the notebooks running in SWAN has not yet been tested for this scenario. The 'master' branch contains an older, less structured version of the code.  
 
 (alternative method):
 - Log in to SWAN.
 - Click on the leftmost icon on the top right ('new terminal').
 - Navigate to where you want this repository (the starting place is your CERNBox home directory).
-- Paste this command: git clone https://github.com/LukaLambrecht/ML4DQM-DC.git (or however you usually clone a repository).
+- Paste this command: git clone https://github.com/LukaLambrecht/ML4DQM-DC.git (or however you usually clone a repository). Disclaimer: the code as described here is currently in the 'dev' branch, not 'master'. This method to get the notebooks running in SWAN has not yet been tested for this scenario. The 'master' branch contains an older, less structured version of the code.  
 - Exit the terminal.
 - The folder should now be where you cloned it, and you can open and run the notebooks in it in SWAN.  
 
