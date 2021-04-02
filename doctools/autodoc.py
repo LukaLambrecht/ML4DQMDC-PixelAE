@@ -55,7 +55,7 @@ for codedir in codedirs:
         mdfiletools.py_to_md( pyfile, thiscodedir, pyfile.replace('.py','.md'), thisdocdir)
         # update yml
         ymltext += (level+1)*4*' '+'- '+pyfile.replace('.py','')+': \'{}\'\n'.format(
-                os.path.join(thisdocdir,pyfile.replace('.py','.md')))
+                os.path.join(codedir,pyfile.replace('.py','.md')))
 
 # write the yml file
 ymlfile = os.path.join(topdir,'mkdocs.yml')
