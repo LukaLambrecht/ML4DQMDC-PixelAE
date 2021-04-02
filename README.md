@@ -40,6 +40,6 @@ Some tutorials are located in the tutorials folder in this repository, that shou
 - Paste this command: git clone https://github.com/LukaLambrecht/ML4DQM-DC.git (or however you usually clone a repository). Disclaimer: the code as described here is currently in the 'dev' branch, not 'master'. This method to get the notebooks running in SWAN has not yet been tested for this scenario. The 'master' branch contains an older, less structured version of the code.  
 - Exit the terminal.
 - The folder should now be where you cloned it, and you can open and run the notebooks in it in SWAN.  
-#### Further documentation:  
+### Further documentation:  
 
 - documentation for all the class definitions and functions in the relevant code directories: https://LukaLambrecht.github.io/ML4DQM-DC/ (note: this documentation is generated automatically from comments in the code and currently not yet in perfect shape, both regarding content and layout)  

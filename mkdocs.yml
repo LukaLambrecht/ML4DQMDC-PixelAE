@@ -1,1 +1,23 @@
 site_name: Documentation for the ML4DQM/DC notebooks
+nav:
+    - Home: 'index.md'
+    - src:
+        - HistStruct: '/home/luklambr/ML4DQM-DC/docs/src/HistStruct.md'
+        - classifiers:
+            - AutoEncoder: '/home/luklambr/ML4DQM-DC/docs/src/classifiers/AutoEncoder.md'
+            - HistogramClassifier: '/home/luklambr/ML4DQM-DC/docs/src/classifiers/HistogramClassifier.md'
+        - cloudfitters:
+            - CloudFitter: '/home/luklambr/ML4DQM-DC/docs/src/cloudfitters/CloudFitter.md'
+            - ExponentialFitter: '/home/luklambr/ML4DQM-DC/docs/src/cloudfitters/ExponentialFitter.md'
+            - GaussianKdeFitter: '/home/luklambr/ML4DQM-DC/docs/src/cloudfitters/GaussianKdeFitter.md'
+            - LogNormalFitter: '/home/luklambr/ML4DQM-DC/docs/src/cloudfitters/LogNormalFitter.md'
+            - SeminormalFitter: '/home/luklambr/ML4DQM-DC/docs/src/cloudfitters/SeminormalFitter.md'
+    - utils:
+        - autoencoder_utils: '/home/luklambr/ML4DQM-DC/docs/utils/autoencoder_utils.md'
+        - clustering_utils: '/home/luklambr/ML4DQM-DC/docs/utils/clustering_utils.md'
+        - csv_utils: '/home/luklambr/ML4DQM-DC/docs/utils/csv_utils.md'
+        - dataframe_utils: '/home/luklambr/ML4DQM-DC/docs/utils/dataframe_utils.md'
+        - generate_data_utils: '/home/luklambr/ML4DQM-DC/docs/utils/generate_data_utils.md'
+        - hist_utils: '/home/luklambr/ML4DQM-DC/docs/utils/hist_utils.md'
+        - json_utils: '/home/luklambr/ML4DQM-DC/docs/utils/json_utils.md'
+        - plot_utils: '/home/luklambr/ML4DQM-DC/docs/utils/plot_utils.md'
