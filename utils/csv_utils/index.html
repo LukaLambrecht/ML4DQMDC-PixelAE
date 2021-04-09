@@ -63,6 +63,10 @@
 <li >
     <a href="../../src/classifiers/HistogramClassifier/">HistogramClassifier</a>
 </li>
+            
+<li >
+    <a href="../../src/classifiers/TemplateBasedClassifier/">TemplateBasedClassifier</a>
+</li>
     </ul>
   </li>
                                     
@@ -128,6 +132,10 @@
 <li >
     <a href="../plot_utils/">plot_utils</a>
 </li>
+                                    
+<li >
+    <a href="../refruns_utils/">refruns_utils</a>
+</li>
                                 </ul>
                             </li>
                         </ul>
@@ -162,7 +170,7 @@
             <li><a href="#sort95filenamesfilelist">sort_filenames(filelist)</a></li>
             <li><a href="#read95csvcsv95file">read_csv(csv_file)</a></li>
             <li><a href="#read95and95merge95csvcsv95files-histnames-runnbs">read_and_merge_csv(csv_files, histnames=[], runnbs=[])</a></li>
-            <li><a href="#write95skimmed95csvhistnames-year-erasall">write_skimmed_csv(histnames, year, eras=['all'])</a></li>
+            <li><a href="#write95skimmed95csvhistnames-year-erasall-dim1">write_skimmed_csv(histnames, year, eras=['all'], dim=1)</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -198,13 +206,14 @@ csv_files is a list of paths to files to merge into a df<br />
 histnames is a list of the types of histograms to keep (default: all)<br />
 runnbs is a list of run numbers to keep (default: all)  </p>
 <hr />
-<h2 id="write95skimmed95csvhistnames-year-erasall">write_skimmed_csv(histnames, year, eras=['all'])</h2>
+<h2 id="write95skimmed95csvhistnames-year-erasall-dim1">write_skimmed_csv(histnames, year, eras=['all'], dim=1)</h2>
 <p><strong>read all available data for a given year/era and make a file per histogram type</strong><br />
 input arguments:<br />
 - histnames: list of histogram names for which to make a separate file<br />
 - year: data-taking year (in string format)<br />
 - eras: data-taking eras for which to make a separate file (in string format)<br />
 use 'all' to make a file with all eras merged, i.e. a full data taking year<br />
+- dim: dimension of histograms (1 or 2), needed to retrieve the correct folder containing input files<br />
 output:<br />
 - one csv file per year/era and per histogram type<br />
 note: this function can take quite a while to run!  </p></div>

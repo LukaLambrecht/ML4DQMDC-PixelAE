@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>HistStruct - Documentation for the ML4DQM/DC notebooks</title>
+        <title>refruns_utils - Documentation for the ML4DQM/DC notebooks</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -44,12 +44,12 @@
                             <li >
                                 <a href="../..">Home</a>
                             </li>
-                            <li class="dropdown active">
+                            <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">src <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
-<li class="active">
-    <a href="./">HistStruct</a>
+<li >
+    <a href="../../src/HistStruct/">HistStruct</a>
 </li>
                                     
   <li class="dropdown-submenu">
@@ -57,15 +57,15 @@
     <ul class="dropdown-menu">
             
 <li >
-    <a href="../classifiers/AutoEncoder/">AutoEncoder</a>
+    <a href="../../src/classifiers/AutoEncoder/">AutoEncoder</a>
 </li>
             
 <li >
-    <a href="../classifiers/HistogramClassifier/">HistogramClassifier</a>
+    <a href="../../src/classifiers/HistogramClassifier/">HistogramClassifier</a>
 </li>
             
 <li >
-    <a href="../classifiers/TemplateBasedClassifier/">TemplateBasedClassifier</a>
+    <a href="../../src/classifiers/TemplateBasedClassifier/">TemplateBasedClassifier</a>
 </li>
     </ul>
   </li>
@@ -75,66 +75,66 @@
     <ul class="dropdown-menu">
             
 <li >
-    <a href="../cloudfitters/CloudFitter/">CloudFitter</a>
+    <a href="../../src/cloudfitters/CloudFitter/">CloudFitter</a>
 </li>
             
 <li >
-    <a href="../cloudfitters/ExponentialFitter/">ExponentialFitter</a>
+    <a href="../../src/cloudfitters/ExponentialFitter/">ExponentialFitter</a>
 </li>
             
 <li >
-    <a href="../cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+    <a href="../../src/cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
 </li>
             
 <li >
-    <a href="../cloudfitters/LogNormalFitter/">LogNormalFitter</a>
+    <a href="../../src/cloudfitters/LogNormalFitter/">LogNormalFitter</a>
 </li>
             
 <li >
-    <a href="../cloudfitters/SeminormalFitter/">SeminormalFitter</a>
+    <a href="../../src/cloudfitters/SeminormalFitter/">SeminormalFitter</a>
 </li>
     </ul>
   </li>
                                 </ul>
                             </li>
-                            <li class="dropdown">
+                            <li class="dropdown active">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">utils <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../../utils/autoencoder_utils/">autoencoder_utils</a>
+    <a href="../autoencoder_utils/">autoencoder_utils</a>
 </li>
                                     
 <li >
-    <a href="../../utils/clustering_utils/">clustering_utils</a>
+    <a href="../clustering_utils/">clustering_utils</a>
 </li>
                                     
 <li >
-    <a href="../../utils/csv_utils/">csv_utils</a>
+    <a href="../csv_utils/">csv_utils</a>
 </li>
                                     
 <li >
-    <a href="../../utils/dataframe_utils/">dataframe_utils</a>
+    <a href="../dataframe_utils/">dataframe_utils</a>
 </li>
                                     
 <li >
-    <a href="../../utils/generate_data_utils/">generate_data_utils</a>
+    <a href="../generate_data_utils/">generate_data_utils</a>
 </li>
                                     
 <li >
-    <a href="../../utils/hist_utils/">hist_utils</a>
+    <a href="../hist_utils/">hist_utils</a>
 </li>
                                     
 <li >
-    <a href="../../utils/json_utils/">json_utils</a>
+    <a href="../json_utils/">json_utils</a>
 </li>
                                     
 <li >
-    <a href="../../utils/plot_utils/">plot_utils</a>
+    <a href="../plot_utils/">plot_utils</a>
 </li>
                                     
-<li >
-    <a href="../../utils/refruns_utils/">refruns_utils</a>
+<li class="active">
+    <a href="./">refruns_utils</a>
 </li>
                                 </ul>
                             </li>
@@ -147,12 +147,12 @@
                             </a>
                         </li>
                             <li >
-                                <a rel="next" href="../..">
+                                <a rel="next" href="../plot_utils/">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
-                            <li >
-                                <a rel="prev" href="../classifiers/AutoEncoder/">
+                            <li class="disabled">
+                                <a rel="prev" >
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -164,80 +164,28 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#histstruct">HistStruct</a></li>
-            <li><a href="#histstructobject">HistStruct(object)</a></li>
+        <li class="main active"><a href="#refruns-utils">refruns utils</a></li>
+            <li><a href="#get95reference95run-runnb-jsonlistnone-jsonfilejson95allrunsrefrunsjson">get_reference_run( runnb, jsonlist=None, jsonfile='json_allRunsRefRuns.json' )</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="histstruct">HistStruct</h1>
+<h1 id="refruns-utils">refruns utils</h1>
 <hr />
-<h2 id="histstructobject">HistStruct(object)</h2>
-<p><strong>main data structure used within this framework</strong><br />
-a HistStruct object basically consists of a mutually consistent collection of numpy arrays,<br />
-where each numpy array corresponds to one histogram type, with dimensions (number of histograms, number of bins).<br />
-the HistStruct has functions to easily perform the following common tasks (among others):<br />
-- select a subset of runs and/or lumisections (e.g. using a json file formatted selector),<br />
-- prepare the data for machine learning training<br />
-- evaluate classifiers (machine learning types or other)  </p>
-<h3 id="9595init9595-self">__init__( self )</h3>
-<p><strong>empty initializer, setting all containers to empty defaults</strong>  </p>
-<h3 id="save-self-path">save( self, path )</h3>
-<p><strong>save a HistStruct object to a pkl file</strong>  </p>
-<h3 id="load-self-path">load( self, path )</h3>
-<p>(no valid documentation found)  </p>
-<h3 id="add95dataframe-self-df-donormalizetrue-rebinningfactor1">add_dataframe( self, df, donormalize=True, rebinningfactor=1 )</h3>
-<p><strong>add a dataframe to a HistStruct</strong><br />
+<h2 id="get95reference95run-runnb-jsonlistnone-jsonfilejson95allrunsrefrunsjson">get_reference_run( runnb, jsonlist=None, jsonfile='json_allRunsRefRuns.json' )</h2>
+<p><strong>get the reference run for a given run number</strong><br />
 input arguments:<br />
-- df is a pandas dataframe as read from the input csv files.<br />
-- donormalize: boolean whether to normalize the histograms<br />
-- rebinningfactor: factor by which to group bins together<br />
-notes:<br />
-- the new dataframe can contain one or more histogram types<br />
-- the new dataframe must contain the same run and lumisection numbers (for each histogram type in it)<br />
-as already present in the HistStruct, except if it is the first one to be added  </p>
-<h3 id="add95mask-self-name-mask">add_mask( self, name, mask )</h3>
-<p><strong>add a mask to a HistStruct</strong><br />
-input arguments:<br />
-- name: a name for the mask<br />
-- mask: a 1D np array of booleans  with same length as number of lumisections in HistStruct  </p>
-<h3 id="remove95mask-self-name">remove_mask( self, name )</h3>
-<p><strong>inverse operation of add_mask</strong>  </p>
-<h3 id="add95json95mask-self-name-jsondict">add_json_mask( self, name, jsondict )</h3>
-<p><strong>add a mask corresponding to a json dict</strong>  </p>
-<h3 id="add95goldenjson95mask-self-name">add_goldenjson_mask( self, name )</h3>
-<p><strong>add a mask corresponding to the golden json file</strong>  </p>
-<h3 id="add95dcsonjson95mask-self-name">add_dcsonjson_mask( self, name )</h3>
-<p><strong>add a mask corresponding to the DCS-bit on json file</strong>  </p>
-<h3 id="add95hightstat95mask-self-name-histnamesnone-entries95to95bins95ratio100">add_hightstat_mask( self, name, histnames=None, entries_to_bins_ratio=100 )</h3>
-<p><strong>add a mask corresponding to lumisections where all histograms have sufficient statistics</strong><br />
-input arguments:<br />
-- histnames: list of histogram names to take into account for making the mask (default: all in the HistStruct)<br />
-- entries_to_bins_ratio: criterion to determine if a histogram has sufficient statistics, number of entries divided by number of bins  </p>
-<h3 id="get95combined95mask-self-names">get_combined_mask( self, names )</h3>
-<p><strong>get a combined mask given multiple mask names</strong><br />
-mostly for internal use; externally you can use get_histograms( histname, <list of mask names>) directly  </p>
-<h3 id="get95runnbs-self-masknamesnone">get_runnbs( self, masknames=None )</h3>
-<p><strong>get the array of run numbers, optionally after masking</strong>  </p>
-<h3 id="get95lsnbs-self-masknamesnone">get_lsnbs( self, masknames=None )</h3>
-<p><strong>get the array of lumisection numbers, optionally after masking</strong>  </p>
-<h3 id="get95scores-self-histnamenone-masknamesnone">get_scores( self, histname=None, masknames=None )</h3>
-<p><strong>get the array of scores for a given histogram type, optionally after masking</strong><br />
-if histname is None, return a dict matching histnames to arrays of scores  </p>
-<h3 id="get95histograms-self-histnamenone-masknamesnone">get_histograms( self, histname=None, masknames=None )</h3>
-<p><strong>get the array of histograms for a given type, optionally after masking</strong><br />
-if histname is None, return a dict matching histnames to arrays of histograms  </p>
-<h3 id="add95classifier-self-histname-classifier-evaluatefalse">add_classifier( self, histname, classifier, evaluate=False )</h3>
-<p><strong>add a histogram classifier for a given histogram name to the HistStruct</strong><br />
-classifier must be an object of type HistogramClassifier (i.e. of any class that derives from it)<br />
-evaluate is a bool whether to evaluate the classifier (and store the result in the 'scores' attribute)  </p>
-<h3 id="evaluate95classifier-self-histname">evaluate_classifier( self, histname )</h3>
-<p><strong>evaluate a histogram classifier for a given histogram name in the HistStruct</strong><br />
-the result is both returned and stored in the 'scores' attribute  </p>
-<h3 id="plot95ls-self-run-ls-recohistnone-recolabelreco-refhistsnone-refhistslabelreference-doprintfalse">plot_ls( self, run, ls, recohist=None, recolabel='reco', refhists=None, refhistslabel='reference', doprint=False)</h3>
-<p><strong>plot the histograms for a given run/ls number versus their references and/or their reconstruction</strong>  </p>
-<h3 id="plot95run-self-run-recohistnone-recolabelreco-refhistsnone-refhistslabelreference-doprintfalse">plot_run( self, run, recohist=None, recolabel='reco', refhists=None, refhistslabel='reference', doprint=False)</h3>
-<p><strong>call plot_ls for all lumisections in a given run</strong>  </p></div>
+- runnb: integer representing a run number.<br />
+- jsonlist: list matching run numbers to reference run numbers.<br />
+note: the list is supposed to contain dicts with keys 'run_number' and 'reference_run_number',<br />
+this convention is based on the json file provided by the tracker group.<br />
+note: if jsonlist is None, jsonfile (see below) will be opened and a jsonlist read from it.<br />
+- jsonfile: path to json file matching run numbers to reference run numbers.<br />
+note: the json file must contain a list of dicts with keys 'run_number' and 'reference_run_number', as explained above.<br />
+note: ignored if jsonlist is not None.<br />
+output:<br />
+integer representing the reference run number for the given run.<br />
+if the given run is not in the json, -1 is returned.  </p></div>
         </div>
 
         <footer class="col-md-12">

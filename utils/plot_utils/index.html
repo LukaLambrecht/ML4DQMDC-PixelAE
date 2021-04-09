@@ -63,6 +63,10 @@
 <li >
     <a href="../../src/classifiers/HistogramClassifier/">HistogramClassifier</a>
 </li>
+            
+<li >
+    <a href="../../src/classifiers/TemplateBasedClassifier/">TemplateBasedClassifier</a>
+</li>
     </ul>
   </li>
                                     
@@ -128,6 +132,10 @@
 <li class="active">
     <a href="./">plot_utils</a>
 </li>
+                                    
+<li >
+    <a href="../refruns_utils/">refruns_utils</a>
+</li>
                                 </ul>
                             </li>
                         </ul>
@@ -143,8 +151,8 @@
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
-                            <li class="disabled">
-                                <a rel="prev" >
+                            <li >
+                                <a rel="prev" href="../refruns_utils/">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -159,6 +167,9 @@
         <li class="main active"><a href="#plot-utils">plot utils</a></li>
             <li><a href="#plot95histshistlist-colorlist-labellist-transparency1-xlims0-1-titlenone-xaxtitlenone-yaxtitlenone">plot_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1), title=None, xaxtitle=None, yaxtitle=None)</a></li>
             <li><a href="#plot95hists95multihistlist-colorlist-labellist-transparency1-xlims0-1-titlenone-xaxtitlenone-yaxtitlenone">plot_hists_multi(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1), title=None, xaxtitle=None, yaxtitle=None)</a></li>
+            <li><a href="#plot95hist952dhist-fignone-axnone-titlenone-xaxtitlenone-yaxtitlenone">plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None)</a></li>
+            <li><a href="#plot95hists952dhists-ncols4-title-none-subtitlesnone-xaxtitlenone-yaxtitlenone">plot_hists_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None)</a></li>
+            <li><a href="#plot95hists952d95gifhists-titles-none-xaxtitlenone-yaxtitlenone-duration03-fignametemp95gifgif">plot_hists_2d_gif(hists, titles = None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp_gif.gif')</a></li>
             <li><a href="#plot95hists95from95dfdf-histtype-nhists">plot_hists_from_df(df, histtype, nhists)</a></li>
             <li><a href="#plot95setssetlist-fignone-axnone-colorlist-labellist-transparencylist-xlims0-1-titlenone-xaxtitlenone-yaxtitlenone">plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], xlims=(0,-1), title=None, xaxtitle=None, yaxtitle=None)</a></li>
             <li><a href="#plot95anomaloushistlist-ls-highlight-1-hrange-1">plot_anomalous(histlist, ls, highlight=-1, hrange=-1)</a></li>
@@ -188,6 +199,18 @@ output: tuple of figure and axis objects, that can be used to further tune the l
 - colorlist is a list or array containing numbers to be mapped to colors<br />
 - labellist is a list or array containing labels for in legend<br />
 output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it  </p>
+<hr />
+<h2 id="plot95hist952dhist-fignone-axnone-titlenone-xaxtitlenone-yaxtitlenone">plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None)</h2>
+<p><strong>plot a 2D histogram</strong><br />
+- hist is a 2D numpy array of shape (nxbins, nybins)  </p>
+<hr />
+<h2 id="plot95hists952dhists-ncols4-title-none-subtitlesnone-xaxtitlenone-yaxtitlenone">plot_hists_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None)</h2>
+<p><strong>plot multiple 2D histograms next to each other</strong><br />
+- hists: list of 2D numpy arrays of shape (nxbins,nybins), or an equivalent 3D numpy array<br />
+- ncols: number of columns to use  </p>
+<hr />
+<h2 id="plot95hists952d95gifhists-titles-none-xaxtitlenone-yaxtitlenone-duration03-fignametemp95gifgif">plot_hists_2d_gif(hists, titles = None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp_gif.gif')</h2>
+<p>(no valid documentation found)  </p>
 <hr />
 <h2 id="plot95hists95from95dfdf-histtype-nhists">plot_hists_from_df(df, histtype, nhists)</h2>
 <p><strong>plot a number of histograms in a dataframe</strong><br />
