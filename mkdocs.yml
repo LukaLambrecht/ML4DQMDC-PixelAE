@@ -6,6 +6,7 @@ nav:
         - classifiers:
             - AutoEncoder: 'src/classifiers/AutoEncoder.md'
             - HistogramClassifier: 'src/classifiers/HistogramClassifier.md'
+            - TemplateBasedClassifier: 'src/classifiers/TemplateBasedClassifier.md'
         - cloudfitters:
             - CloudFitter: 'src/cloudfitters/CloudFitter.md'
             - ExponentialFitter: 'src/cloudfitters/ExponentialFitter.md'
@@ -21,3 +22,4 @@ nav:
         - hist_utils: 'utils/hist_utils.md'
         - json_utils: 'utils/json_utils.md'
         - plot_utils: 'utils/plot_utils.md'
+        - refruns_utils: 'utils/refruns_utils.md'

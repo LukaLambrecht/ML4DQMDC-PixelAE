@@ -81,9 +81,9 @@ evaluate is a bool whether to evaluate the classifier (and store the result in t
 **evaluate a histogram classifier for a given histogram name in the HistStruct**  
 the result is both returned and stored in the 'scores' attribute  
   
-### plot\_ls( self, run, ls, refhists, doprint=False)  
+### plot\_ls( self, run, ls, recohist=None, recolabel='reco', refhists=None, refhistslabel='reference', doprint=False)  
 **plot the histograms for a given run/ls number versus their references and/or their reconstruction**  
   
-### plot\_run( self, run, refhists, doprint=False)  
+### plot\_run( self, run, recohist=None, recolabel='reco', refhists=None, refhistslabel='reference', doprint=False)  
 **call plot\_ls for all lumisections in a given run**  
   

@@ -18,6 +18,21 @@ output: tuple of figure and axis objects, that can be used to further tune the l
 output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it  
   
 - - -    
+## plot\_hist\_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None)  
+**plot a 2D histogram**  
+- hist is a 2D numpy array of shape (nxbins, nybins)  
+  
+- - -    
+## plot\_hists\_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None)  
+**plot multiple 2D histograms next to each other**  
+- hists: list of 2D numpy arrays of shape (nxbins,nybins), or an equivalent 3D numpy array  
+- ncols: number of columns to use  
+  
+- - -    
+## plot\_hists\_2d\_gif(hists, titles = None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp\_gif.gif')  
+(no valid documentation found)  
+  
+- - -    
 ## plot\_hists\_from\_df(df, histtype, nhists)  
 **plot a number of histograms in a dataframe**  
 - df is the dataframe from which to plot  

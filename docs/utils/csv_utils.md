@@ -35,13 +35,14 @@ histnames is a list of the types of histograms to keep (default: all)
 runnbs is a list of run numbers to keep (default: all)  
   
 - - -    
-## write\_skimmed\_csv(histnames, year, eras=['all'])  
+## write\_skimmed\_csv(histnames, year, eras=['all'], dim=1)  
 **read all available data for a given year/era and make a file per histogram type**  
 input arguments:  
 - histnames: list of histogram names for which to make a separate file  
 - year: data-taking year (in string format)  
 - eras: data-taking eras for which to make a separate file (in string format)  
 use 'all' to make a file with all eras merged, i.e. a full data taking year  
+- dim: dimension of histograms (1 or 2), needed to retrieve the correct folder containing input files  
 output:  
 - one csv file per year/era and per histogram type  
 note: this function can take quite a while to run!  
