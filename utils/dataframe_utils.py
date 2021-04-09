@@ -154,16 +154,33 @@ def select_highstat(df, entries_to_bins_ratio=100):
 
 def get_hist_values(df):
     ### same as builtin "df['histo'].values" but convert strings to np arrays
-    # also an array of run and LS numbers is returned
+    # input arguments:
+    # - df: a dataframe containing histograms
+    # note: this function works for both 1D and 2D histograms,
+    #       the distinction is made based on whether or not 'Ybins' is present as a column in the dataframe
+    # output:
+    # a tuple containing the following elements:
+    # - np array of shape (nhists,nbins) (for 1D) or (nhists,nybins,nxbins) (for 2D)
+    # - np array of run numbers of length nhists
+    # - np array of lumisection numbers of length nhists
     # warning: no check is done to assure that all histograms are of the same type!
-    nn = len(json.loads(df.at[list(df.index)[0],'histo']))
-    vals = np.zeros((len(df),nn))
+    dim = 1
+    if 'Ybins' in df.keys(): dim = 2
+    nxbins = df.at[0,'Xbins']+2 # +2 for under- and overflow bins
+    vals = np.zeros((len(df),nxbins))
+    if dim==2: 
+        nybins = df.at[0,'Ybins']+2
+        vals = np.zeros((len(df),nybins,nxbins))
     ls = np.zeros(len(df))
     runs = np.zeros(len(df))
     for i in range(len(df)):
-        vals[i,:] = json.loads(df.at[i,'histo'])
+        hist = np.array(json.loads(df.at[i,'histo']))
+        if dim==2: hist = hist.reshape((nybins,nxbins))
+        vals[i,:] = hist
         ls[i] = int(df.at[i,'fromlumi'])
         runs[i] = int(df.at[i,'fromrun'])
+    ls = ls.astype(int)
+    runs = runs.astype(int)
     return (vals,runs,ls)
 
 

@@ -78,12 +78,15 @@ def read_and_merge_csv(csv_files, histnames=[], runnbs=[]):
     # histnames is a list of the types of histograms to keep (default: all)
     # runnbs is a list of run numbers to keep (default: all)
     dflist = []
-    for f in csv_files:
+    print('INFO in csv_utils.py / read_and_merge_csv:'
+          +' reading and merging {} csv files...'.format(len(csv_files)))
+    for i,f in enumerate(csv_files):
+        print('  - now processing file {} of {}...'.format(i+1,len(csv_files)))
         dffile = read_csv(f)
         if len(histnames)>0: 
             dffile = dfu.select_histnames(dffile,histnames)
         if len(runnbs)>0:
-            dffile = dffile[dffile['fromrun'].isin(runnbs)]
+            dffile = dfu.select_runs(dffile,runnbs)
         dflist.append(dffile)
     df = pd.concat(dflist,ignore_index=True)
     df.sort_values(by=['fromrun','fromlumi'],inplace=True)
@@ -91,13 +94,14 @@ def read_and_merge_csv(csv_files, histnames=[], runnbs=[]):
     return df
 
 
-def write_skimmed_csv(histnames, year, eras=['all']):
+def write_skimmed_csv(histnames, year, eras=['all'], dim=1):
     ### read all available data for a given year/era and make a file per histogram type
     # input arguments:
     # - histnames: list of histogram names for which to make a separate file
     # - year: data-taking year (in string format)
     # - eras: data-taking eras for which to make a separate file (in string format)
     #         use 'all' to make a file with all eras merged, i.e. a full data taking year
+    # - dim: dimension of histograms (1 or 2), needed to retrieve the correct folder containing input files
     # output:
     # - one csv file per year/era and per histogram type
     # note: this function can take quite a while to run!
@@ -108,17 +112,22 @@ def write_skimmed_csv(histnames, year, eras=['all']):
         if era=='all': 
             thiseras = []
             erasuffix = ''
-        datadirs = list(get_data_dirs(year))
+        datadirs = list(get_data_dirs(year=year,eras=thiseras,dim=dim))
         csvfiles = []
         for datadir in datadirs:
             csvfiles += sort_filenames(list(get_csv_files(datadir)))
         # read histograms into df
-        temp = read_and_merge_csv(csvfiles,histnames)
+        temp = read_and_merge_csv(csvfiles,histnames=histnames)
         # write df to files
         for histname in histnames:
             seldf = dfu.select_histnames(temp,[histname])
             histname = histname.replace(' ','_')
             seldf.to_csv('DF'+year+erasuffix+'_'+histname+'.csv')
+
+
+
+
+
 
 
 

@@ -221,12 +221,12 @@ class HistStruct(object):
         self.scores[histname] = scores
         return scores
     
-    def plot_ls( self, run, ls, refhists, doprint=False):
+    def plot_ls( self, run, ls, recohist=None, recolabel='reco', refhists=None, refhistslabel='reference', doprint=False):
         ### plot the histograms for a given run/ls number versus their references and/or their reconstruction
         nhisttypes = len(self.histnames)
         ncols = 4
         nrows = int(math.ceil(nhisttypes/ncols))
-        fig,axs = plt.subplots(nrows,ncols,figsize=(24,12))
+        fig,axs = plt.subplots(nrows,ncols,figsize=(24,12),squeeze=False)
         # find index that given run and ls number correspond to
         index = (set(list(np.where(self.runnbs==run)[0])) & set(list(np.where(self.lsnbs==ls)[0])))
         if len(index)!=1: 
@@ -239,24 +239,36 @@ class HistStruct(object):
             hist = self.histograms[name][index:index+1,:]
             score = self.classifiers[name].evaluate(hist)
             scores.append(score[0])
-            reco = self.classifiers[name].model.predict(hist) # need to generalize to non-autoencoder classifiers
-            pu.plot_sets([refhists[name],hist,reco],
+            histlist = [hist]
+            colorlist = ['black']
+            labellist = ['hist (run: '+str(int(run))+', ls: '+str(int(ls))+')']
+            transparencylist = [1.]
+            if recohist is not None:
+                histlist.insert(0,recohist)
+                colorlist.insert(0,'red')
+                labellist.insert(0,recolabel)
+                transparencylist.insert(0,1.)
+            if refhists is not None:
+                histlist.insert(0,refhists[name])
+                colorlist.insert(0,'blue')
+                labellist.insert(0,refhistslabel)
+                transparencylist.insert(0,0.3)
+            pu.plot_sets(histlist,
                   fig=fig,ax=axs[int(j/ncols),j%ncols],
                   title=name,
-                  colorlist=['blue','black','red'],labellist=['reference hists','hist (run: '+str(int(run))+', ls: '+str(int(ls))+')','reco'],
-                  transparencylist=[0.3,1.,1.])
+                  colorlist=colorlist,labellist=labellist,transparencylist=transparencylist)
             # additional prints
             if doprint:
                 print('mse (this histogram): '+str(score[0]))
                 print('mse (average reference): '+str(np.average(self.classifiers[name].evaluate( refhists[name]))))
-        return {'scorepoint':scores,'figure':fig}
+        return {'scorepoint':np.array(scores),'figure':fig}
 
-    def plot_run( self, run, refhists, doprint=False):
+    def plot_run( self, run, recohist=None, recolabel='reco', refhists=None, refhistslabel='reference', doprint=False):
         ### call plot_ls for all lumisections in a given run
         lsnbs = self.lsnbs[np.where(histstruct.runnbs==run)]
         print('plotting {} lumisections...'.format(len(lsnbs)))
         for lsnb in lsnbs:
-            _ = self.plotlsreco(run,lsnb,refhists,doprint=doprint)
+            _ = self.plotlsreco(run, lsnb, recohist=recohist, recolabel=recolabel, refhists=refhists, refhistslabel=refhistslabel, doprint=doprint)
 
 
 

@@ -6,9 +6,13 @@
 ### imports
 
 # external modules
+import os
+import math
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
+from copy import copy
+import imageio
 
 # local modules
 
@@ -74,7 +78,57 @@ def plot_hists_multi(histlist, colorlist=[], labellist=[], transparency=1, xlims
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
     return (fig,ax)
-    
+
+def plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None):
+    ### plot a 2D histogram
+    # - hist is a 2D numpy array of shape (nxbins, nybins)
+    if fig is None or ax is None: fig,ax = plt.subplots()
+    my_norm = mpl.colors.Normalize(vmin=1e-12, clip=False)
+    my_cmap = copy(mpl.cm.get_cmap('jet'))
+    my_cmap.set_under('w')
+    cobject = mpl.cm.ScalarMappable(norm=my_norm, cmap=my_cmap)
+    cobject.set_array([]) # ad-hoc bug fix
+    ax.imshow(hist, interpolation='none', norm=my_norm, cmap=my_cmap)
+    fig.colorbar(cobject,ax=ax)
+    if title is not None: ax.set_title(title)
+    if xaxtitle is not None: ax.set_xlabel(xaxtitle)
+    if yaxtitle is not None: ax.set_ylabel(yaxtitle)
+    return (fig,ax)
+
+def plot_hists_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None):
+    ### plot multiple 2D histograms next to each other
+    # - hists: list of 2D numpy arrays of shape (nxbins,nybins), or an equivalent 3D numpy array
+    # - ncols: number of columns to use
+    nrows = int(math.ceil(len(hists)/ncols))
+    fig,axs = plt.subplots(nrows,ncols,figsize=(6*ncols,4*nrows),squeeze=False)
+    if( subtitles is not None and len(subtitles)!=len(hists) ):
+        raise Exception('ERROR in plot_utils.py / plot_hists_2d: subtitles must have same length as hists or be None')
+    # loop over all histograms belonging to this lumisection and make the plots
+    for i,hist in enumerate(hists):
+        subtitle = None
+        if subtitles is not None: subtitle = subtitles[i]
+        plot_hist_2d(hist,fig=fig,ax=axs[int(i/ncols),i%ncols],title=subtitle,xaxtitle=xaxtitle,yaxtitle=yaxtitle)
+    if title is not None: fig.suptitle(title)
+    return (fig,axs)
+
+def plot_hists_2d_gif(hists, titles = None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp_gif.gif'):
+    nhists = len(hists)
+    filenames = []
+    for i in range(nhists):
+        title = None
+        if titles is not None: title = titles[i]
+        fig,_ = plot_hist_2d(hists[i], title=title, xaxtitle=xaxtitle, yaxtitle=yaxtitle)
+        filename = 'temp_gif_file_{}.png'.format(i)
+        filenames.append(filename)
+        fig.savefig(filename)
+        plt.close()
+    with imageio.get_writer(figname, mode='I', duration=duration) as writer:
+        for filename in filenames:
+            image = imageio.imread(filename)
+            writer.append_data(image)
+    for filename in filenames:
+        os.remove(filename)
+        
 def plot_hists_from_df(df, histtype, nhists):
     ### plot a number of histograms in a dataframe
     # - df is the dataframe from which to plot
