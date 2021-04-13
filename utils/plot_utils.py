@@ -82,8 +82,18 @@ def plot_hists_multi(histlist, colorlist=[], labellist=[], transparency=1, xlims
 def plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None):
     ### plot a 2D histogram
     # - hist is a 2D numpy array of shape (nxbins, nybins)
+    # notes:
+    # - if the histogram contains only nonnegative values, values below 1e-12 will not be plotted
+    #   (i.e. they will be shown as white spots in the plot) to discriminate zero from small but nonzero
+    # - if the histogram contains negative values, the color axis will be symmetrized around zero
     if fig is None or ax is None: fig,ax = plt.subplots()
-    my_norm = mpl.colors.Normalize(vmin=1e-12, clip=False)
+    histmin = np.amin(hist)
+    histmax = np.amax(hist)
+    hasnegative = histmin<-1e-12
+    if not hasnegative: my_norm = mpl.colors.Normalize(vmin=1e-12, clip=False)
+    else: 
+        extremum = max(abs(histmax),abs(histmin))
+        my_norm = mpl.colors.Normalize(vmin=-extremum,vmax=extremum,clip=False)
     my_cmap = copy(mpl.cm.get_cmap('jet'))
     my_cmap.set_under('w')
     cobject = mpl.cm.ScalarMappable(norm=my_norm, cmap=my_cmap)

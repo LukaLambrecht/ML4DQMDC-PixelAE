@@ -21,7 +21,7 @@ class HistogramClassifier(ABC):
     ### abstract base class for histogram classifying objects
     # note that all concrete histogram classifiers must inherit from HistogramClassifier!
     # a HistogramClassifier can be any object that classifies a histogram; in more detail:
-    # - the input is a collection of histograms (of the same type), represented by a numpy array of shape (nhists,nbins).
+    # - the input is a collection of histograms (of the same type), represented by a numpy array of shape (nhists,nbins) for 1D histograms or (nhists,nybins,nxbins) for 2D histograms.
     # - the output is an array of numbers of shape (nhists).
     # - the processing between input and output can in principle be anything, but usually some sort of discriminating power is assumed.
     # how to make a concrete HistogramClassifier class:
@@ -39,16 +39,21 @@ class HistogramClassifier(ABC):
     def evaluate( self, histograms ):
         ### main function used to process a set of histograms
         # input arguments:
-        # - histograms: 2D numpy array of shape (nhists,nbins).
+        # - histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins).
         # output: 1D numpy array of shape (nhists), one number per histogram.
         
         # check input args
         if not isinstance( histograms, np.ndarray ):
             raise Exception('ERROR in HistogramClassifier.evaluate: input is of type {}'.format(type(histograms))
                            +' while a numpy array is expected.')
-        if( len(histograms.shape)!=2 ):
+        if( len(histograms.shape)!=2 and len(histograms.shape)!=3 ):
             raise Exception('ERROR in HistogramClassifier.evaluate: input array has shape {}'.format(histograms.shape)
-                            +' while a 2D array is expected.')
+                            +' while a 2D or 3D array is expected.')
+
+
+
+
+
 
 
 
