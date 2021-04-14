@@ -65,6 +65,14 @@
 </li>
             
 <li >
+    <a href="../MaxPullClassifier/">MaxPullClassifier</a>
+</li>
+            
+<li >
+    <a href="../NMFClassifier/">NMFClassifier</a>
+</li>
+            
+<li >
     <a href="../TemplateBasedClassifier/">TemplateBasedClassifier</a>
 </li>
     </ul>
@@ -152,7 +160,7 @@
                                 </a>
                             </li>
                             <li >
-                                <a rel="prev" href="../TemplateBasedClassifier/">
+                                <a rel="prev" href="../MaxPullClassifier/">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -176,7 +184,7 @@
 <p><strong>abstract base class for histogram classifying objects</strong><br />
 note that all concrete histogram classifiers must inherit from HistogramClassifier!<br />
 a HistogramClassifier can be any object that classifies a histogram; in more detail:<br />
-- the input is a collection of histograms (of the same type), represented by a numpy array of shape (nhists,nbins).<br />
+- the input is a collection of histograms (of the same type), represented by a numpy array of shape (nhists,nbins) for 1D histograms or (nhists,nybins,nxbins) for 2D histograms.<br />
 - the output is an array of numbers of shape (nhists).<br />
 - the processing between input and output can in principle be anything, but usually some sort of discriminating power is assumed.<br />
 how to make a concrete HistogramClassifier class:<br />
@@ -189,7 +197,7 @@ see also the existing examples!  </p>
 <h3 id="evaluate-self-histograms">evaluate( self, histograms )</h3>
 <p><strong>main function used to process a set of histograms</strong><br />
 input arguments:<br />
-- histograms: 2D numpy array of shape (nhists,nbins).<br />
+- histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins).<br />
 output: 1D numpy array of shape (nhists), one number per histogram.  </p></div>
         </div>
 

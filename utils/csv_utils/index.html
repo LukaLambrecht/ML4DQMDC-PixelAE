@@ -65,6 +65,14 @@
 </li>
             
 <li >
+    <a href="../../src/classifiers/MaxPullClassifier/">MaxPullClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/NMFClassifier/">NMFClassifier</a>
+</li>
+            
+<li >
     <a href="../../src/classifiers/TemplateBasedClassifier/">TemplateBasedClassifier</a>
 </li>
     </ul>
@@ -169,6 +177,7 @@
             <li><a href="#get95csv95filesinputdir">get_csv_files(inputdir)</a></li>
             <li><a href="#sort95filenamesfilelist">sort_filenames(filelist)</a></li>
             <li><a href="#read95csvcsv95file">read_csv(csv_file)</a></li>
+            <li><a href="#write95csvdataframecsvfilename">write_csv(dataframe,csvfilename)</a></li>
             <li><a href="#read95and95merge95csvcsv95files-histnames-runnbs">read_and_merge_csv(csv_files, histnames=[], runnbs=[])</a></li>
             <li><a href="#write95skimmed95csvhistnames-year-erasall-dim1">write_skimmed_csv(histnames, year, eras=['all'], dim=1)</a></li>
     </ul>
@@ -199,6 +208,10 @@ note that the number is supposed to be in ..._<number>.<extension> format  </p>
 <h2 id="read95csvcsv95file">read_csv(csv_file)</h2>
 <p><strong>read csv file into pandas dataframe</strong><br />
 csv_file is the path to the csv file to be read  </p>
+<hr />
+<h2 id="write95csvdataframecsvfilename">write_csv(dataframe,csvfilename)</h2>
+<p><strong>write a dataframe to a csv file</strong><br />
+note: just a wrapper for builtin dataframe.to_csv  </p>
 <hr />
 <h2 id="read95and95merge95csvcsv95files-histnames-runnbs">read_and_merge_csv(csv_files, histnames=[], runnbs=[])</h2>
 <p><strong>read and merge list of csv files into a single df</strong><br />

@@ -65,6 +65,14 @@
 </li>
             
 <li >
+    <a href="../../src/classifiers/MaxPullClassifier/">MaxPullClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/NMFClassifier/">NMFClassifier</a>
+</li>
+            
+<li >
     <a href="../../src/classifiers/TemplateBasedClassifier/">TemplateBasedClassifier</a>
 </li>
     </ul>
@@ -202,7 +210,11 @@ output: tuple of figure and axis objects, that can be used to further tune the l
 <hr />
 <h2 id="plot95hist952dhist-fignone-axnone-titlenone-xaxtitlenone-yaxtitlenone">plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None)</h2>
 <p><strong>plot a 2D histogram</strong><br />
-- hist is a 2D numpy array of shape (nxbins, nybins)  </p>
+- hist is a 2D numpy array of shape (nxbins, nybins)<br />
+notes:<br />
+- if the histogram contains only nonnegative values, values below 1e-12 will not be plotted<br />
+(i.e. they will be shown as white spots in the plot) to discriminate zero from small but nonzero<br />
+- if the histogram contains negative values, the color axis will be symmetrized around zero  </p>
 <hr />
 <h2 id="plot95hists952dhists-ncols4-title-none-subtitlesnone-xaxtitlenone-yaxtitlenone">plot_hists_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None)</h2>
 <p><strong>plot multiple 2D histograms next to each other</strong><br />
