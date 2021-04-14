@@ -33,7 +33,7 @@ def crophists(hists, slices):
     elif len(hists.shape)==3:
         return hists[:,slices[0],slices[1]]
     else:
-        raise Excepion('ERROR in hist_utils.py / crophists: histograms have invalid input shape: {}'.format(hists.shape))
+        raise Exception('ERROR in hist_utils.py / crophists: histograms have invalid input shape: {}'.format(hists.shape))
         
 ### rebinning of histograms
 
@@ -70,7 +70,7 @@ def rebinhists(hists, factor):
                 rebinned[:,i,j] = np.sum(hists[:,factor[0]*i:factor[0]*(i+1),factor[1]*j:factor[1]*(j+1)],axis=(1,2))
         return rebinned
     else:
-        raise Excepion('ERROR in hist_utils.py / rebinhists: histograms have invalid input shape: {}'.format(hists.shape))
+        raise Exception('ERROR in hist_utils.py / rebinhists: histograms have invalid input shape: {}'.format(hists.shape))
 
 ### normalization
 
@@ -86,7 +86,7 @@ def normalizehists(hists):
             normhists.append( hists[i]/hists[i].max() )
         return np.array(normhists)
     else:
-        raise Excepion('ERROR in hist_utils.py / normalizehists: histograms have invalid input shape: {}'.format(hists.shape))
+        raise Exception('ERROR in hist_utils.py / normalizehists: histograms have invalid input shape: {}'.format(hists.shape))
 
 ### averaging a collection of histograms (e.g. for template definition)
 
@@ -108,7 +108,7 @@ def averagehists(hists, nout):
             avghists[i,:] = np.mean(hists[startindex:stopindex,:,:],axis=0)
         return avghists
     else:
-        raise Excepion('ERROR in hist_utils.py / averagehists: histograms have invalid input shape: {}'.format(hists.shape))
+        raise Exception('ERROR in hist_utils.py / averagehists: histograms have invalid input shape: {}'.format(hists.shape))
 
 
 
@@ -123,7 +123,7 @@ def moment(bins, counts, order):
     #   (shape (nhistograms,nbins))
     # - order is the order of the moment to calculate
     #   (0 = maximum, 1 = mean value)
-    # note: for now only 1D histograms are supported
+    # note: for now only 1D histograms are supported!
     if len(bins.shape)==1:
         bins = np.tile(bins,(len(counts),1))
     if not bins.shape == counts.shape:
@@ -158,6 +158,8 @@ def histmoments(bins, counts, orders):
 
 def preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None, donormalize=True, doplot=False):
     ### read a .npy file and output the histograms
+    # args: see e.g. preparedatafromdf
+    # note: not yet tested for 2D histograms, but is expected to work...
     
     hist = np.load(dataname,allow_pickle=False)
     # preprocessing of the data: rebinning and normalizing

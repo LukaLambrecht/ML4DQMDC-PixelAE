@@ -51,10 +51,13 @@ def mseTop10Raw(y_true, y_pred):
 
 def mseTopNRaw(y_true, y_pred, n=10):
     ### generalization of mseTop10Raw to any number of bins to take into account
+    # note: now generalized to also work for 2D histograms, i.e. arrays of shape (nhists,nybins,nxbins)!
     sqdiff = np.power(y_true-y_pred,2)
-    sqdiff[:,::-1].sort()
-    sqdiff = sqdiff[:,:n]
-    mean = np.mean(sqdiff,axis=-1)
+    if len(sqdiff.shape)==3:
+        sqdiff = sqdiff.reshape(len(sqdiff),-1)
+    print(sqdiff.shape)
+    sqdiff = np.partition( sqdiff, -n, axis=-1 )[:,-n:]
+    mean = np.mean( sqdiff, axis=-1 )
     return mean
 
 # attempts to use chi2 instead of mse, so far no good results, but keep for reference

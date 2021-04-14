@@ -71,6 +71,10 @@ def read_csv(csv_file):
     df.reset_index(drop=True,inplace=True)
     return df
 
+def write_csv(dataframe,csvfilename):
+    ### write a dataframe to a csv file
+    # note: just a wrapper for builtin dataframe.to_csv
+    dataframe.to_csv(csvfilename)
 
 def read_and_merge_csv(csv_files, histnames=[], runnbs=[]):
     ### read and merge list of csv files into a single df
