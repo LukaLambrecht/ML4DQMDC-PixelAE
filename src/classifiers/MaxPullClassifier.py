@@ -31,33 +31,38 @@ def pull( testhist, refhist ):
     norm = np.sum(refhist)/np.sum(testhist)
     return (norm*testhist-refhist)/np.power(denom,1/2)
 
-def maxabspull( testhist, refhist ):
+def maxabspull( testhist, refhist, n=1 ):
     ### calculate maximum of bin-per-bin pulls (in absolute value) between two histograms
     # see definition of bin-per-bin pull in function pull (above)
     # input arguments:
     # - testhist, refhist: numpy arrays of the same shape
+    # - n: nubmer of largest pull values to average over (default: 1, just take single maximum)
     # output:
     # a float
-    return np.amax(np.abs( pull(testhist,refhist) ))
+    abspull = np.abs( pull(testhist,refhist) ).flatten()
+    largest = np.partition( abspull, -n )[-n:]
+    return np.mean(largest)
 
 class MaxPullClassifier(HistogramClassifier):
     ### histogram classification based on maximum pull between test histogram and reference histogram.
     # specifically intended for 2D histograms, but should in principle work for 1D as well.
     # see static function pull (above) for definition of bin-per-bin pull and other notes.
     
-    def __init__( self, refhist ):
+    def __init__( self, refhist, n=1 ):
         ### initializer from a reference histogram
         # input arguments:
         # - refhist: a numpy array of shape (nbins) or (nybins,nxbins)
+        # - n: number of largest pull values to average over (default: 1, just take single maximum)
         super( MaxPullClassifier,self ).__init__()
         self.refhist = refhist
+        self.n = n
         
     def evaluate( self, histograms ):
         ### classify the histograms based on their max bin-per-bin pull (in absolute value) with respect to a reference histogram
         super( MaxPullClassifier,self).evaluate( histograms )
         maxpulls = np.zeros(len(histograms))
         for i,hist in enumerate(histograms):
-            maxpulls[i] = maxabspull( hist, self.refhist )
+            maxpulls[i] = maxabspull( hist, self.refhist, n=self.n )
         return maxpulls
     
     def getpull( self, histogram ):
@@ -67,11 +72,6 @@ class MaxPullClassifier(HistogramClassifier):
         # output:
         # numpy array of same shape as histogram containing bin-per-bin pull w.r.t. reference histogram
         return pull( histogram, self.refhist )
-
-
-
-
-
 
 
 
