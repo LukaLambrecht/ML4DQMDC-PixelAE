@@ -79,7 +79,7 @@ def plot_hists_multi(histlist, colorlist=[], labellist=[], transparency=1, xlims
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
     return (fig,ax)
 
-def plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None):
+def plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None, caxrange=None):
     ### plot a 2D histogram
     # - hist is a 2D numpy array of shape (nxbins, nybins)
     # notes:
@@ -94,6 +94,8 @@ def plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=No
     else: 
         extremum = max(abs(histmax),abs(histmin))
         my_norm = mpl.colors.Normalize(vmin=-extremum,vmax=extremum,clip=False)
+    if caxrange is not None:
+        my_norm = mpl.colors.Normalize(vmin=caxrange[0],vmax=caxrange[1],clip=False)
     my_cmap = copy(mpl.cm.get_cmap('jet'))
     my_cmap.set_under('w')
     cobject = mpl.cm.ScalarMappable(norm=my_norm, cmap=my_cmap)
@@ -105,7 +107,7 @@ def plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=No
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
     return (fig,ax)
 
-def plot_hists_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None):
+def plot_hists_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None):
     ### plot multiple 2D histograms next to each other
     # - hists: list of 2D numpy arrays of shape (nxbins,nybins), or an equivalent 3D numpy array
     # - ncols: number of columns to use
@@ -117,7 +119,7 @@ def plot_hists_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, y
     for i,hist in enumerate(hists):
         subtitle = None
         if subtitles is not None: subtitle = subtitles[i]
-        plot_hist_2d(hist,fig=fig,ax=axs[int(i/ncols),i%ncols],title=subtitle,xaxtitle=xaxtitle,yaxtitle=yaxtitle)
+        plot_hist_2d(hist,fig=fig,ax=axs[int(i/ncols),i%ncols],title=subtitle,xaxtitle=xaxtitle,yaxtitle=yaxtitle,caxrange=caxrange)
     if title is not None: fig.suptitle(title)
     return (fig,axs)
 
