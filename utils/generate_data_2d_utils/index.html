@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>csv_utils - Documentation for the ML4DQM/DC notebooks</title>
+        <title>generate_data_2d_utils - Documentation for the ML4DQM/DC notebooks</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -117,16 +117,16 @@
     <a href="../clustering_utils/">clustering_utils</a>
 </li>
                                     
-<li class="active">
-    <a href="./">csv_utils</a>
+<li >
+    <a href="../csv_utils/">csv_utils</a>
 </li>
                                     
 <li >
     <a href="../dataframe_utils/">dataframe_utils</a>
 </li>
                                     
-<li >
-    <a href="../generate_data_2d_utils/">generate_data_2d_utils</a>
+<li class="active">
+    <a href="./">generate_data_2d_utils</a>
 </li>
                                     
 <li >
@@ -159,12 +159,12 @@
                             </a>
                         </li>
                             <li >
-                                <a rel="next" href="../clustering_utils/">
+                                <a rel="next" href="../dataframe_utils/">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li >
-                                <a rel="prev" href="../dataframe_utils/">
+                                <a rel="prev" href="../generate_data_utils/">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -176,64 +176,85 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#csv-utils">csv utils</a></li>
-            <li><a href="#get95data95dirsyear2017-eras-dim1">get_data_dirs(year='2017', eras=[], dim=1)</a></li>
-            <li><a href="#get95csv95filesinputdir">get_csv_files(inputdir)</a></li>
-            <li><a href="#sort95filenamesfilelist">sort_filenames(filelist)</a></li>
-            <li><a href="#read95csvcsv95file">read_csv(csv_file)</a></li>
-            <li><a href="#write95csvdataframecsvfilename">write_csv(dataframe,csvfilename)</a></li>
-            <li><a href="#read95and95merge95csvcsv95files-histnames-runnbs">read_and_merge_csv(csv_files, histnames=[], runnbs=[])</a></li>
-            <li><a href="#write95skimmed95csvhistnames-year-erasall-dim1">write_skimmed_csv(histnames, year, eras=['all'], dim=1)</a></li>
+        <li class="main active"><a href="#generate-data-2d-utils">generate data 2d utils</a></li>
+            <li><a href="#goodnoise95ndshape-fstdnone-kmaxscale025-ncomponents3">goodnoise_nd(shape, fstd=None, kmaxscale=0.25, ncomponents=3)</a></li>
+            <li><a href="#whitenoise95ndshape-fstdnone">whitenoise_nd(shape, fstd=None)</a></li>
+            <li><a href="#random95lico95ndhists">random_lico_nd(hists)</a></li>
+            <li><a href="#fourier95noise95ndhists-outfilename-figname-nresamples1-nonnegativetrue-stdfactor15-kmaxscale025-ncomponents3">fourier_noise_nd(hists, outfilename='', figname='', nresamples=1, nonnegative=True,  stdfactor=15., kmaxscale=0.25, ncomponents=3)</a></li>
+            <li><a href="#white95noise95ndhists-figname-nresamples1-nonnegativetrue-stdfactor15">white_noise_nd(hists, figname='', nresamples=1, nonnegative=True, stdfactor=15.)</a></li>
+            <li><a href="#resample95lico95ndhists-nresamples1-nonnegativetrue">resample_lico_nd(hists, nresamples=1, nonnegative=True)</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="csv-utils">csv utils</h1>
+<h1 id="generate-data-2d-utils">generate data 2d utils</h1>
 <hr />
-<h2 id="get95data95dirsyear2017-eras-dim1">get_data_dirs(year='2017', eras=[], dim=1)</h2>
-<p><strong>yield all data directories</strong><br />
-note that the location of the data is hard-coded;<br />
-this function might break for newer or later reprocessings of the data.<br />
-- year is a string, either '2017' or '2018'<br />
-- era is a list containing a selection of era names<br />
-(default empty list = all eras)<br />
-- dim is either 1 or 2 (for 1D or 2D plots)  </p>
-<hr />
-<h2 id="get95csv95filesinputdir">get_csv_files(inputdir)</h2>
-<p><strong>yields paths to all csv files in input directory</strong><br />
-note that the output paths consist of input_dir/filename<br />
-this function is only meant for 1-level down searching,<br />
-i.e. the .csv files listed directly under input_dir.  </p>
-<hr />
-<h2 id="sort95filenamesfilelist">sort_filenames(filelist)</h2>
-<p><strong>sort filenames in numerical order (e.g. 2 before 10)</strong><br />
-note that the number is supposed to be in ..._<number>.<extension> format  </p>
-<hr />
-<h2 id="read95csvcsv95file">read_csv(csv_file)</h2>
-<p><strong>read csv file into pandas dataframe</strong><br />
-csv_file is the path to the csv file to be read  </p>
-<hr />
-<h2 id="write95csvdataframecsvfilename">write_csv(dataframe,csvfilename)</h2>
-<p><strong>write a dataframe to a csv file</strong><br />
-note: just a wrapper for builtin dataframe.to_csv  </p>
-<hr />
-<h2 id="read95and95merge95csvcsv95files-histnames-runnbs">read_and_merge_csv(csv_files, histnames=[], runnbs=[])</h2>
-<p><strong>read and merge list of csv files into a single df</strong><br />
-csv_files is a list of paths to files to merge into a df<br />
-histnames is a list of the types of histograms to keep (default: all)<br />
-runnbs is a list of run numbers to keep (default: all)  </p>
-<hr />
-<h2 id="write95skimmed95csvhistnames-year-erasall-dim1">write_skimmed_csv(histnames, year, eras=['all'], dim=1)</h2>
-<p><strong>read all available data for a given year/era and make a file per histogram type</strong><br />
-input arguments:<br />
-- histnames: list of histogram names for which to make a separate file<br />
-- year: data-taking year (in string format)<br />
-- eras: data-taking eras for which to make a separate file (in string format)<br />
-use 'all' to make a file with all eras merged, i.e. a full data taking year<br />
-- dim: dimension of histograms (1 or 2), needed to retrieve the correct folder containing input files<br />
+<h2 id="goodnoise95ndshape-fstdnone-kmaxscale025-ncomponents3">goodnoise_nd(shape, fstd=None, kmaxscale=0.25, ncomponents=3)</h2>
+<p><strong>generate one sample of 'good' noise consisting of fourier components</strong><br />
+generalization of goodnoise (see generate_data_utils) to arbitrary number of dimensions<br />
+input args:<br />
+- shape: a tuple, shape of the noise array to be sampled<br />
+note: in case of 1D, a comma is needed e.g. shape = (30,) else it will be automatically parsed to int and raise an error<br />
+- fstd: an array of shape given by shape argument,<br />
+used for scaling of the amplitude of the noise bin-by-bin<br />
+(default: no scaling).<br />
+- kmaxscale: scale factor to limit maximum frequency (lower kmaxscale means smoother noise)<br />
+note: can be a tuple with same length as shape, to scale differently in different dimensions.<br />
+- ncomponents: number of random sines to add per dimension<br />
+note: can be a tuple with same length as shape, to use a different number of components in different dimensions.<br />
 output:<br />
-- one csv file per year/era and per histogram type<br />
-note: this function can take quite a while to run!  </p></div>
+- numpy array of shape detailed by shape argument containing the noise  </p>
+<hr />
+<h2 id="whitenoise95ndshape-fstdnone">whitenoise_nd(shape, fstd=None)</h2>
+<p><strong>generate one sample of white noise (standard normally distributed, uncorrelated between bins)</strong><br />
+generalization of whitenoise (see generate_data_utils) to arbitrary number of dimensions<br />
+input args:<br />
+- shape: a tuple, shape of the noise array to be sampled<br />
+note: in case of 1D, a comma is needed e.g. shape = (30,) else it will be automatically parsed to int and raise an error<br />
+- fstd: an array of shape given by shape argument,<br />
+used for scaling of the amplitude of the noise bin-by-bin<br />
+(default: no scaling).<br />
+output:<br />
+- numpy array of shape detailed by shape argument containing the noise  </p>
+<hr />
+<h2 id="random95lico95ndhists">random_lico_nd(hists)</h2>
+<p><strong>generate one linear combination of histograms with random coefficients in (0,1) summing to 1.</strong><br />
+generalization of random_lico (see generate_data_utils) to arbitrary number of dimensions.<br />
+input args:<br />
+- numpy array of shape (nhists,<arbitrary number of additional dimensions>)<br />
+output:<br />
+- numpy array of shape (<same dimensions as input>), containing the new histogram  </p>
+<hr />
+<h2 id="fourier95noise95ndhists-outfilename-figname-nresamples1-nonnegativetrue-stdfactor15-kmaxscale025-ncomponents3">fourier_noise_nd(hists, outfilename='', figname='', nresamples=1, nonnegative=True,  stdfactor=15., kmaxscale=0.25, ncomponents=3)</h2>
+<p><strong>apply fourier noise on random histograms with simple flat amplitude scaling.</strong><br />
+generalization of fourier_noise (see generate_data_utils) to arbitrary number of dimensions.<br />
+input args:<br />
+- hists: numpy array of shape (nhists,<arbitrary number of dimensions>) used for seeding<br />
+- outfilename: path to csv file to write results to (default: no writing)<br />
+- figname: path to figure plotting examples (default: no plotting)<br />
+- nresamples: number of samples to draw per input histogram<br />
+- nonnegative: boolean whether to set all bins to minimum zero after applying noise<br />
+- stdfactor: factor to scale magnitude of noise (larger factor = smaller noise)<br />
+- kmaxscale and ncomponents: see goodnoise_nd  </p>
+<hr />
+<h2 id="white95noise95ndhists-figname-nresamples1-nonnegativetrue-stdfactor15">white_noise_nd(hists, figname='', nresamples=1, nonnegative=True, stdfactor=15.)</h2>
+<p><strong>apply white noise to the histograms in hists.</strong><br />
+generalization of white_noise (see generate_data_utils) to arbitrary number of dimensions.<br />
+input args:<br />
+- hists: np array (nhists,<arbitrary number of dimensions>) containing input histograms<br />
+- figname: path to figure plotting examples (default: no plotting)<br />
+- nresamples: number of samples to draw per input histogram<br />
+- nonnegative: boolean whether to set all bins to minimum zero after applying noise<br />
+- stdfactor: scaling factor of white noise amplitude (higher factor = smaller noise)  </p>
+<hr />
+<h2 id="resample95lico95ndhists-nresamples1-nonnegativetrue">resample_lico_nd(hists, nresamples=1, nonnegative=True)</h2>
+<p><strong>take random linear combinations of input histograms</strong><br />
+generalization of fourier_noise (see generate_data_utils) to arbitrary number of dimensions.<br />
+input args:<br />
+- hists: numpy array of shape (nhists,<arbitrary number of dimensions>) used for seeding<br />
+- nresamples: number of samples to draw<br />
+- nonnegative: boolean whether to set all bins to minimum zero after applying noise<br />
+note: coefficients in linear combination are always nonnegative, so this setting is superfluous is input histograms are all nonnegative  </p></div>
         </div>
 
         <footer class="col-md-12">

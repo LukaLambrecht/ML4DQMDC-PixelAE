@@ -126,6 +126,10 @@
 </li>
                                     
 <li >
+    <a href="../generate_data_2d_utils/">generate_data_2d_utils</a>
+</li>
+                                    
+<li >
     <a href="../generate_data_utils/">generate_data_utils</a>
 </li>
                                     
@@ -211,7 +215,13 @@ contrary to mseTop10, this function only works for arrays with 2D shapes (so sha
 <hr />
 <h2 id="msetopnrawy95true-y95pred-n10">mseTopNRaw(y_true, y_pred, n=10)</h2>
 <p><strong>generalization of mseTop10Raw to any number of bins to take into account</strong><br />
-note: now generalized to also work for 2D histograms, i.e. arrays of shape (nhists,nybins,nxbins)!  </p>
+note: now generalized to also work for 2D histograms, i.e. arrays of shape (nhists,nybins,nxbins)!<br />
+hence this is the most general method and preferred above mseTop10 and mseTop10Raw, which are only kept for reference<br />
+input arguments:<br />
+- y_true, y_pred: numpy arrays between which to calculate the mean square difference, of shape (nhists,nbins) or (nhists,nybins,nxbins)<br />
+- n: number of largest elements to keep for averaging<br />
+output:<br />
+numpy array of shape (nhists)  </p>
 <hr />
 <h2 id="chisquaredy95true-y95pred">chiSquared(y_true, y_pred)</h2>
 <p><strong>chi2 loss functionfor autoencoder training</strong><br />

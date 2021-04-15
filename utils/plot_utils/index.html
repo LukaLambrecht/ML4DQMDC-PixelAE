@@ -126,6 +126,10 @@
 </li>
                                     
 <li >
+    <a href="../generate_data_2d_utils/">generate_data_2d_utils</a>
+</li>
+                                    
+<li >
     <a href="../generate_data_utils/">generate_data_utils</a>
 </li>
                                     
@@ -175,8 +179,8 @@
         <li class="main active"><a href="#plot-utils">plot utils</a></li>
             <li><a href="#plot95histshistlist-colorlist-labellist-transparency1-xlims0-1-titlenone-xaxtitlenone-yaxtitlenone">plot_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1), title=None, xaxtitle=None, yaxtitle=None)</a></li>
             <li><a href="#plot95hists95multihistlist-colorlist-labellist-transparency1-xlims0-1-titlenone-xaxtitlenone-yaxtitlenone">plot_hists_multi(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1), title=None, xaxtitle=None, yaxtitle=None)</a></li>
-            <li><a href="#plot95hist952dhist-fignone-axnone-titlenone-xaxtitlenone-yaxtitlenone">plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None)</a></li>
-            <li><a href="#plot95hists952dhists-ncols4-title-none-subtitlesnone-xaxtitlenone-yaxtitlenone">plot_hists_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None)</a></li>
+            <li><a href="#plot95hist952dhist-fignone-axnone-titlenone-xaxtitlenone-yaxtitlenone-caxrangenone">plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None, caxrange=None)</a></li>
+            <li><a href="#plot95hists952dhists-ncols4-title-none-subtitlesnone-xaxtitlenone-yaxtitlenone-caxrangenone">plot_hists_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None)</a></li>
             <li><a href="#plot95hists952d95gifhists-titles-none-xaxtitlenone-yaxtitlenone-duration03-fignametemp95gifgif">plot_hists_2d_gif(hists, titles = None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp_gif.gif')</a></li>
             <li><a href="#plot95hists95from95dfdf-histtype-nhists">plot_hists_from_df(df, histtype, nhists)</a></li>
             <li><a href="#plot95setssetlist-fignone-axnone-colorlist-labellist-transparencylist-xlims0-1-titlenone-xaxtitlenone-yaxtitlenone">plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], xlims=(0,-1), title=None, xaxtitle=None, yaxtitle=None)</a></li>
@@ -208,7 +212,7 @@ output: tuple of figure and axis objects, that can be used to further tune the l
 - labellist is a list or array containing labels for in legend<br />
 output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it  </p>
 <hr />
-<h2 id="plot95hist952dhist-fignone-axnone-titlenone-xaxtitlenone-yaxtitlenone">plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None)</h2>
+<h2 id="plot95hist952dhist-fignone-axnone-titlenone-xaxtitlenone-yaxtitlenone-caxrangenone">plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None, caxrange=None)</h2>
 <p><strong>plot a 2D histogram</strong><br />
 - hist is a 2D numpy array of shape (nxbins, nybins)<br />
 notes:<br />
@@ -216,7 +220,7 @@ notes:<br />
 (i.e. they will be shown as white spots in the plot) to discriminate zero from small but nonzero<br />
 - if the histogram contains negative values, the color axis will be symmetrized around zero  </p>
 <hr />
-<h2 id="plot95hists952dhists-ncols4-title-none-subtitlesnone-xaxtitlenone-yaxtitlenone">plot_hists_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None)</h2>
+<h2 id="plot95hists952dhists-ncols4-title-none-subtitlesnone-xaxtitlenone-yaxtitlenone-caxrangenone">plot_hists_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None)</h2>
 <p><strong>plot multiple 2D histograms next to each other</strong><br />
 - hists: list of 2D numpy arrays of shape (nxbins,nybins), or an equivalent 3D numpy array<br />
 - ncols: number of columns to use  </p>
