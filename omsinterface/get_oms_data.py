@@ -19,15 +19,24 @@ sys.path.append(os.path.abspath('../utils/notebook_utils'))
 
 
 
-def get_oms_data( mode, run, authmode='login' ):
+def get_oms_data( mode, run, hltpathname='', authmode='login' ):
 
     # parse arguments
     
     if mode=='run':
         method = omstools.get_runs
-        args = [run,run]
+        args = [run[0],run[1]] if isinstance(run,tuple) else [run]
     elif mode=='lumisections':
         method = omstools.get_lumisections
+        args = [run]
+    elif mode=='hltpathinfos':
+        method = omstools.get_hltpathinfos
+        args = [run]
+    elif mode=='hltrate': 
+        method = omstools.get_hltpathrates
+        args = [run,hltpathname]
+    elif mode=='hltrates':
+        method = omstools.get_all_hltpathrates
         args = [run]
     else:
         raise Exception('ERROR: mode {} not recognized'.format(mode))

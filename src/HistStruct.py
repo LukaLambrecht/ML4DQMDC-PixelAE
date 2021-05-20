@@ -244,7 +244,9 @@ class HistStruct(object):
             labellist = ['hist (run: '+str(int(run))+', ls: '+str(int(ls))+')']
             transparencylist = [1.]
             if recohist is not None:
-                histlist.insert(0,recohist)
+                #histlist.insert(0,recohist[name])
+                reco = self.classifiers[name].model.predict(hist) # need to generalize to non-autoencoder classifiers
+                histlist.insert(0,reco)
                 colorlist.insert(0,'red')
                 labellist.insert(0,recolabel)
                 transparencylist.insert(0,1.)

@@ -91,7 +91,6 @@ def _get_resources_page(table, parameters, page, page_size, **kwargs):
     params.update(parameters)
     
     oms_resource = get_oms_resource(table, params, **kwargs)
-    print("Inside get_resources_page")
 
     return get_oms_resource(table, params, **kwargs)
 
@@ -106,7 +105,6 @@ def get_resources(table, parameters, page_size=PAGE_SIZE, silent=False, **kwargs
     response = _get_resources_page(
         table, parameters, page=1, page_size=page_size, **kwargs
     )
-    print("Inside get_resources")
     
     resource_count = response["meta"]["totalResourceCount"]
     page_count = calc_page_count(resource_count, page_size)
@@ -183,9 +181,7 @@ def get_lumisection_count(run_number, **kwargs):
     return resource_count
 
 
-def get_lumisections(
-    run_number=None, fill_number=None, start_time=None, end_time=None, **kwargs
-):
+def get_lumisections( run_number=None, fill_number=None, start_time=None, end_time=None, **kwargs):
     assert (
         bool(run_number) ^ bool(fill_number) ^ bool(start_time and end_time)
     ), "Specify either run number or fill number or time range"
@@ -225,7 +221,7 @@ def get_all_hltpathrates(run_number, silent=False, **kwargs):
         print("Retrieving all hltpathrates for run number {}".format(run_number))
         print("Getting list of available hltpathinfos...")
 
-    hltpathinfos = get_hltpathinfos(run_number, silent=True, **kwargs)
+    hltpathinfos = get_hltpathinfos(run_number, silent=silent, **kwargs)
 
     path_info_count = len(hltpathinfos)
 
@@ -241,7 +237,7 @@ def get_all_hltpathrates(run_number, silent=False, **kwargs):
             text="Path {}/{}: {:80s}".format(i, path_info_count, path_name),
         )
         hltpathrates.extend(
-            get_hltpathrates(run_number, path_name, silent=True, **kwargs)
+            get_hltpathrates(run_number, path_name, silent=silent, **kwargs)
         )
 
     return hltpathrates

@@ -155,9 +155,10 @@ def select_highstat(df, entries_to_bins_ratio=100):
 def get_hist_values(df):
     ### same as builtin "df['histo'].values" but convert strings to np arrays
     # input arguments:
-    # - df: a dataframe containing histograms
+    # - df: a dataframe containing histograms (assumed to be of a single type!)
     # note: this function works for both 1D and 2D histograms,
     #       the distinction is made based on whether or not 'Ybins' is present as a column in the dataframe
+    #       update: 'Ybins' is also present for 1D histograms, but has value 1!
     # output:
     # a tuple containing the following elements:
     # - np array of shape (nhists,nbins) (for 1D) or (nhists,nybins,nxbins) (for 2D)
@@ -165,7 +166,8 @@ def get_hist_values(df):
     # - np array of lumisection numbers of length nhists
     # warning: no check is done to assure that all histograms are of the same type!
     dim = 1
-    if 'Ybins' in df.keys(): dim = 2
+    if 'Ybins' in df.keys():
+        if df.at[0,'Ybins']>1: dim=2
     nxbins = df.at[0,'Xbins']+2 # +2 for under- and overflow bins
     vals = np.zeros((len(df),nxbins))
     if dim==2: 
