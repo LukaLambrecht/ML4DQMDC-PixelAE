@@ -52,6 +52,7 @@ def _get_oms_resource_authenticated(relative_url, cookies):
 def get_oms_resource(table, parameters, **kwargs):
     parameters = urlencode(parameters)
     relative_url = "{table}?{parameters}".format(table=table, parameters=parameters)
+    print('relative url: '+str(relative_url))
     
     inside_cern_gpn = check_oms_connectivity()
     if inside_cern_gpn:  # Within CERN GPN
