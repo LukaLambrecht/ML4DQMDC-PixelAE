@@ -45,6 +45,48 @@
                                 <a href="../..">Home</a>
                             </li>
                             <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">omsapi <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../omsapi/get_oms_data/">get_oms_data</a>
+</li>
+                                    
+<li >
+    <a href="../../omsapi/omsapi/">omsapi</a>
+</li>
+                                    
+<li >
+    <a href="../../omsapi/urls/">urls</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">omsinterface <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../omsinterface/cert/">cert</a>
+</li>
+                                    
+<li >
+    <a href="../../omsinterface/connectiontools/">connectiontools</a>
+</li>
+                                    
+<li >
+    <a href="../../omsinterface/get_oms_data/">get_oms_data</a>
+</li>
+                                    
+<li >
+    <a href="../../omsinterface/omstools/">omstools</a>
+</li>
+                                    
+<li >
+    <a href="../../omsinterface/urls/">urls</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">src <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
@@ -263,9 +305,10 @@ note: no check is done on the run number!  </p>
 <h2 id="get95hist95valuesdf">get_hist_values(df)</h2>
 <p><strong>same as builtin "df['histo'].values" but convert strings to np arrays</strong><br />
 input arguments:<br />
-- df: a dataframe containing histograms<br />
+- df: a dataframe containing histograms (assumed to be of a single type!)<br />
 note: this function works for both 1D and 2D histograms,<br />
 the distinction is made based on whether or not 'Ybins' is present as a column in the dataframe<br />
+update: 'Ybins' is also present for 1D histograms, but has value 1!<br />
 output:<br />
 a tuple containing the following elements:<br />
 - np array of shape (nhists,nbins) (for 1D) or (nhists,nybins,nxbins) (for 2D)<br />

@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>clustering_utils - Documentation for the ML4DQM/DC notebooks</title>
+        <title>omstools - Documentation for the ML4DQM/DC notebooks</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -61,28 +61,28 @@
 </li>
                                 </ul>
                             </li>
-                            <li class="dropdown">
+                            <li class="dropdown active">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">omsinterface <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../../omsinterface/cert/">cert</a>
+    <a href="../cert/">cert</a>
 </li>
                                     
 <li >
-    <a href="../../omsinterface/connectiontools/">connectiontools</a>
+    <a href="../connectiontools/">connectiontools</a>
 </li>
                                     
 <li >
-    <a href="../../omsinterface/get_oms_data/">get_oms_data</a>
+    <a href="../get_oms_data/">get_oms_data</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">omstools</a>
 </li>
                                     
 <li >
-    <a href="../../omsinterface/omstools/">omstools</a>
-</li>
-                                    
-<li >
-    <a href="../../omsinterface/urls/">urls</a>
+    <a href="../urls/">urls</a>
 </li>
                                 </ul>
                             </li>
@@ -147,48 +147,48 @@
   </li>
                                 </ul>
                             </li>
-                            <li class="dropdown active">
+                            <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">utils <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../autoencoder_utils/">autoencoder_utils</a>
-</li>
-                                    
-<li class="active">
-    <a href="./">clustering_utils</a>
+    <a href="../../utils/autoencoder_utils/">autoencoder_utils</a>
 </li>
                                     
 <li >
-    <a href="../csv_utils/">csv_utils</a>
+    <a href="../../utils/clustering_utils/">clustering_utils</a>
 </li>
                                     
 <li >
-    <a href="../dataframe_utils/">dataframe_utils</a>
+    <a href="../../utils/csv_utils/">csv_utils</a>
 </li>
                                     
 <li >
-    <a href="../generate_data_2d_utils/">generate_data_2d_utils</a>
+    <a href="../../utils/dataframe_utils/">dataframe_utils</a>
 </li>
                                     
 <li >
-    <a href="../generate_data_utils/">generate_data_utils</a>
+    <a href="../../utils/generate_data_2d_utils/">generate_data_2d_utils</a>
 </li>
                                     
 <li >
-    <a href="../hist_utils/">hist_utils</a>
+    <a href="../../utils/generate_data_utils/">generate_data_utils</a>
 </li>
                                     
 <li >
-    <a href="../json_utils/">json_utils</a>
+    <a href="../../utils/hist_utils/">hist_utils</a>
 </li>
                                     
 <li >
-    <a href="../plot_utils/">plot_utils</a>
+    <a href="../../utils/json_utils/">json_utils</a>
 </li>
                                     
 <li >
-    <a href="../refruns_utils/">refruns_utils</a>
+    <a href="../../utils/plot_utils/">plot_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/refruns_utils/">refruns_utils</a>
 </li>
                                 </ul>
                             </li>
@@ -201,12 +201,12 @@
                             </a>
                         </li>
                             <li >
-                                <a rel="next" href="../autoencoder_utils/">
+                                <a rel="next" href="../get_oms_data/">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li >
-                                <a rel="prev" href="../csv_utils/">
+                                <a rel="prev" href="../urls/">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -218,36 +218,95 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#clustering-utils">clustering utils</a></li>
-            <li><a href="#dummy">dummy()</a></li>
-            <li><a href="#vecdistmomentsindex">vecdist(moments,index)</a></li>
-            <li><a href="#costhetadistmomentsindex">costhetadist(moments,index)</a></li>
-            <li><a href="#avgnndistmomentsindexnn">avgnndist(moments,index,nn)</a></li>
-            <li><a href="#getavgnndisthistsnmomentsxminxmaxnbinsnneighbours">getavgnndist(hists,nmoments,xmin,xmax,nbins,nneighbours)</a></li>
-            <li><a href="#filteranomalousdfnmoments3rmouterflowtruermlargest0doplottrue">filteranomalous(df,nmoments=3,rmouterflow=True,rmlargest=0.,doplot=True,)</a></li>
+        <li class="main active"><a href="#omstools">omstools</a></li>
+            <li><a href="#check95oms95connectivity">check_oms_connectivity()</a></li>
+            <li><a href="#get95oms95cookies-authmode-kwargs">get_oms_cookies( authmode, **kwargs )</a></li>
+            <li><a href="#95get95oms95resource95within95cern95gpnrelative95url">_get_oms_resource_within_cern_gpn(relative_url)</a></li>
+            <li><a href="#95get95oms95resource95authenticatedrelative95url-cookies">_get_oms_resource_authenticated(relative_url, cookies)</a></li>
+            <li><a href="#get95oms95resourcetable-parameters-kwargs">get_oms_resource(table, parameters, **kwargs)</a></li>
+            <li><a href="#95get95single95resourcetable-parameters-kwargs">_get_single_resource(table, parameters, **kwargs)</a></li>
+            <li><a href="#get95runrun95number-kwargs">get_run(run_number, **kwargs)</a></li>
+            <li><a href="#get95fillfill95number-kwargs">get_fill(fill_number, **kwargs)</a></li>
+            <li><a href="#95get95resources95pagetable-parameters-page-page95size-kwargs">_get_resources_page(table, parameters, page, page_size, **kwargs)</a></li>
+            <li><a href="#get95resourcestable-parameters-page95sizepage95size-silentfalse-kwargs">get_resources(table, parameters, page_size=PAGE_SIZE, silent=False, **kwargs)</a></li>
+            <li><a href="#get95runsbegin-end-kwargs">get_runs(begin, end, **kwargs)</a></li>
+            <li><a href="#get95fillsbegin-end-kwargs">get_fills(begin, end, **kwargs)</a></li>
+            <li><a href="#get95lumisection95countrun95number-kwargs">get_lumisection_count(run_number, **kwargs)</a></li>
+            <li><a href="#get95lumisections-run95numbernone-fill95numbernone-start95timenone-end95timenone-kwargs">get_lumisections( run_number=None, fill_number=None, start_time=None, end_time=None, **kwargs)</a></li>
+            <li><a href="#get95hltpathinfosrun95number-kwargs">get_hltpathinfos(run_number, **kwargs)</a></li>
+            <li><a href="#get95hltpathratesrun95number-path95name-kwargs">get_hltpathrates(run_number, path_name, **kwargs)</a></li>
+            <li><a href="#get95all95hltpathratesrun95number-silentfalse-kwargs">get_all_hltpathrates(run_number, silent=False, **kwargs)</a></li>
+            <li><a href="#calc95page95countresource95count-page95size">calc_page_count(resource_count, page_size)</a></li>
+            <li><a href="#flatten95resourceresponse">flatten_resource(response)</a></li>
+            <li><a href="#progress95barcurrent-total-text-filler">progress_bar(current, total, text="", filler="#")</a></li>
+            <li><a href="#print95progresscurrent-total-text-args-kwargs">print_progress(current, total, text="", args, *kwargs)</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="clustering-utils">clustering utils</h1>
+<h1 id="omstools">omstools</h1>
 <hr />
-<h2 id="dummy">dummy()</h2>
-<p><strong>general remark: the functions in this script are currently not supported anymore</strong><br />
-please ignore clustering_utils for now, it will probably be removed or completely reworked  </p>
-<hr />
-<h2 id="vecdistmomentsindex">vecdist(moments,index)</h2>
+<h2 id="check95oms95connectivity">check_oms_connectivity()</h2>
 <p>(no valid documentation found)  </p>
 <hr />
-<h2 id="costhetadistmomentsindex">costhetadist(moments,index)</h2>
+<h2 id="get95oms95cookies-authmode-kwargs">get_oms_cookies( authmode, **kwargs )</h2>
 <p>(no valid documentation found)  </p>
 <hr />
-<h2 id="avgnndistmomentsindexnn">avgnndist(moments,index,nn)</h2>
+<h2 id="95get95oms95resource95within95cern95gpnrelative95url">_get_oms_resource_within_cern_gpn(relative_url)</h2>
 <p>(no valid documentation found)  </p>
 <hr />
-<h2 id="getavgnndisthistsnmomentsxminxmaxnbinsnneighbours">getavgnndist(hists,nmoments,xmin,xmax,nbins,nneighbours)</h2>
+<h2 id="95get95oms95resource95authenticatedrelative95url-cookies">_get_oms_resource_authenticated(relative_url, cookies)</h2>
 <p>(no valid documentation found)  </p>
 <hr />
-<h2 id="filteranomalousdfnmoments3rmouterflowtruermlargest0doplottrue">filteranomalous(df,nmoments=3,rmouterflow=True,rmlargest=0.,doplot=True,)</h2>
+<h2 id="get95oms95resourcetable-parameters-kwargs">get_oms_resource(table, parameters, **kwargs)</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="95get95single95resourcetable-parameters-kwargs">_get_single_resource(table, parameters, **kwargs)</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="get95runrun95number-kwargs">get_run(run_number, **kwargs)</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="get95fillfill95number-kwargs">get_fill(fill_number, **kwargs)</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="95get95resources95pagetable-parameters-page-page95size-kwargs">_get_resources_page(table, parameters, page, page_size, **kwargs)</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="get95resourcestable-parameters-page95sizepage95size-silentfalse-kwargs">get_resources(table, parameters, page_size=PAGE_SIZE, silent=False, **kwargs)</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="get95runsbegin-end-kwargs">get_runs(begin, end, **kwargs)</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="get95fillsbegin-end-kwargs">get_fills(begin, end, **kwargs)</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="get95lumisection95countrun95number-kwargs">get_lumisection_count(run_number, **kwargs)</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="get95lumisections-run95numbernone-fill95numbernone-start95timenone-end95timenone-kwargs">get_lumisections( run_number=None, fill_number=None, start_time=None, end_time=None, **kwargs)</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="get95hltpathinfosrun95number-kwargs">get_hltpathinfos(run_number, **kwargs)</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="get95hltpathratesrun95number-path95name-kwargs">get_hltpathrates(run_number, path_name, **kwargs)</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="get95all95hltpathratesrun95number-silentfalse-kwargs">get_all_hltpathrates(run_number, silent=False, **kwargs)</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="calc95page95countresource95count-page95size">calc_page_count(resource_count, page_size)</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="flatten95resourceresponse">flatten_resource(response)</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="progress95barcurrent-total-text-filler">progress_bar(current, total, text="", filler="#")</h2>
+<p>(no valid documentation found)  </p>
+<hr />
+<h2 id="print95progresscurrent-total-text-args-kwargs">print_progress(current, total, text="", <em>args, </em>*kwargs)</h2>
 <p>(no valid documentation found)  </p></div>
         </div>
 
