@@ -235,16 +235,20 @@
 The code in this folder still works (on May 21 2021 at least) but it is nowhere used in the other notebooks in this project and will not be maintained. It can however be used as an alternative / backup way of accessing OMS that does not require to register your own app (see omsapi for details), a CERN username and password suffice.</p>
 <p>References:<br />
 The code is largely based on / copied from the wbmcrawlr tool (<a href="https://github.com/CMSTrackerDPG/wbmcrawlr">https://github.com/CMSTrackerDPG/wbmcrawlr</a>) and the cernrequests package (<a href="https://github.com/CMSTrackerDPG/cernrequests">https://github.com/CMSTrackerDPG/cernrequests</a>) by the Tracker DPG. All credits to the Tracker DPG group, all mistakes in copying or modifying are of course my own.</p>
-<p>How to use:<br />
-- Open example.ipynb<br />
-- The configuration should be quite self-explanatory: choose the mode ('run' for run information, 'lumsisections' for per-lumisection information, other modes also available), enter the run number for which to retrieve the information, choose the mode for authentication (via CERN username and password or via CERN grid certificate).<br />
-- In case you choose to use a certificate, first edit the file 'cert.py' to set the correct paths to where you stored your certificate and key. Else you will be prompted to enter your username and password.<br />
-- Run the cells below, the requested information should now be stored in the specified output json file. Instead, you could also directly use the resulting object in your script without writing it and loading it to a json file.  </p>
-<p>Notes:<br />
-- Preliminary implementation, will be extended to e.g. filter on specific data fields only (for example only keep pileup or luminosity per lumisection), etc. Update: no extensions are planned, as this method of accessing OMS is superseded by a new API version, see above.<br />
-- The authentication with a certificate still has an issue. For now, you need both a certificate and a username/password to make the data retrieval work. The method using username and password seems to work without additional certificate.<br />
-- For more information on how to obtain a certificate, follow this link: <a href="https://github.com/CMSTrackerDPG/cernrequests#prerequisites">https://github.com/CMSTrackerDPG/cernrequests#prerequisites</a><br />
-- One could also install the wbmcrawlr tool (from <a href="here">https://github.com/CMSTrackerDPG/wbmcrawlr</a>) and use it directly. Both methods are equivalent up to now, except these notebooks don't require additional installation of the wbmcrawler tool and cernrequests module.  </p></div>
+<p>How to use:  </p>
+<ul>
+<li>Open example.ipynb  </li>
+<li>The configuration should be quite self-explanatory: choose the mode ('run' for run information, 'lumsisections' for per-lumisection information, other modes also available), enter the run number for which to retrieve the information, choose the mode for authentication (via CERN username and password or via CERN grid certificate).  </li>
+<li>In case you choose to use a certificate, first edit the file 'cert.py' to set the correct paths to where you stored your certificate and key. Else you will be prompted to enter your username and password.  </li>
+<li>Run the cells below, the requested information should now be stored in the specified output json file. Instead, you could also directly use the resulting object in your script without writing it and loading it to a json file.  </li>
+</ul>
+<p>Notes:  </p>
+<ul>
+<li>Preliminary implementation, will be extended to e.g. filter on specific data fields only (for example only keep pileup or luminosity per lumisection), etc. Update: no extensions are planned, as this method of accessing OMS is superseded by a new API version, see above.  </li>
+<li>The authentication with a certificate still has an issue. For now, you need both a certificate and a username/password to make the data retrieval work. The method using username and password seems to work without additional certificate.  </li>
+<li>For more information on how to obtain a certificate, follow this link: <a href="https://github.com/CMSTrackerDPG/cernrequests#prerequisites">https://github.com/CMSTrackerDPG/cernrequests#prerequisites</a>  </li>
+<li>One could also install the wbmcrawlr tool (from <a href="here">https://github.com/CMSTrackerDPG/wbmcrawlr</a>) and use it directly. Both methods are equivalent up to now, except these notebooks don't require additional installation of the wbmcrawler tool and cernrequests module.  </li>
+</ul></div>
         </div>
 
         <footer class="col-md-12">

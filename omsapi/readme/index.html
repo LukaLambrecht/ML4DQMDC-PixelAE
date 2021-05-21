@@ -235,15 +235,19 @@
 Note: this functionality supersedes the older version in the omsinterface folder!  </p>
 <p>References:<br />
 The code is based on the oms api repository here: <a href="https://gitlab.cern.ch/cmsoms/oms-api-client">https://gitlab.cern.ch/cmsoms/oms-api-client</a>. The file omsapi.py in this folder is a direct copy of the omsapi/__init__.py file in that repository, as recommended by the developers to get it running on SWAN. See also these <a href="https://indico.cern.ch/event/997758/contributions/4191705/attachments/2173881/3670409/OMS%20CERN%20OpenID%20migration%20-%20update.pdf">slides</a> for further info on the setup of the app and this <a href="https://cmsoms.cern.ch/agg/api/v1/version/endpoints">site</a> for the available endpoints.</p>
-<p>How to use:<br />
-- You will need to authenticate through an application registered with the OMS developer team. Either contact me on llambrec@cern.ch so I can send you my application ID and client secret, or create your own as explained below.<br />
-- Open example.ipynb for some examples. You need to import get_oms_api.py, then create an OMSAPI instance via get_oms_api() (only once, can be re-used for multiple queries) and then query the information via get_oms_data( \&lt;arguments> ). See example.ipynb or get_oms_data.py for details.</p>
-<p>How to create a personal application for authentication:<br />
-- You will need to register a personal application ID and client secret with the OMS developer team. See the slides linked above on how to do that (only slide 4-6 are relevant, the rest has been taken care of). You will receive an application ID and client secret (both are just string-like variables). <br />
-- Create a new python file in this folder called clientid.py and define two variables in there:<br />
+<p>How to use:  </p>
+<ul>
+<li>You will need to authenticate through an application registered with the OMS developer team. Either contact me on llambrec@cern.ch so I can send you my application ID and client secret, or create your own as explained below.  </li>
+<li>Open example.ipynb for some examples. You need to import get_oms_api.py, then create an OMSAPI instance via get_oms_api() (only once, can be re-used for multiple queries) and then query the information via get_oms_data( \&lt;arguments> ). See example.ipynb or get_oms_data.py for details.</li>
+</ul>
+<p>How to create a personal application for authentication:  </p>
+<ul>
+<li>You will need to register a personal application ID and client secret with the OMS developer team. See the slides linked above on how to do that (only slide 4-6 are relevant, the rest has been taken care of). You will receive an application ID and client secret (both are just string-like variables).   </li>
+<li>Create a new python file in this folder called clientid.py and define two variables in there:<br />
 API_CLIENT_ID = '\&lt;your application ID>'<br />
-API_CLIENT_SECRET = '\&lt;your client secret>'<br />
-- That should be all!  </p></div>
+API_CLIENT_SECRET = '\&lt;your client secret>'  </li>
+<li>That should be all!  </li>
+</ul></div>
         </div>
 
         <footer class="col-md-12">
