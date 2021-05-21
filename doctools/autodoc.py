@@ -44,12 +44,22 @@ for codedir in codedirs:
     if os.path.exists(thisdocdir):
         os.system('rm -r {}'.format(thisdocdir))
     os.makedirs(thisdocdir)
+    # get python files
     pyfiles = sorted([f for f in os.listdir(thiscodedir) 
                 if os.path.splitext(f)[1]=='.py'])
-    if len(pyfiles)<1: continue
+    # get markdown files
+    mdfiles = sorted([f for f in os.listdir(thiscodedir)
+                if os.path.splitext(f)[1]=='.md'])
+    if len(pyfiles)==0 and len(mdfiles)==0: continue
     # update yml
     level = codedir.count('/')+1
     ymltext += level*4*' '+'- '+codedir.split('/')[-1]+':\n'
+    # loop over markdown files and copy them directly to doc dir
+    for mdfile in mdfiles:
+        os.system('cp {} {}'.format(os.path.join(thiscodedir,mdfile),
+                                    os.path.join(thisdocdir,mdfile)))
+        ymltext += (level+1)*4*' '+'- '+mdfile.replace('.md','')+': \'{}\'\n'.format(
+                os.path.join(codedir,mdfile))
     # loop over python files and make the doc files
     for pyfile in pyfiles:
         mdfiletools.py_to_md( pyfile, thiscodedir, pyfile.replace('.py','.md'), thisdocdir)

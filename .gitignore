@@ -1,1 +1,8 @@
+# ignore OMS API client ID and secret
 omsapi/clientid.py
+
+# ignore all .pyc files
+**.pyc
+
+# ignore /site folder as it is automatically created with doctools
+site

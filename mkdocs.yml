@@ -2,10 +2,12 @@ site_name: Documentation for the ML4DQM/DC notebooks
 nav:
     - Home: 'index.md'
     - omsapi:
+        - readme: 'omsapi/readme.md'
         - get_oms_data: 'omsapi/get_oms_data.md'
         - omsapi: 'omsapi/omsapi.md'
         - urls: 'omsapi/urls.md'
     - omsinterface:
+        - readme: 'omsinterface/readme.md'
         - cert: 'omsinterface/cert.md'
         - connectiontools: 'omsinterface/connectiontools.md'
         - get_oms_data: 'omsinterface/get_oms_data.md'
