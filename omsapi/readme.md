@@ -8,11 +8,11 @@ The code is based on the oms api repository here: [https://gitlab.cern.ch/cmsoms
 
 How to use:  
 - You will need to authenticate through an application registered with the OMS developer team. Either contact me on llambrec@cern.ch so I can send you my application ID and client secret, or create your own as explained below.
-- Open example.ipynb for some examples. You need to import get_oms_api.py, then create an OMSAPI instance via get\_oms\_api() (only once, can be re-used for multiple queries) and then query the information via get\_oms\_data( <arguments> ). See example.ipynb or get\_oms\_data.py for details.
+- Open example.ipynb for some examples. You need to import get_oms_api.py, then create an OMSAPI instance via get\_oms\_api() (only once, can be re-used for multiple queries) and then query the information via get\_oms\_data( \<arguments\> ). See example.ipynb or get\_oms\_data.py for details.
 
 How to create a personal application for authentication:
 - You will need to register a personal application ID and client secret with the OMS developer team. See the slides linked above on how to do that (only slide 4-6 are relevant, the rest has been taken care of). You will receive an application ID and client secret (both are just string-like variables). 
 - Create a new python file in this folder called clientid.py and define two variables in there:  
-API\_CLIENT\_ID = '<your application ID>'  
-API\_CLIENT\_SECRET = '<your client secret>'
+API\_CLIENT\_ID = '\<your application ID\>'  
+API\_CLIENT\_SECRET = '\<your client secret\>'
 - That should be all!
