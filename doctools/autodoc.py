@@ -11,7 +11,7 @@ topdir = os.path.abspath('..')
 # define top directory for the documentation, relative to project top level
 docdir = 'docs'
 # define which code directories to take into account, relative to project top level
-codedirs = sorted(['utils','src','src/cloudfitters','src/classifiers'])
+codedirs = sorted(['utils','src','src/cloudfitters','src/classifiers','omsinterface','omsapi'])
 # define title for site
 sitetitle = 'Documentation for the ML4DQM/DC notebooks'
 

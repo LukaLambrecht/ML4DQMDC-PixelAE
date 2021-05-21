@@ -80,9 +80,10 @@ note: no check is done on the run number!
 ## get\_hist\_values(df)  
 **same as builtin "df['histo'].values" but convert strings to np arrays**  
 input arguments:  
-- df: a dataframe containing histograms  
+- df: a dataframe containing histograms (assumed to be of a single type!)  
 note: this function works for both 1D and 2D histograms,  
 the distinction is made based on whether or not 'Ybins' is present as a column in the dataframe  
+update: 'Ybins' is also present for 1D histograms, but has value 1!  
 output:  
 a tuple containing the following elements:  
 - np array of shape (nhists,nbins) (for 1D) or (nhists,nybins,nxbins) (for 2D)  

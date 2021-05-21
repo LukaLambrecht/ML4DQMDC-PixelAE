@@ -23,6 +23,13 @@ contrary to mseTop10, this function only works for arrays with 2D shapes (so sha
 - - -    
 ## mseTopNRaw(y\_true, y\_pred, n=10)  
 **generalization of mseTop10Raw to any number of bins to take into account**  
+note: now generalized to also work for 2D histograms, i.e. arrays of shape (nhists,nybins,nxbins)!  
+hence this is the most general method and preferred above mseTop10 and mseTop10Raw, which are only kept for reference  
+input arguments:  
+- y\_true, y\_pred: numpy arrays between which to calculate the mean square difference, of shape (nhists,nbins) or (nhists,nybins,nxbins)  
+- n: number of largest elements to keep for averaging  
+output:  
+numpy array of shape (nhists)  
   
 - - -    
 ## chiSquared(y\_true, y\_pred)  

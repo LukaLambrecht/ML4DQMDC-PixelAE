@@ -28,6 +28,11 @@ note that the number is supposed to be in ...\_<number>.<extension> format
 csv\_file is the path to the csv file to be read  
   
 - - -    
+## write\_csv(dataframe,csvfilename)  
+**write a dataframe to a csv file**  
+note: just a wrapper for builtin dataframe.to\_csv  
+  
+- - -    
 ## read\_and\_merge\_csv(csv\_files, histnames=[], runnbs=[])  
 **read and merge list of csv files into a single df**  
 csv\_files is a list of paths to files to merge into a df  

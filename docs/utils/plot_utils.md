@@ -1,7 +1,7 @@
 # plot utils  
   
 - - -    
-## plot\_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1), title=None, xaxtitle=None, yaxtitle=None)  
+## plot\_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1), title=None, xaxtitle=None, yaxtitle=None, bkgcolor=None, bkgcmap='spring')  
 **plot some histograms (in histlist) in one figure using specified colors and/or labels**  
 - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))  
 - colorlist is a list or array containing colors (in string format)  
@@ -18,12 +18,16 @@ output: tuple of figure and axis objects, that can be used to further tune the l
 output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it  
   
 - - -    
-## plot\_hist\_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None)  
+## plot\_hist\_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None, caxrange=None)  
 **plot a 2D histogram**  
 - hist is a 2D numpy array of shape (nxbins, nybins)  
+notes:  
+- if the histogram contains only nonnegative values, values below 1e-12 will not be plotted  
+(i.e. they will be shown as white spots in the plot) to discriminate zero from small but nonzero  
+- if the histogram contains negative values, the color axis will be symmetrized around zero  
   
 - - -    
-## plot\_hists\_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None)  
+## plot\_hists\_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None)  
 **plot multiple 2D histograms next to each other**  
 - hists: list of 2D numpy arrays of shape (nxbins,nybins), or an equivalent 3D numpy array  
 - ncols: number of columns to use  

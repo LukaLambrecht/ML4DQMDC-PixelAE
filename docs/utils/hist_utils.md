@@ -35,7 +35,7 @@ for 2D histograms, the bin contents are scaled so the maximum is 1 for each hist
 (shape (nhistograms,nbins))  
 - order is the order of the moment to calculate  
 (0 = maximum, 1 = mean value)  
-note: for now only 1D histograms are supported  
+note: for now only 1D histograms are supported!  
   
 - - -    
 ## histmean(bins, counts)  
@@ -53,6 +53,8 @@ the return type is a numpy array of shape (nhistograms,nmoments)
 - - -    
 ## preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None, donormalize=True, doplot=False)  
 **read a .npy file and output the histograms**  
+args: see e.g. preparedatafromdf  
+note: not yet tested for 2D histograms, but is expected to work...  
   
 - - -    
 ## preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=None, donormalize=False, doplot=False)  
