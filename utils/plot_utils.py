@@ -22,7 +22,7 @@ import imageio
 # functions for plotting 
       
 def plot_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1),
-              title=None, xaxtitle=None, yaxtitle=None):
+              title=None, xaxtitle=None, yaxtitle=None, bkgcolor=None, bkgcmap='spring'):
     ### plot some histograms (in histlist) in one figure using specified colors and/or labels
     # - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))
     # - colorlist is a list or array containing colors (in string format)
@@ -43,6 +43,11 @@ def plot_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1
     for i,row in enumerate(histlist):
         if docolor: ax.step(xax,row,color=colorlist[i],label=labellist[i],alpha=transparency)
         else: ax.step(xax,row,label=labellist[i],alpha=transparency)
+    if bkgcolor is not None:
+        bkgcolor = np.array(bkgcolor)
+        ax.pcolorfast((xlims[0],xlims[1]), ax.get_ylim(),
+              bkgcolor[np.newaxis],
+              cmap=bkgcmap, alpha=0.1)
     if dolabel: ax.legend()
     if title is not None: ax.set_title(title)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
