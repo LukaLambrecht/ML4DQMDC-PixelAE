@@ -21,13 +21,19 @@ import imageio
 
 # functions for plotting 
       
-def plot_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1),
+def plot_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1),
               title=None, xaxtitle=None, yaxtitle=None, bkgcolor=None, bkgcmap='spring'):
     ### plot some histograms (in histlist) in one figure using specified colors and/or labels
     # - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))
-    # - colorlist is a list or array containing colors (in string format)
+    # - colorlist is a list or array containing colors (in string format), of length nhistograms
     #   note: it can also be a single string representing a color (in pyplot), then all histograms will take this color
-    # - labellist is a list or array containing labels for in legend
+    # - labellist is a list or array containing labels for in legend, of length nhistograms
+    # - xlims is a tuple of min and max for the x-axis labels, defaults to (-0.5,nbins-0.5)
+    # - title, xaxtitle, yaxtitle: strings for histogram title, x-axis title and y-axis title respectively
+    # - bkgcolor: 1D array representing background color for the plot (color axis will be scaled between min and max in bkgcolor)
+    #   note: if bkgcolor does not have the same length as the x-axis, it will be compressed or stretched to fit the axis,
+    #         but this might be meaningless, depending on what you are trying to visualize!
+    # - bkgmap: name of valid pyplot color map for plotting the background color
     # output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it
     dolabel = True; docolor = True
     if len(labellist)==0:
@@ -37,13 +43,15 @@ def plot_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1
         colorlist = [colorlist]*len(histlist)
     if len(colorlist)==0:
         docolor = False
-    if xlims[1]<xlims[0]: xlims = (0,len(histlist[0]))
+    if xlims[1]<xlims[0]: xlims = (-0.5,len(histlist[0])-0.5)
     xax = np.linspace(xlims[0],xlims[1],num=len(histlist[0]))
     fig,ax = plt.subplots()
     for i,row in enumerate(histlist):
-        if docolor: ax.step(xax,row,color=colorlist[i],label=labellist[i],alpha=transparency)
-        else: ax.step(xax,row,label=labellist[i],alpha=transparency)
+        if docolor: ax.step(xax,row,where='mid',color=colorlist[i],label=labellist[i],alpha=transparency)
+        else: ax.step(xax,row,where='mid',label=labellist[i],alpha=transparency)
     if bkgcolor is not None:
+        # modify bkcolor so the automatic stretching matches the bin numbers correctly
+        bkgcolor = [el for el in bkgcolor for _ in (0,1)][1:-1]
         bkgcolor = np.array(bkgcolor)
         ax.pcolorfast((xlims[0],xlims[1]), ax.get_ylim(),
               bkgcolor[np.newaxis],
@@ -54,7 +62,7 @@ def plot_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
     return (fig,ax)
     
-def plot_hists_multi(histlist, colorlist=[], labellist=[], transparency=1, xlims=(0,-1),
+def plot_hists_multi(histlist, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1),
                     title=None, xaxtitle=None, yaxtitle=None):
     ### plot many histograms (in histlist) in one figure using specified colors and/or labels
     # - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))
@@ -75,8 +83,8 @@ def plot_hists_multi(histlist, colorlist=[], labellist=[], transparency=1, xlims
         cobject = mpl.cm.ScalarMappable(norm=norm, cmap=mpl.cm.jet)
         cobject.set_array([]) # ad-hoc bug fix
     for i,row in enumerate(histlist):
-        if docolor: ax.step(xax,row,color=cobject.to_rgba(colorlist[i]),label=labellist[i],alpha=transparency)
-        else: ax.step(xax,row,label=labellist[i],alpha=transparency)
+        if docolor: ax.step(xax,row,where='mid',color=cobject.to_rgba(colorlist[i]),label=labellist[i],alpha=transparency)
+        else: ax.step(xax,row,where='mid',label=labellist[i],alpha=transparency)
     if docolor: fig.colorbar(cobject)
     if dolabel: ax.legend()
     if title is not None: ax.set_title(title)
@@ -157,7 +165,7 @@ def plot_hists_from_df(df, histtype, nhists):
     val = get_hist_values(dfs)[0]
     plot_hists(val)
     
-def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], xlims=(0,-1),
+def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], xlims=(-0.5,-1),
              title=None, xaxtitle=None, yaxtitle=None):
     ### plot multiple sets of histograms to compare the shapes
     # - setlist is a list of 2D numpy arrays containing histograms
@@ -180,10 +188,10 @@ def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparen
     if fig is None or ax is None: fig,ax = plt.subplots()
     for i,histlist in enumerate(setlist):
         row = histlist[0]
-        ax.step(xax,row,color=colorlist[i],label=labellist[i],alpha=transparencylist[i])
+        ax.step(xax,row,where='mid',color=colorlist[i],label=labellist[i],alpha=transparencylist[i])
         if len(histlist)<2: continue
         for j,row in enumerate(histlist[1:,:]):
-            ax.step(xax,row,color=colorlist[i],alpha=transparencylist[i])
+            ax.step(xax,row,where='mid',color=colorlist[i],alpha=transparencylist[i])
     if dolabel: ax.legend(loc='upper right')
     if title is not None: ax.set_title(title)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
@@ -212,7 +220,7 @@ def plot_anomalous(histlist, ls, highlight=-1, hrange=-1):
     if lshist is not None: 
         xlims = (0,len(lshist))
         xax = np.linspace(xlims[0],xlims[1],num=len(lshist))
-        ax.step(xax,lshist,color='black',linewidth=2)
+        ax.step(xax,lshist,where='mid',color='black',linewidth=2)
     return (fig,ax)
 
 def plot_moments(moments, ls, dims, fig=None, ax=None, markersize=10):
