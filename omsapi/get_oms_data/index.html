@@ -227,21 +227,21 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#get-oms-data">get oms data</a></li>
-            <li><a href="#get_oms_api">get_oms_api()</a></li>
-            <li><a href="#get_oms_data-omsapi-api_endpoint-runnb-extrafilters-extraargs-sortnone-attributes">get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[])</a></li>
-            <li><a href="#get_oms_response_attribute-omsresponse-attribute">get_oms_response_attribute( omsresponse, attribute )</a></li>
+            <li><a href="#get95oms95api">get_oms_api()</a></li>
+            <li><a href="#get95oms95data-omsapi-api95endpoint-runnb-extrafilters-extraargs-sortnone-attributes">get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[])</a></li>
+            <li><a href="#get95oms95response95attribute-omsresponse-attribute">get_oms_response_attribute( omsresponse, attribute )</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
 <h1 id="get-oms-data">get oms data</h1>
-<h2 id="get_oms_api">get_oms_api()</h2>
+<h2 id="get95oms95api">get_oms_api()</h2>
 <pre><code class="text">get an OMSAPI instance  
 takes no input arguments, as the configuration parameters are unlikely to change very often  
 if needed, these parameters can be changed in the file urls.py  
 </code></pre>
 
-<h2 id="get_oms_data-omsapi-api_endpoint-runnb-extrafilters-extraargs-sortnone-attributes">get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[])</h2>
+<h2 id="get95oms95data-omsapi-api95endpoint-runnb-extrafilters-extraargs-sortnone-attributes">get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[])</h2>
 <pre><code class="text">query some data from OMS  
 input arguments:  
 - omsapi: an OMSAPI instance, e.g. created by get_oms_api()  
@@ -259,7 +259,7 @@ input arguments:
 - attributes: list of valid field names in the OMS data to return (if not specified, all information is returned)  
 </code></pre>
 
-<h2 id="get_oms_response_attribute-omsresponse-attribute">get_oms_response_attribute( omsresponse, attribute )</h2>
+<h2 id="get95oms95response95attribute-omsresponse-attribute">get_oms_response_attribute( omsresponse, attribute )</h2>
 <pre><code class="text">small helper function to retrieve a list of values for a single attribute  
 input arguments:  
 - omsresponse: the json-like object returned by get_oms_data  

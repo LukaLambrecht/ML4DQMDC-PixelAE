@@ -231,7 +231,7 @@
             <li><a href="#rebinhistshists-factor">rebinhists(hists, factor)</a></li>
             <li><a href="#normalizehistshists">normalizehists(hists)</a></li>
             <li><a href="#averagehistshists-nout">averagehists(hists, nout)</a></li>
-            <li><a href="#running_average_histshists-window-weightsnone">running_average_hists(hists, window, weights=None)</a></li>
+            <li><a href="#running95average95histshists-window-weightsnone">running_average_hists(hists, window, weights=None)</a></li>
             <li><a href="#momentbins-counts-order">moment(bins, counts, order)</a></li>
             <li><a href="#histmeanbins-counts">histmean(bins, counts)</a></li>
             <li><a href="#histrmsbins-counts">histrms(bins, counts)</a></li>
@@ -293,7 +293,7 @@ returns:
 - a numpy array of shape (nout,&lt;input number of bins&gt;)  
 </code></pre>
 
-<h2 id="running_average_histshists-window-weightsnone">running_average_hists(hists, window, weights=None)</h2>
+<h2 id="running95average95histshists-window-weightsnone">running_average_hists(hists, window, weights=None)</h2>
 <pre><code class="text">replace each histogram in a collection of histograms by its running average  
 input arguments:  
 - hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D  
