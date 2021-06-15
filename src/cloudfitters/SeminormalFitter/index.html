@@ -227,13 +227,13 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#seminormalfitter">SeminormalFitter</a></li>
-            <li><a href="#seminormalfittercloudfitter">SeminormalFitter(CloudFitter)</a></li>
+            <li><a href="#class-seminormalfittercloudfitter">[class] SeminormalFitter(CloudFitter)</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
 <h1 id="seminormalfitter">SeminormalFitter</h1>
-<h2 id="seminormalfittercloudfitter">SeminormalFitter(CloudFitter)</h2>
+<h2 id="class-seminormalfittercloudfitter">[class] SeminormalFitter(CloudFitter)</h2>
 <pre><code class="text">class for fitting a 'seminormal' distribution to a point cloud  
 this is not strictly speaking a probability distribution,  
 only the first quadrant of the result of fitting a normal distribution  
@@ -243,25 +243,30 @@ parameters
 - mvn: scipy.stats multivariate_normal object built from the cov  
 </code></pre>
 
-<h3 id="9595init9595selfpoints">__init__(self,points)</h3>
-<pre><code class="text">constructor  
-points is a np array of shape (npoints,ndims)  
-note: points can also be an array or list with length 0,  
-      in that case the object is initialized empty.  
-      use this followed by the 'load' method to load a previously saved fit!  
-</code></pre>
-
-<h3 id="pdfselfpoints">pdf(self,points)</h3>
-<pre><code class="text">get pdf at points  
-</code></pre>
-
-<h3 id="saveselfpath">save(self,path)</h3>
-<pre><code class="text">save the covariance matrix as a .npy file specified by path  
-</code></pre>
-
-<h3 id="loadselfpath">load(self,path)</h3>
-<pre><code class="text">load a covariance matrix from a .npy file specified by path and build the fit from it  
-</code></pre></div>
+<p>: ### __init__(self,points)<br />
+: <code>text  
+: constructor  
+: points is a np array of shape (npoints,ndims)  
+: note: points can also be an array or list with length 0,  
+:       in that case the object is initialized empty.  
+:       use this followed by the 'load' method to load a previously saved fit!  
+:</code><br />
+: <br />
+: ### pdf(self,points)<br />
+: <code>text  
+: get pdf at points  
+:</code><br />
+: <br />
+: ### save(self,path)<br />
+: <code>text  
+: save the covariance matrix as a .npy file specified by path  
+:</code><br />
+: <br />
+: ### load(self,path)<br />
+: <code>text  
+: load a covariance matrix from a .npy file specified by path and build the fit from it  
+:</code><br />
+:   </p></div>
         </div>
 
         <footer class="col-md-12">

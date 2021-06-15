@@ -227,13 +227,13 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#histogramclassifier">HistogramClassifier</a></li>
-            <li><a href="#histogramclassifierabc">HistogramClassifier(ABC)</a></li>
+            <li><a href="#class-histogramclassifierabc">[class] HistogramClassifier(ABC)</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
 <h1 id="histogramclassifier">HistogramClassifier</h1>
-<h2 id="histogramclassifierabc">HistogramClassifier(ABC)</h2>
+<h2 id="class-histogramclassifierabc">[class] HistogramClassifier(ABC)</h2>
 <pre><code class="text">abstract base class for histogram classifying objects  
 note that all concrete histogram classifiers must inherit from HistogramClassifier!  
 a HistogramClassifier can be any object that classifies a histogram; in more detail:  
@@ -247,16 +247,19 @@ how to make a concrete HistogramClassifier class:
 see also the existing examples!  
 </code></pre>
 
-<h3 id="9595init9595-self">__init__( self )</h3>
-<pre><code class="text">empty intializer  
-</code></pre>
-
-<h3 id="evaluate-self-histograms">evaluate( self, histograms )</h3>
-<pre><code class="text">main function used to process a set of histograms  
-input arguments:  
-- histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins).  
-output: 1D numpy array of shape (nhists), one number per histogram.  
-</code></pre></div>
+<p>: ### __init__( self )<br />
+: <code>text  
+: empty intializer  
+:</code><br />
+: <br />
+: ### evaluate( self, histograms )<br />
+: <code>text  
+: main function used to process a set of histograms  
+: input arguments:  
+: - histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins).  
+: output: 1D numpy array of shape (nhists), one number per histogram.  
+:</code><br />
+:   </p></div>
         </div>
 
         <footer class="col-md-12">

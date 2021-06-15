@@ -227,13 +227,13 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#autoencoder">AutoEncoder</a></li>
-            <li><a href="#autoencoderhistogramclassifier">AutoEncoder(HistogramClassifier)</a></li>
+            <li><a href="#class-autoencoderhistogramclassifier">[class] AutoEncoder(HistogramClassifier)</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
 <h1 id="autoencoder">AutoEncoder</h1>
-<h2 id="autoencoderhistogramclassifier">AutoEncoder(HistogramClassifier)</h2>
+<h2 id="class-autoencoderhistogramclassifier">[class] AutoEncoder(HistogramClassifier)</h2>
 <pre><code class="text">histogram classfier based on the MSE of an autoencoder reconstruction  
 the AutoEncoder derives from the generic HistogramClassifier.   
 for this specific classifier, the output score of a histogram is the mean-square-error (MSE)   
@@ -241,20 +241,24 @@ between the original histogram and its autoencoder reconstruction.
 in essence, it is just a wrapper for a tensorflow model.  
 </code></pre>
 
-<h3 id="9595init9595-self-modelnone">__init__( self, model=None )</h3>
-<pre><code class="text">intializer from a tensorflow model  
-the model is assumed to be fully trained on a suitable training set and ready for use  
-TODO: perhaps the functionality for initializing and training the model can be absorbed in the AutoEncoder class,  
-      but this is not yet supported currently  
-</code></pre>
-
-<h3 id="evaluate-self-histograms">evaluate( self, histograms )</h3>
-<pre><code class="text">classification of a collection of histograms based on their autoencoder reconstruction  
-</code></pre>
-
-<h3 id="reconstruct-self-histograms">reconstruct( self, histograms )</h3>
-<pre><code class="text">return the autoencoder reconstruction of a set of histograms  
-</code></pre></div>
+<p>: ### __init__( self, model=None )<br />
+: <code>text  
+: intializer from a tensorflow model  
+: the model is assumed to be fully trained on a suitable training set and ready for use  
+: TODO: perhaps the functionality for initializing and training the model can be absorbed in the AutoEncoder class,  
+:       but this is not yet supported currently  
+:</code><br />
+: <br />
+: ### evaluate( self, histograms )<br />
+: <code>text  
+: classification of a collection of histograms based on their autoencoder reconstruction  
+:</code><br />
+: <br />
+: ### reconstruct( self, histograms )<br />
+: <code>text  
+: return the autoencoder reconstruction of a set of histograms  
+:</code><br />
+:   </p></div>
         </div>
 
         <footer class="col-md-12">

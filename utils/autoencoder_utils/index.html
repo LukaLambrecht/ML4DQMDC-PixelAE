@@ -244,7 +244,7 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="autoencoder-utils">autoencoder utils</h1>
-<h2 id="msetop10y95true-y95pred">mseTop10(y_true, y_pred)</h2>
+<h3 id="msetop10y95true-y95pred">mseTop10(y_true, y_pred)</h3>
 <pre><code class="text">MSE top 10 loss function for autoencoder training  
 input arguments:  
 - y_true and y_pred: two numpy arrays of equal shape,  
@@ -256,7 +256,7 @@ output:
   if y_true and y_pred are 2D arrays, this function returns 1D array (mseTop10 for each histogram)  
 </code></pre>
 
-<h2 id="msetop10rawy95true-y95pred">mseTop10Raw(y_true, y_pred)</h2>
+<h3 id="msetop10rawy95true-y95pred">mseTop10Raw(y_true, y_pred)</h3>
 <pre><code class="text">same as mseTop10 but without using tf or K  
 the version including tf or K seemed to cause randomly dying kernels, no clear reason could be found,  
 but it was solved using this loss function instead.  
@@ -264,7 +264,7 @@ verified that it gives exactly the same output as the function above on some ran
 contrary to mseTop10, this function only works for arrays with 2D shapes (so shape (nhists,nbins)), not for (nbins,).  
 </code></pre>
 
-<h2 id="msetopnrawy95true-y95pred-n10">mseTopNRaw(y_true, y_pred, n=10)</h2>
+<h3 id="msetopnrawy95true-y95pred-n10">mseTopNRaw(y_true, y_pred, n=10)</h3>
 <pre><code class="text">generalization of mseTop10Raw to any number of bins to take into account  
 note: now generalized to also work for 2D histograms, i.e. arrays of shape (nhists,nybins,nxbins)!  
       hence this is the most general method and preferred above mseTop10 and mseTop10Raw, which are only kept for reference  
@@ -275,7 +275,7 @@ output:
 numpy array of shape (nhists)  
 </code></pre>
 
-<h2 id="chisquaredy95true-y95pred">chiSquared(y_true, y_pred)</h2>
+<h3 id="chisquaredy95true-y95pred">chiSquared(y_true, y_pred)</h3>
 <pre><code class="text">chi2 loss functionfor autoencoder training  
 input arguments:  
 - y_true and y_pred: two numpy arrays of equal shape,  
@@ -286,11 +286,11 @@ output:
   if y_true and y_pred are 2D arrays, this function returns 1D array (chiSquared for each histogram)  
 </code></pre>
 
-<h2 id="chisquaredtop10y95true-y95pred">chiSquaredTop10(y_true, y_pred)</h2>
+<h3 id="chisquaredtop10y95true-y95pred">chiSquaredTop10(y_true, y_pred)</h3>
 <pre><code class="text">same as chiSquared but take into account only 10 largest values in averaging.  
 </code></pre>
 
-<h2 id="calculate95rocscores-labels-scoreax">calculate_roc(scores, labels, scoreax)</h2>
+<h3 id="calculate95rocscores-labels-scoreax">calculate_roc(scores, labels, scoreax)</h3>
 <pre><code class="text">calculate a roc curve  
 input arguments:  
 - scores is a 1D numpy array containing output scores of any algorithm  
@@ -305,7 +305,7 @@ output:
 tuple of two np arrays (signal efficiency and background efficiency)  
 </code></pre>
 
-<h2 id="get95rocscores-labels-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic">get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')</h2>
+<h3 id="get95rocscores-labels-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic">get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')</h3>
 <pre><code class="text">make a ROC curve  
 input arguments:  
 - scores is a 1D numpy array containing output scores of any algorithm  
@@ -326,7 +326,7 @@ input arguments:
         - 'classic' = signal efficiency afo background efficiency  
 </code></pre>
 
-<h2 id="get95roc95from95histshists-labels-predicted95hists-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic">get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')</h2>
+<h3 id="get95roc95from95histshists-labels-predicted95hists-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic">get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')</h3>
 <pre><code class="text">make a ROC curve without manually calculating the scores  
 the output score is the mseTop10Raw between the histograms and their reconstruction  
 - input arguments:  
@@ -334,19 +334,19 @@ the output score is the mseTop10Raw between the histograms and their reconstruct
 - other arguments: see get_roc  
 </code></pre>
 
-<h2 id="get95confusion95matrixscores-labels-wp">get_confusion_matrix(scores, labels, wp)</h2>
+<h3 id="get95confusion95matrixscores-labels-wp">get_confusion_matrix(scores, labels, wp)</h3>
 <pre><code class="text">plot a confusion matrix  
 scores and labels are defined in the same way as for get_roc  
 wp is the chosen working point   
 (i.e. any score above wp is flagged as signal, any below is flagged as background)  
 </code></pre>
 
-<h2 id="get95confusion95matrix95from95histshists-labels-predicted95hists-msewp">get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp)</h2>
+<h3 id="get95confusion95matrix95from95histshists-labels-predicted95hists-msewp">get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp)</h3>
 <pre><code class="text">plot a confusion matrix without manually calculating the scores  
 the output score is the mse between the histograms and their reconstruction  
 </code></pre>
 
-<h2 id="getautoencoderinput95sizearchactoptadamlossmsetop10">getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10)</h2>
+<h3 id="getautoencoderinput95sizearchactoptadamlossmsetop10">getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10)</h3>
 <pre><code class="text">get a trainable autoencoder model  
 input args:  
 - input_size: size of vector that autoencoder will operate on  
@@ -356,7 +356,7 @@ input args:
 - loss: loss function to use (defualt: mseTop10)  
 </code></pre>
 
-<h2 id="train95simple95autoencoderhistsnepochs-1modelname">train_simple_autoencoder(hists,nepochs=-1,modelname='')</h2>
+<h3 id="train95simple95autoencoderhistsnepochs-1modelname">train_simple_autoencoder(hists,nepochs=-1,modelname='')</h3>
 <pre><code class="text">create and train a very simple keras model  
 the model consists of one hidden layer (with half as many units as there are input bins), tanh activation, adam optimizer and mseTop10 loss.  
 input args:   
