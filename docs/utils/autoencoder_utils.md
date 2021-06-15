@@ -1,5 +1,9 @@
 # autoencoder utils  
   
+# define loss functions
+- - -
+  
+  
 ### mseTop10(y\_true, y\_pred)  
 ```text  
 MSE top 10 loss function for autoencoder training  

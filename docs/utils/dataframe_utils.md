@@ -1,5 +1,9 @@
 # dataframe utils  
   
+getter and selector for histogram names 
+- - -
+  
+  
 ### get\_histnames(df)  
 ```text  
 get a list of (unique) histogram names present in a df  

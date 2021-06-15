@@ -1,5 +1,9 @@
 # generate data 2d utils  
   
+# help functions
+- - -
+  
+  
 ### goodnoise\_nd(shape, fstd=None, kmaxscale=0.25, ncomponents=3)  
 ```text  
 generate one sample of 'good' noise consisting of fourier components  

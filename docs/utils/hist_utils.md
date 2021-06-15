@@ -1,5 +1,9 @@
 # hist utils  
   
+# cropping of hisograms
+- - -
+  
+  
 ### crophists(hists, slices)  
 ```text  
 perform cropping on a set of histograms  

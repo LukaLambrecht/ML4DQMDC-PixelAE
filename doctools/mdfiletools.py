@@ -25,6 +25,7 @@ def py_to_md( pyfilename, pyfiledir, mdfilename, mdfiledir ):
 
     # read the comments
     comments = commenttools.CommentCollection()
+    comments.read_markdowncomments_from_file(pyfilepath)
     comments.read_defcomments_from_file(pyfilepath)
     with open(mdfilepath,'w') as f:
         # write a title for the markdown file

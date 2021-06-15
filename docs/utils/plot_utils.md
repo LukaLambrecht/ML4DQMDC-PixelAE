@@ -1,5 +1,9 @@
 # plot utils  
   
+functions for plotting 
+- - -
+  
+  
 ### plot\_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None, bkgcolor=None, bkgcmap='spring')  
 ```text  
 plot some histograms (in histlist) in one figure using specified colors and/or labels  

@@ -1,5 +1,9 @@
 # get oms data  
   
+# set names of filter attributes
+- - -
+  
+  
 ### get\_oms\_api()  
 ```text  
 get an OMSAPI instance  

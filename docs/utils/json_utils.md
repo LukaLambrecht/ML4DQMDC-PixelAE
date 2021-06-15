@@ -1,5 +1,9 @@
 # json utils  
   
+# reading and writing json files
+- - -
+  
+  
 ### loadjson( jsonfile )  
 ```text  
 load the content of a json file into a python object  

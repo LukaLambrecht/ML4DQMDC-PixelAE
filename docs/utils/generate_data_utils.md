@@ -1,5 +1,9 @@
 # generate data utils  
   
+# help functions
+- - -
+  
+  
 ### goodnoise(nbins, fstd=None)  
 ```text  
 generate one sample of 'good' noise consisting of fourier components  

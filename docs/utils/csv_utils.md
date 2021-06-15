@@ -1,5 +1,10 @@
 # csv utils  
   
+# some functions that point to the data directories (hard-coded for now!)
+example usage of these functions: see function write_skimmed_csv within this same notebook
+- - -
+  
+  
 ### get\_data\_dirs(year='2017', eras=[], dim=1)  
 ```text  
 yield all data directories  

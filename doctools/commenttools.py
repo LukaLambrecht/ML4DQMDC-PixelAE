@@ -108,6 +108,22 @@ class ClassComment(Comment):
         ### alias for format for easy printing
         return self.format()
 
+class MarkDownComment( Comment ):
+    ### comment class for markdown cells in .ipynb, converted to comments in .py
+    # the content of the comments already has markdown syntax, 
+    # just need to remove the leading '# '
+
+    def __init__( self, rawtext ):
+        super( MarkDownComment, self ).__init__( rawtext )
+
+    def format( self ):
+        lines = self.rawtext.split('\n')
+        for i,line in enumerate(lines): lines[i] = line[2:]
+        return '\n'.join(lines)+'- - -\n'
+
+    def __str__( self ):
+        ### alias for format for easy printing
+        return self.format()
 
 class CommentCollection(object):
 
@@ -193,6 +209,32 @@ class CommentCollection(object):
                 else:
                     self.comments.append( FuncComment( defname, rawtext, level=3 ) )
 
+    def read_markdowncomments_from_file( self, filename ):
+        f = open(filename,'r')
+        lines = f.readlines()
+        f.close()
+        i = 0
+        while i<len(lines):
+            line = lines[i]
+            if line[0]=='#':
+                # skip some standard lines
+                if( line=='#!/usr/bin/env python\n' 
+                        or line=='# coding: utf-8\n'
+                        or line=='### imports\n'
+                        or line=='# external modules\n'
+                        or line=='# local modules\n'): 
+                    i += 1
+                    continue
+                # else it is probably a valid comment, start looking for next lines
+                j = i
+                rawtext = line
+                while lines[j+1][0]=='#':
+                    rawtext += lines[j+1]
+                    j += 1
+                i = j+1
+                self.comments.append( MarkDownComment( rawtext ) )
+                break # for now allow only one markdown comment, as header
+            else: i += 1
 
 
 if __name__=='__main__':
@@ -201,6 +243,7 @@ if __name__=='__main__':
     testfile = os.path.abspath(sys.argv[1])
     
     ccol = CommentCollection()
-    ccol.read_defcomments_from_file_2( testfile )
+    ccol.read_markdowncomments_from_file( testfile )
+    #ccol.read_defcomments_from_file( testfile )
     for c in ccol.get_comments(): 
         print(c)

@@ -1,5 +1,9 @@
 # omsapi  
   
+pylint: disable=W0702,R0902
+- - -
+  
+  
 - - -
 ## [class] OMSApiException(Exception)  
 ```text  
