@@ -243,9 +243,7 @@ the HistStruct has functions to easily perform the following common tasks (among
 - evaluate classifiers (machine learning types or other)  
 </code></pre>
 
-<ul>
-<li>[attribute] __init__( self )  </li>
-</ul>
+<h3 id="-attribute-9595init9595-self">+-- [attribute] __init__( self )</h3>
 <pre><code class="text">empty initializer, setting all containers to empty defaults  
 a HistStruct object has the following properties:  
 histnames: list of histogram names  
@@ -259,25 +257,19 @@ masks: dict mapping name to 1D numpy array of booleans (same length as histogram
 exthistograms: dict similar to histograms for additional (e.g. artificially generated) histograms  
 </code></pre>
 
-<ul>
-<li>[attribute] save( self, path )  </li>
-</ul>
+<h3 id="-attribute-save-self-path">+-- [attribute] save( self, path )</h3>
 <pre><code class="text">save a HistStruct object to a pkl file  
 input arguments:  
 - path where to store the file (appendix .pkl is automatically appended)  
 </code></pre>
 
-<ul>
-<li>[attribute] load( self, path )  </li>
-</ul>
+<h3 id="-attribute-load-self-path">+-- [attribute] load( self, path )</h3>
 <pre><code class="text">load a HistStruct object from a pkl file  
 input arguments:  
 - path to a pkl file containing a HistStruct object  
 </code></pre>
 
-<ul>
-<li>[attribute] add_dataframe( self, df, cropslices=None, donormalize=True, rebinningfactor=None )  </li>
-</ul>
+<h3 id="-attribute-add95dataframe-self-df-cropslicesnone-donormalizetrue-rebinningfactornone">+-- [attribute] add_dataframe( self, df, cropslices=None, donormalize=True, rebinningfactor=None )</h3>
 <pre><code class="text">add a dataframe to a HistStruct  
 input arguments:  
 - df: a pandas dataframe as read from the input csv files  
@@ -294,9 +286,7 @@ notes:
   with add_histograms, allowing for more control over complicated preprocessing.  
 </code></pre>
 
-<ul>
-<li>[attribute] add_histograms( self, histname, histograms, runnbs, lsnbs, nentries=None )  </li>
-</ul>
+<h3 id="-attribute-add95histograms-self-histname-histograms-runnbs-lsnbs-nentriesnone">+-- [attribute] add_histograms( self, histname, histograms, runnbs, lsnbs, nentries=None )</h3>
 <pre><code class="text">add a set of histograms to a HistStruct  
 input arguments:  
 - histname: name of the histogram type to be added  
@@ -316,24 +306,18 @@ notes:
 - see also add_dataframe for an alternative way of adding histograms  
 </code></pre>
 
-<ul>
-<li>[attribute] add_mask( self, name, mask )  </li>
-</ul>
+<h3 id="-attribute-add95mask-self-name-mask">+-- [attribute] add_mask( self, name, mask )</h3>
 <pre><code class="text">add a mask to a HistStruct  
 input arguments:  
 - name: a name for the mask  
 - mask: a 1D np array of booleans  with same length as number of lumisections in HistStruct  
 </code></pre>
 
-<ul>
-<li>[attribute] remove_mask( self, name )  </li>
-</ul>
+<h3 id="-attribute-remove95mask-self-name">+-- [attribute] remove_mask( self, name )</h3>
 <pre><code class="text">inverse operation of add_mask  
 </code></pre>
 
-<ul>
-<li>[attribute] add_json_mask( self, name, jsondict )  </li>
-</ul>
+<h3 id="-attribute-add95json95mask-self-name-jsondict">+-- [attribute] add_json_mask( self, name, jsondict )</h3>
 <pre><code class="text">add a mask corresponding to a json dict  
 input arguments:  
 - name: a name for the mask  
@@ -341,65 +325,49 @@ input arguments:
 all lumisections present in the jsondict will be masked True, the others False.  
 </code></pre>
 
-<ul>
-<li>[attribute] add_goldenjson_mask( self, name )  </li>
-</ul>
+<h3 id="-attribute-add95goldenjson95mask-self-name">+-- [attribute] add_goldenjson_mask( self, name )</h3>
 <pre><code class="text">add a mask corresponding to the golden json file  
 input arguments:  
 - name: a name for the mask  
 </code></pre>
 
-<ul>
-<li>[attribute] add_dcsonjson_mask( self, name )  </li>
-</ul>
+<h3 id="-attribute-add95dcsonjson95mask-self-name">+-- [attribute] add_dcsonjson_mask( self, name )</h3>
 <pre><code class="text">add a mask corresponding to the DCS-bit on json file  
 input arguments:  
 - name: a name for the mask  
 </code></pre>
 
-<ul>
-<li>[attribute] add_hightstat_mask( self, name, histnames=None, entries_to_bins_ratio=100 )  </li>
-</ul>
+<h3 id="-attribute-add95hightstat95mask-self-name-histnamesnone-entries95to95bins95ratio100">+-- [attribute] add_hightstat_mask( self, name, histnames=None, entries_to_bins_ratio=100 )</h3>
 <pre><code class="text">add a mask corresponding to lumisections where all histograms have sufficient statistics  
 input arguments:  
 - histnames: list of histogram names to take into account for making the mask (default: all in the HistStruct)  
 - entries_to_bins_ratio: criterion to determine if a histogram has sufficient statistics, number of entries divided by number of bins  
 </code></pre>
 
-<ul>
-<li>[attribute] get_combined_mask( self, names )  </li>
-</ul>
+<h3 id="-attribute-get95combined95mask-self-names">+-- [attribute] get_combined_mask( self, names )</h3>
 <pre><code class="text">get a combined mask given multiple mask names  
 mostly for internal use; externally you can use get_histograms( histname, &lt;list of mask names&gt;) directly  
 </code></pre>
 
-<ul>
-<li>[attribute] get_runnbs( self, masknames=None )  </li>
-</ul>
+<h3 id="-attribute-get95runnbs-self-masknamesnone">+-- [attribute] get_runnbs( self, masknames=None )</h3>
 <pre><code class="text">get the array of run numbers, optionally after masking  
 input arguments:  
 - masknames: list of names of masks (default: no masking, return full array)  
 </code></pre>
 
-<ul>
-<li>[attribute] get_lsnbs( self, masknames=None )  </li>
-</ul>
+<h3 id="-attribute-get95lsnbs-self-masknamesnone">+-- [attribute] get_lsnbs( self, masknames=None )</h3>
 <pre><code class="text">get the array of lumisection numbers, optionally after masking  
 input arguments:  
 - masknames: list of names of masks (default: no masking, return full array)  
 </code></pre>
 
-<ul>
-<li>[attribute] get_index( self, runnb, lsnb )  </li>
-</ul>
+<h3 id="-attribute-get95index-self-runnb-lsnb">+-- [attribute] get_index( self, runnb, lsnb )</h3>
 <pre><code class="text">get the index in the current HistStruct of a given run and lumisection number  
 input arguments:  
 - runnb and lsnb: run and lumisection number respectively  
 </code></pre>
 
-<ul>
-<li>[attribute] get_scores( self, histname=None, masknames=None )  </li>
-</ul>
+<h3 id="-attribute-get95scores-self-histnamenone-masknamesnone">+-- [attribute] get_scores( self, histname=None, masknames=None )</h3>
 <pre><code class="text">get the array of scores for a given histogram type, optionally after masking  
 input arguments:  
 - histname: name of the histogram type for which to retrieve the score.   
@@ -411,9 +379,7 @@ notes:
   else an exception will be thrown.  
 </code></pre>
 
-<ul>
-<li>[attribute] get_scores_ls( self, runnb, lsnb, histnames=None, suppresswarnings=False )  </li>
-</ul>
+<h3 id="-attribute-get95scores95ls-self-runnb-lsnb-histnamesnone-suppresswarningsfalse">+-- [attribute] get_scores_ls( self, runnb, lsnb, histnames=None, suppresswarnings=False )</h3>
 <pre><code class="text">get the scores for a given run/lumisection number and for given histogram names  
 input arguments:  
 - runnb: run number  
@@ -427,9 +393,7 @@ notes:
   else the returned scores will be None.  
 </code></pre>
 
-<ul>
-<li>[attribute] get_histograms( self, histname=None, masknames=None )  </li>
-</ul>
+<h3 id="-attribute-get95histograms-self-histnamenone-masknamesnone">+-- [attribute] get_histograms( self, histname=None, masknames=None )</h3>
 <pre><code class="text">get the array of histograms for a given type, optionally after masking  
 input arguments:  
 - histname: name of the histogram type to retrieve   
@@ -437,9 +401,7 @@ input arguments:
 - masknames: list of names of masks (default: no masking, return full array)  
 </code></pre>
 
-<ul>
-<li>[attribute] add_classifier( self, histname, classifier, evaluate=False )  </li>
-</ul>
+<h3 id="-attribute-add95classifier-self-histname-classifier-evaluatefalse">+-- [attribute] add_classifier( self, histname, classifier, evaluate=False )</h3>
 <pre><code class="text">add a histogram classifier for a given histogram name to the HistStruct  
 input arguments:  
 - histname: a valid histogram name present in the HistStruct to which this classifier applies  
@@ -448,9 +410,7 @@ input arguments:
   if set to True, the result is both returned and stored in the 'scores' attribute.  
 </code></pre>
 
-<ul>
-<li>[attribute] evaluate_classifier( self, histname )  </li>
-</ul>
+<h3 id="-attribute-evaluate95classifier-self-histname">+-- [attribute] evaluate_classifier( self, histname )</h3>
 <pre><code class="text">evaluate a histogram classifier for a given histogram name in the HistStruct  
 input arguments:  
 - histname: a valid histogram name present in the HistStruct for which to evaluate the classifier  
@@ -458,9 +418,7 @@ notes:
 - the result is both returned and stored in the 'scores' attribute  
 </code></pre>
 
-<ul>
-<li>[attribute] plot_ls( self, runnb, lsnb, histnames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference')  </li>
-</ul>
+<h3 id="-attribute-plot95ls-self-runnb-lsnb-histnamesnone-recohistnone-recohistlabelreco-refhistsnone-refhistslabelreference">+-- [attribute] plot_ls( self, runnb, lsnb, histnames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference')</h3>
 <pre><code class="text">plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction  
 note: so far only for 1D histograms.  
       case of 2D histograms requires different plotting method since they cannot be clearly overlaid.  
@@ -481,11 +439,11 @@ input arguments:
 - refhistslabel: legend entry for the reference histograms  
 </code></pre>
 
-<ul>
-<li>[attribute] plot_run( self, runnb, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False)  </li>
-</ul>
+<h3 id="-attribute-plot95run-self-runnb-recohistnone-recohistlabelreco-refhistsnone-refhistslabelreference-doprintfalse">+-- [attribute] plot_run( self, runnb, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False)</h3>
 <pre><code class="text">call plot_ls for all lumisections in a given run  
-</code></pre></div>
+</code></pre>
+
+<hr /></div>
         </div>
 
         <footer class="col-md-12">

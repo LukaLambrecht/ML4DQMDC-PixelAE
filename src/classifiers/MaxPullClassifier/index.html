@@ -263,30 +263,26 @@ specifically intended for 2D histograms, but should in principle work for 1D as 
 see static function pull (above) for definition of bin-per-bin pull and other notes.  
 </code></pre>
 
-<ul>
-<li>[attribute] __init__( self, refhist, n=1 )  </li>
-</ul>
+<h3 id="-attribute-9595init9595-self-refhist-n1">+-- [attribute] __init__( self, refhist, n=1 )</h3>
 <pre><code class="text">initializer from a reference histogram  
 input arguments:  
 - refhist: a numpy array of shape (nbins) or (nybins,nxbins)  
 - n: number of largest pull values to average over (default: 1, just take single maximum)  
 </code></pre>
 
-<ul>
-<li>[attribute] evaluate( self, histograms )  </li>
-</ul>
+<h3 id="-attribute-evaluate-self-histograms">+-- [attribute] evaluate( self, histograms )</h3>
 <pre><code class="text">classify the histograms based on their max bin-per-bin pull (in absolute value) with respect to a reference histogram  
 </code></pre>
 
-<ul>
-<li>[attribute] getpull( self, histogram )  </li>
-</ul>
+<h3 id="-attribute-getpull-self-histogram">+-- [attribute] getpull( self, histogram )</h3>
 <pre><code class="text">get the pull histogram for a given test histogram  
 input arguments:  
 histogram: a single histogram, i.e. numpy array of shape (nbins) for 1D or (nybins,nxbins) for 2D.  
 output:  
 numpy array of same shape as histogram containing bin-per-bin pull w.r.t. reference histogram  
-</code></pre></div>
+</code></pre>
+
+<hr /></div>
         </div>
 
         <footer class="col-md-12">

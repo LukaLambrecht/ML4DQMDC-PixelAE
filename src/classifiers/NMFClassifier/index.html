@@ -239,9 +239,7 @@ specifically intended for 2D histograms, but should in principle work for 1D as 
 it is basically a wrapper for a sklearn.decomposition.NMF instance.  
 </code></pre>
 
-<ul>
-<li>[attribute] __init__( self, histograms, ncomponents )  </li>
-</ul>
+<h3 id="-attribute-9595init9595-self-histograms-ncomponents">+-- [attribute] __init__( self, histograms, ncomponents )</h3>
 <pre><code class="text">initializer from a collection of histograms  
 input arguments:  
 - histograms: a numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins) that will be used to fit a NMF model  
@@ -249,30 +247,26 @@ input arguments:
 TODO: add keyword arguments to pass down to sklearn.decomposition.NMF  
 </code></pre>
 
-<ul>
-<li>[attribute] evaluate( self, histograms, nmax )  </li>
-</ul>
+<h3 id="-attribute-evaluate-self-histograms-nmax">+-- [attribute] evaluate( self, histograms, nmax )</h3>
 <pre><code class="text">classify the given histograms based on the MSE with respect to their reconstructed version  
 input arguments:  
 - histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins)  
 - nmax: number of largest elements to keep in mean square error calculation  
 </code></pre>
 
-<ul>
-<li>[attribute] getcomponents( self )  </li>
-</ul>
+<h3 id="-attribute-getcomponents-self">+-- [attribute] getcomponents( self )</h3>
 <pre><code class="text">return the NMF components (aka cluster centers aka basis vectors)  
 output:  
 a numpy array of shape (ncomponents,nbins) or (ncomponents,nybins,nxbins)  
 </code></pre>
 
-<ul>
-<li>[attribute] reconstruct( self, histograms )  </li>
-</ul>
+<h3 id="-attribute-reconstruct-self-histograms">+-- [attribute] reconstruct( self, histograms )</h3>
 <pre><code class="text">return the NMF reconstruction for a given set of histograms  
 input arguments:  
 - histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins)  
-</code></pre></div>
+</code></pre>
+
+<hr /></div>
         </div>
 
         <footer class="col-md-12">
