@@ -236,7 +236,7 @@
 
 <h1 id="maxpullclassifier">MaxPullClassifier</h1>
 <h2 id="pull-testhist-refhist">pull( testhist, refhist )</h2>
-<pre><code>### calculate bin-per-bin pull between two histograms  
+<pre><code class="plaintext">### calculate bin-per-bin pull between two histograms  
 # bin-per-bin pull is defined here preliminarily as (testhist(bin)-refhist(bin))/sqrt(refhist(bin))  
 # notes:   
 # - bins in the denominator where refhist is &lt; 1 are set to one! This is for histograms with absolute counts, and they should not be normalized!  
@@ -248,7 +248,7 @@
 </code></pre>
 
 <h2 id="maxabspull-testhist-refhist-n1">maxabspull( testhist, refhist, n=1 )</h2>
-<pre><code>### calculate maximum of bin-per-bin pulls (in absolute value) between two histograms  
+<pre><code class="plaintext">### calculate maximum of bin-per-bin pulls (in absolute value) between two histograms  
 # see definition of bin-per-bin pull in function pull (above)  
 # input arguments:  
 # - testhist, refhist: numpy arrays of the same shape  
@@ -258,24 +258,24 @@
 </code></pre>
 
 <h2 id="maxpullclassifierhistogramclassifier">MaxPullClassifier(HistogramClassifier)</h2>
-<pre><code>### histogram classification based on maximum pull between test histogram and reference histogram.  
+<pre><code class="plaintext">### histogram classification based on maximum pull between test histogram and reference histogram.  
 # specifically intended for 2D histograms, but should in principle work for 1D as well.  
 # see static function pull (above) for definition of bin-per-bin pull and other notes.  
 </code></pre>
 
 <h3 id="init-self-refhist-n1"><strong>init</strong>( self, refhist, n=1 )</h3>
-<pre><code>### initializer from a reference histogram  
+<pre><code class="plaintext">### initializer from a reference histogram  
 # input arguments:  
 # - refhist: a numpy array of shape (nbins) or (nybins,nxbins)  
 # - n: number of largest pull values to average over (default: 1, just take single maximum)  
 </code></pre>
 
 <h3 id="evaluate-self-histograms">evaluate( self, histograms )</h3>
-<pre><code>### classify the histograms based on their max bin-per-bin pull (in absolute value) with respect to a reference histogram  
+<pre><code class="plaintext">### classify the histograms based on their max bin-per-bin pull (in absolute value) with respect to a reference histogram  
 </code></pre>
 
 <h3 id="getpull-self-histogram">getpull( self, histogram )</h3>
-<pre><code>### get the pull histogram for a given test histogram  
+<pre><code class="plaintext">### get the pull histogram for a given test histogram  
 # input arguments:  
 # histogram: a single histogram, i.e. numpy array of shape (nbins) for 1D or (nybins,nxbins) for 2D.  
 # output:  

@@ -234,17 +234,17 @@
 
 <h1 id="seminormalfitter">SeminormalFitter</h1>
 <h2 id="seminormalfittercloudfitter">SeminormalFitter(CloudFitter)</h2>
-<pre><code>### class for fitting a 'seminormal' distribution to a point cloud  
+<pre><code class="plaintext">### class for fitting a 'seminormal' distribution to a point cloud  
 # this is not strictly speaking a probability distribution,  
 # only the first quadrant of the result of fitting a normal distribution  
 # to the data + its mirror image wrt the origin.  
 # parameters  
 # - cov: multidim covariance matrix of normal distribution  
-# - mvn: scipy.stats multivariate\_normal object built from the cov  
+# - mvn: scipy.stats multivariate_normal object built from the cov  
 </code></pre>
 
 <h3 id="initselfpoints"><strong>init</strong>(self,points)</h3>
-<pre><code>### constructor  
+<pre><code class="plaintext">### constructor  
 # points is a np array of shape (npoints,ndims)  
 # note: points can also be an array or list with length 0,  
 #       in that case the object is initialized empty.  
@@ -252,15 +252,15 @@
 </code></pre>
 
 <h3 id="pdfselfpoints">pdf(self,points)</h3>
-<pre><code>### get pdf at points  
+<pre><code class="plaintext">### get pdf at points  
 </code></pre>
 
 <h3 id="saveselfpath">save(self,path)</h3>
-<pre><code>### save the covariance matrix as a .npy file specified by path  
+<pre><code class="plaintext">### save the covariance matrix as a .npy file specified by path  
 </code></pre>
 
 <h3 id="loadselfpath">load(self,path)</h3>
-<pre><code>### load a covariance matrix from a .npy file specified by path and build the fit from it  
+<pre><code class="plaintext">### load a covariance matrix from a .npy file specified by path and build the fit from it  
 </code></pre></div>
         </div>
 

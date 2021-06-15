@@ -234,7 +234,7 @@
 
 <h1 id="histogramclassifier">HistogramClassifier</h1>
 <h2 id="histogramclassifierabc">HistogramClassifier(ABC)</h2>
-<pre><code>### abstract base class for histogram classifying objects  
+<pre><code class="plaintext">### abstract base class for histogram classifying objects  
 # note that all concrete histogram classifiers must inherit from HistogramClassifier!  
 # a HistogramClassifier can be any object that classifies a histogram; in more detail:  
 # - the input is a collection of histograms (of the same type), represented by a numpy array of shape (nhists,nbins) for 1D histograms or (nhists,nybins,nxbins) for 2D histograms.  
@@ -248,11 +248,11 @@
 </code></pre>
 
 <h3 id="init-self"><strong>init</strong>( self )</h3>
-<pre><code>### empty intializer  
+<pre><code class="plaintext">### empty intializer  
 </code></pre>
 
 <h3 id="evaluate-self-histograms">evaluate( self, histograms )</h3>
-<pre><code>### main function used to process a set of histograms  
+<pre><code class="plaintext">### main function used to process a set of histograms  
 # input arguments:  
 # - histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins).  
 # output: 1D numpy array of shape (nhists), one number per histogram.  

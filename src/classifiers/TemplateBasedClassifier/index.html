@@ -239,7 +239,7 @@
 
 <h1 id="templatebasedclassifier">TemplateBasedClassifier</h1>
 <h2 id="msetopn_templates-histograms-templates-n-1">mseTopN_templates( histograms, templates, n=-1 )</h2>
-<pre><code>### calculate the mse between each histogram in histograms and each histogram in templates  
+<pre><code class="plaintext">### calculate the mse between each histogram in histograms and each histogram in templates  
 # input arguments:  
 # - histograms: 2D numpy array of shape (nhistograms, nbins)  
 # - templates: 2D numpy array of shape (ntemplates,nbins)  
@@ -249,7 +249,7 @@
 </code></pre>
 
 <h2 id="msetopn_min-histograms-templates-n-1">mseTopN_min( histograms, templates, n=-1 )</h2>
-<pre><code>### calculate the mse betwee a histogram and each template and return the minimum  
+<pre><code class="plaintext">### calculate the mse betwee a histogram and each template and return the minimum  
 # input arguments:  
 # - histograms: 2D numpy array of shape (nhistograms, nbins)  
 # - templates: 2D numpy array of shape (ntemplates,nbins)  
@@ -259,11 +259,11 @@
 </code></pre>
 
 <h2 id="msetop10_min-histograms-templates">mseTop10_min( histograms, templates )</h2>
-<pre><code>### special case of above with n=10  
+<pre><code class="plaintext">### special case of above with n=10  
 </code></pre>
 
 <h2 id="msetopn_avg-histograms-templates-n-1">mseTopN_avg( histograms, templates, n=-1 )</h2>
-<pre><code>### calculate the mse betwee a histogram and each template and return the average  
+<pre><code class="plaintext">### calculate the mse betwee a histogram and each template and return the average  
 # input arguments:  
 # - histograms: 2D numpy array of shape (nhistograms, nbins)  
 # - templates: 2D numpy array of shape (ntemplates,nbins)  
@@ -273,15 +273,15 @@
 </code></pre>
 
 <h2 id="msetop10_avg-histograms-templates">mseTop10_avg( histograms, templates )</h2>
-<pre><code>### special case of above with n=10  
+<pre><code class="plaintext">### special case of above with n=10  
 </code></pre>
 
 <h2 id="templatebasedclassifierhistogramclassifier">TemplateBasedClassifier(HistogramClassifier)</h2>
-<pre><code>### histogram classifier based on a direct comparison with templates (i.e. reference histograms)  
+<pre><code class="plaintext">### histogram classifier based on a direct comparison with templates (i.e. reference histograms)  
 </code></pre>
 
 <h3 id="init-self-templates-comparemethodminmse"><strong>init</strong>( self, templates, comparemethod='minmse' )</h3>
-<pre><code>### initializer from a set of templates (reference histograms)  
+<pre><code class="plaintext">### initializer from a set of templates (reference histograms)  
 # input arguments:  
 # - templates: a 2D numpy array of shape (nhistograms,nbins)  
 # - comparemethod: string representing the method by which to compare a histogram with a set of templates  
@@ -291,7 +291,7 @@
 </code></pre>
 
 <h3 id="evaluate-self-histograms">evaluate( self, histograms )</h3>
-<pre><code>### classification of a collection of histograms based on their deviation from templates  
+<pre><code class="plaintext">### classification of a collection of histograms based on their deviation from templates  
 </code></pre></div>
         </div>
 

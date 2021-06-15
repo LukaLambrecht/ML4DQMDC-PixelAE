@@ -245,19 +245,19 @@
 
 <h1 id="autoencoder-utils">autoencoder utils</h1>
 <h2 id="msetop10y_true-y_pred">mseTop10(y_true, y_pred)</h2>
-<pre><code>### MSE top 10 loss function for autoencoder training  
+<pre><code class="plaintext">### MSE top 10 loss function for autoencoder training  
 # input arguments:  
-# - y\_true and y\_pred: two numpy arrays of equal shape,  
+# - y_true and y_pred: two numpy arrays of equal shape,  
 #   typically a histogram and its autoencoder reconstruction.  
 #   if two-dimensional, the arrays are assumed to have shape (nhists,nbins)!  
 # output:  
-# - mean squared error between y\_true and y\_pred,  
+# - mean squared error between y_true and y_pred,  
 #   where only the 10 bins with largest squared error are taken into account.  
-#   if y\_true and y\_pred are 2D arrays, this function returns 1D array (mseTop10 for each histogram)  
+#   if y_true and y_pred are 2D arrays, this function returns 1D array (mseTop10 for each histogram)  
 </code></pre>
 
 <h2 id="msetop10rawy_true-y_pred">mseTop10Raw(y_true, y_pred)</h2>
-<pre><code>### same as mseTop10 but without using tf or K  
+<pre><code class="plaintext">### same as mseTop10 but without using tf or K  
 # the version including tf or K seemed to cause randomly dying kernels, no clear reason could be found,  
 # but it was solved using this loss function instead.  
 # verified that it gives exactly the same output as the function above on some random arrays.  
@@ -265,33 +265,33 @@
 </code></pre>
 
 <h2 id="msetopnrawy_true-y_pred-n10">mseTopNRaw(y_true, y_pred, n=10)</h2>
-<pre><code>### generalization of mseTop10Raw to any number of bins to take into account  
+<pre><code class="plaintext">### generalization of mseTop10Raw to any number of bins to take into account  
 # note: now generalized to also work for 2D histograms, i.e. arrays of shape (nhists,nybins,nxbins)!  
 #       hence this is the most general method and preferred above mseTop10 and mseTop10Raw, which are only kept for reference  
 # input arguments:  
-# - y\_true, y\_pred: numpy arrays between which to calculate the mean square difference, of shape (nhists,nbins) or (nhists,nybins,nxbins)  
+# - y_true, y_pred: numpy arrays between which to calculate the mean square difference, of shape (nhists,nbins) or (nhists,nybins,nxbins)  
 # - n: number of largest elements to keep for averaging  
 # output:  
 # numpy array of shape (nhists)  
 </code></pre>
 
 <h2 id="chisquaredy_true-y_pred">chiSquared(y_true, y_pred)</h2>
-<pre><code>### chi2 loss functionfor autoencoder training  
+<pre><code class="plaintext">### chi2 loss functionfor autoencoder training  
 # input arguments:  
-# - y\_true and y\_pred: two numpy arrays of equal shape,  
+# - y_true and y_pred: two numpy arrays of equal shape,  
 #   typically a histogram and its autoencoder reconstruction.  
 #   if two-dimensional, the arrays are assumed to have shape (nhists,nbins)!  
 # output:  
-# - relative mean squared error between y\_true and y\_pred,  
-#   if y\_true and y\_pred are 2D arrays, this function returns 1D array (chiSquared for each histogram)  
+# - relative mean squared error between y_true and y_pred,  
+#   if y_true and y_pred are 2D arrays, this function returns 1D array (chiSquared for each histogram)  
 </code></pre>
 
 <h2 id="chisquaredtop10y_true-y_pred">chiSquaredTop10(y_true, y_pred)</h2>
-<pre><code>### same as chiSquared but take into account only 10 largest values in averaging.  
+<pre><code class="plaintext">### same as chiSquared but take into account only 10 largest values in averaging.  
 </code></pre>
 
 <h2 id="calculate_rocscores-labels-scoreax">calculate_roc(scores, labels, scoreax)</h2>
-<pre><code>### calculate a roc curve  
+<pre><code class="plaintext">### calculate a roc curve  
 # input arguments:  
 # - scores is a 1D numpy array containing output scores of any algorithm  
 # - labels is a 1D numpy array (equally long as scores) containing labels  
@@ -306,7 +306,7 @@
 </code></pre>
 
 <h2 id="get_rocscores-labels-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic">get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')</h2>
-<pre><code>### make a ROC curve  
+<pre><code class="plaintext">### make a ROC curve  
 # input arguments:  
 # - scores is a 1D numpy array containing output scores of any algorithm  
 # - labels is a 1D numpy array (equally long as scores) containing labels  
@@ -327,29 +327,29 @@
 </code></pre>
 
 <h2 id="get_roc_from_histshists-labels-predicted_hists-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic">get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')</h2>
-<pre><code>### make a ROC curve without manually calculating the scores  
+<pre><code class="plaintext">### make a ROC curve without manually calculating the scores  
 # the output score is the mseTop10Raw between the histograms and their reconstruction  
 # - input arguments:  
-# - hists and predicted\_hists are 2D numpy arrays of shape (nhistograms,nbins)  
-# - other arguments: see get\_roc  
+# - hists and predicted_hists are 2D numpy arrays of shape (nhistograms,nbins)  
+# - other arguments: see get_roc  
 </code></pre>
 
 <h2 id="get_confusion_matrixscores-labels-wp">get_confusion_matrix(scores, labels, wp)</h2>
-<pre><code>### plot a confusion matrix  
-# scores and labels are defined in the same way as for get\_roc  
+<pre><code class="plaintext">### plot a confusion matrix  
+# scores and labels are defined in the same way as for get_roc  
 # wp is the chosen working point   
 # (i.e. any score above wp is flagged as signal, any below is flagged as background)  
 </code></pre>
 
 <h2 id="get_confusion_matrix_from_histshists-labels-predicted_hists-msewp">get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp)</h2>
-<pre><code>### plot a confusion matrix without manually calculating the scores  
+<pre><code class="plaintext">### plot a confusion matrix without manually calculating the scores  
 # the output score is the mse between the histograms and their reconstruction  
 </code></pre>
 
 <h2 id="getautoencoderinput_sizearchactoptadamlossmsetop10">getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10)</h2>
-<pre><code># get a trainable autoencoder model  
+<pre><code class="plaintext"># get a trainable autoencoder model  
 # input args:  
-# - input\_size: size of vector that autoencoder will operate on  
+# - input_size: size of vector that autoencoder will operate on  
 # - arch: list of number of nodes per hidden layer (excluding input and output layer)  
 # - act: list of activations per layer (default: tanh)  
 # - opt: optimizer to use (default: adam)  
@@ -357,7 +357,7 @@
 </code></pre>
 
 <h2 id="train_simple_autoencoderhistsnepochs-1modelname">train_simple_autoencoder(hists,nepochs=-1,modelname='')</h2>
-<pre><code>### create and train a very simple keras model  
+<pre><code class="plaintext">### create and train a very simple keras model  
 # the model consists of one hidden layer (with half as many units as there are input bins), tanh activation, adam optimizer and mseTop10 loss.  
 # input args:   
 # - hists is a 2D numpy array of shape (nhistograms, nbins)  

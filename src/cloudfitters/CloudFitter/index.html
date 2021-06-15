@@ -234,7 +234,7 @@
 
 <h1 id="cloudfitter">CloudFitter</h1>
 <h2 id="cloudfitterabc">CloudFitter(ABC)</h2>
-<pre><code>### abstract base class for all point cloud fitting algorithms  
+<pre><code class="plaintext">### abstract base class for all point cloud fitting algorithms  
 # note that all concrete point cloud fitters must inherit from CloudFitter!  
 # how to make a concrete CloudFitter class:  
 # - define a class that inherits from CloudFitter  
@@ -244,12 +244,12 @@
 </code></pre>
 
 <h3 id="init-self-points"><strong>init</strong>( self, points )</h3>
-<pre><code>### default intializer  
+<pre><code class="plaintext">### default intializer  
 # - points: 2D numpy array of shape (npoints,ndims)  
 </code></pre>
 
 <h3 id="pdf-self-points">pdf( self, points )</h3>
-<pre><code>### evaluate the pdf (probability density function) at given points  
+<pre><code class="plaintext">### evaluate the pdf (probability density function) at given points  
 # - points: a 2D numpy array of shape (npoints,ndims)  
 # output: a 1D array of shape (npoints)  
 </code></pre></div>

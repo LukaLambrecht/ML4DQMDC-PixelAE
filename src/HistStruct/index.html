@@ -234,7 +234,7 @@
 
 <h1 id="histstruct">HistStruct</h1>
 <h2 id="histstructobject">HistStruct(object)</h2>
-<pre><code>### main data structure used within this framework  
+<pre><code class="plaintext">### main data structure used within this framework  
 # a HistStruct object basically consists of a mutually consistent collection of numpy arrays,  
 # where each numpy array corresponds to one histogram type, with dimensions (number of histograms, number of bins).  
 # the HistStruct has functions to easily perform the following common tasks (among others):  
@@ -244,7 +244,7 @@
 </code></pre>
 
 <h3 id="init-self"><strong>init</strong>( self )</h3>
-<pre><code>### empty initializer, setting all containers to empty defaults  
+<pre><code class="plaintext">### empty initializer, setting all containers to empty defaults  
 # a HistStruct object has the following properties:  
 # histnames: list of histogram names  
 # histograms: dict mapping histogram name to 2D numpy array of histograms (shape (nhists,nbins))  
@@ -258,36 +258,36 @@
 </code></pre>
 
 <h3 id="save-self-path">save( self, path )</h3>
-<pre><code>### save a HistStruct object to a pkl file  
+<pre><code class="plaintext">### save a HistStruct object to a pkl file  
 # input arguments:  
 # - path where to store the file (appendix .pkl is automatically appended)  
 </code></pre>
 
 <h3 id="load-self-path">load( self, path )</h3>
-<pre><code>### load a HistStruct object from a pkl file  
+<pre><code class="plaintext">### load a HistStruct object from a pkl file  
 # input arguments:  
 # - path to a pkl file containing a HistStruct object  
 </code></pre>
 
 <h3 id="add_dataframe-self-df-cropslicesnone-donormalizetrue-rebinningfactornone">add_dataframe( self, df, cropslices=None, donormalize=True, rebinningfactor=None )</h3>
-<pre><code>### add a dataframe to a HistStruct  
+<pre><code class="plaintext">### add a dataframe to a HistStruct  
 # input arguments:  
 # - df: a pandas dataframe as read from the input csv files  
 # - cropslices: list of slices (one per dimension) by which to crop the histograms  
 # - donormalize: boolean whether to normalize the histograms  
 # - rebinningfactor: factor by which to group bins together  
-# for more details on cropslices, donormalize and rebinningfactor, see hist\_utils.py / preparedatafromdf!  
+# for more details on cropslices, donormalize and rebinningfactor, see hist_utils.py / preparedatafromdf!  
 # notes:  
 # - the new dataframe can contain one or multiple histogram types  
 # - the new dataframe must contain the same run and lumisection numbers (for each histogram type in it)  
 #   as already present in the HistStruct, except if it is the first one to be added  
 # - alternative to adding the dataframe with the options cropslices, donormalize and rebinningfactor  
 #   (that will be passed down to preparedatafromdf), one can also call preparedatafromdf manually and add it  
-#   with add\_histograms, allowing for more control over complicated preprocessing.  
+#   with add_histograms, allowing for more control over complicated preprocessing.  
 </code></pre>
 
 <h3 id="add_histograms-self-histname-histograms-runnbs-lsnbs-nentriesnone">add_histograms( self, histname, histograms, runnbs, lsnbs, nentries=None )</h3>
-<pre><code>### add a set of histograms to a HistStruct  
+<pre><code class="plaintext">### add a set of histograms to a HistStruct  
 # input arguments:  
 # - histname: name of the histogram type to be added  
 # - histograms: a numpy array of shape (nhistograms,nbins), assumed to be of a single type  
@@ -303,22 +303,22 @@
 # notes:  
 # - no preprocessing is performed, this is assumed to have been done manually (if needed) before adding the histograms  
 # - runnbs and lsnbs must correspond to what is already in the current HistStruct, except if this is the first set of histogram to be added  
-# - see also add\_dataframe for an alternative way of adding histograms  
+# - see also add_dataframe for an alternative way of adding histograms  
 </code></pre>
 
 <h3 id="add_mask-self-name-mask">add_mask( self, name, mask )</h3>
-<pre><code>### add a mask to a HistStruct  
+<pre><code class="plaintext">### add a mask to a HistStruct  
 # input arguments:  
 # - name: a name for the mask  
 # - mask: a 1D np array of booleans  with same length as number of lumisections in HistStruct  
 </code></pre>
 
 <h3 id="remove_mask-self-name">remove_mask( self, name )</h3>
-<pre><code>### inverse operation of add\_mask  
+<pre><code class="plaintext">### inverse operation of add_mask  
 </code></pre>
 
 <h3 id="add_json_mask-self-name-jsondict">add_json_mask( self, name, jsondict )</h3>
-<pre><code>### add a mask corresponding to a json dict  
+<pre><code class="plaintext">### add a mask corresponding to a json dict  
 # input arguments:  
 # - name: a name for the mask  
 # - jsondict: a dictionary in typical json format (see the golden json file for inspiration)  
@@ -326,49 +326,49 @@
 </code></pre>
 
 <h3 id="add_goldenjson_mask-self-name">add_goldenjson_mask( self, name )</h3>
-<pre><code>### add a mask corresponding to the golden json file  
+<pre><code class="plaintext">### add a mask corresponding to the golden json file  
 # input arguments:  
 # - name: a name for the mask  
 </code></pre>
 
 <h3 id="add_dcsonjson_mask-self-name">add_dcsonjson_mask( self, name )</h3>
-<pre><code>### add a mask corresponding to the DCS-bit on json file  
+<pre><code class="plaintext">### add a mask corresponding to the DCS-bit on json file  
 # input arguments:  
 # - name: a name for the mask  
 </code></pre>
 
 <h3 id="add_hightstat_mask-self-name-histnamesnone-entries_to_bins_ratio100">add_hightstat_mask( self, name, histnames=None, entries_to_bins_ratio=100 )</h3>
-<pre><code>### add a mask corresponding to lumisections where all histograms have sufficient statistics  
+<pre><code class="plaintext">### add a mask corresponding to lumisections where all histograms have sufficient statistics  
 # input arguments:  
 # - histnames: list of histogram names to take into account for making the mask (default: all in the HistStruct)  
-# - entries\_to\_bins\_ratio: criterion to determine if a histogram has sufficient statistics, number of entries divided by number of bins  
+# - entries_to_bins_ratio: criterion to determine if a histogram has sufficient statistics, number of entries divided by number of bins  
 </code></pre>
 
 <h3 id="get_combined_mask-self-names">get_combined_mask( self, names )</h3>
-<pre><code>### get a combined mask given multiple mask names  
-# mostly for internal use; externally you can use get\_histograms( histname, &lt;list of mask names&gt;) directly  
+<pre><code class="plaintext">### get a combined mask given multiple mask names  
+# mostly for internal use; externally you can use get_histograms( histname, &lt;list of mask names&gt;) directly  
 </code></pre>
 
 <h3 id="get_runnbs-self-masknamesnone">get_runnbs( self, masknames=None )</h3>
-<pre><code>### get the array of run numbers, optionally after masking  
+<pre><code class="plaintext">### get the array of run numbers, optionally after masking  
 # input arguments:  
 # - masknames: list of names of masks (default: no masking, return full array)  
 </code></pre>
 
 <h3 id="get_lsnbs-self-masknamesnone">get_lsnbs( self, masknames=None )</h3>
-<pre><code>### get the array of lumisection numbers, optionally after masking  
+<pre><code class="plaintext">### get the array of lumisection numbers, optionally after masking  
 # input arguments:  
 # - masknames: list of names of masks (default: no masking, return full array)  
 </code></pre>
 
 <h3 id="get_index-self-runnb-lsnb">get_index( self, runnb, lsnb )</h3>
-<pre><code>### get the index in the current HistStruct of a given run and lumisection number  
+<pre><code class="plaintext">### get the index in the current HistStruct of a given run and lumisection number  
 # input arguments:  
 # - runnb and lsnb: run and lumisection number respectively  
 </code></pre>
 
 <h3 id="get_scores-self-histnamenone-masknamesnone">get_scores( self, histname=None, masknames=None )</h3>
-<pre><code>### get the array of scores for a given histogram type, optionally after masking  
+<pre><code class="plaintext">### get the array of scores for a given histogram type, optionally after masking  
 # input arguments:  
 # - histname: name of the histogram type for which to retrieve the score.   
 #   if None, return a dict matching histnames to arrays of scores  
@@ -380,7 +380,7 @@
 </code></pre>
 
 <h3 id="get_scores_ls-self-runnb-lsnb-histnamesnone-suppresswarningsfalse">get_scores_ls( self, runnb, lsnb, histnames=None, suppresswarnings=False )</h3>
-<pre><code>### get the scores for a given run/lumisection number and for given histogram names  
+<pre><code class="plaintext">### get the scores for a given run/lumisection number and for given histogram names  
 # input arguments:  
 # - runnb: run number  
 # - lsnb: lumisection number  
@@ -394,7 +394,7 @@
 </code></pre>
 
 <h3 id="get_histograms-self-histnamenone-masknamesnone">get_histograms( self, histname=None, masknames=None )</h3>
-<pre><code>### get the array of histograms for a given type, optionally after masking  
+<pre><code class="plaintext">### get the array of histograms for a given type, optionally after masking  
 # input arguments:  
 # - histname: name of the histogram type to retrieve   
 #   if None, return a dict matching histnames to arrays of histograms  
@@ -402,7 +402,7 @@
 </code></pre>
 
 <h3 id="add_classifier-self-histname-classifier-evaluatefalse">add_classifier( self, histname, classifier, evaluate=False )</h3>
-<pre><code>### add a histogram classifier for a given histogram name to the HistStruct  
+<pre><code class="plaintext">### add a histogram classifier for a given histogram name to the HistStruct  
 # input arguments:  
 # - histname: a valid histogram name present in the HistStruct to which this classifier applies  
 # - classifier: an object of type HistogramClassifier (i.e. of any class that derives from it)  
@@ -411,7 +411,7 @@
 </code></pre>
 
 <h3 id="evaluate_classifier-self-histname">evaluate_classifier( self, histname )</h3>
-<pre><code>### evaluate a histogram classifier for a given histogram name in the HistStruct  
+<pre><code class="plaintext">### evaluate a histogram classifier for a given histogram name in the HistStruct  
 # input arguments:  
 # - histname: a valid histogram name present in the HistStruct for which to evaluate the classifier  
 # notes:  
@@ -419,7 +419,7 @@
 </code></pre>
 
 <h3 id="plot_ls-self-runnb-lsnb-histnamesnone-recohistnone-recohistlabelreco-refhistsnone-refhistslabelreference">plot_ls( self, runnb, lsnb, histnames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference')</h3>
-<pre><code>### plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction  
+<pre><code class="plaintext">### plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction  
 # note: so far only for 1D histograms.  
 #       case of 2D histograms requires different plotting method since they cannot be clearly overlaid.  
 #       if a HistStruct contains both 1D and 2D histograms, the 1D histograms must be selected with the histnames argument.  
@@ -440,7 +440,7 @@
 </code></pre>
 
 <h3 id="plot_run-self-runnb-recohistnone-recohistlabelreco-refhistsnone-refhistslabelreference-doprintfalse">plot_run( self, runnb, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False)</h3>
-<pre><code>### call plot\_ls for all lumisections in a given run  
+<pre><code class="plaintext">### call plot_ls for all lumisections in a given run  
 </code></pre></div>
         </div>
 
