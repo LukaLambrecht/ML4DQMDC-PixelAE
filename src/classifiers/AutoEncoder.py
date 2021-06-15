@@ -47,6 +47,10 @@ class AutoEncoder(HistogramClassifier):
         super( AutoEncoder,self).evaluate( histograms )
         predictions = self.model.predict( histograms )
         return mseTop10Raw( histograms, predictions )
+    
+    def reconstruct( self, histograms ):
+        ### return the autoencoder reconstruction of a set of histograms
+        return self.model.predict( histograms )
 
 
 
