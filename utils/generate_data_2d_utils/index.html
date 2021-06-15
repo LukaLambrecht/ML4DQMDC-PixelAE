@@ -244,15 +244,15 @@
 generalization of goodnoise (see generate_data_utils) to arbitrary number of dimensions<br />
 input args:<br />
 - shape: a tuple, shape of the noise array to be sampled<br />
-note: in case of 1D, a comma is needed e.g. shape = (30,) else it will be automatically parsed to int and raise an error<br />
-- fstd: an array of shape given by shape argument,<br />
-used for scaling of the amplitude of the noise bin-by-bin<br />
-(default: no scaling).<br />
+  note: in case of 1D, a comma is needed e.g. shape = (30,) else it will be automatically parsed to int and raise an error<br />
+- fstd: an array of shape given by shape argument, <br />
+  used for scaling of the amplitude of the noise bin-by-bin<br />
+  (default: no scaling).<br />
 - kmaxscale: scale factor to limit maximum frequency (lower kmaxscale means smoother noise)<br />
-note: can be a tuple with same length as shape, to scale differently in different dimensions.<br />
+  note: can be a tuple with same length as shape, to scale differently in different dimensions.<br />
 - ncomponents: number of random sines to add per dimension<br />
-note: can be a tuple with same length as shape, to use a different number of components in different dimensions.<br />
-output:<br />
+  note: can be a tuple with same length as shape, to use a different number of components in different dimensions.<br />
+output: <br />
 - numpy array of shape detailed by shape argument containing the noise  </p>
 <hr />
 <h2 id="whitenoise95ndshape-fstdnone">whitenoise_nd(shape, fstd=None)</h2>
@@ -260,17 +260,17 @@ output:<br />
 generalization of whitenoise (see generate_data_utils) to arbitrary number of dimensions<br />
 input args:<br />
 - shape: a tuple, shape of the noise array to be sampled<br />
-note: in case of 1D, a comma is needed e.g. shape = (30,) else it will be automatically parsed to int and raise an error<br />
-- fstd: an array of shape given by shape argument,<br />
-used for scaling of the amplitude of the noise bin-by-bin<br />
-(default: no scaling).<br />
-output:<br />
+  note: in case of 1D, a comma is needed e.g. shape = (30,) else it will be automatically parsed to int and raise an error<br />
+- fstd: an array of shape given by shape argument, <br />
+  used for scaling of the amplitude of the noise bin-by-bin<br />
+  (default: no scaling).<br />
+output: <br />
 - numpy array of shape detailed by shape argument containing the noise  </p>
 <hr />
 <h2 id="random95lico95ndhists">random_lico_nd(hists)</h2>
 <p><strong>generate one linear combination of histograms with random coefficients in (0,1) summing to 1.</strong><br />
 generalization of random_lico (see generate_data_utils) to arbitrary number of dimensions.<br />
-input args:<br />
+input args: <br />
 - numpy array of shape (nhists,<arbitrary number of additional dimensions>)<br />
 output:<br />
 - numpy array of shape (<same dimensions as input>), containing the new histogram  </p>
@@ -278,7 +278,7 @@ output:<br />
 <h2 id="fourier95noise95ndhists-outfilename-figname-nresamples1-nonnegativetrue-stdfactor15-kmaxscale025-ncomponents3">fourier_noise_nd(hists, outfilename='', figname='', nresamples=1, nonnegative=True,  stdfactor=15., kmaxscale=0.25, ncomponents=3)</h2>
 <p><strong>apply fourier noise on random histograms with simple flat amplitude scaling.</strong><br />
 generalization of fourier_noise (see generate_data_utils) to arbitrary number of dimensions.<br />
-input args:<br />
+input args: <br />
 - hists: numpy array of shape (nhists,<arbitrary number of dimensions>) used for seeding<br />
 - outfilename: path to csv file to write results to (default: no writing)<br />
 - figname: path to figure plotting examples (default: no plotting)<br />
@@ -300,11 +300,11 @@ input args:<br />
 <h2 id="resample95lico95ndhists-nresamples1-nonnegativetrue">resample_lico_nd(hists, nresamples=1, nonnegative=True)</h2>
 <p><strong>take random linear combinations of input histograms</strong><br />
 generalization of fourier_noise (see generate_data_utils) to arbitrary number of dimensions.<br />
-input args:<br />
+input args: <br />
 - hists: numpy array of shape (nhists,<arbitrary number of dimensions>) used for seeding<br />
 - nresamples: number of samples to draw<br />
 - nonnegative: boolean whether to set all bins to minimum zero after applying noise<br />
-note: coefficients in linear combination are always nonnegative, so this setting is superfluous is input histograms are all nonnegative  </p></div>
+  note: coefficients in linear combination are always nonnegative, so this setting is superfluous is input histograms are all nonnegative  </p></div>
         </div>
 
         <footer class="col-md-12">

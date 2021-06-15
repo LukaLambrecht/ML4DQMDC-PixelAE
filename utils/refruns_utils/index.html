@@ -239,12 +239,12 @@
 input arguments:<br />
 - runnb: integer representing a run number.<br />
 - jsonlist: list matching run numbers to reference run numbers.<br />
-note: the list is supposed to contain dicts with keys 'run_number' and 'reference_run_number',<br />
-this convention is based on the json file provided by the tracker group.<br />
-note: if jsonlist is None, jsonfile (see below) will be opened and a jsonlist read from it.<br />
+  note: the list is supposed to contain dicts with keys 'run_number' and 'reference_run_number',<br />
+        this convention is based on the json file provided by the tracker group.<br />
+  note: if jsonlist is None, jsonfile (see below) will be opened and a jsonlist read from it.<br />
 - jsonfile: path to json file matching run numbers to reference run numbers.<br />
-note: the json file must contain a list of dicts with keys 'run_number' and 'reference_run_number', as explained above.<br />
-note: ignored if jsonlist is not None.<br />
+  note: the json file must contain a list of dicts with keys 'run_number' and 'reference_run_number', as explained above.<br />
+  note: ignored if jsonlist is not None.<br />
 output:<br />
 integer representing the reference run number for the given run.<br />
 if the given run is not in the json, -1 is returned.  </p></div>

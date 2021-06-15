@@ -231,6 +231,7 @@
             <li><a href="#rebinhistshists-factor">rebinhists(hists, factor)</a></li>
             <li><a href="#normalizehistshists">normalizehists(hists)</a></li>
             <li><a href="#averagehistshists-nout">averagehists(hists, nout)</a></li>
+            <li><a href="#running95average95histshists-window-weightsnone">running_average_hists(hists, window, weights=None)</a></li>
             <li><a href="#momentbins-counts-order">moment(bins, counts, order)</a></li>
             <li><a href="#histmeanbins-counts">histmean(bins, counts)</a></li>
             <li><a href="#histrmsbins-counts">histrms(bins, counts)</a></li>
@@ -245,36 +246,83 @@
 <h1 id="hist-utils">hist utils</h1>
 <hr />
 <h2 id="crophistshists-slices">crophists(hists, slices)</h2>
-<p><strong>perform cropping on a sit of histograms</strong><br />
+<p><strong>perform cropping on a set of histograms</strong><br />
 input arguments:<br />
-- hists is a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D<br />
-- slices is a list of slice objects (builtin python type) of length 1 (for 1D) or 2 (for 2D)  </p>
+- hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D<br />
+- slices is a list of slice objects (builtin python type) of length 1 (for 1D) or 2 (for 2D)<br />
+  note: a slice can be created using the builtin python syntax 'slice(start,stop,step)', <br />
+        and the syntax 'list[slice]' is equivalent to 'list[start:stop:step]'.<br />
+        use 'None' to ignore one of the arguments for slice creation (equivalent to ':' in direct slicing)<br />
+example usage:<br />
+- see tutorials/plot_histograms_2d.ipynb<br />
+returns:<br />
+- a numpy array containing the same histograms as input but cropped according to the slices argument  </p>
 <hr />
 <h2 id="rebinhistshists-factor">rebinhists(hists, factor)</h2>
 <p><strong>perform rebinning on a set of histograms</strong><br />
 input arguments:<br />
-- hists is a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D<br />
-- factor is the rebinning factor, or a tuple (y axis rebinning factor, x axis rebinning factor),<br />
-which must be a divisors of the respective number of bins.  </p>
+- hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D<br />
+- factor: the rebinning factor (for 1D), or a tuple of (y axis rebinning factor, x axis rebinning factor) (for 2D) <br />
+  note: the rebinning applied here is simple summing of bin contents,<br />
+        and the rebinning factors must be divisors of the respective number of bins!<br />
+example usage:<br />
+- see tutorials/plot_histograms_2d.ipynb<br />
+returns:<br />
+- a numpy array containing the same histograms as input but rebinned according to the factor argument  </p>
 <hr />
 <h2 id="normalizehistshists">normalizehists(hists)</h2>
-<p><strong>perform normalization</strong><br />
-for 1D histograms, the sum of bin contents is set equal one for each histogram<br />
-for 2D histograms, the bin contents are scaled so the maximum is 1 for each histogram<br />
-(maybe later make more flexible by adding normalization stragy as argument)  </p>
+<p><strong>perform normalization on a set of histograms</strong><br />
+note: <br />
+- for 1D histograms, the sum of bin contents is set equal one for each histogram<br />
+- for 2D histograms, the bin contents are scaled so the maximum is 1 for each histogram<br />
+- maybe later make more flexible by adding normalization stragy as argument...<br />
+input arguments:<br />
+- hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D<br />
+returns:<br />
+- a numpy array containing the same histograms as input but normalized  </p>
 <hr />
 <h2 id="averagehistshists-nout">averagehists(hists, nout)</h2>
-<p><strong>partition hists (of shape (nhistograms,nbins) or (nhistograms,nybins,nxbins)) into nout parts and take the average histogram of each part</strong>  </p>
+<p><strong>partition a set of histograms into equal parts and take the average histogram of each part</strong><br />
+input arguments:<br />
+- hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D<br />
+- nout: number of partitions / output histograms<br />
+  note: nout=1 corresponds to simply taking the average of all histograms in hists.<br />
+returns:<br />
+- a numpy array of shape (nout,<input number of bins>)  </p>
+<hr />
+<h2 id="running95average95histshists-window-weightsnone">running_average_hists(hists, window, weights=None)</h2>
+<p><strong>replace each histogram in a collection of histograms by its running average</strong><br />
+input arguments:<br />
+- hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D<br />
+- nwindow: number of histograms to consider for the averaging<br />
+  if window is an integer, it is the number of previous histograms in hists used for averaging<br />
+  (so window=0 would correspond to no averaging)<br />
+  if window is a tuple, it corresponds to (nprevious,nnext), and the nprevious previous and nnext next histograms in hists are used for averaging<br />
+  (so window=(0,0) would correspond to no averaging)<br />
+- weights: a list or numpy array containing the relative weights of the histograms in the averaging procedure.<br />
+  note: the weights can be any number, but they will be normalized to have unit sum.<br />
+  note: weights must have length nwindow+1 or nprevious+1+nnext.<br />
+  note: the default behaviour is a uniform array with values 1./(window+1) (or 1./(nprevious+1+nnext))<br />
+returns:<br />
+- a numpy array with same shape as input but where each histogram is replaced by its running average<br />
+notes:<br />
+- at the edges, the weights are cropped to match the input array and renormalized<br />
+- this function will crash when the length of the set of histograms is smaller than the total window length,<br />
+  maybe extend later (although this is not normally needed)  </p>
 <hr />
 <h2 id="momentbins-counts-order">moment(bins, counts, order)</h2>
 <p><strong>get n-th central moment of a histogram</strong><br />
-- bins is a 1D or 2D np array holding the bin centers<br />
-(shape (nbins) or (nhistograms,nbins))<br />
-- array is a 2D np array containing the bin counts<br />
-(shape (nhistograms,nbins))<br />
-- order is the order of the moment to calculate<br />
-(0 = maximum, 1 = mean value)<br />
-note: for now only 1D histograms are supported!  </p>
+input arguments:<br />
+- bins: a 1D or 2D np array holding the bin centers<br />
+  (shape (nbins) or (nhistograms,nbins))<br />
+- counts: a 2D np array containing the bin counts<br />
+  (shape (nhistograms,nbins))<br />
+- order: the order of the moment to calculate<br />
+  (0 = maximum value, 1 = mean value)<br />
+returns:<br />
+- an array of shape (nhistograms) holding the requested moment per histogram<br />
+notes: <br />
+- for now only 1D histograms are supported!  </p>
 <hr />
 <h2 id="histmeanbins-counts">histmean(bins, counts)</h2>
 <p><strong>special case of moment calculation (with order=1)</strong>  </p>
@@ -284,18 +332,24 @@ note: for now only 1D histograms are supported!  </p>
 <hr />
 <h2 id="histmomentsbins-counts-orders">histmoments(bins, counts, orders)</h2>
 <p><strong>apply moment calculation for a list of orders</strong><br />
-the return type is a numpy array of shape (nhistograms,nmoments)  </p>
+input arguments:<br />
+- see function moment(bins, counts, order),<br />
+  the only difference being that orders is a list instead of a single number<br />
+returns:<br />
+- a numpy array of shape (nhistograms,nmoments)  </p>
 <hr />
 <h2 id="preparedatafromnpydataname-cropslicesnone-rebinningfactornone-donormalizetrue-doplotfalse">preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None, donormalize=True, doplot=False)</h2>
 <p><strong>read a .npy file and output the histograms</strong><br />
-args: see e.g. preparedatafromdf<br />
-note: not yet tested for 2D histograms, but is expected to work...  </p>
+input arguments: <br />
+- see e.g. preparedatafromdf<br />
+notes: <br />
+- not yet tested for 2D histograms, but is expected to work...  </p>
 <hr />
 <h2 id="preparedatafromdfdf-returnrunlsfalse-cropslicesnone-rebinningfactornone-donormalizefalse-doplotfalse">preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=None, donormalize=False, doplot=False)</h2>
-<p>prepare the data contained in a dataframe in the form of a numpy array<br />
-args:<br />
+<p><strong>prepare the data contained in a dataframe in the form of a numpy array</strong><br />
+input arguments:<br />
 - returnrunls: boolean whether to return a tuple of (histograms, run numbers, lumisection numbers).<br />
-(default: return only histograms)<br />
+  (default: return only histograms)<br />
 - cropslices: list of slices by which to crop the historams (default: no cropping)<br />
 - rebinningfactor: an integer (or tuple of integers for 2D histograms) to downsample/rebin the histograms (default: no rebinning)<br />
 - donormalize: boolean whether to normalize the data<br />
@@ -303,9 +357,9 @@ args:<br />
 <hr />
 <h2 id="preparedatafromcsvdataname-returnrunlsfalse-cropslicesnone-rebinningfactornone-donormalizetrue-doplotfalse">preparedatafromcsv(dataname, returnrunls=False, cropslices=None, rebinningfactor=None, donormalize=True, doplot=False)</h2>
 <p><strong>prepare the data contained in a dataframe csv file in the form of a numpy array</strong><br />
-args:<br />
+input arguments:<br />
 - returnrunls: boolean whether to return a tuple of (histograms, run numbers, lumisection numbers).<br />
-(default: return only histograms)<br />
+  (default: return only histograms)<br />
 - cropslices: list of slices by which to crop the historams (default: no cropping)<br />
 - rebinningfactor: an integer (or tuple of integers for 2D histograms) to downsample/rebin the histograms (default: no rebinning)<br />
 - donormalize: boolean whether to normalize the data<br />

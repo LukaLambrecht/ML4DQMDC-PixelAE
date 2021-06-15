@@ -243,21 +243,58 @@ the HistStruct has functions to easily perform the following common tasks (among
 - prepare the data for machine learning training<br />
 - evaluate classifiers (machine learning types or other)  </p>
 <h3 id="9595init9595-self">__init__( self )</h3>
-<p><strong>empty initializer, setting all containers to empty defaults</strong>  </p>
+<p><strong>empty initializer, setting all containers to empty defaults</strong><br />
+a HistStruct object has the following properties:<br />
+histnames: list of histogram names<br />
+histograms: dict mapping histogram name to 2D numpy array of histograms (shape (nhists,nbins))<br />
+nentries: dict mapping histogram name to 1D numpy array of number of entries per histogram (same length as histograms)<br />
+runnbs: 1D numpy array of run numbers (same length as histograms)<br />
+lsnbs: 1D numpy array of lumisection numbers (same length as histograms)<br />
+classifiers: dict mapping histogram name to object of type HistogramClassifier<br />
+scores: dict mapping histogram name to 1D numpy array of values associated to the histograms (same length as histograms)<br />
+masks: dict mapping name to 1D numpy array of booleans (same length as histograms) that can be used for masking<br />
+exthistograms: dict similar to histograms for additional (e.g. artificially generated) histograms  </p>
 <h3 id="save-self-path">save( self, path )</h3>
-<p><strong>save a HistStruct object to a pkl file</strong>  </p>
+<p><strong>save a HistStruct object to a pkl file</strong><br />
+input arguments:<br />
+- path where to store the file (appendix .pkl is automatically appended)  </p>
 <h3 id="load-self-path">load( self, path )</h3>
-<p>(no valid documentation found)  </p>
-<h3 id="add95dataframe-self-df-donormalizetrue-rebinningfactor1">add_dataframe( self, df, donormalize=True, rebinningfactor=1 )</h3>
+<p><strong>load a HistStruct object from a pkl file</strong><br />
+input arguments:<br />
+- path to a pkl file containing a HistStruct object  </p>
+<h3 id="add95dataframe-self-df-cropslicesnone-donormalizetrue-rebinningfactornone">add_dataframe( self, df, cropslices=None, donormalize=True, rebinningfactor=None )</h3>
 <p><strong>add a dataframe to a HistStruct</strong><br />
 input arguments:<br />
-- df is a pandas dataframe as read from the input csv files.<br />
+- df: a pandas dataframe as read from the input csv files<br />
+- cropslices: list of slices (one per dimension) by which to crop the histograms<br />
 - donormalize: boolean whether to normalize the histograms<br />
 - rebinningfactor: factor by which to group bins together<br />
+for more details on cropslices, donormalize and rebinningfactor, see hist_utils.py / preparedatafromdf!<br />
 notes:<br />
-- the new dataframe can contain one or more histogram types<br />
+- the new dataframe can contain one or multiple histogram types<br />
 - the new dataframe must contain the same run and lumisection numbers (for each histogram type in it)<br />
-as already present in the HistStruct, except if it is the first one to be added  </p>
+  as already present in the HistStruct, except if it is the first one to be added<br />
+- alternative to adding the dataframe with the options cropslices, donormalize and rebinningfactor<br />
+  (that will be passed down to preparedatafromdf), one can also call preparedatafromdf manually and add it<br />
+  with add_histograms, allowing for more control over complicated preprocessing.  </p>
+<h3 id="add95histograms-self-histname-histograms-runnbs-lsnbs-nentriesnone">add_histograms( self, histname, histograms, runnbs, lsnbs, nentries=None )</h3>
+<p><strong>add a set of histograms to a HistStruct</strong><br />
+input arguments:<br />
+- histname: name of the histogram type to be added<br />
+- histograms: a numpy array of shape (nhistograms,nbins), assumed to be of a single type<br />
+- runnbs: a 1D list or array of length nhistograms containing the run number per histogram<br />
+- lsnbs: a 1D list or array of length nhistograms containing the lumisection number per histogram<br />
+- nentries: a 1D list or array of length nhistograms containing the number of entries per histogram<br />
+  notes:<br />
+  - must be provided explicitly since histograms might be normalized, <br />
+    in which case the number of entries cannot be determined from the sum of bin contents.<br />
+  - used for (de-)selecting histograms with sufficient statistics; <br />
+    if you don't need that type of selection, nentries can be left at default.<br />
+  - default is None, meaning all entries will be set to zero.<br />
+notes:<br />
+- no preprocessing is performed, this is assumed to have been done manually (if needed) before adding the histograms<br />
+- runnbs and lsnbs must correspond to what is already in the current HistStruct, except if this is the first set of histogram to be added<br />
+- see also add_dataframe for an alternative way of adding histograms  </p>
 <h3 id="add95mask-self-name-mask">add_mask( self, name, mask )</h3>
 <p><strong>add a mask to a HistStruct</strong><br />
 input arguments:<br />
@@ -266,11 +303,19 @@ input arguments:<br />
 <h3 id="remove95mask-self-name">remove_mask( self, name )</h3>
 <p><strong>inverse operation of add_mask</strong>  </p>
 <h3 id="add95json95mask-self-name-jsondict">add_json_mask( self, name, jsondict )</h3>
-<p><strong>add a mask corresponding to a json dict</strong>  </p>
+<p><strong>add a mask corresponding to a json dict</strong><br />
+input arguments:<br />
+- name: a name for the mask<br />
+- jsondict: a dictionary in typical json format (see the golden json file for inspiration)<br />
+all lumisections present in the jsondict will be masked True, the others False.  </p>
 <h3 id="add95goldenjson95mask-self-name">add_goldenjson_mask( self, name )</h3>
-<p><strong>add a mask corresponding to the golden json file</strong>  </p>
+<p><strong>add a mask corresponding to the golden json file</strong><br />
+input arguments:<br />
+- name: a name for the mask  </p>
 <h3 id="add95dcsonjson95mask-self-name">add_dcsonjson_mask( self, name )</h3>
-<p><strong>add a mask corresponding to the DCS-bit on json file</strong>  </p>
+<p><strong>add a mask corresponding to the DCS-bit on json file</strong><br />
+input arguments:<br />
+- name: a name for the mask  </p>
 <h3 id="add95hightstat95mask-self-name-histnamesnone-entries95to95bins95ratio100">add_hightstat_mask( self, name, histnames=None, entries_to_bins_ratio=100 )</h3>
 <p><strong>add a mask corresponding to lumisections where all histograms have sufficient statistics</strong><br />
 input arguments:<br />
@@ -280,25 +325,78 @@ input arguments:<br />
 <p><strong>get a combined mask given multiple mask names</strong><br />
 mostly for internal use; externally you can use get_histograms( histname, <list of mask names>) directly  </p>
 <h3 id="get95runnbs-self-masknamesnone">get_runnbs( self, masknames=None )</h3>
-<p><strong>get the array of run numbers, optionally after masking</strong>  </p>
+<p><strong>get the array of run numbers, optionally after masking</strong><br />
+input arguments:<br />
+- masknames: list of names of masks (default: no masking, return full array)  </p>
 <h3 id="get95lsnbs-self-masknamesnone">get_lsnbs( self, masknames=None )</h3>
-<p><strong>get the array of lumisection numbers, optionally after masking</strong>  </p>
+<p><strong>get the array of lumisection numbers, optionally after masking</strong><br />
+input arguments:<br />
+- masknames: list of names of masks (default: no masking, return full array)  </p>
+<h3 id="get95index-self-runnb-lsnb">get_index( self, runnb, lsnb )</h3>
+<p><strong>get the index in the current HistStruct of a given run and lumisection number</strong><br />
+input arguments:<br />
+- runnb and lsnb: run and lumisection number respectively  </p>
 <h3 id="get95scores-self-histnamenone-masknamesnone">get_scores( self, histname=None, masknames=None )</h3>
 <p><strong>get the array of scores for a given histogram type, optionally after masking</strong><br />
-if histname is None, return a dict matching histnames to arrays of scores  </p>
+input arguments:<br />
+- histname: name of the histogram type for which to retrieve the score. <br />
+  if None, return a dict matching histnames to arrays of scores<br />
+- masknames: list of names of masks (default: no masking, return full array)<br />
+notes:<br />
+- this method takes the scores from the HistStruct.scores attribute;<br />
+  make sure to have evaluated the classifiers before calling this method,<br />
+  else an exception will be thrown.  </p>
+<h3 id="get95scores95ls-self-runnb-lsnb-histnamesnone-suppresswarningsfalse">get_scores_ls( self, runnb, lsnb, histnames=None, suppresswarnings=False )</h3>
+<p><strong>get the scores for a given run/lumisection number and for given histogram names</strong><br />
+input arguments:<br />
+- runnb: run number<br />
+- lsnb: lumisection number<br />
+- histnames: names of the histogram types for which to retrieve the score. <br />
+returns:<br />
+- a dict matching each name in histnames to a score (or None if no valid score)<br />
+notes:<br />
+- this method takes the scores from the HistStruct.scores attribute;<br />
+  make sure to have evaluated the classifiers before calling this method,<br />
+  else the returned scores will be None.  </p>
 <h3 id="get95histograms-self-histnamenone-masknamesnone">get_histograms( self, histname=None, masknames=None )</h3>
 <p><strong>get the array of histograms for a given type, optionally after masking</strong><br />
-if histname is None, return a dict matching histnames to arrays of histograms  </p>
+input arguments:<br />
+- histname: name of the histogram type to retrieve <br />
+  if None, return a dict matching histnames to arrays of histograms<br />
+- masknames: list of names of masks (default: no masking, return full array)  </p>
 <h3 id="add95classifier-self-histname-classifier-evaluatefalse">add_classifier( self, histname, classifier, evaluate=False )</h3>
 <p><strong>add a histogram classifier for a given histogram name to the HistStruct</strong><br />
-classifier must be an object of type HistogramClassifier (i.e. of any class that derives from it)<br />
-evaluate is a bool whether to evaluate the classifier (and store the result in the 'scores' attribute)  </p>
+input arguments:<br />
+- histname: a valid histogram name present in the HistStruct to which this classifier applies<br />
+- classifier: an object of type HistogramClassifier (i.e. of any class that derives from it)<br />
+- evaluate: a bool whether to evaluate the classifier (and store the result in the 'scores' attribute)<br />
+  if set to True, the result is both returned and stored in the 'scores' attribute.  </p>
 <h3 id="evaluate95classifier-self-histname">evaluate_classifier( self, histname )</h3>
 <p><strong>evaluate a histogram classifier for a given histogram name in the HistStruct</strong><br />
-the result is both returned and stored in the 'scores' attribute  </p>
-<h3 id="plot95ls-self-run-ls-recohistnone-recolabelreco-refhistsnone-refhistslabelreference-doprintfalse">plot_ls( self, run, ls, recohist=None, recolabel='reco', refhists=None, refhistslabel='reference', doprint=False)</h3>
-<p><strong>plot the histograms for a given run/ls number versus their references and/or their reconstruction</strong>  </p>
-<h3 id="plot95run-self-run-recohistnone-recolabelreco-refhistsnone-refhistslabelreference-doprintfalse">plot_run( self, run, recohist=None, recolabel='reco', refhists=None, refhistslabel='reference', doprint=False)</h3>
+input arguments:<br />
+- histname: a valid histogram name present in the HistStruct for which to evaluate the classifier<br />
+notes:<br />
+- the result is both returned and stored in the 'scores' attribute  </p>
+<h3 id="plot95ls-self-runnb-lsnb-histnamesnone-recohistnone-recohistlabelreco-refhistsnone-refhistslabelreference">plot_ls( self, runnb, lsnb, histnames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference')</h3>
+<p><strong>plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction</strong><br />
+note: so far only for 1D histograms.<br />
+      case of 2D histograms requires different plotting method since they cannot be clearly overlaid.<br />
+      if a HistStruct contains both 1D and 2D histograms, the 1D histograms must be selected with the histnames argument.<br />
+input arguments:<br />
+- runnb: run number<br />
+- lsnb: lumisection number<br />
+- histnames: names of histogram types to plot (default: all)<br />
+- recohist: dict matching histogram names to reconstructed histograms<br />
+  notes: - 'reconstructed histograms' refers to e.g. autoencoder or NMF reconstructions;<br />
+           some models (e.g. simply looking at histogram moments) might not have this kind of reconstruction<br />
+         - in principle one histogram per key is expected, but still the the shape must be 2D (i.e. (1,nbins))<br />
+         - in case recohist is set to 'auto', the reconstruction is calculated on the fly for the input histograms<br />
+- recohistlabel: legend entry for the reco histograms<br />
+- refhists: dict matching histogram names to reference histograms<br />
+  notes: - multiple histograms (i.e. a 2D array) per key are expected;<br />
+           in case there is only one reference histogram, it must be reshaped into (1,nbins)<br />
+- refhistslabel: legend entry for the reference histograms  </p>
+<h3 id="plot95run-self-runnb-recohistnone-recohistlabelreco-refhistsnone-refhistslabelreference-doprintfalse">plot_run( self, runnb, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False)</h3>
 <p><strong>call plot_ls for all lumisections in a given run</strong>  </p></div>
         </div>
 

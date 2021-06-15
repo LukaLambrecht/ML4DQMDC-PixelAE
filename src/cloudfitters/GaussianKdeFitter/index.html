@@ -239,14 +239,14 @@
 basically a wrapper for scipy.stats.gaussian_kde.<br />
 parameters<br />
 - kernel: scipy.stats.gaussian_kde object<br />
-- cov: covariance matrix<br />
+- cov: covariance matrix <br />
 (use np.cov for now, maybe later replace by internal kernel.covariance)  </p>
 <h3 id="9595init9595selfpointsbw95methodscott">__init__(self,points,bw_method='scott')</h3>
 <p><strong>constructor</strong><br />
 input arguments:<br />
 - points: a np array of shape (npoints,ndims)<br />
 - bw_method: method to calculate the bandwidth of the gaussians,<br />
-see https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.gaussian_kde.html  </p>
+  see https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.gaussian_kde.html  </p>
 <h3 id="pdfselfpoints">pdf(self,points)</h3>
 <p><strong>get pdf at points</strong>  </p></div>
         </div>

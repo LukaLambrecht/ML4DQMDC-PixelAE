@@ -257,8 +257,8 @@
 input args:<br />
 - nbins: number of bins, length of noise array to be sampled<br />
 - fstd: an array of length nbins used for scaling of the amplitude of the noise<br />
-bin-by-bin.<br />
-output:<br />
+        bin-by-bin.<br />
+output: <br />
 - numpy array of length nbins containing the noise  </p>
 <hr />
 <h2 id="badnoisenbins-fstdnone">badnoise(nbins, fstd=None)</h2>
@@ -273,7 +273,7 @@ input args and output: similar to goodnoise  </p>
 <hr />
 <h2 id="random95licohists">random_lico(hists)</h2>
 <p><strong>generate one linear combination of histograms with random coefficients in (0,1) summing to 1</strong><br />
-input args:<br />
+input args: <br />
 - numpy array of shape (nhists,nbins), the rows of which will be linearly combined<br />
 output:<br />
 - numpy array of shape (nbins), containing the new histogram  </p>
@@ -325,7 +325,7 @@ disadvantages: deviations from mean are small, does not model systematic shifts 
 <hr />
 <h2 id="fourier95noisehists-outfilename-figname-nresamples1-nonnegativetrue-stdfactor15">fourier_noise(hists, outfilename='', figname='', nresamples=1, nonnegative=True, stdfactor=15.)</h2>
 <p><strong>apply fourier noise on random histograms with simple flat amplitude scaling.</strong><br />
-input args:<br />
+input args: <br />
 - hists: numpy array of shape (nhists,nbins) used for seeding<br />
 - outfilename: path to csv file to write results to (default: no writing)<br />
 - figname: path to figure plotting examples (default: no plotting)<br />
@@ -358,8 +358,8 @@ input args:<br />
 - smoothinghalfwidth: halfwidth of smoothing procedure to apply on the result (default: no smoothing)<br />
 advantages: no arbitrary noise modeling<br />
 disadvantages: bins are considered independent, shape of historams not taken into account,<br />
-does not work well on small number of input histograms,<br />
-does not work well on histograms with systematic shifts  </p>
+               does not work well on small number of input histograms, <br />
+               does not work well on histograms with systematic shifts  </p>
 <hr />
 <h2 id="resample95similar95bin95per95bin-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue-keeppercentage1">resample_similar_bin_per_bin( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True, keeppercentage=1.)</h2>
 <p><strong>resample from bin-per-bin probability distributions, but only from similar looking histograms.</strong><br />
@@ -372,11 +372,11 @@ input args:<br />
 - nonnegative: boolean whether or not to put all bins to minimum zero after applying noise<br />
 - keeppercentage: percentage (between 1 and 100) of histograms in allhists to use per input histogram<br />
 advantages: no assumptions on shape of noise,<br />
-can handle systematic shifts in histograms<br />
+            can handle systematic shifts in histograms<br />
 disadvantages: bins are treated independently from each other  </p>
 <hr />
 <h2 id="resample95similar95fourier95noise-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue-keeppercentage1">resample_similar_fourier_noise( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True, keeppercentage=1.)</h2>
-<p><strong>apply fourier noise on mean histogram,</strong><br />
+<p><strong>apply fourier noise on mean histogram, </strong><br />
 where the mean is determined from a set of similar-looking histograms<br />
 input args:<br />
 - allhists: np array (nhists,nbins) containing all available histograms (to determine mean)<br />
@@ -387,7 +387,7 @@ input args:<br />
 - nonnegative: boolean whether or not to put all bins to minimum zero after applying noise<br />
 - keeppercentage: percentage (between 1 and 100) of histograms in allhists to use per input histogram<br />
 advantages: most of fourier_noise_on_mean but can additionally handle shifting histograms,<br />
-apart from fourier noise, also white noise can be applied.<br />
+            apart from fourier noise, also white noise can be applied.<br />
 disadvantages: does not filter out odd histograms as long as enough other odd histograms look more or less similar  </p>
 <hr />
 <h2 id="resample95similar95lico-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue-keeppercentage1">resample_similar_lico( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True, keeppercentage=1.)</h2>
@@ -411,8 +411,8 @@ f(x) - sampled distribution<br />
 x_r, y_r -&gt; randomly sampled point<br />
 if y_r&lt;=f(x_r), fill the new distribution at bin corresponding to x_r with weight:<br />
 weight = (sum of input hist)/(#mc points accepted)<br />
-this is equal to<br />
-weight = (MC space volume)/(# all MC points)  </p></div>
+this is equal to <br />
+weight = (MC space volume)/(all MC points)  </p></div>
         </div>
 
         <footer class="col-md-12">

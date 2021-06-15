@@ -239,7 +239,7 @@
 <h2 id="pull-testhist-refhist">pull( testhist, refhist )</h2>
 <p><strong>calculate bin-per-bin pull between two histograms</strong><br />
 bin-per-bin pull is defined here preliminarily as (testhist(bin)-refhist(bin))/sqrt(refhist(bin))<br />
-notes:<br />
+notes: <br />
 - bins in the denominator where refhist is &lt; 1 are set to one! This is for histograms with absolute counts, and they should not be normalized!<br />
 - instead another normalization is applied: the test histogram is multiplied by sum(refhist)/sum(testhist) before computing the pulls<br />
 input arguments:<br />

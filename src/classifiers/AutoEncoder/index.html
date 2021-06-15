@@ -236,17 +236,19 @@
 <hr />
 <h2 id="autoencoderhistogramclassifier">AutoEncoder(HistogramClassifier)</h2>
 <p><strong>histogram classfier based on the MSE of an autoencoder reconstruction</strong><br />
-the AutoEncoder derives from the generic HistogramClassifier.<br />
-for this specific classifier, the output score of a histogram is the mean-square-error (MSE)<br />
+the AutoEncoder derives from the generic HistogramClassifier. <br />
+for this specific classifier, the output score of a histogram is the mean-square-error (MSE) <br />
 between the original histogram and its autoencoder reconstruction.<br />
 in essence, it is just a wrapper for a tensorflow model.  </p>
 <h3 id="9595init9595-self-modelnone">__init__( self, model=None )</h3>
 <p><strong>intializer from a tensorflow model</strong><br />
 the model is assumed to be fully trained on a suitable training set and ready for use<br />
 TODO: perhaps the functionality for initializing and training the model can be absorbed in the AutoEncoder class,<br />
-but this is not yet supported currently  </p>
+      but this is not yet supported currently  </p>
 <h3 id="evaluate-self-histograms">evaluate( self, histograms )</h3>
-<p><strong>classification of a collection of histograms based on their autoencoder reconstruction</strong>  </p></div>
+<p><strong>classification of a collection of histograms based on their autoencoder reconstruction</strong>  </p>
+<h3 id="reconstruct-self-histograms">reconstruct( self, histograms )</h3>
+<p><strong>return the autoencoder reconstruction of a set of histograms</strong>  </p></div>
         </div>
 
         <footer class="col-md-12">
