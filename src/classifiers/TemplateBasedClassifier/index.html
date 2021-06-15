@@ -280,22 +280,23 @@ output:
 <pre><code class="text">histogram classifier based on a direct comparison with templates (i.e. reference histograms)  
 </code></pre>
 
-<p>: ### __init__( self, templates, comparemethod='minmse' )<br />
-: <code>text  
-: initializer from a set of templates (reference histograms)  
-: input arguments:  
-: - templates: a 2D numpy array of shape (nhistograms,nbins)  
-: - comparemethod: string representing the method by which to compare a histogram with a set of templates  
-:   currently supported methods are:  
-:   - minmse: minimum mean square error between histogram and all templates  
-:   - avgmse: average mean square error between histogram and all templates  
-:</code><br />
-: <br />
-: ### evaluate( self, histograms )<br />
-: <code>text  
-: classification of a collection of histograms based on their deviation from templates  
-:</code><br />
-:   </p></div>
+<ul>
+<li>[attribute] __init__( self, templates, comparemethod='minmse' )  </li>
+</ul>
+<pre><code class="text">initializer from a set of templates (reference histograms)  
+input arguments:  
+- templates: a 2D numpy array of shape (nhistograms,nbins)  
+- comparemethod: string representing the method by which to compare a histogram with a set of templates  
+  currently supported methods are:  
+  - minmse: minimum mean square error between histogram and all templates  
+  - avgmse: average mean square error between histogram and all templates  
+</code></pre>
+
+<ul>
+<li>[attribute] evaluate( self, histograms )  </li>
+</ul>
+<pre><code class="text">classification of a collection of histograms based on their deviation from templates  
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">

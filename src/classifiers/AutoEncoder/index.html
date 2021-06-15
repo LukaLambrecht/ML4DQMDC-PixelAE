@@ -241,24 +241,26 @@ between the original histogram and its autoencoder reconstruction.
 in essence, it is just a wrapper for a tensorflow model.  
 </code></pre>
 
-<p>: ### __init__( self, model=None )<br />
-: <code>text  
-: intializer from a tensorflow model  
-: the model is assumed to be fully trained on a suitable training set and ready for use  
-: TODO: perhaps the functionality for initializing and training the model can be absorbed in the AutoEncoder class,  
-:       but this is not yet supported currently  
-:</code><br />
-: <br />
-: ### evaluate( self, histograms )<br />
-: <code>text  
-: classification of a collection of histograms based on their autoencoder reconstruction  
-:</code><br />
-: <br />
-: ### reconstruct( self, histograms )<br />
-: <code>text  
-: return the autoencoder reconstruction of a set of histograms  
-:</code><br />
-:   </p></div>
+<ul>
+<li>[attribute] __init__( self, model=None )  </li>
+</ul>
+<pre><code class="text">intializer from a tensorflow model  
+the model is assumed to be fully trained on a suitable training set and ready for use  
+TODO: perhaps the functionality for initializing and training the model can be absorbed in the AutoEncoder class,  
+      but this is not yet supported currently  
+</code></pre>
+
+<ul>
+<li>[attribute] evaluate( self, histograms )  </li>
+</ul>
+<pre><code class="text">classification of a collection of histograms based on their autoencoder reconstruction  
+</code></pre>
+
+<ul>
+<li>[attribute] reconstruct( self, histograms )  </li>
+</ul>
+<pre><code class="text">return the autoencoder reconstruction of a set of histograms  
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">

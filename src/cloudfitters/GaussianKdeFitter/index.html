@@ -242,20 +242,21 @@ parameters
 (use np.cov for now, maybe later replace by internal kernel.covariance)  
 </code></pre>
 
-<p>: ### __init__(self,points,bw_method='scott')<br />
-: <code>text  
-: constructor  
-: input arguments:  
-: - points: a np array of shape (npoints,ndims)  
-: - bw_method: method to calculate the bandwidth of the gaussians,  
-:   see https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.gaussian_kde.html  
-:</code><br />
-: <br />
-: ### pdf(self,points)<br />
-: <code>text  
-: get pdf at points  
-:</code><br />
-:   </p></div>
+<ul>
+<li>[attribute] __init__(self,points,bw_method='scott')  </li>
+</ul>
+<pre><code class="text">constructor  
+input arguments:  
+- points: a np array of shape (npoints,ndims)  
+- bw_method: method to calculate the bandwidth of the gaussians,  
+  see https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.gaussian_kde.html  
+</code></pre>
+
+<ul>
+<li>[attribute] pdf(self,points)  </li>
+</ul>
+<pre><code class="text">get pdf at points  
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">

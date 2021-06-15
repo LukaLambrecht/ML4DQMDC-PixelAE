@@ -243,30 +243,33 @@ parameters
 - mvn: scipy.stats multivariate_normal object built from the cov  
 </code></pre>
 
-<p>: ### __init__(self,points)<br />
-: <code>text  
-: constructor  
-: points is a np array of shape (npoints,ndims)  
-: note: points can also be an array or list with length 0,  
-:       in that case the object is initialized empty.  
-:       use this followed by the 'load' method to load a previously saved fit!  
-:</code><br />
-: <br />
-: ### pdf(self,points)<br />
-: <code>text  
-: get pdf at points  
-:</code><br />
-: <br />
-: ### save(self,path)<br />
-: <code>text  
-: save the covariance matrix as a .npy file specified by path  
-:</code><br />
-: <br />
-: ### load(self,path)<br />
-: <code>text  
-: load a covariance matrix from a .npy file specified by path and build the fit from it  
-:</code><br />
-:   </p></div>
+<ul>
+<li>[attribute] __init__(self,points)  </li>
+</ul>
+<pre><code class="text">constructor  
+points is a np array of shape (npoints,ndims)  
+note: points can also be an array or list with length 0,  
+      in that case the object is initialized empty.  
+      use this followed by the 'load' method to load a previously saved fit!  
+</code></pre>
+
+<ul>
+<li>[attribute] pdf(self,points)  </li>
+</ul>
+<pre><code class="text">get pdf at points  
+</code></pre>
+
+<ul>
+<li>[attribute] save(self,path)  </li>
+</ul>
+<pre><code class="text">save the covariance matrix as a .npy file specified by path  
+</code></pre>
+
+<ul>
+<li>[attribute] load(self,path)  </li>
+</ul>
+<pre><code class="text">load a covariance matrix from a .npy file specified by path and build the fit from it  
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">
