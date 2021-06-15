@@ -236,13 +236,13 @@
 
 <h1 id="get-oms-data">get oms data</h1>
 <h2 id="get_oms_api">get_oms_api()</h2>
-<pre><code class="plaintext">### get an OMSAPI instance  
+<pre><code class="text">### get an OMSAPI instance  
 # takes no input arguments, as the configuration parameters are unlikely to change very often  
 # if needed, these parameters can be changed in the file urls.py  
 </code></pre>
 
 <h2 id="get_oms_data-omsapi-api_endpoint-runnb-extrafilters-extraargs-sortnone-attributes">get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[])</h2>
-<pre><code class="plaintext">### query some data from OMS  
+<pre><code class="text">### query some data from OMS  
 # input arguments:  
 # - omsapi: an OMSAPI instance, e.g. created by get_oms_api()  
 # - api_endpoint: string, target information, e.g. 'runs' or 'lumisections'  
@@ -260,7 +260,7 @@
 </code></pre>
 
 <h2 id="get_oms_response_attribute-omsresponse-attribute">get_oms_response_attribute( omsresponse, attribute )</h2>
-<pre><code class="plaintext">### small helper function to retrieve a list of values for a single attribute  
+<pre><code class="text">### small helper function to retrieve a list of values for a single attribute  
 # input arguments:  
 # - omsresponse: the json-like object returned by get_oms_data  
 # - attribute: name of one of the attributes present in omsresponse  

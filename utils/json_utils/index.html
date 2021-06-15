@@ -246,7 +246,7 @@
 
 <h1 id="json-utils">json utils</h1>
 <h2 id="loadjson-jsonfile">loadjson( jsonfile )</h2>
-<pre><code class="plaintext">### load the content of a json file into a python object  
+<pre><code class="text">### load the content of a json file into a python object  
 # input arguments:  
 # - jsonfile: the name (or full path if needed) to the json file to be read  
 # output:  
@@ -258,7 +258,7 @@
 </code></pre>
 
 <h2 id="writejson-jsondict-outputfile-overwritefalse">writejson( jsondict, outputfile, overwrite=False )</h2>
-<pre><code class="plaintext">### inverse function of loadjson  
+<pre><code class="text">### inverse function of loadjson  
 # input arguments  
 # - jsondict: dict object to be written to a json file  
 # - outputfile: output file to be written, extension '.json' will be appended automatically  
@@ -266,7 +266,7 @@
 </code></pre>
 
 <h2 id="injson_single-run-lumi-jsondict">injson_single( run, lumi, jsondict )</h2>
-<pre><code class="plaintext">### helper function for injson, only for internal use  
+<pre><code class="text">### helper function for injson, only for internal use  
 # input arguments:  
 # - run and lumi are integers  
 # - jsondict is an object loaded from a json file  
@@ -275,7 +275,7 @@
 </code></pre>
 
 <h2 id="injson-run-lumi-jsonfilenone-jsondictnone">injson( run, lumi, jsonfile=None, jsondict=None )</h2>
-<pre><code class="plaintext">### find if a run and lumi combination is in a given json file  
+<pre><code class="text">### find if a run and lumi combination is in a given json file  
 # input arguments:  
 # - run and lumi: integers or (equally long) arrays of integers  
 # - jsonfile: a path to a json file  
@@ -286,30 +286,30 @@
 </code></pre>
 
 <h2 id="isgoldenrun-lumi">isgolden(run, lumi)</h2>
-<pre><code class="plaintext">### find if a run and lumi combination is in the golden json file  
+<pre><code class="text">### find if a run and lumi combination is in the golden json file  
 # input arguments:  
 # - run and lumi: either integers or (equally long) arrays of integers  
 </code></pre>
 
 <h2 id="isdcsonrun-lumi">isdcson(run, lumi)</h2>
-<pre><code class="plaintext">### find if a run and lumi combination is in DCS-only json file  
+<pre><code class="text">### find if a run and lumi combination is in DCS-only json file  
 # input arguments:  
 # - run and lumi: either integers or (equally long) arrays of integers  
 </code></pre>
 
 <h2 id="ispixelgoodrun-lumi">ispixelgood(run, lumi)</h2>
-<pre><code class="plaintext">### find if a run and lumi combination is in the json with good pixel flag  
+<pre><code class="text">### find if a run and lumi combination is in the json with good pixel flag  
 # note: this json was custom generated in run regisitry and not official!  
 </code></pre>
 
 <h2 id="ispixelbadrun-lumi">ispixelbad(run, lumi)</h2>
-<pre><code class="plaintext">### find if a run and lumi combination is in the json with bad pixel flag  
+<pre><code class="text">### find if a run and lumi combination is in the json with bad pixel flag  
 # note: this json was custom generated in run registry and not official!  
 # note: not simply the negation of ispixelgood! json has more relaxed conditions on DCS-like criteria.  
 </code></pre>
 
 <h2 id="plainlist_to_rangelist-plainlist">plainlist_to_rangelist( plainlist )</h2>
-<pre><code class="plaintext">### helper function for tuplelist_to_jsondict, only for internal use  
+<pre><code class="text">### helper function for tuplelist_to_jsondict, only for internal use  
 # input arguments:  
 # - plainlist: a list of integers in increasing order, must have length &gt;= 2  
 # output:  
@@ -318,19 +318,19 @@
 </code></pre>
 
 <h2 id="rangelist_to_plainlist-rangelist">rangelist_to_plainlist( rangelist )</h2>
-<pre><code class="plaintext">### inverse function of plainlist_to_rangelist, for internal use only  
+<pre><code class="text">### inverse function of plainlist_to_rangelist, for internal use only  
 </code></pre>
 
 <h2 id="tuplelist_to_jsondict-tuplelist">tuplelist_to_jsondict( tuplelist )</h2>
-<pre><code class="plaintext">### convert a list of tuples of format (run number, [lumisection numbers]) to json dict  
+<pre><code class="text">### convert a list of tuples of format (run number, [lumisection numbers]) to json dict  
 </code></pre>
 
 <h2 id="jsondict_to_tuplelist-jsondict">jsondict_to_tuplelist( jsondict )</h2>
-<pre><code class="plaintext">### inverse function of tuplelist_to_jsondict  
+<pre><code class="text">### inverse function of tuplelist_to_jsondict  
 </code></pre>
 
 <h2 id="get_lcs-jsonlist">get_lcs( jsonlist )</h2>
-<pre><code class="plaintext">### return a jsondict object that is the largest common subset (LCS) between the jsondict objects in jsonlist  
+<pre><code class="text">### return a jsondict object that is the largest common subset (LCS) between the jsondict objects in jsonlist  
 # input arguments:  
 # - jsonlist: a list of dicts in the conventional json format,   
 #   so each element in jsonlist must be e.g. { &quot;294927&quot;: [ [ 55,85 ], [ 95,105] ], &quot;294928&quot;: [ [1,33 ] ] }  
