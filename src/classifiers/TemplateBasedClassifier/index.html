@@ -227,63 +227,72 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#templatebasedclassifier">TemplateBasedClassifier</a></li>
-            <li><a href="#msetopn95templates-histograms-templates-n-1">mseTopN_templates( histograms, templates, n=-1 )</a></li>
-            <li><a href="#msetopn95min-histograms-templates-n-1">mseTopN_min( histograms, templates, n=-1 )</a></li>
-            <li><a href="#msetop1095min-histograms-templates">mseTop10_min( histograms, templates )</a></li>
-            <li><a href="#msetopn95avg-histograms-templates-n-1">mseTopN_avg( histograms, templates, n=-1 )</a></li>
-            <li><a href="#msetop1095avg-histograms-templates">mseTop10_avg( histograms, templates )</a></li>
+            <li><a href="#msetopn_templates-histograms-templates-n-1">mseTopN_templates( histograms, templates, n=-1 )</a></li>
+            <li><a href="#msetopn_min-histograms-templates-n-1">mseTopN_min( histograms, templates, n=-1 )</a></li>
+            <li><a href="#msetop10_min-histograms-templates">mseTop10_min( histograms, templates )</a></li>
+            <li><a href="#msetopn_avg-histograms-templates-n-1">mseTopN_avg( histograms, templates, n=-1 )</a></li>
+            <li><a href="#msetop10_avg-histograms-templates">mseTop10_avg( histograms, templates )</a></li>
             <li><a href="#templatebasedclassifierhistogramclassifier">TemplateBasedClassifier(HistogramClassifier)</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
 <h1 id="templatebasedclassifier">TemplateBasedClassifier</h1>
-<hr />
-<h2 id="msetopn95templates-histograms-templates-n-1">mseTopN_templates( histograms, templates, n=-1 )</h2>
-<p><strong>calculate the mse between each histogram in histograms and each histogram in templates</strong><br />
-input arguments:<br />
-- histograms: 2D numpy array of shape (nhistograms, nbins)<br />
-- templates: 2D numpy array of shape (ntemplates,nbins)<br />
-- n: integer representing the number of (sorted) bin squared errors to take into account (default: all)<br />
-output:<br />
-2D numpy array of shape (nhistograms,ntemplates) holding the mseTopN between each  </p>
-<hr />
-<h2 id="msetopn95min-histograms-templates-n-1">mseTopN_min( histograms, templates, n=-1 )</h2>
-<p><strong>calculate the mse betwee a histogram and each template and return the minimum</strong><br />
-input arguments:<br />
-- histograms: 2D numpy array of shape (nhistograms, nbins)<br />
-- templates: 2D numpy array of shape (ntemplates,nbins)<br />
-- n: integer representing the number of (sorted) bin squared errors to take into account (default: all)<br />
-output:<br />
-1D numpy array of shape (nhistograms) holding the minimum mseTopN for each histogram  </p>
-<hr />
-<h2 id="msetop1095min-histograms-templates">mseTop10_min( histograms, templates )</h2>
-<p><strong>special case of above with n=10</strong>  </p>
-<hr />
-<h2 id="msetopn95avg-histograms-templates-n-1">mseTopN_avg( histograms, templates, n=-1 )</h2>
-<p><strong>calculate the mse betwee a histogram and each template and return the average</strong><br />
-input arguments:<br />
-- histograms: 2D numpy array of shape (nhistograms, nbins)<br />
-- templates: 2D numpy array of shape (ntemplates,nbins)<br />
-- n: integer representing the number of (sorted) bin squared errors to take into account (default: all)<br />
-output:<br />
-1D numpy array of shape (nhistograms) holding the average mseTopN for each histogram  </p>
-<hr />
-<h2 id="msetop1095avg-histograms-templates">mseTop10_avg( histograms, templates )</h2>
-<p><strong>special case of above with n=10</strong>  </p>
-<hr />
+<h2 id="msetopn_templates-histograms-templates-n-1">mseTopN_templates( histograms, templates, n=-1 )</h2>
+<pre><code>calculate the mse between each histogram in histograms and each histogram in templates  
+input arguments:  
+- histograms: 2D numpy array of shape (nhistograms, nbins)  
+- templates: 2D numpy array of shape (ntemplates,nbins)  
+- n: integer representing the number of (sorted) bin squared errors to take into account (default: all)  
+output:  
+2D numpy array of shape (nhistograms,ntemplates) holding the mseTopN between each  
+</code></pre>
+
+<h2 id="msetopn_min-histograms-templates-n-1">mseTopN_min( histograms, templates, n=-1 )</h2>
+<pre><code>calculate the mse betwee a histogram and each template and return the minimum  
+input arguments:  
+- histograms: 2D numpy array of shape (nhistograms, nbins)  
+- templates: 2D numpy array of shape (ntemplates,nbins)  
+- n: integer representing the number of (sorted) bin squared errors to take into account (default: all)  
+output:  
+1D numpy array of shape (nhistograms) holding the minimum mseTopN for each histogram  
+</code></pre>
+
+<h2 id="msetop10_min-histograms-templates">mseTop10_min( histograms, templates )</h2>
+<pre><code>special case of above with n=10  
+</code></pre>
+
+<h2 id="msetopn_avg-histograms-templates-n-1">mseTopN_avg( histograms, templates, n=-1 )</h2>
+<pre><code>calculate the mse betwee a histogram and each template and return the average  
+input arguments:  
+- histograms: 2D numpy array of shape (nhistograms, nbins)  
+- templates: 2D numpy array of shape (ntemplates,nbins)  
+- n: integer representing the number of (sorted) bin squared errors to take into account (default: all)  
+output:  
+1D numpy array of shape (nhistograms) holding the average mseTopN for each histogram  
+</code></pre>
+
+<h2 id="msetop10_avg-histograms-templates">mseTop10_avg( histograms, templates )</h2>
+<pre><code>special case of above with n=10  
+</code></pre>
+
 <h2 id="templatebasedclassifierhistogramclassifier">TemplateBasedClassifier(HistogramClassifier)</h2>
-<p><strong>histogram classifier based on a direct comparison with templates (i.e. reference histograms)</strong>  </p>
-<h3 id="9595init9595-self-templates-comparemethodminmse">__init__( self, templates, comparemethod='minmse' )</h3>
-<p><strong>initializer from a set of templates (reference histograms)</strong><br />
-input arguments:<br />
-- templates: a 2D numpy array of shape (nhistograms,nbins)<br />
-- comparemethod: string representing the method by which to compare a histogram with a set of templates<br />
-  currently supported methods are:<br />
-  - minmse: minimum mean square error between histogram and all templates<br />
-  - avgmse: average mean square error between histogram and all templates  </p>
+<pre><code>histogram classifier based on a direct comparison with templates (i.e. reference histograms)  
+</code></pre>
+
+<h3 id="init-self-templates-comparemethodminmse"><strong>init</strong>( self, templates, comparemethod='minmse' )</h3>
+<pre><code>initializer from a set of templates (reference histograms)  
+input arguments:  
+- templates: a 2D numpy array of shape (nhistograms,nbins)  
+- comparemethod: string representing the method by which to compare a histogram with a set of templates  
+  currently supported methods are:  
+  - minmse: minimum mean square error between histogram and all templates  
+  - avgmse: average mean square error between histogram and all templates  
+</code></pre>
+
 <h3 id="evaluate-self-histograms">evaluate( self, histograms )</h3>
-<p><strong>classification of a collection of histograms based on their deviation from templates</strong>  </p></div>
+<pre><code>classification of a collection of histograms based on their deviation from templates  
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">

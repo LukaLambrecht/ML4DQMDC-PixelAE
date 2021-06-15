@@ -227,102 +227,119 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#dataframe-utils">dataframe utils</a></li>
-            <li><a href="#get95histnamesdf">get_histnames(df)</a></li>
-            <li><a href="#select95histnamesdf-histnames">select_histnames(df, histnames)</a></li>
-            <li><a href="#get95runsdf">get_runs(df)</a></li>
-            <li><a href="#select95runsdf-runnbs">select_runs(df, runnbs)</a></li>
-            <li><a href="#get95lsdf">get_ls(df)</a></li>
-            <li><a href="#select95lsdf-lsnbs">select_ls(df, lsnbs)</a></li>
-            <li><a href="#get95runslsdf">get_runsls(df)</a></li>
-            <li><a href="#select95jsondf-jsonfile">select_json(df, jsonfile)</a></li>
-            <li><a href="#select95runslsdf-jsondict">select_runsls(df, jsondict)</a></li>
-            <li><a href="#select95goldendf">select_golden(df)</a></li>
-            <li><a href="#select95notgoldendf">select_notgolden(df)</a></li>
-            <li><a href="#select95dcsondf">select_dcson(df)</a></li>
-            <li><a href="#select95dcsoffdf">select_dcsoff(df)</a></li>
-            <li><a href="#select95pixelgooddf">select_pixelgood(df)</a></li>
-            <li><a href="#select95pixelbaddf">select_pixelbad(df)</a></li>
-            <li><a href="#get95highstatdf-entries95to95bins95ratio100">get_highstat(df, entries_to_bins_ratio=100)</a></li>
-            <li><a href="#select95highstatdf-entries95to95bins95ratio100">select_highstat(df, entries_to_bins_ratio=100)</a></li>
-            <li><a href="#get95hist95valuesdf">get_hist_values(df)</a></li>
+            <li><a href="#get_histnamesdf">get_histnames(df)</a></li>
+            <li><a href="#select_histnamesdf-histnames">select_histnames(df, histnames)</a></li>
+            <li><a href="#get_runsdf">get_runs(df)</a></li>
+            <li><a href="#select_runsdf-runnbs">select_runs(df, runnbs)</a></li>
+            <li><a href="#get_lsdf">get_ls(df)</a></li>
+            <li><a href="#select_lsdf-lsnbs">select_ls(df, lsnbs)</a></li>
+            <li><a href="#get_runslsdf">get_runsls(df)</a></li>
+            <li><a href="#select_jsondf-jsonfile">select_json(df, jsonfile)</a></li>
+            <li><a href="#select_runslsdf-jsondict">select_runsls(df, jsondict)</a></li>
+            <li><a href="#select_goldendf">select_golden(df)</a></li>
+            <li><a href="#select_notgoldendf">select_notgolden(df)</a></li>
+            <li><a href="#select_dcsondf">select_dcson(df)</a></li>
+            <li><a href="#select_dcsoffdf">select_dcsoff(df)</a></li>
+            <li><a href="#select_pixelgooddf">select_pixelgood(df)</a></li>
+            <li><a href="#select_pixelbaddf">select_pixelbad(df)</a></li>
+            <li><a href="#get_highstatdf-entries_to_bins_ratio100">get_highstat(df, entries_to_bins_ratio=100)</a></li>
+            <li><a href="#select_highstatdf-entries_to_bins_ratio100">select_highstat(df, entries_to_bins_ratio=100)</a></li>
+            <li><a href="#get_hist_valuesdf">get_hist_values(df)</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
 <h1 id="dataframe-utils">dataframe utils</h1>
-<hr />
-<h2 id="get95histnamesdf">get_histnames(df)</h2>
-<p><strong>get a list of (unique) histogram names present in a df</strong><br />
-df is a dataframe read from an input csv file.  </p>
-<hr />
-<h2 id="select95histnamesdf-histnames">select_histnames(df, histnames)</h2>
-<p><strong>keep only a subset of histograms in a df</strong><br />
-histnames is a list of histogram names to keep in the df.  </p>
-<hr />
-<h2 id="get95runsdf">get_runs(df)</h2>
-<p><strong>return a list of (unique) run numbers present in a df</strong><br />
-df is a dataframe read from an input csv file.  </p>
-<hr />
-<h2 id="select95runsdf-runnbs">select_runs(df, runnbs)</h2>
-<p><strong>keep only a subset of runs in a df</strong><br />
-runnbs is a list of run numbers to keep in the df.  </p>
-<hr />
-<h2 id="get95lsdf">get_ls(df)</h2>
-<p><strong>return a list of ls numbers present in a df</strong><br />
-note that the numbers are not required to be unique!<br />
-note: no check is done on the run number!  </p>
-<hr />
-<h2 id="select95lsdf-lsnbs">select_ls(df, lsnbs)</h2>
-<p><strong>keep only a subset of lumisection numbers in a df</strong><br />
-lsnbs is a list of lumisection numbers to keep in the df.<br />
-note: no check is done on the run number!  </p>
-<hr />
-<h2 id="get95runslsdf">get_runsls(df)</h2>
-<p><strong>return a dictionary with runs and lumisections in a dataframe (same format as e.g. golden json)</strong>  </p>
-<hr />
-<h2 id="select95jsondf-jsonfile">select_json(df, jsonfile)</h2>
-<p><strong>keep only lumisections that are in the given json file</strong>  </p>
-<hr />
-<h2 id="select95runslsdf-jsondict">select_runsls(df, jsondict)</h2>
-<p><strong>equivalent to select_json but using a pre-loaded json dict instead of a json file on disk</strong>  </p>
-<hr />
-<h2 id="select95goldendf">select_golden(df)</h2>
-<p><strong>keep only golden lumisections in df</strong>  </p>
-<hr />
-<h2 id="select95notgoldendf">select_notgolden(df)</h2>
-<p><strong>keep all but golden lumisections in df</strong>  </p>
-<hr />
-<h2 id="select95dcsondf">select_dcson(df)</h2>
-<p><strong>keep only lumisections in df that have DCS-bit on</strong>  </p>
-<hr />
-<h2 id="select95dcsoffdf">select_dcsoff(df)</h2>
-<p><strong>keep only lumisections in df that have DCS-bit off</strong>  </p>
-<hr />
-<h2 id="select95pixelgooddf">select_pixelgood(df)</h2>
-<p><strong>keep only lumisections in df that are in good pixel json</strong>  </p>
-<hr />
-<h2 id="select95pixelbaddf">select_pixelbad(df)</h2>
-<p><strong>keep only lumisections in df that are in bad pixel json</strong>  </p>
-<hr />
-<h2 id="get95highstatdf-entries95to95bins95ratio100">get_highstat(df, entries_to_bins_ratio=100)</h2>
-<p><strong>return a select object of runs and ls of histograms with high statistics</strong>  </p>
-<hr />
-<h2 id="select95highstatdf-entries95to95bins95ratio100">select_highstat(df, entries_to_bins_ratio=100)</h2>
-<p><strong>keep only lumisection in df with high statistics</strong>  </p>
-<hr />
-<h2 id="get95hist95valuesdf">get_hist_values(df)</h2>
-<p><strong>same as builtin "df['histo'].values" but convert strings to np arrays</strong><br />
-input arguments:<br />
-- df: a dataframe containing histograms (assumed to be of a single type!)<br />
-note: this function works for both 1D and 2D histograms,<br />
-      the distinction is made based on whether or not 'Ybins' is present as a column in the dataframe<br />
-      update: 'Ybins' is also present for 1D histograms, but has value 1!<br />
-output:<br />
-a tuple containing the following elements:<br />
-- np array of shape (nhists,nbins) (for 1D) or (nhists,nybins,nxbins) (for 2D)<br />
-- np array of run numbers of length nhists<br />
-- np array of lumisection numbers of length nhists<br />
-warning: no check is done to assure that all histograms are of the same type!  </p></div>
+<h2 id="get_histnamesdf">get_histnames(df)</h2>
+<pre><code>get a list of (unique) histogram names present in a df  
+df is a dataframe read from an input csv file.  
+</code></pre>
+
+<h2 id="select_histnamesdf-histnames">select_histnames(df, histnames)</h2>
+<pre><code>keep only a subset of histograms in a df  
+histnames is a list of histogram names to keep in the df.  
+</code></pre>
+
+<h2 id="get_runsdf">get_runs(df)</h2>
+<pre><code>return a list of (unique) run numbers present in a df  
+df is a dataframe read from an input csv file.  
+</code></pre>
+
+<h2 id="select_runsdf-runnbs">select_runs(df, runnbs)</h2>
+<pre><code>keep only a subset of runs in a df  
+runnbs is a list of run numbers to keep in the df.  
+</code></pre>
+
+<h2 id="get_lsdf">get_ls(df)</h2>
+<pre><code>return a list of ls numbers present in a df  
+note that the numbers are not required to be unique!  
+note: no check is done on the run number!  
+</code></pre>
+
+<h2 id="select_lsdf-lsnbs">select_ls(df, lsnbs)</h2>
+<pre><code>keep only a subset of lumisection numbers in a df  
+lsnbs is a list of lumisection numbers to keep in the df.  
+note: no check is done on the run number!  
+</code></pre>
+
+<h2 id="get_runslsdf">get_runsls(df)</h2>
+<pre><code>return a dictionary with runs and lumisections in a dataframe (same format as e.g. golden json)  
+</code></pre>
+
+<h2 id="select_jsondf-jsonfile">select_json(df, jsonfile)</h2>
+<pre><code>keep only lumisections that are in the given json file  
+</code></pre>
+
+<h2 id="select_runslsdf-jsondict">select_runsls(df, jsondict)</h2>
+<pre><code>equivalent to select\_json but using a pre-loaded json dict instead of a json file on disk  
+</code></pre>
+
+<h2 id="select_goldendf">select_golden(df)</h2>
+<pre><code>keep only golden lumisections in df  
+</code></pre>
+
+<h2 id="select_notgoldendf">select_notgolden(df)</h2>
+<pre><code>keep all but golden lumisections in df  
+</code></pre>
+
+<h2 id="select_dcsondf">select_dcson(df)</h2>
+<pre><code>keep only lumisections in df that have DCS-bit on  
+</code></pre>
+
+<h2 id="select_dcsoffdf">select_dcsoff(df)</h2>
+<pre><code>keep only lumisections in df that have DCS-bit off  
+</code></pre>
+
+<h2 id="select_pixelgooddf">select_pixelgood(df)</h2>
+<pre><code>keep only lumisections in df that are in good pixel json  
+</code></pre>
+
+<h2 id="select_pixelbaddf">select_pixelbad(df)</h2>
+<pre><code>keep only lumisections in df that are in bad pixel json  
+</code></pre>
+
+<h2 id="get_highstatdf-entries_to_bins_ratio100">get_highstat(df, entries_to_bins_ratio=100)</h2>
+<pre><code>return a select object of runs and ls of histograms with high statistics  
+</code></pre>
+
+<h2 id="select_highstatdf-entries_to_bins_ratio100">select_highstat(df, entries_to_bins_ratio=100)</h2>
+<pre><code>keep only lumisection in df with high statistics  
+</code></pre>
+
+<h2 id="get_hist_valuesdf">get_hist_values(df)</h2>
+<pre><code>same as builtin &quot;df['histo'].values&quot; but convert strings to np arrays  
+input arguments:  
+- df: a dataframe containing histograms (assumed to be of a single type!)  
+note: this function works for both 1D and 2D histograms,  
+      the distinction is made based on whether or not 'Ybins' is present as a column in the dataframe  
+      update: 'Ybins' is also present for 1D histograms, but has value 1!  
+output:  
+a tuple containing the following elements:  
+- np array of shape (nhists,nbins) (for 1D) or (nhists,nybins,nxbins) (for 2D)  
+- np array of run numbers of length nhists  
+- np array of lumisection numbers of length nhists  
+warning: no check is done to assure that all histograms are of the same type!  
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">

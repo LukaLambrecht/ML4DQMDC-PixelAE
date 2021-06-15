@@ -233,22 +233,28 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="autoencoder">AutoEncoder</h1>
-<hr />
 <h2 id="autoencoderhistogramclassifier">AutoEncoder(HistogramClassifier)</h2>
-<p><strong>histogram classfier based on the MSE of an autoencoder reconstruction</strong><br />
-the AutoEncoder derives from the generic HistogramClassifier. <br />
-for this specific classifier, the output score of a histogram is the mean-square-error (MSE) <br />
-between the original histogram and its autoencoder reconstruction.<br />
-in essence, it is just a wrapper for a tensorflow model.  </p>
-<h3 id="9595init9595-self-modelnone">__init__( self, model=None )</h3>
-<p><strong>intializer from a tensorflow model</strong><br />
-the model is assumed to be fully trained on a suitable training set and ready for use<br />
-TODO: perhaps the functionality for initializing and training the model can be absorbed in the AutoEncoder class,<br />
-      but this is not yet supported currently  </p>
+<pre><code>histogram classfier based on the MSE of an autoencoder reconstruction  
+the AutoEncoder derives from the generic HistogramClassifier.   
+for this specific classifier, the output score of a histogram is the mean-square-error (MSE)   
+between the original histogram and its autoencoder reconstruction.  
+in essence, it is just a wrapper for a tensorflow model.  
+</code></pre>
+
+<h3 id="init-self-modelnone"><strong>init</strong>( self, model=None )</h3>
+<pre><code>intializer from a tensorflow model  
+the model is assumed to be fully trained on a suitable training set and ready for use  
+TODO: perhaps the functionality for initializing and training the model can be absorbed in the AutoEncoder class,  
+      but this is not yet supported currently  
+</code></pre>
+
 <h3 id="evaluate-self-histograms">evaluate( self, histograms )</h3>
-<p><strong>classification of a collection of histograms based on their autoencoder reconstruction</strong>  </p>
+<pre><code>classification of a collection of histograms based on their autoencoder reconstruction  
+</code></pre>
+
 <h3 id="reconstruct-self-histograms">reconstruct( self, histograms )</h3>
-<p><strong>return the autoencoder reconstruction of a set of histograms</strong>  </p></div>
+<pre><code>return the autoencoder reconstruction of a set of histograms  
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">

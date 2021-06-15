@@ -227,118 +227,134 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#plot-utils">plot utils</a></li>
-            <li><a href="#plot95histshistlist-colorlist-labellist-transparency1-xlims-05-1-titlenone-xaxtitlenone-yaxtitlenone-bkgcolornone-bkgcmapspring">plot_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None, bkgcolor=None, bkgcmap='spring')</a></li>
-            <li><a href="#plot95hists95multihistlist-colorlist-labellist-transparency1-xlims-05-1-titlenone-xaxtitlenone-yaxtitlenone">plot_hists_multi(histlist, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)</a></li>
-            <li><a href="#plot95hist952dhist-fignone-axnone-titlenone-xaxtitlenone-yaxtitlenone-caxrangenone">plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None, caxrange=None)</a></li>
-            <li><a href="#plot95hists952dhists-ncols4-title-none-subtitlesnone-xaxtitlenone-yaxtitlenone-caxrangenone">plot_hists_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None)</a></li>
-            <li><a href="#plot95hists952d95gifhists-titles-none-xaxtitlenone-yaxtitlenone-duration03-fignametemp95gifgif">plot_hists_2d_gif(hists, titles = None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp_gif.gif')</a></li>
-            <li><a href="#plot95hists95from95dfdf-histtype-nhists">plot_hists_from_df(df, histtype, nhists)</a></li>
-            <li><a href="#plot95setssetlist-fignone-axnone-colorlist-labellist-transparencylist-xlims-05-1-titlenone-xaxtitlenone-yaxtitlenone">plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)</a></li>
-            <li><a href="#plot95anomaloushistlist-ls-highlight-1-hrange-1">plot_anomalous(histlist, ls, highlight=-1, hrange=-1)</a></li>
-            <li><a href="#plot95momentsmoments-ls-dims-fignone-axnone-markersize10">plot_moments(moments, ls, dims, fig=None, ax=None, markersize=10)</a></li>
-            <li><a href="#plot95distancedists-lsnone-rmlargest0-doplottrue-titlenone-xaxtitlelumisection-number-yaxtitledistance-metric">plot_distance(dists, ls=None, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='distance metric')</a></li>
-            <li><a href="#plot95lossdata-xlimsnone-titlenone-xaxtitleepoch-yaxtitleloss">plot_loss(data, xlims=None, title=None, xaxtitle='epoch', yaxtitle='loss')</a></li>
-            <li><a href="#plot95msemse-rmlargest0-doplottrue-titlenone-xaxtitlelumisection-number-yaxtitlemse">plot_mse(mse, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='mse')</a></li>
-            <li><a href="#plot95score95dist-scores-labels-nbins20-normalizefalse-titleoutput-score-distributions-for-signal-and-background-xaxtitleoutput-score-yaxtitlenone">plot_score_dist( scores, labels, nbins=20, normalize=False, title='output score distributions for signal and background', xaxtitle='output score', yaxtitle=None)</a></li>
-            <li><a href="#plot95fit952d-points-fitfuncnone-logprobfalse-onlycontourfalse-xlims5-ylims5-onlypositivefalse-xaxtitlenone-yaxtitlenone">plot_fit_2d( points, fitfunc=None, logprob=False, onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, yaxtitle=None )</a></li>
+            <li><a href="#plot_histshistlist-colorlist-labellist-transparency1-xlims-05-1-titlenone-xaxtitlenone-yaxtitlenone-bkgcolornone-bkgcmapspring">plot_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None, bkgcolor=None, bkgcmap='spring')</a></li>
+            <li><a href="#plot_hists_multihistlist-colorlist-labellist-transparency1-xlims-05-1-titlenone-xaxtitlenone-yaxtitlenone">plot_hists_multi(histlist, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)</a></li>
+            <li><a href="#plot_hist_2dhist-fignone-axnone-titlenone-xaxtitlenone-yaxtitlenone-caxrangenone">plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None, caxrange=None)</a></li>
+            <li><a href="#plot_hists_2dhists-ncols4-title-none-subtitlesnone-xaxtitlenone-yaxtitlenone-caxrangenone">plot_hists_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None)</a></li>
+            <li><a href="#plot_hists_2d_gifhists-titles-none-xaxtitlenone-yaxtitlenone-duration03-fignametemp_gifgif">plot_hists_2d_gif(hists, titles = None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp_gif.gif')</a></li>
+            <li><a href="#plot_lossdata-xlimsnone-titlenone-xaxtitleepoch-yaxtitleloss">plot_loss(data, xlims=None, title=None, xaxtitle='epoch', yaxtitle='loss')</a></li>
+            <li><a href="#plot_msemse-rmlargest0-doplottrue-titlenone-xaxtitlelumisection-number-yaxtitlemse">plot_mse(mse, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='mse')</a></li>
+            <li><a href="#plot_score_dist-scores-labels-nbins20-normalizefalse-titleoutput-score-distributions-for-signal-and-background-xaxtitleoutput-score-yaxtitlenone">plot_score_dist( scores, labels, nbins=20, normalize=False, title='output score distributions for signal and background', xaxtitle='output score', yaxtitle=None)</a></li>
+            <li><a href="#plot_fit_2d-points-fitfuncnone-logprobfalse-onlycontourfalse-xlims5-ylims5-onlypositivefalse-xaxtitlenone-yaxtitlenone">plot_fit_2d( points, fitfunc=None, logprob=False, onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, yaxtitle=None )</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
 <h1 id="plot-utils">plot utils</h1>
-<hr />
-<h2 id="plot95histshistlist-colorlist-labellist-transparency1-xlims-05-1-titlenone-xaxtitlenone-yaxtitlenone-bkgcolornone-bkgcmapspring">plot_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None, bkgcolor=None, bkgcmap='spring')</h2>
-<p><strong>plot some histograms (in histlist) in one figure using specified colors and/or labels</strong><br />
-- histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))<br />
-- colorlist is a list or array containing colors (in string format), of length nhistograms<br />
-  note: it can also be a single string representing a color (in pyplot), then all histograms will take this color<br />
-- labellist is a list or array containing labels for in legend, of length nhistograms<br />
-- xlims is a tuple of min and max for the x-axis labels, defaults to (-0.5,nbins-0.5)<br />
-- title, xaxtitle, yaxtitle: strings for histogram title, x-axis title and y-axis title respectively<br />
-- bkgcolor: 1D array representing background color for the plot (color axis will be scaled between min and max in bkgcolor)<br />
-  note: if bkgcolor does not have the same length as the x-axis, it will be compressed or stretched to fit the axis,<br />
-        but this might be meaningless, depending on what you are trying to visualize!<br />
-- bkgmap: name of valid pyplot color map for plotting the background color<br />
-output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it  </p>
-<hr />
-<h2 id="plot95hists95multihistlist-colorlist-labellist-transparency1-xlims-05-1-titlenone-xaxtitlenone-yaxtitlenone">plot_hists_multi(histlist, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)</h2>
-<p><strong>plot many histograms (in histlist) in one figure using specified colors and/or labels</strong><br />
-- histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))<br />
-- colorlist is a list or array containing numbers to be mapped to colors<br />
-- labellist is a list or array containing labels for in legend<br />
-output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it  </p>
-<hr />
-<h2 id="plot95hist952dhist-fignone-axnone-titlenone-xaxtitlenone-yaxtitlenone-caxrangenone">plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None, caxrange=None)</h2>
-<p><strong>plot a 2D histogram</strong><br />
-- hist is a 2D numpy array of shape (nxbins, nybins)<br />
-notes:<br />
-- if the histogram contains only nonnegative values, values below 1e-12 will not be plotted<br />
-  (i.e. they will be shown as white spots in the plot) to discriminate zero from small but nonzero<br />
-- if the histogram contains negative values, the color axis will be symmetrized around zero  </p>
-<hr />
-<h2 id="plot95hists952dhists-ncols4-title-none-subtitlesnone-xaxtitlenone-yaxtitlenone-caxrangenone">plot_hists_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None)</h2>
-<p><strong>plot multiple 2D histograms next to each other</strong><br />
-- hists: list of 2D numpy arrays of shape (nxbins,nybins), or an equivalent 3D numpy array<br />
-- ncols: number of columns to use  </p>
-<hr />
-<h2 id="plot95hists952d95gifhists-titles-none-xaxtitlenone-yaxtitlenone-duration03-fignametemp95gifgif">plot_hists_2d_gif(hists, titles = None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp_gif.gif')</h2>
-<p>(no valid documentation found)  </p>
-<hr />
-<h2 id="plot95hists95from95dfdf-histtype-nhists">plot_hists_from_df(df, histtype, nhists)</h2>
-<p><strong>plot a number of histograms in a dataframe</strong><br />
+<h2 id="plot_histshistlist-colorlist-labellist-transparency1-xlims-05-1-titlenone-xaxtitlenone-yaxtitlenone-bkgcolornone-bkgcmapspring">plot_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None, bkgcolor=None, bkgcmap='spring')</h2>
+<pre><code>plot some histograms (in histlist) in one figure using specified colors and/or labels  
+- histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))  
+- colorlist is a list or array containing colors (in string format), of length nhistograms  
+  note: it can also be a single string representing a color (in pyplot), then all histograms will take this color  
+- labellist is a list or array containing labels for in legend, of length nhistograms  
+- xlims is a tuple of min and max for the x-axis labels, defaults to (-0.5,nbins-0.5)  
+- title, xaxtitle, yaxtitle: strings for histogram title, x-axis title and y-axis title respectively  
+- bkgcolor: 1D array representing background color for the plot (color axis will be scaled between min and max in bkgcolor)  
+  note: if bkgcolor does not have the same length as the x-axis, it will be compressed or stretched to fit the axis,  
+        but this might be meaningless, depending on what you are trying to visualize!  
+- bkgmap: name of valid pyplot color map for plotting the background color  
+output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it  
+</code></pre>
+
+<h2 id="plot_hists_multihistlist-colorlist-labellist-transparency1-xlims-05-1-titlenone-xaxtitlenone-yaxtitlenone">plot_hists_multi(histlist, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)</h2>
+<pre><code>plot many histograms (in histlist) in one figure using specified colors and/or labels  
+- histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))  
+- colorlist is a list or array containing numbers to be mapped to colors  
+- labellist is a list or array containing labels for in legend  
+output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it  
+</code></pre>
+
+<h2 id="plot_hist_2dhist-fignone-axnone-titlenone-xaxtitlenone-yaxtitlenone-caxrangenone">plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None, caxrange=None)</h2>
+<pre><code>plot a 2D histogram  
+- hist is a 2D numpy array of shape (nxbins, nybins)  
+notes:  
+- if the histogram contains only nonnegative values, values below 1e-12 will not be plotted  
+  (i.e. they will be shown as white spots in the plot) to discriminate zero from small but nonzero  
+- if the histogram contains negative values, the color axis will be symmetrized around zero  
+</code></pre>
+
+<h2 id="plot_hists_2dhists-ncols4-title-none-subtitlesnone-xaxtitlenone-yaxtitlenone-caxrangenone">plot_hists_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None)</h2>
+<pre><code>plot multiple 2D histograms next to each other  
+- hists: list of 2D numpy arrays of shape (nxbins,nybins), or an equivalent 3D numpy array  
+- ncols: number of columns to use  
+</code></pre>
+
+<h2 id="plot_hists_2d_gifhists-titles-none-xaxtitlenone-yaxtitlenone-duration03-fignametemp_gifgif">plot_hists_2d_gif(hists, titles = None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp_gif.gif')</h2>
+<pre><code>(no valid documentation found)```  
+
+
+## plot_hists_from_df(df, histtype, nhists)  
+</code></pre>
+
+<p>plot a number of histograms in a dataframe<br />
 - df is the dataframe from which to plot<br />
 - histtype is the name of the histogram type (e.g. 'chargeInner_PXLayer_1')<br />
 - nhists is the number of histograms to plot  </p>
-<hr />
-<h2 id="plot95setssetlist-fignone-axnone-colorlist-labellist-transparencylist-xlims-05-1-titlenone-xaxtitlenone-yaxtitlenone">plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)</h2>
-<p><strong>plot multiple sets of histograms to compare the shapes</strong><br />
+<pre><code>
+
+## plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)  
+</code></pre>
+
+<p>plot multiple sets of histograms to compare the shapes<br />
 - setlist is a list of 2D numpy arrays containing histograms<br />
 - fig and ax: a pyplot figure and axis object (if one of both is none a new figure is created)<br />
 - title is a string that will be used as the title for the ax object<br />
 other parameters are lists of which each element applies to one list of histograms  </p>
-<hr />
-<h2 id="plot95anomaloushistlist-ls-highlight-1-hrange-1">plot_anomalous(histlist, ls, highlight=-1, hrange=-1)</h2>
+<pre><code>
+
+## plot_anomalous(histlist, ls, highlight=-1, hrange=-1)  
+</code></pre>
+
 <p>histlist and ls are a list of histograms and corresponding lumisection numbers<br />
 lsnumber is the lumisection number of the histogram to highlight<br />
 hrange is the number of histograms before and after lsnumber to plot (default: whole run)  </p>
-<hr />
-<h2 id="plot95momentsmoments-ls-dims-fignone-axnone-markersize10">plot_moments(moments, ls, dims, fig=None, ax=None, markersize=10)</h2>
+<pre><code>
+
+## plot_moments(moments, ls, dims, fig=None, ax=None, markersize=10)  
+</code></pre>
+
 <p>moments is an (nhists,nmoments) array<br />
 dims is a tuple of two or three values between 0 and nmoments-1  </p>
-<hr />
-<h2 id="plot95distancedists-lsnone-rmlargest0-doplottrue-titlenone-xaxtitlelumisection-number-yaxtitledistance-metric">plot_distance(dists, ls=None, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='distance metric')</h2>
-<p>(no valid documentation found)  </p>
-<hr />
-<h2 id="plot95lossdata-xlimsnone-titlenone-xaxtitleepoch-yaxtitleloss">plot_loss(data, xlims=None, title=None, xaxtitle='epoch', yaxtitle='loss')</h2>
-<p><strong>plot the training and validation loss</strong><br />
-data is the object returned by the .fit method when called upon a keras model<br />
-e.g. history = <your autoencoder>.fit(<training params>)<br />
-     plot_loss(history,'a title')  </p>
-<hr />
-<h2 id="plot95msemse-rmlargest0-doplottrue-titlenone-xaxtitlelumisection-number-yaxtitlemse">plot_mse(mse, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='mse')</h2>
-<p><strong>plot the mse's and return the mean and std</strong><br />
-input args:<br />
-- mse is a 1D numpy array of mse scores<br />
-- doplot: boolean whether to make a plot or simply return mean and std<br />
-- rmlargest: fraction of largest mse's to remove (to avoid being too sensitive to outliers)  </p>
-<hr />
-<h2 id="plot95score95dist-scores-labels-nbins20-normalizefalse-titleoutput-score-distributions-for-signal-and-background-xaxtitleoutput-score-yaxtitlenone">plot_score_dist( scores, labels, nbins=20, normalize=False, title='output score distributions for signal and background', xaxtitle='output score', yaxtitle=None)</h2>
-<p><strong>make a plot showing the distributions of the output scores for signal and background</strong>  </p>
-<hr />
-<h2 id="plot95fit952d-points-fitfuncnone-logprobfalse-onlycontourfalse-xlims5-ylims5-onlypositivefalse-xaxtitlenone-yaxtitlenone">plot_fit_2d( points, fitfunc=None, logprob=False, onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, yaxtitle=None )</h2>
-<p><strong>make a scatter plot of a 2D point cloud with fitted contour</strong><br />
-input arguments:<br />
-- points: a numpy array of shape (npoints,ndims)<br />
-- fitfunc: an object of type CloudFitter (see src/cloudfitters) <br />
-  or any other object that implements a pdf(points) method<br />
-- logprob: boolean whether to plot log probability or normal probability<br />
-- onlycontour: a boolean whether to draw only the fit or include the data points<br />
-- xlims and ylims: tuples of (low,high)<br />
-  note: can be an integer, in which case the range will be determined automatically<br />
-        from the formula low = mean-xlims<em>std, high = mean+xlims</em>std,<br />
-        where mean and std are determined from the points array.<br />
-- onlypositive: overrides previous argument to set lower bound of plotting range at 0 in both dimensions.<br />
-- xaxtitle and yaxtitle: titles for axes.  </p></div>
+<pre><code>
+
+## plot_distance(dists, ls=None, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='distance metric')  
+</code></pre>
+
+<p>(no valid documentation found)```  </p>
+<h2 id="plot_lossdata-xlimsnone-titlenone-xaxtitleepoch-yaxtitleloss">plot_loss(data, xlims=None, title=None, xaxtitle='epoch', yaxtitle='loss')</h2>
+<pre><code>plot the training and validation loss  
+data is the object returned by the .fit method when called upon a keras model  
+e.g. history = &lt;your autoencoder&gt;.fit(&lt;training params&gt;)  
+     plot\_loss(history,'a title')  
+</code></pre>
+
+<h2 id="plot_msemse-rmlargest0-doplottrue-titlenone-xaxtitlelumisection-number-yaxtitlemse">plot_mse(mse, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='mse')</h2>
+<pre><code>plot the mse's and return the mean and std  
+input args:  
+- mse is a 1D numpy array of mse scores  
+- doplot: boolean whether to make a plot or simply return mean and std  
+- rmlargest: fraction of largest mse's to remove (to avoid being too sensitive to outliers)  
+</code></pre>
+
+<h2 id="plot_score_dist-scores-labels-nbins20-normalizefalse-titleoutput-score-distributions-for-signal-and-background-xaxtitleoutput-score-yaxtitlenone">plot_score_dist( scores, labels, nbins=20, normalize=False, title='output score distributions for signal and background', xaxtitle='output score', yaxtitle=None)</h2>
+<pre><code>make a plot showing the distributions of the output scores for signal and background  
+</code></pre>
+
+<h2 id="plot_fit_2d-points-fitfuncnone-logprobfalse-onlycontourfalse-xlims5-ylims5-onlypositivefalse-xaxtitlenone-yaxtitlenone">plot_fit_2d( points, fitfunc=None, logprob=False, onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, yaxtitle=None )</h2>
+<pre><code>make a scatter plot of a 2D point cloud with fitted contour  
+input arguments:  
+- points: a numpy array of shape (npoints,ndims)  
+- fitfunc: an object of type CloudFitter (see src/cloudfitters)   
+  or any other object that implements a pdf(points) method  
+- logprob: boolean whether to plot log probability or normal probability  
+- onlycontour: a boolean whether to draw only the fit or include the data points  
+- xlims and ylims: tuples of (low,high)  
+  note: can be an integer, in which case the range will be determined automatically  
+        from the formula low = mean-xlims*std, high = mean+xlims*std,  
+        where mean and std are determined from the points array.  
+- onlypositive: overrides previous argument to set lower bound of plotting range at 0 in both dimensions.  
+- xaxtitle and yaxtitle: titles for axes.  
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">

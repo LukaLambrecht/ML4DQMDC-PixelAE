@@ -233,18 +233,22 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="lognormalfitter">LogNormalFitter</h1>
-<hr />
 <h2 id="lognormalfittercloudfitter">LogNormalFitter(CloudFitter)</h2>
-<p><strong>class for fitting a log-normal distribution to a point cloud</strong><br />
-parameters:<br />
-- mean: multidim mean of underlying normal<br />
-- cov: multidim covariance matrix of underlying normal<br />
-- mvn: scipy.stats multivariate_normal object built from the mean and cov  </p>
-<h3 id="9595init9595selfpoints">__init__(self,points)</h3>
-<p><strong>constructor</strong><br />
-points is a np array of shape (npoints,ndims)  </p>
+<pre><code>class for fitting a log-normal distribution to a point cloud  
+parameters:  
+- mean: multidim mean of underlying normal  
+- cov: multidim covariance matrix of underlying normal  
+- mvn: scipy.stats multivariate\_normal object built from the mean and cov  
+</code></pre>
+
+<h3 id="initselfpoints"><strong>init</strong>(self,points)</h3>
+<pre><code>constructor  
+points is a np array of shape (npoints,ndims)  
+</code></pre>
+
 <h3 id="pdfselfpoints">pdf(self,points)</h3>
-<p><strong>get pdf at points</strong>  </p></div>
+<pre><code>get pdf at points  
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">

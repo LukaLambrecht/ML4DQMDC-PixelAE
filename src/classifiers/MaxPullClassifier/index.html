@@ -235,44 +235,52 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="maxpullclassifier">MaxPullClassifier</h1>
-<hr />
 <h2 id="pull-testhist-refhist">pull( testhist, refhist )</h2>
-<p><strong>calculate bin-per-bin pull between two histograms</strong><br />
-bin-per-bin pull is defined here preliminarily as (testhist(bin)-refhist(bin))/sqrt(refhist(bin))<br />
-notes: <br />
-- bins in the denominator where refhist is &lt; 1 are set to one! This is for histograms with absolute counts, and they should not be normalized!<br />
-- instead another normalization is applied: the test histogram is multiplied by sum(refhist)/sum(testhist) before computing the pulls<br />
-input arguments:<br />
-- testhist, refhist: numpy arrays of the same shape<br />
-output:<br />
-numpy array of same shape as testhist and refhist  </p>
-<hr />
+<pre><code>calculate bin-per-bin pull between two histograms  
+bin-per-bin pull is defined here preliminarily as (testhist(bin)-refhist(bin))/sqrt(refhist(bin))  
+notes:   
+- bins in the denominator where refhist is &lt; 1 are set to one! This is for histograms with absolute counts, and they should not be normalized!  
+- instead another normalization is applied: the test histogram is multiplied by sum(refhist)/sum(testhist) before computing the pulls  
+input arguments:  
+- testhist, refhist: numpy arrays of the same shape  
+output:  
+numpy array of same shape as testhist and refhist  
+</code></pre>
+
 <h2 id="maxabspull-testhist-refhist-n1">maxabspull( testhist, refhist, n=1 )</h2>
-<p><strong>calculate maximum of bin-per-bin pulls (in absolute value) between two histograms</strong><br />
-see definition of bin-per-bin pull in function pull (above)<br />
-input arguments:<br />
-- testhist, refhist: numpy arrays of the same shape<br />
-- n: nubmer of largest pull values to average over (default: 1, just take single maximum)<br />
-output:<br />
-a float  </p>
-<hr />
+<pre><code>calculate maximum of bin-per-bin pulls (in absolute value) between two histograms  
+see definition of bin-per-bin pull in function pull (above)  
+input arguments:  
+- testhist, refhist: numpy arrays of the same shape  
+- n: nubmer of largest pull values to average over (default: 1, just take single maximum)  
+output:  
+a float  
+</code></pre>
+
 <h2 id="maxpullclassifierhistogramclassifier">MaxPullClassifier(HistogramClassifier)</h2>
-<p><strong>histogram classification based on maximum pull between test histogram and reference histogram.</strong><br />
-specifically intended for 2D histograms, but should in principle work for 1D as well.<br />
-see static function pull (above) for definition of bin-per-bin pull and other notes.  </p>
-<h3 id="9595init9595-self-refhist-n1">__init__( self, refhist, n=1 )</h3>
-<p><strong>initializer from a reference histogram</strong><br />
-input arguments:<br />
-- refhist: a numpy array of shape (nbins) or (nybins,nxbins)<br />
-- n: number of largest pull values to average over (default: 1, just take single maximum)  </p>
+<pre><code>histogram classification based on maximum pull between test histogram and reference histogram.  
+specifically intended for 2D histograms, but should in principle work for 1D as well.  
+see static function pull (above) for definition of bin-per-bin pull and other notes.  
+</code></pre>
+
+<h3 id="init-self-refhist-n1"><strong>init</strong>( self, refhist, n=1 )</h3>
+<pre><code>initializer from a reference histogram  
+input arguments:  
+- refhist: a numpy array of shape (nbins) or (nybins,nxbins)  
+- n: number of largest pull values to average over (default: 1, just take single maximum)  
+</code></pre>
+
 <h3 id="evaluate-self-histograms">evaluate( self, histograms )</h3>
-<p><strong>classify the histograms based on their max bin-per-bin pull (in absolute value) with respect to a reference histogram</strong>  </p>
+<pre><code>classify the histograms based on their max bin-per-bin pull (in absolute value) with respect to a reference histogram  
+</code></pre>
+
 <h3 id="getpull-self-histogram">getpull( self, histogram )</h3>
-<p><strong>get the pull histogram for a given test histogram</strong><br />
-input arguments:<br />
-histogram: a single histogram, i.e. numpy array of shape (nbins) for 1D or (nybins,nxbins) for 2D.<br />
-output:<br />
-numpy array of same shape as histogram containing bin-per-bin pull w.r.t. reference histogram  </p></div>
+<pre><code>get the pull histogram for a given test histogram  
+input arguments:  
+histogram: a single histogram, i.e. numpy array of shape (nbins) for 1D or (nybins,nxbins) for 2D.  
+output:  
+numpy array of same shape as histogram containing bin-per-bin pull w.r.t. reference histogram  
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">

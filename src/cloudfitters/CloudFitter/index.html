@@ -233,22 +233,26 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="cloudfitter">CloudFitter</h1>
-<hr />
 <h2 id="cloudfitterabc">CloudFitter(ABC)</h2>
-<p><strong>abstract base class for all point cloud fitting algorithms</strong><br />
-note that all concrete point cloud fitters must inherit from CloudFitter!<br />
-how to make a concrete CloudFitter class:<br />
-- define a class that inherits from CloudFitter<br />
-- make sure all functions with @abstractmethod are implemented in your class<br />
-- it is recommended to start each overriding function with a call to super(), but this is not strictly necessary<br />
-see also the existing examples!  </p>
-<h3 id="9595init9595-self-points">__init__( self, points )</h3>
-<p><strong>default intializer</strong><br />
-- points: 2D numpy array of shape (npoints,ndims)  </p>
+<pre><code>abstract base class for all point cloud fitting algorithms  
+note that all concrete point cloud fitters must inherit from CloudFitter!  
+how to make a concrete CloudFitter class:  
+- define a class that inherits from CloudFitter  
+- make sure all functions with @abstractmethod are implemented in your class  
+- it is recommended to start each overriding function with a call to super(), but this is not strictly necessary  
+see also the existing examples!  
+</code></pre>
+
+<h3 id="init-self-points"><strong>init</strong>( self, points )</h3>
+<pre><code>default intializer  
+- points: 2D numpy array of shape (npoints,ndims)  
+</code></pre>
+
 <h3 id="pdf-self-points">pdf( self, points )</h3>
-<p><strong>evaluate the pdf (probability density function) at given points</strong><br />
-- points: a 2D numpy array of shape (npoints,ndims)<br />
-output: a 1D array of shape (npoints)  </p></div>
+<pre><code>evaluate the pdf (probability density function) at given points  
+- points: a 2D numpy array of shape (npoints,ndims)  
+output: a 1D array of shape (npoints)  
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">

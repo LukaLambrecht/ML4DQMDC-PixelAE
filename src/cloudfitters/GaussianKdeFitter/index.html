@@ -233,22 +233,26 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="gaussiankdefitter">GaussianKdeFitter</h1>
-<hr />
 <h2 id="gaussiankdefittercloudfitter">GaussianKdeFitter(CloudFitter)</h2>
-<p><strong>class for fitting a gaussian kernel density to a point cloud</strong><br />
-basically a wrapper for scipy.stats.gaussian_kde.<br />
-parameters<br />
-- kernel: scipy.stats.gaussian_kde object<br />
-- cov: covariance matrix <br />
-(use np.cov for now, maybe later replace by internal kernel.covariance)  </p>
-<h3 id="9595init9595selfpointsbw95methodscott">__init__(self,points,bw_method='scott')</h3>
-<p><strong>constructor</strong><br />
-input arguments:<br />
-- points: a np array of shape (npoints,ndims)<br />
-- bw_method: method to calculate the bandwidth of the gaussians,<br />
-  see https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.gaussian_kde.html  </p>
+<pre><code>class for fitting a gaussian kernel density to a point cloud  
+basically a wrapper for scipy.stats.gaussian\_kde.  
+parameters  
+- kernel: scipy.stats.gaussian\_kde object  
+- cov: covariance matrix   
+(use np.cov for now, maybe later replace by internal kernel.covariance)  
+</code></pre>
+
+<h3 id="initselfpointsbw_methodscott"><strong>init</strong>(self,points,bw_method='scott')</h3>
+<pre><code>constructor  
+input arguments:  
+- points: a np array of shape (npoints,ndims)  
+- bw\_method: method to calculate the bandwidth of the gaussians,  
+  see https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.gaussian\_kde.html  
+</code></pre>
+
 <h3 id="pdfselfpoints">pdf(self,points)</h3>
-<p><strong>get pdf at points</strong>  </p></div>
+<pre><code>get pdf at points  
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">

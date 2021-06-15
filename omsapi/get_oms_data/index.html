@@ -227,42 +227,44 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#get-oms-data">get oms data</a></li>
-            <li><a href="#get95oms95api">get_oms_api()</a></li>
-            <li><a href="#get95oms95data-omsapi-api95endpoint-runnb-extrafilters-extraargs-sortnone-attributes">get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[])</a></li>
-            <li><a href="#get95oms95response95attribute-omsresponse-attribute">get_oms_response_attribute( omsresponse, attribute )</a></li>
+            <li><a href="#get_oms_api">get_oms_api()</a></li>
+            <li><a href="#get_oms_data-omsapi-api_endpoint-runnb-extrafilters-extraargs-sortnone-attributes">get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[])</a></li>
+            <li><a href="#get_oms_response_attribute-omsresponse-attribute">get_oms_response_attribute( omsresponse, attribute )</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
 <h1 id="get-oms-data">get oms data</h1>
-<hr />
-<h2 id="get95oms95api">get_oms_api()</h2>
-<p><strong>get an OMSAPI instance</strong><br />
-takes no input arguments, as the configuration parameters are unlikely to change very often<br />
-if needed, these parameters can be changed in the file urls.py  </p>
-<hr />
-<h2 id="get95oms95data-omsapi-api95endpoint-runnb-extrafilters-extraargs-sortnone-attributes">get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[])</h2>
-<p><strong>query some data from OMS</strong><br />
-input arguments:<br />
-- omsapi: an OMSAPI instance, e.g. created by get_oms_api()<br />
-- api_endpoint: string, target information, e.g. 'runs' or 'lumisections'<br />
-  (see the readme for a link where the available endpoints are listed)<br />
-- runnb: run number(s) to retrieve the info for,<br />
-  either integer (for single run) or tuple or list of two elements (first run and last run)<br />
-  (can also be None to not filter on run number but this is not recommended)<br />
-- extrafilters: list of extra filters (apart from run number),<br />
-  each filter is supposed to be a dict of the form {'attribute_name':<name>,'value':<value>,'operator':<operator>}<br />
-  where <name> must be a valid field name in the OMS data, <value> its value, and <operator> chosen from "EQ", "NEQ", "LT", "GT", "LE", "GE" or "LIKE"<br />
-- extraargs: dict of custom key/value pairs to add to the query<br />
-  (still experimental, potentially usable for changing the granularity from 'run' to 'lumisection' for e.g. L1 trigger rates, see example.ipynb)<br />
-- sort: valid field name in the OMS data by which to sort<br />
-- attributes: list of valid field names in the OMS data to return (if not specified, all information is returned)  </p>
-<hr />
-<h2 id="get95oms95response95attribute-omsresponse-attribute">get_oms_response_attribute( omsresponse, attribute )</h2>
-<p><strong>small helper function to retrieve a list of values for a single attribute</strong><br />
-input arguments:<br />
-- omsresponse: the json-like object returned by get_oms_data<br />
-- attribute: name of one of the attributes present in omsresponse  </p></div>
+<h2 id="get_oms_api">get_oms_api()</h2>
+<pre><code>get an OMSAPI instance  
+takes no input arguments, as the configuration parameters are unlikely to change very often  
+if needed, these parameters can be changed in the file urls.py  
+</code></pre>
+
+<h2 id="get_oms_data-omsapi-api_endpoint-runnb-extrafilters-extraargs-sortnone-attributes">get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[])</h2>
+<pre><code>query some data from OMS  
+input arguments:  
+- omsapi: an OMSAPI instance, e.g. created by get\_oms\_api()  
+- api\_endpoint: string, target information, e.g. 'runs' or 'lumisections'  
+  (see the readme for a link where the available endpoints are listed)  
+- runnb: run number(s) to retrieve the info for,  
+  either integer (for single run) or tuple or list of two elements (first run and last run)  
+  (can also be None to not filter on run number but this is not recommended)  
+- extrafilters: list of extra filters (apart from run number),  
+  each filter is supposed to be a dict of the form {'attribute\_name':&lt;name&gt;,'value':&lt;value&gt;,'operator':&lt;operator&gt;}  
+  where &lt;name&gt; must be a valid field name in the OMS data, &lt;value&gt; its value, and &lt;operator&gt; chosen from &quot;EQ&quot;, &quot;NEQ&quot;, &quot;LT&quot;, &quot;GT&quot;, &quot;LE&quot;, &quot;GE&quot; or &quot;LIKE&quot;  
+- extraargs: dict of custom key/value pairs to add to the query  
+  (still experimental, potentially usable for changing the granularity from 'run' to 'lumisection' for e.g. L1 trigger rates, see example.ipynb)  
+- sort: valid field name in the OMS data by which to sort  
+- attributes: list of valid field names in the OMS data to return (if not specified, all information is returned)  
+</code></pre>
+
+<h2 id="get_oms_response_attribute-omsresponse-attribute">get_oms_response_attribute( omsresponse, attribute )</h2>
+<pre><code>small helper function to retrieve a list of values for a single attribute  
+input arguments:  
+- omsresponse: the json-like object returned by get\_oms\_data  
+- attribute: name of one of the attributes present in omsresponse  
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">
