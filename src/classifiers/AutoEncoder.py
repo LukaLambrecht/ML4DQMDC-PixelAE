@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **Histogram classfier based on the MSE of an autoencoder reconstruction**
+# 
+# The AutoEncoder derives from the generic HistogramClassifier.  
+# For this specific classifier, the output score of a histogram is the mean-square-error (MSE) between the original histogram and its autoencoder reconstruction.  
+# In essence, it is just a wrapper for a tensorflow model.  
+
 
 
 ### imports
@@ -34,9 +40,8 @@ class AutoEncoder(HistogramClassifier):
         
         super( AutoEncoder,self ).__init__()
         if model is None:
-            raise NotYetImplementedError('ERROR in AutoEncoder.init: init must take a fully trained and ready tensorflow model as input (for now)')
+            raise NotYetImplementedError('ERROR in AutoEncoder.__init__: init must take a fully trained and ready tensorflow model as input (for now)')
         if not isinstance( model, tensorflow.keras.Model ):
-            # still to check if this is the correct type to check!
             raise Exception('ERROR in AutoEncoder.init: model has type {}'.format(type(model))
                            +' while a tensorflow model is expected')
         self.model = model

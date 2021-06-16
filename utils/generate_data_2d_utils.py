@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **Extension of generate\_data\_utils.py towards 2D histograms** 
+
 
 
 ### imports

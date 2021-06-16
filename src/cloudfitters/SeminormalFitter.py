@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **Class for fitting a 'seminormal' distribution to a point cloud**
+# 
+# This is not strictly speaking a probability distribution, only the first quadrant of the result of fitting a normal distribution to the data + its mirror image wrt the origin.  
+
 
 
 ### imports
@@ -29,10 +33,11 @@ class SeminormalFitter(CloudFitter):
         
     def __init__(self,points):
         ### constructor
-        # points is a np array of shape (npoints,ndims)
-        # note: points can also be an array or list with length 0,
-        #       in that case the object is initialized empty.
-        #       use this followed by the 'load' method to load a previously saved fit!
+        # input arguments:
+        # - points: a np array of shape (npoints,ndims)
+        #   note: points can also be an array or list with length 0,
+        #         in that case the object is initialized empty.
+        #         use this followed by the 'load' method to load a previously saved fit!
         if len(points)==0: 
             self.ndims = 0
             self.npoints = 0

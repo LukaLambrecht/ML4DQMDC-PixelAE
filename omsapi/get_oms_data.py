@@ -1,6 +1,24 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **Functionality to call the OMS API with the correct query based on input parameters**  
+# 
+# How to use?  
+# Check the readme file in this directory for the required setup!  
+# In particular, you will need an application ID and client secret to authenticate.  
+# 
+# Once this is ready, you can do the following:  
+# - Import this module, for example via "from get_oms_data import get_oms_api, get_oms_data, get_oms_response_attribute"
+# - Create an instance of the OMS API class using "omsapi = get_oms_api()"  
+#   This instance can be re-used for all consecutive calls to OMS, no need to recreate it for every call.
+# - Make a call to "get_oms_data", where the first argument is the instance you just created.  
+#   Other arguments: see the function documentation below.
+# - The returned object is a complicated dictionary containing all information.  
+#   Simply print it to find out its exact structure and how to access exactly the values you need.  
+#   The function "get_oms_response_attribute" is a small helper function to retrieve a specific attribute from this dictionary.
+#   
+# See the notebook example.ipynb in this directory for some examples!
+
 
 
 ### imports

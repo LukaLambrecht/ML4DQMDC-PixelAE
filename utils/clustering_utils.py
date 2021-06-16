@@ -1,32 +1,38 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **A collection of functions used for performing clustering tasks**  
+# 
+# This collection of tools is a little deprecated at this moment but kept for reference; it contains functionality for pre-filtering the histograms in the training set based on their moments (e.g. mean, rms).  
+# Note that the functions here have not been used in a long time and might need some maintenance before they work properly again.
+
 
 
 ### imports 
 
 # external modules
+import os
+import sys
 import numpy as np
 
 # local modules
+from hist_utils import moment
 
 
 
 
-### functionality for fitting a function to point multidimensional point clouds
-# DEPRECATED AND REPLACED BY EQUIVALENT CLASSES IN SRC/CLOUDFITTERS
-
-
-
-
-def dummy():
-    ### general remark: the functions in this script are currently not supported anymore
-    # please ignore clustering_utils for now, it will probably be removed or completely reworked
-    pass
-
-def vecdist(moments,index):
-    
-    # does not work well if there are outliers which dominate the distance
+def vecdist(moments, index):
+    ### calculate the vectorial distance between a set of moments
+    # input arguments:
+    # - moments: 2D numpy array of shape (ninstances,nmoments)
+    # - index: index for which instance to calculate the distance relative to the other instances
+    # returns:
+    # - a distance measure for the given index w.r.t. the other instances in 'moments'
+    # notes:
+    # - for this distance measure, the points are considered as vectors and the point at index is the origin.
+    #   with respect to this origin, the average vector before index and the average vector after index are calculated.
+    #   the distance is then defined as the norm of the difference of these vectors, 
+    #   normalized by the norms of the individual vectors.
     relmoments = moments-np.tile([moments[index,:]],(len(moments),1))
     sumsm = np.sum(relmoments[:index,:],axis=0)
     sumgr = np.sum(relmoments[index+1:,:],axis=0)
@@ -34,18 +40,33 @@ def vecdist(moments,index):
     sumofdist = np.sum(np.sqrt(np.sum(np.power(relmoments,2),axis=1)))
     return distofsum/sumofdist
 
-def costhetadist(moments,index):
-    
-    # works more or less but not all bad points have small values, 
-    # allows to identify problematic regions but not individual LS
-    if(index==0 or index==len(moments)-1): return 0
-    inprod = np.sum(np.multiply(moments[index-1,:],moments[index+1,:]))
-    norms = np.sqrt(np.sum(np.power(moments[index-1,:],2)))*np.sqrt(np.sum(np.power(moments[index+1,:],2)))
+def costhetadist(moments, index):
+    ### calculate the costheta distance between a set of moments
+    # input arguments:
+    # - moments: 2D numpy array of shape (ninstances,nmoments)
+    # - index: index for which instance to calculate the distance relative to the other instances
+    # returns:
+    # - a distance measure for the given index w.r.t. the other instances in 'moments'
+    # notes:
+    # - this distance measure takes the cosine of the angle between the point at index
+    #   and the one at index-1 (interpreted as vectors from the origin).
+    if(index==0): return 0
+    inprod = np.sum(np.multiply(moments[index-1,:],moments[index,:]))
+    norms = np.sqrt(np.sum(np.power(moments[index-1,:],2)))*np.sqrt(np.sum(np.power(moments[index,:],2)))
+    if norms<1e-12: norms += 1e-12
     return inprod/norms
 
-def avgnndist(moments,index,nn):
-    
-    # seems to work well for the runs tested!
+def avgnndist(moments, index, nn):
+    ### calculate average euclidean distance to neighbouring points
+    # input arguments:
+    # - moments: 2D numpy array of shape (ninstances,nmoments)
+    # - index: index for which instance to calculate the distance relative to the other instances
+    # - nn: (half-) window size
+    # returns:
+    # - a distance measure for the given index w.r.t. the other instances in 'moments'
+    # notes:
+    # - for this distance measure, the average euclidean distance is calculated between the point at 'index'
+    #   and the points at index-nn and index+nn (e.g. the nn previous and next lumisections).
     rng = np.array(range(index-nn,index+nn+1))
     rng = rng[(rng>=0) & (rng<len(moments))]
     moments_sec = moments[rng,:]-np.tile(moments[index,:],(len(rng),1))
@@ -54,7 +75,8 @@ def avgnndist(moments,index,nn):
 
 
 
-def getavgnndist(hists,nmoments,xmin,xmax,nbins,nneighbours):
+def getavgnndist(hists, nmoments, xmin, xmax, nbins, nneighbours):
+    ### apply avgnndist to a set of histograms
     
     dists = np.zeros(len(hists))
     moments = np.zeros((len(hists),nmoments))
@@ -69,7 +91,8 @@ def getavgnndist(hists,nmoments,xmin,xmax,nbins,nneighbours):
 
 
 
-def filteranomalous(df,nmoments=3,rmouterflow=True,rmlargest=0.,doplot=True,):
+def filteranomalous(df, nmoments=3, rmouterflow=True, rmlargest=0., doplot=True):
+    ### do a pre-filtering, removing the histograms with anomalous moments
     
     # do preliminary filtering (no DCS-bit OFF)
     # (implicitly re-index)
@@ -111,11 +134,6 @@ def filteranomalous(df,nmoments=3,rmouterflow=True,rmlargest=0.,doplot=True,):
     dffail.reset_index(drop=True,inplace=True)
     
     return (df,dfpass,dffail,gmean,gstd)
-
-
-
-
-
 
 
 

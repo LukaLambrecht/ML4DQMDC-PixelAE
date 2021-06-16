@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **Histogram classification based on nonnegative matrix factorization**
+# 
+# Specifically intended for 2D histograms, but should in principle work for 1D as well.  
+# It is basically a wrapper for a sklearn.decomposition.NMF instance.
+
 
 
 ### imports

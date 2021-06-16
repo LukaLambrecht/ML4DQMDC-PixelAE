@@ -1,6 +1,23 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **A collection of useful basic functions for manipulating json files.**  
+# Functionality includes:
+# - reading and writing json files for given sets of run numbers and lumisection numbers
+# - checking if a given run number, lumisection number or combination is present in a given json file
+# 
+# Note that the json files are always assumed to contain the following structure:  
+# - dict  
+#   - run number (in string format)  
+#     - list  
+#       - list of two elements  
+#         - starting lumisection number, ending lumisection number  
+# 
+# Example:  
+# { "294927": \[ \[ 55,85 \], \[ 95,105\] \] } 
+# 
+# There is one exception to this rule: instead of \[ start, stop \], the lumisection list can also be \[ -1 \], which is short for all lumisections within that run.
+
 
 
 ### imports

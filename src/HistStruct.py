@@ -1,6 +1,20 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **HistStruct: consistent treatment of multiple histogram types**  
+# 
+# The HistStruct class is intended to be the main data structure used within this framework.
+# A HistStruct object basically consists of a mutually consistent collection of numpy arrays, where each numpy array corresponds to one histogram type, with dimensions (number of histograms, number of bins). The HistStruct has functions to easily perform the following common tasks (among others):  
+# - select a subset of runs and/or lumisections (e.g. using a custom or predefined json file formatted selector),
+# - prepare the data for machine learning training, with all kinds of preprocessing,
+# - evaluate classifiers (machine learning types or other).
+# 
+# Up to now the HistStruct is not used in many places, the main reason being that most of the tutorials for example were written (or at leasted started) before this class.  
+# When only processing a single histogram type, the HistStruct might be a bit of an overkill and one could choose to operate on the dataframe directly.  
+# However, especially when using multiple histogram types, the HistStruct is very handy to keep everything consistent.  
+# 
+# See the tutorial autoencoder_combine.ipynb for an important example!
+
 
 
 ### imports
