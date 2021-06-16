@@ -233,6 +233,11 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="autoencoder">AutoEncoder</h1>
+<p><strong>Histogram classfier based on the MSE of an autoencoder reconstruction</strong></p>
+<p>The AutoEncoder derives from the generic HistogramClassifier.<br />
+For this specific classifier, the output score of a histogram is the mean-square-error (MSE) between the original histogram and its autoencoder reconstruction.<br />
+In essence, it is just a wrapper for a tensorflow model.  </p>
+<hr />
 <hr />
 <h2 id="class-autoencoderhistogramclassifier">[class] AutoEncoder(HistogramClassifier)</h2>
 <pre><code class="text">histogram classfier based on the MSE of an autoencoder reconstruction  

@@ -233,8 +233,32 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="get-oms-data">get oms data</h1>
+<p><strong>Main function in omsinterface to retrieve information from OMS</strong>  </p>
+<p>How to use?<br />
+See the readme file in this directory and the notebook example.ipynb!</p>
+<hr />
 <h3 id="get95oms95data-mode-run-hltpathname-authmodelogin">get_oms_data( mode, run, hltpathname='', authmode='login' )</h3>
-<pre><code class="text">(no valid documentation found)  
+<pre><code class="text">main function for retrieving information from the OMS database  
+input arguments:  
+- mode: a string representing the type of information to retrieve.  
+  the following options are currently supported:  
+  'run' -&gt; retrieve information per run  
+  'lumisections' -&gt; retrieve information per lumisection  
+  'hltpathinfos' -&gt; get information on the available HLT paths for a given run,   
+                    in particular their names,   
+  'hltrate' -&gt; get the trigger rate of a specified HLT path    
+  'hltrates' -&gt; get the trigger rate for all available HLT paths  
+- run: a single run number (integer format)  
+  note: in case mode is 'run', the run argument can also be a tuple  
+  representing a range of runs.  
+- hltpathname: the name of a HLT path for which to retrieve the trigger rate.  
+  ignored if mode is not 'hltrate'  
+- authmode: string representing mode of authentication.  
+  choose from 'login' (you will be prompted for your cern username and password)  
+  or 'certificate' (requires you to have set up the path to a valid certificate)  
+returns:  
+- a list or dict (depending on the specifications) containing all information.  
+  simply print it to see how to access the exact values you need.  
 </code></pre></div>
         </div>
 

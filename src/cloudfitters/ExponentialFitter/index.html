@@ -233,6 +233,9 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="exponentialfitter">ExponentialFitter</h1>
+<p><strong>Class for fitting an exponential distribution to a point cloud</strong></p>
+<p>An exponential distribution in N dimensions is fully determined by an N-dimensional vector, representing the N-dimensional decay parameter (or lambda parameter) of the distribution. </p>
+<hr />
 <hr />
 <h2 id="class-exponentialfittercloudfitter">[class] ExponentialFitter(CloudFitter)</h2>
 <pre><code class="text">class for fitting an exponential distribution to a point cloud  
@@ -240,12 +243,13 @@ parameters
 - l: multidimensional lambda parameter of exponential  
 </code></pre>
 
-<h3 id="9595init9595selfpoints">&#10551; __init__(self,points)</h3>
+<h3 id="9595init9595self-points">&#10551; __init__(self, points)</h3>
 <pre><code class="text">constructor  
-points is a np array of shape (npoints,ndims)  
+input arguments:  
+- points: a np array of shape (npoints,ndims)  
 </code></pre>
 
-<h3 id="pdfselfpoints">&#10551; pdf(self,points)</h3>
+<h3 id="pdfself-points">&#10551; pdf(self, points)</h3>
 <pre><code class="text">get pdf at points  
 </code></pre>
 

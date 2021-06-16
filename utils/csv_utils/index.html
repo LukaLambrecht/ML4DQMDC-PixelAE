@@ -227,7 +227,6 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#csv-utils">csv utils</a></li>
-        <li class="main "><a href="#some-functions-that-point-to-the-data-directories-hard-coded-for-now">some functions that point to the data directories (hard-coded for now!)</a></li>
             <li><a href="#get95data95dirsyear2017-eras-dim1">get_data_dirs(year='2017', eras=[], dim=1)</a></li>
             <li><a href="#get95csv95filesinputdir">get_csv_files(inputdir)</a></li>
             <li><a href="#sort95filenamesfilelist">sort_filenames(filelist)</a></li>
@@ -240,8 +239,11 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="csv-utils">csv utils</h1>
-<h1 id="some-functions-that-point-to-the-data-directories-hard-coded-for-now">some functions that point to the data directories (hard-coded for now!)</h1>
-<p>example usage of these functions: see function write_skimmed_csv within this same notebook</p>
+<p><strong>A collection of useful basic functions for reading and processing the input csv files.</strong>  </p>
+<p>Functionality includes:
+- reading the raw input csv files and producing more manageable csv files (grouped per histogram type).
+- reading csv files into pandas dataframes and writing pandas dataframes back to csv files.</p>
+<p>See the tutorial read_and_write_data.ipynb for example uses!</p>
 <hr />
 <h3 id="get95data95dirsyear2017-eras-dim1">get_data_dirs(year='2017', eras=[], dim=1)</h3>
 <pre><code class="text">yield all data directories  

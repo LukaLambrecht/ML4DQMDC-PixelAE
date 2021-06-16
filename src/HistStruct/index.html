@@ -233,6 +233,17 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="histstruct">HistStruct</h1>
+<p><strong>HistStruct: consistent treatment of multiple histogram types</strong>  </p>
+<p>The HistStruct class is intended to be the main data structure used within this framework.
+A HistStruct object basically consists of a mutually consistent collection of numpy arrays, where each numpy array corresponds to one histogram type, with dimensions (number of histograms, number of bins). The HistStruct has functions to easily perform the following common tasks (among others):<br />
+- select a subset of runs and/or lumisections (e.g. using a custom or predefined json file formatted selector),
+- prepare the data for machine learning training, with all kinds of preprocessing,
+- evaluate classifiers (machine learning types or other).</p>
+<p>Up to now the HistStruct is not used in many places, the main reason being that most of the tutorials for example were written (or at leasted started) before this class.<br />
+When only processing a single histogram type, the HistStruct might be a bit of an overkill and one could choose to operate on the dataframe directly.<br />
+However, especially when using multiple histogram types, the HistStruct is very handy to keep everything consistent.  </p>
+<p>See the tutorial autoencoder_combine.ipynb for an important example!</p>
+<hr />
 <hr />
 <h2 id="class-histstructobject">[class] HistStruct(object)</h2>
 <pre><code class="text">main data structure used within this framework  

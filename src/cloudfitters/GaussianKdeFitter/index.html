@@ -233,6 +233,10 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="gaussiankdefitter">GaussianKdeFitter</h1>
+<p><strong>Class for fitting a gaussian kernel density to a point cloud</strong></p>
+<p>Basically a wrapper for scipy.stats.gaussian_kde.<br />
+A gaussian kernel density can be thought of as a sum of little (potentially multidimensional) gaussians, each one centered at one of the points in the cloud. Hence, the resulting distribution is a sort of smoothed version of the discrete point cloud.</p>
+<hr />
 <hr />
 <h2 id="class-gaussiankdefittercloudfitter">[class] GaussianKdeFitter(CloudFitter)</h2>
 <pre><code class="text">class for fitting a gaussian kernel density to a point cloud  
@@ -243,7 +247,7 @@ parameters
 (use np.cov for now, maybe later replace by internal kernel.covariance)  
 </code></pre>
 
-<h3 id="9595init9595selfpointsbw95methodscott">&#10551; __init__(self,points,bw_method='scott')</h3>
+<h3 id="9595init9595self-points-bw95methodscott">&#10551; __init__(self, points, bw_method='scott')</h3>
 <pre><code class="text">constructor  
 input arguments:  
 - points: a np array of shape (npoints,ndims)  

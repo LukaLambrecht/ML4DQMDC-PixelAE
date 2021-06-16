@@ -227,7 +227,6 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#autoencoder-utils">autoencoder utils</a></li>
-        <li class="main "><a href="#define-loss-functions">define loss functions</a></li>
             <li><a href="#msetop10y95true-y95pred">mseTop10(y_true, y_pred)</a></li>
             <li><a href="#msetop10rawy95true-y95pred">mseTop10Raw(y_true, y_pred)</a></li>
             <li><a href="#msetopnrawy95true-y95pred-n10">mseTopNRaw(y_true, y_pred, n=10)</a></li>
@@ -245,7 +244,11 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="autoencoder-utils">autoencoder utils</h1>
-<h1 id="define-loss-functions">define loss functions</h1>
+<p><strong>Utilities related to the training and evaluation of autoencoder models with keras</strong></p>
+<p>The functionality in this script includes:
+- definition of loss functions (several flavours of MSE or chi-squared)
+- calculating and plotting ROC curves and confusion matrices
+- definition of very simple ready-to-use keras model architectures</p>
 <hr />
 <h3 id="msetop10y95true-y95pred">mseTop10(y_true, y_pred)</h3>
 <pre><code class="text">MSE top 10 loss function for autoencoder training  

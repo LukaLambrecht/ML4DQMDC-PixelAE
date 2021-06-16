@@ -233,6 +233,9 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="seminormalfitter">SeminormalFitter</h1>
+<p><strong>Class for fitting a 'seminormal' distribution to a point cloud</strong></p>
+<p>This is not strictly speaking a probability distribution, only the first quadrant of the result of fitting a normal distribution to the data + its mirror image wrt the origin.  </p>
+<hr />
 <hr />
 <h2 id="class-seminormalfittercloudfitter">[class] SeminormalFitter(CloudFitter)</h2>
 <pre><code class="text">class for fitting a 'seminormal' distribution to a point cloud  
@@ -246,10 +249,11 @@ parameters
 
 <h3 id="9595init9595selfpoints">&#10551; __init__(self,points)</h3>
 <pre><code class="text">constructor  
-points is a np array of shape (npoints,ndims)  
-note: points can also be an array or list with length 0,  
-      in that case the object is initialized empty.  
-      use this followed by the 'load' method to load a previously saved fit!  
+input arguments:  
+- points: a np array of shape (npoints,ndims)  
+  note: points can also be an array or list with length 0,  
+        in that case the object is initialized empty.  
+        use this followed by the 'load' method to load a previously saved fit!  
 </code></pre>
 
 <h3 id="pdfselfpoints">&#10551; pdf(self,points)</h3>

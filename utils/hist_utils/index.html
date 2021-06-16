@@ -227,7 +227,6 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#hist-utils">hist utils</a></li>
-        <li class="main "><a href="#cropping-of-hisograms">cropping of hisograms</a></li>
             <li><a href="#crophistshists-slices">crophists(hists, slices)</a></li>
             <li><a href="#rebinhistshists-factor">rebinhists(hists, factor)</a></li>
             <li><a href="#normalizehistshists">normalizehists(hists)</a></li>
@@ -245,16 +244,23 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="hist-utils">hist utils</h1>
-<h1 id="cropping-of-hisograms">cropping of hisograms</h1>
+<p><strong>A collection of useful basic functions for processing histograms.</strong>  </p>
+<p>Functionality includes:
+- rebinning and normalization
+- moment calculation
+- averaging
+- higher-level functions preparing data for ML training, starting from a dataframe or input csv file.</p>
 <hr />
 <h3 id="crophistshists-slices">crophists(hists, slices)</h3>
 <pre><code class="text">perform cropping on a set of histograms  
 input arguments:  
 - hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D  
-- slices is a list of slice objects (builtin python type) of length 1 (for 1D) or 2 (for 2D)  
-  note: a slice can be created using the builtin python syntax 'slice(start,stop,step)',   
-        and the syntax 'list[slice]' is equivalent to 'list[start:stop:step]'.  
-        use 'None' to ignore one of the arguments for slice creation (equivalent to ':' in direct slicing)  
+- slices: a slice object (builtin python type) or a list of two slices (for 2D)  
+  notes:   
+    - a slice can be created using the builtin python syntax 'slice(start,stop,step)',   
+      and the syntax 'list[slice]' is equivalent to 'list[start:stop:step]'.  
+      use 'None' to ignore one of the arguments for slice creation (equivalent to ':' in direct slicing)  
+    - for 1D histograms, slices can be either a slice object or a list of length 1 containing a single slice.  
 example usage:  
 - see tutorials/plot_histograms_2d.ipynb  
 returns:  
@@ -362,7 +368,7 @@ notes:
 input arguments:  
 - returnrunls: boolean whether to return a tuple of (histograms, run numbers, lumisection numbers).  
   (default: return only histograms)  
-- cropslices: list of slices by which to crop the historams (default: no cropping)  
+- cropslices: list of slices (one per dimension) by which to crop the historams (default: no cropping)  
 - rebinningfactor: an integer (or tuple of integers for 2D histograms) to downsample/rebin the histograms (default: no rebinning)  
 - donormalize: boolean whether to normalize the data  
 - doplot: if True, some example plots are made showing the histograms  
@@ -373,7 +379,7 @@ input arguments:
 input arguments:  
 - returnrunls: boolean whether to return a tuple of (histograms, run numbers, lumisection numbers).  
   (default: return only histograms)  
-- cropslices: list of slices by which to crop the historams (default: no cropping)  
+- cropslices: list of slices (one per dimension) by which to crop the historams (default: no cropping)  
 - rebinningfactor: an integer (or tuple of integers for 2D histograms) to downsample/rebin the histograms (default: no rebinning)  
 - donormalize: boolean whether to normalize the data  
 - doplot: if True, some example plots are made showing the histograms  

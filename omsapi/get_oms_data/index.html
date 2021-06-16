@@ -227,7 +227,6 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#get-oms-data">get oms data</a></li>
-        <li class="main "><a href="#set-names-of-filter-attributes">set names of filter attributes</a></li>
             <li><a href="#get95oms95api">get_oms_api()</a></li>
             <li><a href="#get95oms95data-omsapi-api95endpoint-runnb-extrafilters-extraargs-sortnone-attributes">get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[])</a></li>
             <li><a href="#get95oms95response95attribute-omsresponse-attribute">get_oms_response_attribute( omsresponse, attribute )</a></li>
@@ -236,7 +235,20 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="get-oms-data">get oms data</h1>
-<h1 id="set-names-of-filter-attributes">set names of filter attributes</h1>
+<p><strong>Functionality to call the OMS API with the correct query based on input parameters</strong>  </p>
+<p>How to use?<br />
+Check the readme file in this directory for the required setup!<br />
+In particular, you will need an application ID and client secret to authenticate.  </p>
+<p>Once this is ready, you can do the following:<br />
+- Import this module, for example via "from get_oms_data import get_oms_api, get_oms_data, get_oms_response_attribute"
+- Create an instance of the OMS API class using "omsapi = get_oms_api()"<br />
+  This instance can be re-used for all consecutive calls to OMS, no need to recreate it for every call.
+- Make a call to "get_oms_data", where the first argument is the instance you just created.<br />
+  Other arguments: see the function documentation below.
+- The returned object is a complicated dictionary containing all information.<br />
+  Simply print it to find out its exact structure and how to access exactly the values you need.<br />
+  The function "get_oms_response_attribute" is a small helper function to retrieve a specific attribute from this dictionary.</p>
+<p>See the notebook example.ipynb in this directory for some examples!</p>
 <hr />
 <h3 id="get95oms95api">get_oms_api()</h3>
 <pre><code class="text">get an OMSAPI instance  

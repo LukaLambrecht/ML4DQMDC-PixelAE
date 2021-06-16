@@ -233,6 +233,14 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="cloudfitter">CloudFitter</h1>
+<p><strong>Abstract base class for all point cloud fitting algorithms</strong> </p>
+<p>Note that all concrete point cloud fitters must inherit from CloudFitter!  </p>
+<p>How to make a concrete CloudFitter class:
+- define a class that inherits from CloudFitter
+- make sure all functions with @abstractmethod are implemented in your class
+- it is recommended to start each overriding function with a call to super(), but this is not strictly necessary</p>
+<p>See also the existing examples!</p>
+<hr />
 <hr />
 <h2 id="class-cloudfitterabc">[class] CloudFitter(ABC)</h2>
 <pre><code class="text">abstract base class for all point cloud fitting algorithms  
@@ -246,11 +254,15 @@ see also the existing examples!
 
 <h3 id="9595init9595-self-points">&#10551; __init__( self, points )</h3>
 <pre><code class="text">default intializer  
+this is an @abstractmethod and must be overridden in any concrete deriving class!  
+input arguments:  
 - points: 2D numpy array of shape (npoints,ndims)  
 </code></pre>
 
 <h3 id="pdf-self-points">&#10551; pdf( self, points )</h3>
 <pre><code class="text">evaluate the pdf (probability density function) at given points  
+this is an @abstractmethod and must be overridden in any concrete deriving class!  
+input arguments:  
 - points: a 2D numpy array of shape (npoints,ndims)  
 output: a 1D array of shape (npoints)  
 </code></pre>
