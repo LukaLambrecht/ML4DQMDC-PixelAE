@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **Class for fitting a log-normal distribution to a point cloud**
+# 
+# A log-normal distribution is constructed by fitting a normal distribution to the logarithm of the point coordinates.
+
 
 
 ### imports
@@ -27,7 +31,8 @@ class LogNormalFitter(CloudFitter):
     
     def __init__(self,points):
         ### constructor
-        # points is a np array of shape (npoints,ndims)
+        # input arguments:
+        # - points: a np array of shape (npoints,ndims)
         super( LogNormalFitter, self ).__init__(points)
         # transform the data from assumed log-normal to normal
         points_log = np.log(points)

@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **A collection of useful basic functions for manipulating pandas dataframes.**  
+# 
+# Functionality includes (among others):
+# - selecting DCS-bit on data or golden json data.
+# - selecting specific runs, lumisections, or types of histograms
+
 
 
 ### imports

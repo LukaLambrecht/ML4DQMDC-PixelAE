@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **Utilities related to the training and evaluation of autoencoder models with keras**
+# 
+# The functionality in this script includes:
+# - definition of loss functions (several flavours of MSE or chi-squared)
+# - calculating and plotting ROC curves and confusion matrices
+# - definition of very simple ready-to-use keras model architectures
+
 
 
 ### imports
@@ -247,7 +254,7 @@ def get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp):
 ### getting a keras model ready for training with minimal user inputs
 
 def getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10):
-    # get a trainable autoencoder model
+    ### get a trainable autoencoder model
     # input args:
     # - input_size: size of vector that autoencoder will operate on
     # - arch: list of number of nodes per hidden layer (excluding input and output layer)

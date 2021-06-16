@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **Class for fitting a gaussian kernel density to a point cloud**
+# 
+# Basically a wrapper for scipy.stats.gaussian_kde.  
+# A gaussian kernel density can be thought of as a sum of little (potentially multidimensional) gaussians, each one centered at one of the points in the cloud. Hence, the resulting distribution is a sort of smoothed version of the discrete point cloud.
+
 
 
 ### imports
@@ -26,7 +31,7 @@ class GaussianKdeFitter(CloudFitter):
     # - cov: covariance matrix 
     # (use np.cov for now, maybe later replace by internal kernel.covariance)
     
-    def __init__(self,points,bw_method='scott'):
+    def __init__(self, points, bw_method='scott'):
         ### constructor
         # input arguments:
         # - points: a np array of shape (npoints,ndims)

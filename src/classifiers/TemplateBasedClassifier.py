@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **Histogram classifier based on a direct comparison with templates (i.e. reference histograms)**
+
 
 
 ### imports

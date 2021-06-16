@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **A collection of useful basic functions for reading and processing the input csv files.**  
+# 
+# Functionality includes:
+# - reading the raw input csv files and producing more manageable csv files (grouped per histogram type).
+# - reading csv files into pandas dataframes and writing pandas dataframes back to csv files.
+# 
+# See the tutorial read\_and\_write\_data.ipynb for example uses!
+
 
 
 ### imports
@@ -17,9 +25,6 @@ importlib.reload(dfu)
 
 
 
-
-### some functions that point to the data directories (hard-coded for now!)
-# example usage of these functions: see function write_skimmed_csv within this same notebook
 
 def get_data_dirs(year='2017', eras=[], dim=1):
     ### yield all data directories
@@ -60,8 +65,6 @@ def sort_filenames(filelist):
 
 
 
-
-### some functions to load one or more csv files into pandas dataframe (df) and make a subselection of the histograms contained in them
 
 def read_csv(csv_file):
     ### read csv file into pandas dataframe

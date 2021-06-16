@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **A collection of functions for artificially creating a labeled dataset.**  
+# 
+# See the function documentation below for more details on the implemented methods.  
+# Also check the tutorial generate\_data.ipynb for examples!
+
 
 
 ### imports

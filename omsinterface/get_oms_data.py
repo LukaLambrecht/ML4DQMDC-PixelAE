@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **Main function in omsinterface to retrieve information from OMS**  
+# 
+# How to use?  
+# See the readme file in this directory and the notebook example.ipynb!
+
 
 
 ### imports
@@ -10,9 +15,11 @@ import sys
 import os
 import json
 from getpass import getpass
+import importlib
 
 # local modules
 import omstools
+importlib.reload(omstools)
 import cert
 sys.path.append(os.path.abspath('../utils/notebook_utils'))
 
@@ -20,12 +27,33 @@ sys.path.append(os.path.abspath('../utils/notebook_utils'))
 
 
 def get_oms_data( mode, run, hltpathname='', authmode='login' ):
+    ### main function for retrieving information from the OMS database
+    # input arguments:
+    # - mode: a string representing the type of information to retrieve.
+    #   the following options are currently supported:
+    #   'run' -> retrieve information per run
+    #   'lumisections' -> retrieve information per lumisection
+    #   'hltpathinfos' -> get information on the available HLT paths for a given run, 
+    #                     in particular their names, 
+    #   'hltrate' -> get the trigger rate of a specified HLT path  
+    #   'hltrates' -> get the trigger rate for all available HLT paths
+    # - run: a single run number (integer format)
+    #   note: in case mode is 'run', the run argument can also be a tuple
+    #   representing a range of runs.
+    # - hltpathname: the name of a HLT path for which to retrieve the trigger rate.
+    #   ignored if mode is not 'hltrate'
+    # - authmode: string representing mode of authentication.
+    #   choose from 'login' (you will be prompted for your cern username and password)
+    #   or 'certificate' (requires you to have set up the path to a valid certificate)
+    # returns:
+    # - a list or dict (depending on the specifications) containing all information.
+    #   simply print it to see how to access the exact values you need.
 
     # parse arguments
     
     if mode=='run':
         method = omstools.get_runs
-        args = [run[0],run[1]] if isinstance(run,tuple) else [run]
+        args = [run[0],run[1]] if isinstance(run,tuple) else [run,run]
     elif mode=='lumisections':
         method = omstools.get_lumisections
         args = [run]

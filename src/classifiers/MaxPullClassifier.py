@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **Histogram classification based on maximum pull between test histogram and reference histogram.**
+# 
+# Specifically intended for 2D histograms, but should in principle work for 1D as well.  
+# Ssee static function 'pull' for definition of bin-per-bin pull and other notes.
+
 
 
 ### imports

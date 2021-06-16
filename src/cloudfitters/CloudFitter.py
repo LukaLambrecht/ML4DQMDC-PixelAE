@@ -1,6 +1,17 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **Abstract base class for all point cloud fitting algorithms** 
+# 
+# Note that all concrete point cloud fitters must inherit from CloudFitter!  
+# 
+# How to make a concrete CloudFitter class:
+# - define a class that inherits from CloudFitter
+# - make sure all functions with @abstractmethod are implemented in your class
+# - it is recommended to start each overriding function with a call to super(), but this is not strictly necessary
+# 
+# See also the existing examples!
+
 
 
 ### imports
@@ -29,6 +40,8 @@ class CloudFitter(ABC):
     @abstractmethod
     def __init__( self, points ):
         ### default intializer
+        # this is an @abstractmethod and must be overridden in any concrete deriving class!
+        # input arguments:
         # - points: 2D numpy array of shape (npoints,ndims)
         if not isinstance( points, np.ndarray ):
             raise Exception('ERROR in CloudFitter.init: points must be a numpy array but found type {}'.format(type(points)))
@@ -39,6 +52,8 @@ class CloudFitter(ABC):
     @abstractmethod
     def pdf( self, points ):
         ### evaluate the pdf (probability density function) at given points
+        # this is an @abstractmethod and must be overridden in any concrete deriving class!
+        # input arguments:
         # - points: a 2D numpy array of shape (npoints,ndims)
         # output: a 1D array of shape (npoints)
         if not isinstance( points, np.ndarray ):

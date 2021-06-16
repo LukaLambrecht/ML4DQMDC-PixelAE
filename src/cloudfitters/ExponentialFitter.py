@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# **Class for fitting an exponential distribution to a point cloud**
+# 
+# An exponential distribution in N dimensions is fully determined by an N-dimensional vector, representing the N-dimensional decay parameter (or lambda parameter) of the distribution. 
+
 
 
 ### imports
@@ -22,14 +26,15 @@ class ExponentialFitter(CloudFitter):
     # parameters
     # - l: multidimensional lambda parameter of exponential
     
-    def __init__(self,points):
+    def __init__(self, points):
         ### constructor
-        # points is a np array of shape (npoints,ndims)
+        # input arguments:
+        # - points: a np array of shape (npoints,ndims)
         super( ExponentialFitter, self ).__init__(points)
         # for now use mean for beta, maybe change later!
         self.l = np.reciprocal(np.mean(points,axis=0))
         
-    def pdf(self,points):
+    def pdf(self, points):
         ### get pdf at points
         super( ExponentialFitter, self ).pdf(points)
         temp = np.repeat(np.transpose(np.expand_dims(self.l,axis=1)),len(points),axis=0)
