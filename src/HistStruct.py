@@ -498,12 +498,15 @@ class HistStruct(object):
                   colorlist=colorlist,labellist=labellist,transparencylist=transparencylist)
         return fig,axs
 
-    def plot_run( self, runnb, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False):
+    def plot_run( self, runnb, masknames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False):
         ### call plot_ls for all lumisections in a given run
-        lsnbs = self.lsnbs[np.where(self.runnbs==runnb)]
+        runnbs = self.get_runnbs( masknames=masknames )
+        lsnbs = self.get_lsnbs( masknames=masknames )
+        runsel = np.where(runnbs==runnb)
+        lsnbs = lsnbs[runsel]
         print('plotting {} lumisections...'.format(len(lsnbs)))
         for lsnb in lsnbs:
-            _ = self.plotlsreco(runnb, lsnb, recohist=recohist, recohistlabel=recohistlabel, refhists=refhists, refhistslabel=refhistslabel)
+            _ = self.plot_ls(runnb, lsnb, recohist=recohist, recohistlabel=recohistlabel, refhists=refhists, refhistslabel=refhistslabel)
 
 
 
