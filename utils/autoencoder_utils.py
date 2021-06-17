@@ -110,7 +110,7 @@ def calculate_roc(scores, labels, scoreax):
     # - scoreax is an array of score thresholds for which to compute the signal and background efficiency,
     #   assumed to be sorted in increasing order (i.e. from loose to tight)
     # output:
-    # tuple of two np arrays (signal efficiency and background efficiency)
+    # - tuple of two np arrays (signal efficiency and background efficiency)
     nsig = np.sum(labels)
     nback = np.sum(1-labels)
     sig_eff = np.zeros(len(scoreax))
@@ -140,8 +140,10 @@ def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True,
     # - plotmode: how to plot the roc curve; options are:
     #         - 'classic' = signal efficiency afo background efficiency
     
-    if not mode in ['lin','geom','full']:
-        raise Exception('ERROR in autoencoder_utils.py / get_roc: mode {} not recognized'.format(mode))
+    mlist = ['lin','geom','full']
+    if not mode in mlist:
+        raise Exception('ERROR in autoencoder_utils.py / get_roc: mode {} not recognized;'.format(mode)
+                       +' options are: {}'.format(mlist))
     
     if mode=='full':
         scoreax = np.sort(scores)
@@ -162,17 +164,20 @@ def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True,
     if doprint:
         print('calculating roc curve:')
         for i in range(len(scoreax)):
-            print('  threshold: {:.4f}, signal: {:.4f}, background: {:.4f}'.format(scoreax[i],sig_eff[i],bkg_eff[i]))
+            print('  threshold: {:.4e}, signal: {:.4f}, background: {:.4f}'.format(scoreax[i],sig_eff[i],bkg_eff[i]))
     
     # note: sig_eff = signal efficiency = tp = true positive = signal flagged as signal
     # note: bkg_eff = background efficiency = fp = false positive = background flagged as signal
     fn = 1 - sig_eff # signal marked as background
     tn = 1 - bkg_eff # background marked as background
     
+    auc = np.trapz(sig_eff[::-1],bkg_eff[::-1])
+    
+    if not doplot:
+        return auc
+    
     # calculate auc
     if plotmode=='classic':
-        auc = np.trapz(sig_eff[::-1],bkg_eff[::-1])
-        if not doplot: return auc
         # make plot
         fig,ax = plt.subplots()
         ax.scatter(bkg_eff,sig_eff)
@@ -197,6 +202,7 @@ def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True,
         if auc>0.99:
             auctext = '1 - '+'{:.3e}'.format(1-auc)
         ax.text(0.7,0.1,'AUC: '+auctext,transform=ax.transAxes)
+        plt.show()
         
     else:
         print('ERROR: mode not recognized: '+str(mode))
@@ -238,6 +244,7 @@ def get_confusion_matrix(scores, labels, wp):
     df_cm = pd.DataFrame(cmat, index = ['bad','good'],
                   columns = ['predicted anomalous','predicted good'])
     #plt.figure(figsize = (10,7))
+    plt.figure()
     sn.heatmap(df_cm, annot=True, cmap=plt.cm.Blues)
     
 def get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp):
