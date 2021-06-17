@@ -28,11 +28,12 @@ class NMFClassifier(HistogramClassifier):
     # specifically intended for 2D histograms, but should in principle work for 1D as well.
     # it is basically a wrapper for a sklearn.decomposition.NMF instance.
     
-    def __init__( self, histograms, ncomponents ):
+    def __init__( self, histograms, ncomponents, nmax ):
         ### initializer from a collection of histograms
         # input arguments:
         # - histograms: a numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins) that will be used to fit a NMF model
         # - ncomponents: number of NMF components (aka clusters aka basis vectors) to use in the decomposition
+        # - nmax: number of largest elements to keep in mean square error calculation
         # TODO: add keyword arguments to pass down to sklearn.decomposition.NMF
         
         super( NMFClassifier,self ).__init__()
@@ -41,20 +42,27 @@ class NMFClassifier(HistogramClassifier):
             histograms = histograms.reshape(histograms.shape[0],-1)
         self.NMF = NMF( n_components=ncomponents )
         self.NMF.fit( histograms )
+        self.nmax = nmax
         
-    def evaluate( self, histograms, nmax ):
+    def set_nmax( self, nmax ):
+        ### set number of largest elements to keep in mean square error calculation
+        # useful to quickly re-evaluate the model with different nmax without retraining
+        # input arguments:
+        # - nmax: number of largest elements to keep in mean square error calculation
+        self.nmax = nmax
+        
+    def evaluate( self, histograms ):
         ### classify the given histograms based on the MSE with respect to their reconstructed version
         # input arguments:
         # - histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins)
-        # - nmax: number of largest elements to keep in mean square error calculation
         
-        super( NMFClassifier,self ).__init__()
+        super( NMFClassifier,self ).evaluate( histograms )
         if len(histograms.shape)==3:
             histograms = histograms.reshape(histograms.shape[0],-1)
         reco = self.NMF.inverse_transform(self.NMF.transform(histograms))
-        return mseTopNRaw( histograms, reco, n=nmax )
+        return mseTopNRaw( histograms, reco, n=self.nmax )
     
-    def getcomponents( self ):
+    def get_components( self ):
         ### return the NMF components (aka cluster centers aka basis vectors)
         # output:
         # a numpy array of shape (ncomponents,nbins) or (ncomponents,nybins,nxbins)

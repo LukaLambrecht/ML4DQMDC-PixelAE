@@ -289,7 +289,7 @@ def upsample_hist_set(hists,ntarget,fourierstdfactor=15.,figname='f'):
     ### wrapper for fourier_noise allowing for a fixed target number of histograms instead of a fixed resampling factor
     # useful function for quickly generating a fixed number of resampled histograms,
     # without bothering too much about what exact resampling technique or detailed settings would be most appropriate.
-    nresamples = int(float(ntarget)/len(hists))    
+    nresamples = max(1,int(float(ntarget)/len(hists)))    
     hists_ext = fourier_noise(hists,figname=figname,nresamples=nresamples,nonnegative=True,stdfactor=fourierstdfactor)
     return hists_ext
 

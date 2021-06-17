@@ -385,6 +385,42 @@ class HistStruct(object):
         self.scores[histname] = scores
         return scores
     
+    def plot_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[] ):
+        ### plot the histograms in a HistStruct, optionally after msking
+        # note: so far only for 1D hsitograms.
+        #       case of 2D histograms requires different plotting method since they cannot be clearly overlaid.
+        #       if a HistStruct contains both 1D and 2D histograms, the 1D histograms must be selected with the histnames argument.
+        # input arguments:
+        # - histnames: list of names of the histogram types to plot (default: all)
+        # - masknames: list of list of mask names
+        #   note: each element in masknames represents a set of masks to apply; 
+        #         the histograms passing different sets of masks are plotted in different colors
+        # - colorlist: list of matplotlib colors, must have same length as masknames
+        # - labellist: list of labels for the legend, must have same legnth as masknames
+        # - transparencylist: list of transparency values, must have same length as masknames
+        
+        # check validity of requested histnames
+        if histnames is None: histnames = self.histnames
+        for histname in histnames:
+            if not histname in self.histnames:
+                raise Exception('ERROR in HistStruct.plot_ls: requested to plot histogram type {}'.format(histname)
+                               +' but it is not present in the current HistStruct.')
+        # initializations
+        ncols = min(4,len(histnames))
+        nrows = int(math.ceil(len(histnames)/ncols))
+        fig,axs = plt.subplots(nrows,ncols,figsize=(6*ncols,6*nrows),squeeze=False)
+        # loop over all histogram types
+        for j,name in enumerate(histnames):
+             # get the histograms to plot
+            histlist = []
+            for maskset in masknames:
+                histlist.append( self.get_histograms(histname=name, masknames=maskset) )
+            pu.plot_sets(histlist,
+                  fig=fig,ax=axs[int(j/ncols),j%ncols],
+                  title=name,
+                  colorlist=colorlist,labellist=labellist,transparencylist=transparencylist)
+        return fig,axs
+    
     def plot_ls( self, runnb, lsnb, histnames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference'):
         ### plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction
         # note: so far only for 1D histograms.
@@ -425,10 +461,9 @@ class HistStruct(object):
         # find index that given run and ls number correspond to
         index = self.get_index( runnb, lsnb )
         # initializations
-        ncols = 4
+        ncols = min(4,len(histnames))
         nrows = int(math.ceil(len(histnames)/ncols))
         fig,axs = plt.subplots(nrows,ncols,figsize=(6*ncols,6*nrows),squeeze=False)
-        scores = []
         # loop over all histograms belonging to this lumisection and make the plots
         for j,name in enumerate(histnames):
             hist = self.histograms[name][index:index+1,:]
@@ -465,7 +500,7 @@ class HistStruct(object):
 
     def plot_run( self, runnb, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False):
         ### call plot_ls for all lumisections in a given run
-        lsnbs = self.lsnbs[np.where(histstruct.runnbs==runnb)]
+        lsnbs = self.lsnbs[np.where(self.runnbs==runnb)]
         print('plotting {} lumisections...'.format(len(lsnbs)))
         for lsnb in lsnbs:
             _ = self.plotlsreco(runnb, lsnb, recohist=recohist, recohistlabel=recohistlabel, refhists=refhists, refhistslabel=refhistslabel)
