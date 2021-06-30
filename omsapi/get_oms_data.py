@@ -73,6 +73,7 @@ def get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, so
     #   (still experimental, potentially usable for changing the granularity from 'run' to 'lumisection' for e.g. L1 trigger rates, see example.ipynb)
     # - sort: valid field name in the OMS data by which to sort
     # - attributes: list of valid field names in the OMS data to return (if not specified, all information is returned)
+    # - limit_entries: entry limit for output json object
     
     filters = []
     
