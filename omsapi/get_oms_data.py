@@ -57,7 +57,7 @@ def get_oms_api():
 
 
 
-def get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[]):
+def get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[], limit_entries=1000):
     ### query some data from OMS
     # input arguments:
     # - omsapi: an OMSAPI instance, e.g. created by get_oms_api()
@@ -73,6 +73,7 @@ def get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, so
     #   (still experimental, potentially usable for changing the granularity from 'run' to 'lumisection' for e.g. L1 trigger rates, see example.ipynb)
     # - sort: valid field name in the OMS data by which to sort
     # - attributes: list of valid field names in the OMS data to return (if not specified, all information is returned)
+    # - limit_entries: entry limit for output json object
     
     filters = []
     
@@ -109,7 +110,7 @@ def get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, so
     if sort is not None: q.sort(sort)
     if len(attributes) is not None: q.attrs(attributes)
     for key,val in extraargs.items(): q.custom(key,value=val)
-    q.paginate(1,1000)
+    q.paginate(1, limit_entries)
     print(q.data_query())
     response = q.data()
     return response.json()
