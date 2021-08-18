@@ -15,8 +15,11 @@ import matplotlib as mpl
 import numpy as np
 from copy import copy
 import imageio
+import importlib
 
 # local modules
+import autoencoder_utils as aeu # needed for clip_scores in plot_fit_2d
+importlib.reload(aeu)
 
 
 
@@ -312,8 +315,9 @@ def plot_mse(mse, rmlargest=0., doplot=True,
 
 
 def plot_score_dist( scores, labels, nbins=20, normalize=False,
-                        title='output score distributions for signal and background',
-                        xaxtitle='output score', yaxtitle=None):
+                        siglabel='signal', sigcolor='g',
+                        bcklabel='background', bckcolor='r',
+                        title=None, xaxtitle=None, yaxtitle=None):
     ### make a plot showing the distributions of the output scores for signal and background
     minscore = np.min(scores)
     maxscore = np.max(scores)
@@ -327,8 +331,8 @@ def plot_score_dist( scores, labels, nbins=20, normalize=False,
         sighist = sighist/np.sum(sighist)
         bckhist = bckhist/np.sum(bckhist)
     (fig,ax) = plt.subplots()
-    ax.step(scoreax,sighist,color='g',label='signal',where='mid')
-    ax.step(scoreax,bckhist,color='r',label='background',where='mid')
+    ax.step(scoreax,sighist,color=sigcolor,label=siglabel,where='mid')
+    ax.step(scoreax,bckhist,color=bckcolor,label=bcklabel,where='mid')
     ax.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
     if title is not None: ax.set_title(title)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
@@ -337,14 +341,17 @@ def plot_score_dist( scores, labels, nbins=20, normalize=False,
     plt.show()
     return (fig,ax)
 
-def plot_fit_2d( points, fitfunc=None, logprob=False, onlycontour=False, xlims=5, ylims=5, onlypositive=False,
-               xaxtitle=None, yaxtitle=None ):
+def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False, 
+                onlycontour=False, xlims=5, ylims=5, onlypositive=False,
+                xaxtitle=None, yaxtitle=None, title=None,
+                transparency=1 ):
     ### make a scatter plot of a 2D point cloud with fitted contour
     # input arguments:
     # - points: a numpy array of shape (npoints,ndims)
     # - fitfunc: an object of type CloudFitter (see src/cloudfitters) 
     #   or any other object that implements a pdf(points) method
     # - logprob: boolean whether to plot log probability or normal probability
+    # - clipprob: boolean whether to replace +- inf values by (non-inf) max and min
     # - onlycontour: a boolean whether to draw only the fit or include the data points
     # - xlims and ylims: tuples of (low,high)
     #   note: can be an integer, in which case the range will be determined automatically
@@ -377,10 +384,11 @@ def plot_fit_2d( points, fitfunc=None, logprob=False, onlycontour=False, xlims=5
         gridpoints = np.transpose(np.vstack((np.ravel(x),np.ravel(y))))
         evalpoints = fitfunc.pdf(gridpoints)
         if logprob: evalpoints = np.log(evalpoints)
+        if clipprob: evalpoints = aeu.clip_scores(evalpoints)
         z = np.reshape(evalpoints,x.shape)
 
         # make a plot of probability contours
-        contourplot = ax.contourf(x, y, z, 30)
+        contourplot = ax.contourf(x, y, z, 30, alpha=transparency)
         plt.colorbar(contourplot)
         
     if not onlycontour:
@@ -390,6 +398,7 @@ def plot_fit_2d( points, fitfunc=None, logprob=False, onlycontour=False, xlims=5
     
     ax.set_xlim(xlims)
     ax.set_ylim(ylims)
+    if title is not None: ax.set_title(title)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
     ax.ticklabel_format(axis='both', style='sci', scilimits=(0,0))
