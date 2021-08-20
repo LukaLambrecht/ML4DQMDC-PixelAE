@@ -23,6 +23,8 @@
 import os
 import sys
 import pickle
+import shutil
+import copy
 import math
 import pandas as pd
 import numpy as np
@@ -58,35 +60,95 @@ class HistStruct(object):
         # nentries: dict mapping histogram name to 1D numpy array of number of entries per histogram (same length as histograms)
         # runnbs: 1D numpy array of run numbers (same length as histograms)
         # lsnbs: 1D numpy array of lumisection numbers (same length as histograms)
+        # globalscores: 1D numpy array of global score per lumisection (same length as histograms)
         # classifiers: dict mapping histogram name to object of type HistogramClassifier
         # scores: dict mapping histogram name to 1D numpy array of values associated to the histograms (same length as histograms)
         # masks: dict mapping name to 1D numpy array of booleans (same length as histograms) that can be used for masking
-        # exthistograms: dict similar to histograms for additional (e.g. artificially generated) histograms
+        # exthistograms: dict of dicts similar to histograms for additional (e.g. artificially generated) histograms
+        # extscores: dict of dicts similar to scores for additional (e.g. artificially generated) histograms
+        # extglobalscores: dict of lists similar to scores for additional (e.g. artificially generated) histograms
         self.histnames = []
         self.histograms = {}
         self.nentries = {}
         self.runnbs = []
         self.lsnbs = []
+        self.globalscores = []
         self.classifiers = {}
         self.scores = {}
         self.masks = {}
         self.exthistograms = {}
+        self.extscores = {}
+        self.extglobalscores = {}
         
-    def save( self, path ):
+    def save( self, path, save_classifiers=True, classifiers_path='temp_classifiers' ):
         ### save a HistStruct object to a pkl file
         # input arguments:
         # - path where to store the file (appendix .pkl is automatically appended)
-        path = os.path.splitext(path)[0]+'.pkl'
-        with open(path,'wb') as f:
-            pickle.dump(self,f)
+        # - save_classifiers: a boolean whether to include the classifiers if present in the HistStruct
+        # - classifiers_path: path to folder where the classifiers will be stored
+        self.classifiers_path = None
+        if( len(self.classifiers.keys())==0 ):
+            path = os.path.splitext(path)[0]+'.pkl'
+            with open(path,'wb') as f:
+                pickle.dump(self,f)  
+        elif( not save_classifiers ):
+            classifiers = dict(self.classifiers)
+            self.classifiers = {}
+            path = os.path.splitext(path)[0]+'.pkl'
+            with open(path,'wb') as f:
+                pickle.dump(self,f)
+            self.classifiers = classifiers
+        else:
+            self.classifiers_path = classifiers_path
+            fpath = os.path.splitext(path)[0]+'.pkl'
+            cpath = classifiers_path
+            # save the classifiers and store the types in the HistStruct
+            self.classifier_types = {}
+            self.classifier_histnames = []
+            for histname,classifier in self.classifiers.items():
+                classifier.save( os.path.join(cpath,histname) )
+                self.classifier_types[histname] = type(classifier)
+                self.classifier_histnames.append(histname)
+            # remove the classifiers and pickle the rest
+            self.classifiers = {}
+            with open(fpath,'wb') as f:
+                pickle.dump(self,f)
+            # restore the classifiers
+            for histname in self.classifier_histnames:
+                self.classifiers[histname] = self.classifier_types[histname].load( os.path.join(cpath,histname) )
             
     @classmethod
-    def load( self, path ):
+    def load( self, path, load_classifiers=True, verbose=False ):
         ### load a HistStruct object from a pkl file
         # input arguments:
         # - path to a pkl file containing a HistStruct object
+        # - load_classifiers: a boolean whether to load the separately stored classifiers if present
+        #   note: the path where the classifiers are stored is implicit in the HistStruct when saving;
+        #         if you want to use a different path, you need to load without classifiers
+        #         and add the new ones by manually loading them and adding them with add_classifier.
+        # - verbose: boolean whether to print some information
         with open(path,'rb') as f:
             obj = pickle.load(f)
+        if verbose:
+            print('loaded a HistStruct object with the following properties:')
+            print('- histogram types: {}'.format(len(obj.histnames)))
+            for histname in obj.histnames: print('  - {}'.format(histname))
+            print('- number of lumisections: {}'.format(len(obj.lsnbs)))
+            print('- masks: {}'.format(len(obj.masks.keys())))
+            for mask in obj.masks.keys(): print('  - {}'.format(mask))
+            print('- extra histogram sets: {}'.format(len(obj.exthistograms.keys())))
+            for extname in obj.exthistograms.keys(): print('  - {}'.format(extname))
+        if( not load_classifiers ): return obj
+        if( obj.classifiers_path is None ): 
+            print('WARNING in HistStruct.load: requested to load classifers, '
+                  +'but no classifiers are assosiated with this HistStruct; ignoring.')
+            return obj
+        cpath = obj.classifiers_path
+        if( not os.path.exists(cpath) ): 
+            print('WARNING in HistStruct.load: requested to load classifiers, but path {} not found'.format(cpath) )
+            return obj
+        for histname in obj.classifier_histnames:
+                obj.classifiers[histname] = obj.classifier_types[histname].load( os.path.join(cpath,histname) )
         return obj
         
     def add_dataframe( self, df, cropslices=None, donormalize=True, rebinningfactor=None ):
@@ -151,7 +213,7 @@ class HistStruct(object):
         # - see also add_dataframe for an alternative way of adding histograms
         
         if histname in self.histnames:
-            raise Exception('ERROR in HistStruct.add_dataframe: dataframe contains histogram name '.format(histname)
+            raise Exception('ERROR in HistStruct.add_histograms: histogram name is '.format(histname)
                                +' but this is already present in the current HistStruct.')
         runnbs = np.array(runnbs).astype(int)
         lsnbs = np.array(lsnbs).astype(int)
@@ -170,6 +232,63 @@ class HistStruct(object):
         self.nentries[histname] = nentries
         self.runnbs = runnbs
         self.lsnbs = lsnbs
+        
+    def add_globalscores( self, globalscores ):
+        ### add an array of global scores (one per lumisection)
+        # input arguments:
+        # - globalscores: 1D numpy array of scores (must have same length as lumisection and run numbers)
+        
+        if( len(globalscores)!=len(self.lsnbs) ):
+            raise Exception('ERROR in HistStruct.add_globalscores: length of globalscores ({})'.format(len(globalscores))
+                           +' does not match length of list of lumisections ({})'.format(len(self.lsnbs)))
+        if( len(self.globalscores)>0 ):
+            print('WARNING in HistStruct.add_globalscores: array of global scores appears to be already initialized; overwriting...')
+        self.globalscores = globalscores
+        
+    def add_extglobalscores( self, extname, globalscores ):
+        ### add an array of global scores (one per lumisection) for a specified extra set of histograms in the HistStruct
+        # input arguments:
+        # - extname: name of extra histogram set
+        # - globalscores: 1D numpy array of scores
+        # note: this function checks if all histogram types in this set contain the same number of histograms,
+        #       (and that this number corresponds to the length of globalscores)
+        #       else adding globalscores is meaningless
+        
+        if not extname in self.exthistograms.keys():
+            raise Exception('ERROR in HistStruct.add_extglobalscores: requested to add scores for set {}'.format(extname)
+                           +' but this is not present in the current HistStruct.')
+        histnames = list(self.exthistograms[extname].keys())
+        nhists = self.exthistograms[extname][histnames[0]].shape[0]
+        for histname in histnames[1:]:
+            if( self.exthistograms[extname][histname].shape[0]!=nhists ):
+                raise Exception('ERROR in HistStruct.add_extglobalscores: requested to add scores for set {}'.format(extname)
+                               +' but the number of histograms for this set is not consistent between several types.')
+        if( len(globalscores)!=nhists ):
+            if( self.exthistograms[extname][histname].shape[0]!=nhists ):
+                raise Exception('ERROR in HistStruct.add_extglobalscores: the number of histograms ({})'.format(nhists)
+                                +' fdoes not match the length of the provided array ({}).'.format(len(globalscores)))
+        if( extname in self.extglobalscores.keys() ):
+            print('WARNING in HistStruct.add_extglobalscores: array of global scores for set {}'.format(extname)
+                  +' appears to be already initialized; overwriting...')
+        self.extglobalscores[extname] = globalscores
+            
+        
+    def add_exthistograms( self, extname, histname, histograms ):
+        ### add a set of extra histograms to a HistStruct
+        # these histograms are not assumed to correspond to physical run/lumisections numbers (e.g. resampled ones),
+        # and no consistency checks are done
+        # input arguments:
+        # - extname: name of the extra histogram set (you can add multiple, e.g. resampled_good, resampled_bad and/or resampled_training)
+        # - histname: name of the histogram type
+        # - histograms: a numpy array of shape (nhistograms,nbins)
+        if extname in self.exthistograms.keys():
+            if histname in self.exthistograms[extname].keys():
+                raise Exception('ERROR in HistStruct.add_exthistograms: histogram name is {}'.format(histname)
+                               +' but this is already present in the set of extra histogram with name {}'.format(extname))
+        else: 
+            self.exthistograms[extname] = {}
+            self.extscores[extname] = {}
+        self.exthistograms[extname][histname] = histograms
     
     def add_mask( self, name, mask ):
         ### add a mask to a HistStruct
@@ -213,7 +332,7 @@ class HistStruct(object):
         mask = jsonu.isdcson( self.runnbs, self.lsnbs )
         self.add_mask( name, mask )
         
-    def add_hightstat_mask( self, name, histnames=None, entries_to_bins_ratio=100 ):
+    def add_highstat_mask( self, name, histnames=None, entries_to_bins_ratio=100 ):
         ### add a mask corresponding to lumisections where all histograms have sufficient statistics
         # input arguments:
         # - histnames: list of histogram names to take into account for making the mask (default: all in the HistStruct)
@@ -298,6 +417,36 @@ class HistStruct(object):
         if histname is None: return res
         return res[histname]
     
+    def get_extscores( self, extname, histname=None ):
+        ### get the array of scores for a given histogram type in a given extra set.
+        # input arguments:
+        # - extname: name of the extra set (see also add_exthistograms)
+        # - histname: name of the histogram type for which to retrieve the score. 
+        #   if None, return a dict matching histnames to arrays of scores
+        # notes:
+        # - this method takes the scores from the HistStruct.extscores attribute;
+        #   make sure to have evaluated the classifiers before calling this method,
+        #   else an exception will be thrown.
+        if not extname in self.exthistograms.keys():
+            raise Exception('ERROR in HistStruct.get_extscores: requested to retrieve scores for set {}'.format(extname)
+                           +' but this is not present in the current HistStruct.')
+        histnames = self.histnames[:]
+        if histname is not None:
+            # check if histname is valid
+            if histname not in self.exthistograms[extname].keys():
+                raise Exception('ERROR in HistStruct.get_extscores: requested histogram name {}'.format(histname)
+                               +' but this is not present in the extra set with name {}.'.format(extname))
+            if histname not in self.extscores[extname].keys():
+                raise Exception('ERROR in HistStruct.get_extscores: requested histogram name {}'.format(histname)
+                               +' in extra set with name {}'.format(extname)
+                               +' but the scores for this histogram type were not yet initialized.')
+            histnames = [histname]
+        res = {}
+        for hname in histnames:
+            res[hname] = self.extscores[extname][hname]
+        if histname is None: return res
+        return res[histname]
+    
     def get_scores_ls( self, runnb, lsnb, histnames=None, suppresswarnings=False ):
         ### get the scores for a given run/lumisection number and for given histogram names
         # input arguments:
@@ -328,6 +477,51 @@ class HistStruct(object):
                 scores[histname] = self.scores[histname][index]
         return scores
     
+    def get_globalscores( self, masknames=None ):
+        ### get the array of global scores, optionally after masking
+        # input arguments:
+        # - masknames: list of names of masks (default: no masking, return full array)
+        # notes:
+        # - this method takes the scores from the HistStruct.globalscores attribute;
+        #   make sure to have set this attribute with add_globalscores,
+        #   else an exception will be thrown.
+        if( len(self.globalscores)==0 ):
+            raise Exception('ERROR in HistStruct.get_globalscores: array of global scores seems to be uninitialized.')
+        mask = np.ones(len(self.lsnbs)).astype(bool)
+        if masknames is not None:
+            mask = self.get_combined_mask(masknames)
+        return self.globalscores[mask]
+    
+    def get_globalscore_ls( self, runnb, lsnb ):
+        ### get the global score for a given run/lumisection number
+        # input arguments:
+        # - runnb: run number
+        # - lsnb: lumisection number
+        # - histnames: names of the histogram types for which to retrieve the score. 
+        # returns:
+        # - a dict matching each name in histnames to a score (or None if no valid score)
+        # notes:
+        # - this method takes the scores from the HistStruct.scores attribute;
+        #   make sure to have evaluated the classifiers before calling this method,
+        #   else the returned scores will be None.
+        index = self.get_index(runnb,lsnb)
+        if( len(self.globalscores)==0 ):
+            raise Exception('ERROR in HistStruct.get_globalscore_ls: array of global scores seems to be uninitialized.')
+        return self.globalscores[index]
+    
+    def get_extglobalscores( self, extname ):
+        ### get the array of global scores for one of the extra histogram sets
+        # input arguments:
+        # - extname: name of the extra histogram set
+        # notes:
+        # - this method takes the scores from the HistStruct.extglobalscores attribute;
+        #   make sure to have set this attribute with add_extglobalscores,
+        #   else an exception will be thrown.
+        if extname not in self.extglobalscores.keys():
+            raise Exception('ERROR in HistStruct.get_extglobalscores: requested to retrieve global scores for set {}'.format(extname)
+                           +' but they are not present in the current HistStruct.')
+        return self.extglobalscores[extname]
+    
     def get_histograms( self, histname=None, masknames=None ):
         ### get the array of histograms for a given type, optionally after masking
         # input arguments:
@@ -338,7 +532,7 @@ class HistStruct(object):
         if histname is not None:
             # check if histname is valid
             if histname not in self.histnames:
-                raise Exception('ERROR in HistStruct.get_scores: requested histogram name {}'.format(histname)
+                raise Exception('ERROR in HistStruct.get_histograms: requested histogram name {}'.format(histname)
                                +' but this is not present in the current HistStruct.')
             histnames = [histname]
         mask = np.ones(len(self.lsnbs)).astype(bool)
@@ -347,6 +541,28 @@ class HistStruct(object):
         res = {}
         for hname in histnames:
             res[hname] = self.histograms[hname][mask]
+        if histname is None: return res
+        return res[histname]
+    
+    def get_exthistograms( self, extname, histname=None ):
+        ### get the array of extra histograms for a given set name and type name
+        # input arguments:
+        # - extname: name of the set of extra histograms (see also add_exthistograms)
+        # - histname: name of the histogram type to retrieve 
+        #   if None, return a dict matching histnames to arrays of histograms
+        if not extname in self.exthistograms.keys():
+            raise Exception('ERROR in HistStruct.get_exthistograms: requested to retrieve histograms in set {}'.format(extname)
+                           +' but this is not present in the current HistStruct.')
+        histnames = self.histnames[:]
+        if histname is not None:
+            # check if histname is valid
+            if histname not in self.exthistograms[extname].keys():
+                raise Exception('ERROR in HistStruct.get_exthistograms: requested histogram name {}'.format(histname)
+                               +' but this is not present in the extra set with name {}.'.format(extname))
+            histnames = [histname]
+        res = {}
+        for hname in histnames:
+            res[hname] = self.exthistograms[extname][hname]
         if histname is None: return res
         return res[histname]
     
@@ -367,22 +583,33 @@ class HistStruct(object):
         if evaluate:
             return self.evaluate_classifier( histname )
         
-    def evaluate_classifier( self, histname ):
+    def evaluate_classifier( self, histname, extname=None ):
         ### evaluate a histogram classifier for a given histogram name in the HistStruct
         # input arguments:
         # - histname: a valid histogram name present in the HistStruct for which to evaluate the classifier
+        # - extname: name of a set of extra histograms (see add_exthistograms)
+        #            if None, will evaluate the classifer for the main set of histograms
         # notes:
         # - the result is both returned and stored in the 'scores' attribute
         
-        # check if histname is valid
-        if histname not in self.histnames:
-            raise Exception('ERROR in HistStruct.evaluate_classifier: requested histogram name {}'.format(histname)
-                            +' but this is not present in the current HistStruct.')
         if not histname in self.classifiers.keys():
-            raise Exception('ERROR in HistStruct.evaluate_classifier: requested to evaluate classifier for {}'.format(histname)
+                raise Exception('ERROR in HistStruct.evaluate_classifier: requested to evaluate classifier for {}'.format(histname)
                            +' but no classifier was set for this histogram type.')
-        scores = self.classifiers[histname].evaluate(self.histograms[histname])
-        self.scores[histname] = scores
+        if extname is None:
+            if histname not in self.histnames:
+                raise Exception('ERROR in HistStruct.evaluate_classifier: requested histogram name {}'.format(histname)
+                            +' but this is not present in the current HistStruct.')
+            scores = self.classifiers[histname].evaluate(self.histograms[histname])
+            self.scores[histname] = scores
+        else:
+            if not extname in self.exthistograms.keys():
+                raise Exception('ERROR in HistStruct.get_evaluate_classifier: requested to retrieve histograms in set {}'.format(extname)
+                           +' but this is not present in the current HistStruct.')
+            if histname not in self.exthistograms[extname].keys():
+                raise Exception('ERROR in HistStruct.get_evaluate_classifier: requested histogram name {}'.format(histname)
+                               +' but this is not present in the extra set with name {}.'.format(extname))
+            scores = self.classifiers[histname].evaluate(self.exthistograms[extname][histname])
+            self.extscores[extname][histname] = scores
         return scores
     
     def plot_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[] ):

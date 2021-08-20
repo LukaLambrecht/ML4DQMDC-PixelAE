@@ -21,6 +21,7 @@
 ### imports
 
 # external modules
+import os
 import sys
 import numpy as np
 from abc import ABC,abstractmethod
@@ -52,12 +53,12 @@ class HistogramClassifier(ABC):
         pass
     
     @abstractmethod
-    def evaluate( self, histograms ):
-        ### main function used to process a set of histograms
+    def train( self, histograms ):
+        ### train the classifier on a set of input histograms
         # this is an @abstractmethod and must be overridden in any concrete deriving class!
         # input arguments:
         # - histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins).
-        # output: 1D numpy array of shape (nhists), one number per histogram.
+        # output: expected to be none.
         
         # check input args
         if not isinstance( histograms, np.ndarray ):
@@ -66,6 +67,38 @@ class HistogramClassifier(ABC):
         if( len(histograms.shape)!=2 and len(histograms.shape)!=3 ):
             raise Exception('ERROR in HistogramClassifier.evaluate: input array has shape {}'.format(histograms.shape)
                             +' while a 2D or 3D array is expected.')
+    
+    @abstractmethod
+    def evaluate( self, histograms ):
+        ### main function used to evaluate a set of histograms
+        # this is an @abstractmethod and must be overridden in any concrete deriving class!
+        # input arguments:
+        # - histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins).
+        # output: expected to be a 1D numpy array of shape (nhists), one number per histogram.
+        
+        # check input args
+        if not isinstance( histograms, np.ndarray ):
+            raise Exception('ERROR in HistogramClassifier.evaluate: input is of type {}'.format(type(histograms))
+                           +' while a numpy array is expected.')
+        if( len(histograms.shape)!=2 and len(histograms.shape)!=3 ):
+            raise Exception('ERROR in HistogramClassifier.evaluate: input array has shape {}'.format(histograms.shape)
+                            +' while a 2D or 3D array is expected.')
+            
+    def save( self, path ):
+        ### save a classifier to disk
+        # specific implementation in concrete classes, here only path creation
+        
+        dirname = os.path.dirname( path )
+        if not os.path.exists( dirname ):
+            os.makedirs( dirname )
+            
+    @classmethod
+    def load( self, path ):
+        ### load a classifier object from disk
+        # specific implementation in concrete classes, here only path checking
+        if not os.path.exists( path ):
+            raise Exception('ERROR in HistogramClassifier.load: file path {}'.format(path)
+                           +' does not seem to exist.')
 
 
 

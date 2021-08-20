@@ -74,7 +74,7 @@ def mseTopNRaw(y_true, y_pred, n=10):
 
 # attempts to use chi2 instead of mse, so far no good results, but keep for reference
 def chiSquared(y_true, y_pred):
-    ### chi2 loss functionfor autoencoder training
+    ### chi2 loss function for autoencoder training
     # input arguments:
     # - y_true and y_pred: two numpy arrays of equal shape,
     #   typically a histogram and its autoencoder reconstruction.
@@ -86,11 +86,21 @@ def chiSquared(y_true, y_pred):
     chi2 = K.sum(normdiffsq,axis=-1)
     return chi2
 
-def chiSquaredTop10(y_true, y_pred):
-    ### same as chiSquared but take into account only 10 largest values in averaging.
-    normdiffsq = np.divide(K.square(y_pred - y_true),y_true)
-    top_values,_ = tf.nn.top_k(normdiffsq,k=10,sorted=True)
-    chi2 = K.sum(top_values,axis=-1)
+def chiSquaredTopNRaw(y_true, y_pred, n=10):
+    ### generalization of chiSquared to any number of bins to take into account
+    # note: should work for 2D histograms as well (i.e. arrays of shape (nhistograms,nybins,nxbins)),
+    #       but not yet tested!
+    # input arguments:
+    # - y_true, y_pred: numpy arrays between which to calculate the mean square difference, of shape (nhists,nbins) or (nhists,nybins,nxbins)
+    # - n: number of largest elements to keep for summing
+    # output:
+    # numpy array of shape (nhists)
+    sqdiff = np.power(y_true-y_pred,2)
+    chi2 = np.where(y_true==0,0,sqdiff/y_true)
+    if len(chi2.shape)==3:
+        chi2 = chi2.reshape(len(chi2),-1)
+    chi2 = np.partition( chi2, -n, axis=-1 )[:,-n:]
+    chi2 = np.sum( chi2, axis=-1 )
     return chi2
 
 
@@ -147,6 +157,8 @@ def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True,
     
     if mode=='full':
         scoreax = np.sort(scores)
+        scoreax[-1] += 0.01 # make sure the extremal scores are fully covered
+        scoreax[0] -= 0.01 # make sure the extremal scores are fully covered
     elif mode=='lin':
         scoremin = np.amin(scores)-1e-7
         scoremax = np.amax(scores)+1e-7
@@ -164,12 +176,14 @@ def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True,
     if doprint:
         print('calculating roc curve:')
         for i in range(len(scoreax)):
-            print('  threshold: {:.4e}, signal: {:.4f}, background: {:.4f}'.format(scoreax[i],sig_eff[i],bkg_eff[i]))
+            #print('  threshold: {:.4e}, signal: {:.4f}, background: {:.4f}'.format(scoreax[i],sig_eff[i],bkg_eff[i]))
+            print('  threshold: {}, signal: {}, background: {}'.format(scoreax[i],sig_eff[i],bkg_eff[i]))
     
     # note: sig_eff = signal efficiency = tp = true positive = signal flagged as signal
     # note: bkg_eff = background efficiency = fp = false positive = background flagged as signal
     fn = 1 - sig_eff # signal marked as background
     tn = 1 - bkg_eff # background marked as background
+    
     
     auc = np.trapz(sig_eff[::-1],bkg_eff[::-1])
     
@@ -198,7 +212,7 @@ def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True,
         ylowlim = 2*ylowlim-1.
         ax.set_ylim((ylowlim,1+(1-ylowlim)/5))
         ax.grid()
-        auctext = str(auc)
+        auctext = '{:.3f}'.format(auc)
         if auc>0.99:
             auctext = '1 - '+'{:.3e}'.format(1-auc)
         ax.text(0.7,0.1,'AUC: '+auctext,transform=ax.transAxes)
@@ -222,11 +236,14 @@ def get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, 
     # score equals mse, since larger mse = more signal-like (signal=anomalies)
     return get_roc(mse,labels,mode=mode,npoints=npoints,doprint=doprint,doplot=doplot,plotmode=plotmode)
 
-def get_confusion_matrix(scores, labels, wp):
+def get_confusion_matrix(scores, labels, wp=None):
     ### plot a confusion matrix
     # scores and labels are defined in the same way as for get_roc
     # wp is the chosen working point 
     # (i.e. any score above wp is flagged as signal, any below is flagged as background)
+    
+    if wp is None:
+        raise Exception('ERROR in get_confusion_matrix: you must provide a working point with the keyword option wp=...')
     
     nsig = np.sum(labels)
     nback = np.sum(1-labels)
@@ -253,7 +270,7 @@ def get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp):
     
     # get mse
     mse = mseTop10Raw(hists, predicted_hists)
-    get_confusion_matrix(mse, labels, msewp)
+    get_confusion_matrix(mse, labels, wp=msewp)
 
 
 
@@ -308,11 +325,34 @@ def train_simple_autoencoder(hists,nepochs=-1,modelname=''):
     opt = 'adam'
     loss = mseTop10
     if nepochs<0: nepochs = int(min(40,len(hists)/400))
-    model = getautoencoder(input_size,arch,act,opt,loss)
+    model = getautoencoder(input_size,arch,act=act,opt=opt,loss=loss)
     history = model.fit(hists, hists, epochs=nepochs, batch_size=500, shuffle=False, verbose=1, validation_split=0.1)
     plot_utils.plot_loss(history)
     if len(modelname)>0: model.save(modelname.split('.')[0]+'.h5')
     return model
+
+
+
+
+### replacing scores of +-inf with sensible value
+
+def clip_scores( scores ):
+    ### clip +-inf values in scores
+    # +inf values in scores will be replaced by the maximum value (exclucing +inf) plus one
+    # -inf values in scores will be replaced by the minimim value (exclucing -inf) minus one
+    # input arguments:
+    # - scores: 1D numpy array
+    # returns
+    # - array with same length as scores with elements replaced as explained above
+    maxnoninf = np.max(np.where(scores==np.inf,np.min(scores),scores)) + 1
+    minnoninf = np.min(np.where(scores==-np.inf,np.max(scores),scores)) -1
+    if np.max(scores)>maxnoninf: 
+        scores = np.where(scores==np.inf,maxnoninf,scores)
+        print('NOTE: scores of +inf were reset to {}'.format(maxnoninf))
+    if np.min(scores)<minnoninf:
+        scores = np.where(scores==-np.inf,minnoninf,scores)
+        print('NOTE: scores of -inf were reset to {}'.format(minnoninf))
+    return scores
 
 
 

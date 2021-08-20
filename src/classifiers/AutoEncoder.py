@@ -12,15 +12,18 @@
 ### imports
 
 # external modules
+import os
 import sys
 import numpy as np
 import tensorflow
+from tensorflow.keras.models import load_model
 import importlib
 
 # local modules
 from HistogramClassifier import HistogramClassifier
 sys.path.append('../../utils')
-from autoencoder_utils import mseTop10Raw
+from autoencoder_utils import mseTop10Raw, mseTop10
+import plot_utils
 
 
 
@@ -34,10 +37,9 @@ class AutoEncoder(HistogramClassifier):
     
     def __init__( self, model=None ):
         ### intializer from a tensorflow model
-        # the model is assumed to be fully trained on a suitable training set and ready for use
-        # TODO: perhaps the functionality for initializing and training the model can be absorbed in the AutoEncoder class,
-        #       but this is not yet supported currently
-        
+        # the model is assumed to be a valid tensorflow model;
+        # it can be already trained before wrapping it in an AutoEncoder object,
+        # but if this is not the case, the AutoEncoder.train function can be called afterwards.
         super( AutoEncoder,self ).__init__()
         if model is None:
             raise NotYetImplementedError('ERROR in AutoEncoder.__init__: init must take a fully trained and ready tensorflow model as input (for now)')
@@ -46,16 +48,38 @@ class AutoEncoder(HistogramClassifier):
                            +' while a tensorflow model is expected')
         self.model = model
         
+    def train( self, histograms, doplot=True, **kwargs ):
+        ### train the model on a given set of input histograms
+        super( AutoEncoder,self ).train( histograms )
+        history = self.model.fit(histograms, histograms, **kwargs)
+        if doplot: plot_utils.plot_loss(history)
+        
     def evaluate( self, histograms ):
         ### classification of a collection of histograms based on their autoencoder reconstruction
-        
-        super( AutoEncoder,self).evaluate( histograms )
+        super( AutoEncoder,self ).evaluate( histograms )
         predictions = self.model.predict( histograms )
         return mseTop10Raw( histograms, predictions )
     
     def reconstruct( self, histograms ):
         ### return the autoencoder reconstruction of a set of histograms
         return self.model.predict( histograms )
+    
+    def save( self, path ):
+        ### save the underlying tensorflow model to a tensorflow SavedModel or H5 format.
+        # note: depending on the extension specified in path, the SavedModel or H5 format is chosen,
+        #       see https://www.tensorflow.org/guide/keras/save_and_serialize
+        super( AutoEncoder,self ).save( path )
+        self.model.save( path )
+        
+    @classmethod
+    def load( self, path, **kwargs ):
+        ### get an AutoEncoder instance from a saved tensorflow SavedModel or H5 file
+        super( AutoEncoder,self ).load( path )
+        model = load_model(path, custom_objects={'mseTop10':mseTop10}, **kwargs)
+        # to do: check if the above also works if mseTop10 is not in the model
+        # to do: check if it is possible to add all custom objects without using the kwargs
+        classifier = AutoEncoder( model=model )
+        return classifier
 
 
 

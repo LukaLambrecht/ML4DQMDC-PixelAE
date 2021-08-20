@@ -53,14 +53,22 @@ class MaxPullClassifier(HistogramClassifier):
     # specifically intended for 2D histograms, but should in principle work for 1D as well.
     # see static function pull (above) for definition of bin-per-bin pull and other notes.
     
-    def __init__( self, refhist, n=1 ):
-        ### initializer from a reference histogram
+    def __init__( self, n=1 ):
+        ### initializer
         # input arguments:
-        # - refhist: a numpy array of shape (nbins) or (nybins,nxbins)
         # - n: number of largest pull values to average over (default: 1, just take single maximum)
         super( MaxPullClassifier,self ).__init__()
-        self.refhist = refhist
         self.n = n
+        
+    def train( self, refhist ):
+        ### 'train' the classifier, i.e. set the reference histogram.
+        # input arguments:
+        # - refhist: a numpy array of shape (1,nbins) or (1,nybins,nxbins)
+        super( MaxPullClassifier,self).train( refhist )
+        if not refhist.shape[0]==1:
+            raise Exception('ERROR in MaxPullClassifier/train: first dimension of training set is expected to be 1'
+                           +' (only one reference histogram allowed, provided in format (1,nbins) or (1,nybins,nxbins))')
+        self.refhist = refhist[0]
         
     def evaluate( self, histograms ):
         ### classify the histograms based on their max bin-per-bin pull (in absolute value) with respect to a reference histogram
