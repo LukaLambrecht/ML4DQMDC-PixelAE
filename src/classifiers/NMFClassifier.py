@@ -28,23 +28,27 @@ class NMFClassifier(HistogramClassifier):
     # specifically intended for 2D histograms, but should in principle work for 1D as well.
     # it is basically a wrapper for a sklearn.decomposition.NMF instance.
     
-    def __init__( self, histograms, ncomponents, loss_type='mse', nmax=10 ):
-        ### initializer from a collection of histograms
+    def __init__( self, ncomponents, loss_type='mse', nmax=10 ):
+        ### initializer
         # input arguments:
-        # - histograms: a numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins) that will be used to fit a NMF model
         # - ncomponents: number of NMF components (aka clusters aka basis vectors) to use in the decomposition
         # - loss_type: choose from 'mse' (mean-squared-error) or 'chi2' (chi squared error)
         # - nmax: number of largest elements to keep in error calculation
         # TODO: add keyword arguments to pass down to sklearn.decomposition.NMF
-        
         super( NMFClassifier,self ).__init__()
+        self.NMF = NMF( n_components=ncomponents )
+        self.loss_type = loss_type
+        self.nmax = nmax
+        
+    def train( self, histograms ):
+        ### train the NMF model on a given set of input histograms
+        # input arguments:
+        # - histograms: a numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins) that will be used to fit a NMF model
+        super( NMFClassifier,self ).train( histograms )
         self.shape = list(histograms.shape)[1:]
         if len(histograms.shape)==3:
             histograms = histograms.reshape(histograms.shape[0],-1)
-        self.NMF = NMF( n_components=ncomponents )
         self.NMF.fit( histograms )
-        self.loss_type = loss_type
-        self.nmax = nmax
         
     def set_nmax( self, nmax ):
         ### set number of largest elements to keep in mean square error calculation

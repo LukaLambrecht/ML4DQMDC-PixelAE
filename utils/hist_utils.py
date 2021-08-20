@@ -124,10 +124,17 @@ def averagehists(hists, nout):
     ### partition a set of histograms into equal parts and take the average histogram of each part
     # input arguments:
     # - hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D
-    # - nout: number of partitions / output histograms
+    # - nout: number of partitions, i.e. number of output histograms
     #   note: nout=1 corresponds to simply taking the average of all histograms in hists.
+    #   note: if nout is negative or if nout is larger than number of input histograms, the original set of histograms is returned.
     # returns:
-    # - a numpy array of shape (nout,<input number of bins>)
+    # - a numpy array of shape (nout,nbins)
+    if nout<0: return hists
+    if nout > len(hists):
+        print('WARNING in hist_utils.py / averagehists: requested number of output histograms ({})'.format(nout)
+             +' is larger than number of input histograms ({}),'.format(len(hists))
+             +' returning input histograms.')
+        return hists
     nsub = int(len(hists)/nout)
     if len(hists.shape)==2:
         avghists = np.zeros((nout,hists.shape[1]))   

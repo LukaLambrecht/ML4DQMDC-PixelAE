@@ -79,30 +79,32 @@ def mseTop10_avg( histograms, templates ):
 class TemplateBasedClassifier(HistogramClassifier):
     ### histogram classifier based on a direct comparison with templates (i.e. reference histograms)
     
-    def __init__( self, templates, comparemethod='minmse' ):
-        ### initializer from a set of templates (reference histograms)
+    def __init__( self, comparemethod='minmse' ):
+        ### initializer
         # input arguments:
-        # - templates: a 2D numpy array of shape (nhistograms,nbins)
         # - comparemethod: string representing the method by which to compare a histogram with a set of templates
         #   currently supported methods are:
         #   - minmse: minimum mean square error between histogram and all templates
         #   - avgmse: average mean square error between histogram and all templates
         
-        if not isinstance(templates,np.ndarray):
-            raise Exception('ERROR in TemplateBasedClassifier.__init__: templates must be a numpy array.')
-        if not len(templates.shape)==2:
-            raise Exception('ERROR in TemplateBasedClassifier.__init__: templates must have 2D shape')
         self.methods = ({'minmse':mseTopN_min,
                          'minmsetop10': mseTop10_min,
                          'avgmse':mseTopN_avg,
                          'avgmsetop10': mseTop10_avg })
         if not comparemethod in self.methods.keys():
             raise Exception('ERROR in TemplateBasedClassifier.__init__: comparemethod not recognized: {}'.format(comparemethod))
-        self.templates = templates
         self.comparemethod = comparemethod
+        
+    def train( self, templates ):
+        ### 'train' the classifier, i.e. set the templates (reference histograms)
+        # input arguments:
+        # - templates: a 2D numpy array of shape (nhistograms,nbins)
+        super(TemplateBasedClassifier,self).evaluate( histograms )
+        self.templates = templates
         
     def evaluate( self, histograms ):
         ### classification of a collection of histograms based on their deviation from templates
+        super(TemplateBasedClassifier,self).evaluate( histograms )
         return self.methods[self.comparemethod]( histograms, self.templates )
 
 

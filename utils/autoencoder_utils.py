@@ -236,11 +236,14 @@ def get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, 
     # score equals mse, since larger mse = more signal-like (signal=anomalies)
     return get_roc(mse,labels,mode=mode,npoints=npoints,doprint=doprint,doplot=doplot,plotmode=plotmode)
 
-def get_confusion_matrix(scores, labels, wp):
+def get_confusion_matrix(scores, labels, wp=None):
     ### plot a confusion matrix
     # scores and labels are defined in the same way as for get_roc
     # wp is the chosen working point 
     # (i.e. any score above wp is flagged as signal, any below is flagged as background)
+    
+    if wp is None:
+        raise Exception('ERROR in get_confusion_matrix: you must provide a working point with the keyword option wp=...')
     
     nsig = np.sum(labels)
     nback = np.sum(1-labels)
@@ -267,7 +270,7 @@ def get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp):
     
     # get mse
     mse = mseTop10Raw(hists, predicted_hists)
-    get_confusion_matrix(mse, labels, msewp)
+    get_confusion_matrix(mse, labels, wp=msewp)
 
 
 
@@ -322,7 +325,7 @@ def train_simple_autoencoder(hists,nepochs=-1,modelname=''):
     opt = 'adam'
     loss = mseTop10
     if nepochs<0: nepochs = int(min(40,len(hists)/400))
-    model = getautoencoder(input_size,arch,act,opt,loss)
+    model = getautoencoder(input_size,arch,act=act,opt=opt,loss=loss)
     history = model.fit(hists, hists, epochs=nepochs, batch_size=500, shuffle=False, verbose=1, validation_split=0.1)
     plot_utils.plot_loss(history)
     if len(modelname)>0: model.save(modelname.split('.')[0]+'.h5')
