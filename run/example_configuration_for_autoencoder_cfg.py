@@ -46,7 +46,7 @@ print('done')
 
 ### parameters for loading the data
 
-HISTSTRUCT_FILE_NAME = 'test.pkl'
+HISTSTRUCT_FILE_NAME = 'test.zip'
 
 
 
@@ -151,11 +151,18 @@ if __name__=='__main__':
             histstruct.add_classifier(histname,classifier)
         
     # save modified histstruct
-    savename = os.path.splitext(HISTSTRUCT_FILE_NAME)[0]+'_configured.pkl'
+    savename = os.path.splitext(HISTSTRUCT_FILE_NAME)[0]+'_configured.zip'
     histstruct.save( savename )
     
     # delete the loaded histstruct to free some memory
     del histstruct
+
+
+
+
+for root, dirs, files in os.walk('test_configured_classifiers_storage'):
+    for name in files:
+        print(os.path.join(root, name))
 
 
 
@@ -190,7 +197,7 @@ EXTEND_TEST_GOOD_PARTITIONS = [-1]*ngoodsets
 EXTEND_TEST_BAD = True 
 EXTEND_TEST_BAD_FUNCTION = gdu.upsample_hist_set
 EXTEND_TEST_BAD_OPTIONS = {'figname':'','ntarget':5e3,'fourierstdfactor':20.}
-EXTEND_TEST_GOOD_PARTITIONS = [-1]*nbadsets
+EXTEND_TEST_BAD_PARTITIONS = [-1]*nbadsets
 
 
 

@@ -27,7 +27,8 @@ importlib.reload(aeu)
 # functions for plotting 
       
 def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1),
-              title=None, xaxtitle=None, yaxtitle=None, bkgcolor=None, bkgcmap='spring'):
+              title=None, xaxtitle=None, yaxtitle=None, 
+              bkgcolor=None, bkgcmap='spring', bkgrange=None, bkgtitle=None):
     ### plot some histograms (in histlist) in one figure using specified colors and/or labels
     # - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))
     # - colorlist is a list or array containing colors (in string format), of length nhistograms
@@ -58,9 +59,17 @@ def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transpar
         # modify bkcolor so the automatic stretching matches the bin numbers correctly
         bkgcolor = [el for el in bkgcolor for _ in (0,1)][1:-1]
         bkgcolor = np.array(bkgcolor)
+        if bkgrange is None: bkgrange=(np.min(bkgcolor),np.max(bkgcolor))
         ax.pcolorfast((xlims[0],xlims[1]), ax.get_ylim(),
               bkgcolor[np.newaxis],
-              cmap=bkgcmap, alpha=0.1)
+              cmap=bkgcmap, alpha=0.1,
+              vmin=bkgrange[0], vmax=bkgrange[1])
+        # add a color bar
+        norm = mpl.colors.Normalize(vmin=bkgrange[0], vmax=bkgrange[1])
+        cobject = mpl.cm.ScalarMappable(norm=norm, cmap=bkgcmap)
+        cobject.set_array([]) # ad-hoc bug fix
+        cbar = fig.colorbar(cobject, ax=ax, alpha=0.1)
+        if bkgtitle is not None: cbar.ax.set_ylabel(bkgtitle, rotation=270, labelpad=20.)
     if dolabel: ax.legend()
     if title is not None: ax.set_title(title)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)

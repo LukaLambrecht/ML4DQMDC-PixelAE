@@ -23,6 +23,8 @@
 import os
 import sys
 import pickle
+import zipfile
+import glob
 import shutil
 import copy
 import math
@@ -80,28 +82,23 @@ class HistStruct(object):
         self.extscores = {}
         self.extglobalscores = {}
         
-    def save( self, path, save_classifiers=True, classifiers_path='temp_classifiers' ):
+    def save( self, path, save_classifiers=True ):
         ### save a HistStruct object to a pkl file
         # input arguments:
-        # - path where to store the file (appendix .pkl is automatically appended)
+        # - path where to store the file (appendix .zip is automatically appended)
         # - save_classifiers: a boolean whether to include the classifiers if present in the HistStruct
-        # - classifiers_path: path to folder where the classifiers will be stored
-        self.classifiers_path = None
-        if( len(self.classifiers.keys())==0 ):
-            path = os.path.splitext(path)[0]+'.pkl'
-            with open(path,'wb') as f:
-                pickle.dump(self,f)  
-        elif( not save_classifiers ):
+        pklpath = os.path.splitext(path)[0]+'.pkl'
+        zippath = os.path.splitext(path)[0]+'.zip'
+        cpath = os.path.splitext(path)[0]+'_classifiers_storage'
+        zipcontents = []
+        if( len(self.classifiers.keys())==0 or not save_classifiers ):
             classifiers = dict(self.classifiers)
             self.classifiers = {}
-            path = os.path.splitext(path)[0]+'.pkl'
-            with open(path,'wb') as f:
+            with open(pklpath,'wb') as f:
                 pickle.dump(self,f)
             self.classifiers = classifiers
+            zipcontents.append(pklpath)
         else:
-            self.classifiers_path = classifiers_path
-            fpath = os.path.splitext(path)[0]+'.pkl'
-            cpath = classifiers_path
             # save the classifiers and store the types in the HistStruct
             self.classifier_types = {}
             self.classifier_histnames = []
@@ -109,25 +106,41 @@ class HistStruct(object):
                 classifier.save( os.path.join(cpath,histname) )
                 self.classifier_types[histname] = type(classifier)
                 self.classifier_histnames.append(histname)
+            # get all files to store in the zip file
+            for root, dirs, files in os.walk(cpath):
+                for name in files:
+                    zipcontents.append(os.path.join(root, name))
             # remove the classifiers and pickle the rest
             self.classifiers = {}
-            with open(fpath,'wb') as f:
+            with open(pklpath,'wb') as f:
                 pickle.dump(self,f)
+            zipcontents.append(pklpath)
             # restore the classifiers
             for histname in self.classifier_histnames:
                 self.classifiers[histname] = self.classifier_types[histname].load( os.path.join(cpath,histname) )
+        # put everything in a zip file
+        with zipfile.ZipFile( zippath, 'w' ) as zipf:
+            for f in zipcontents: zipf.write(f)
+        # remove individual files
+        for f in zipcontents: os.system('rm {}'.format(f))
+        if os.path.exists(cpath): os.system('rm -r {}'.format(cpath))
             
     @classmethod
     def load( self, path, load_classifiers=True, verbose=False ):
         ### load a HistStruct object from a pkl file
         # input arguments:
-        # - path to a pkl file containing a HistStruct object
-        # - load_classifiers: a boolean whether to load the separately stored classifiers if present
-        #   note: the path where the classifiers are stored is implicit in the HistStruct when saving;
-        #         if you want to use a different path, you need to load without classifiers
-        #         and add the new ones by manually loading them and adding them with add_classifier.
+        # - path to a zip file containing a HistStruct object
+        # - load_classifiers: a boolean whether to load the classifiers if present
         # - verbose: boolean whether to print some information
-        with open(path,'rb') as f:
+        pklpath = os.path.splitext(path)[0]+'.pkl'
+        zippath = os.path.splitext(path)[0]+'.zip'
+        cpath = os.path.splitext(path)[0]+'_classifiers_storage'
+        zipcontents = []
+        # extract the zip file
+        with zipfile.ZipFile( zippath, 'r' ) as zipf:
+            zipcontents = zipf.namelist()
+            zipf.extractall()
+        with open(pklpath,'rb') as f:
             obj = pickle.load(f)
         if verbose:
             print('loaded a HistStruct object with the following properties:')
@@ -138,17 +151,14 @@ class HistStruct(object):
             for mask in obj.masks.keys(): print('  - {}'.format(mask))
             print('- extra histogram sets: {}'.format(len(obj.exthistograms.keys())))
             for extname in obj.exthistograms.keys(): print('  - {}'.format(extname))
-        if( not load_classifiers ): return obj
-        if( obj.classifiers_path is None ): 
-            print('WARNING in HistStruct.load: requested to load classifers, '
-                  +'but no classifiers are assosiated with this HistStruct; ignoring.')
-            return obj
-        cpath = obj.classifiers_path
-        if( not os.path.exists(cpath) ): 
-            print('WARNING in HistStruct.load: requested to load classifiers, but path {} not found'.format(cpath) )
-            return obj
-        for histname in obj.classifier_histnames:
+        if( load_classifiers ):
+            if len(zipcontents)==1:
+                print('WARNING: requested to load classifiers, but this stored HistStruct object does not seem to contain any.')     
+            for histname in obj.classifier_histnames:
                 obj.classifiers[histname] = obj.classifier_types[histname].load( os.path.join(cpath,histname) )
+        # remove individual files
+        for f in zipcontents: os.system('rm {}'.format(f))
+        if os.path.exists(cpath): os.system('rm -r {}'.format(cpath))
         return obj
         
     def add_dataframe( self, df, cropslices=None, donormalize=True, rebinningfactor=None ):
@@ -362,6 +372,10 @@ class HistStruct(object):
                 raise Exception('ERROR in HistStruct.get_combined_mask: mask {} requested but not found.'.format(name))
             mask = mask & self.masks[name]
         return mask
+    
+    def get_masknames( self ):
+        ### return a simple list of all mask names in the current HistStruct
+        return list( self.masks.keys() )
         
     def get_runnbs( self, masknames=None ):
         ### get the array of run numbers, optionally after masking
