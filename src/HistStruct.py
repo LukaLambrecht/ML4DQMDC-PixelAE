@@ -190,9 +190,10 @@ class HistStruct(object):
             obj = pickle.load(f)
         if( load_classifiers ):
             if len(zipcontents)==1:
-                print('WARNING: requested to load classifiers, but this stored HistStruct object does not seem to contain any.')     
-            for histname in obj.classifier_histnames:
-                obj.classifiers[histname] = obj.classifier_types[histname].load( os.path.join(unzippath,cbasename,histname) )
+                print('WARNING: requested to load classifiers, but this stored HistStruct object does not seem to contain any.')
+            else:
+                for histname in obj.classifier_histnames:
+                    obj.classifiers[histname] = obj.classifier_types[histname].load( os.path.join(unzippath,cbasename,histname) )
         # remove individual files
         if os.path.exists(unzippath): os.system('rm -r {}'.format(unzippath))
         if verbose:
