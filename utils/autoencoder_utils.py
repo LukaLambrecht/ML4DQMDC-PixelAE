@@ -216,7 +216,6 @@ def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True,
         if auc>0.99:
             auctext = '1 - '+'{:.3e}'.format(1-auc)
         ax.text(0.7,0.1,'AUC: '+auctext,transform=ax.transAxes)
-        plt.show()
         
     else:
         print('ERROR: mode not recognized: '+str(mode))

@@ -14,7 +14,8 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
 from copy import copy
-import imageio
+try: import imageio
+except ImportError: print('WARNING: could not import module imageio')
 import importlib
 
 # local modules
@@ -285,7 +286,6 @@ def plot_distance(dists, ls=None, rmlargest=0., doplot=True,
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
     ax.legend()
-    plt.show()
     return (fig,ax)
 
 
@@ -298,15 +298,19 @@ def plot_loss(data, xlims=None,
     # e.g. history = <your autoencoder>.fit(<training params>)
     #      plot_loss(history,'a title')
     fig,ax = plt.subplots()
-    ax.plot(data.history['loss'], linestyle=(0,()), color="#1A237E", linewidth=3, label='training')
-    ax.plot(data.history['val_loss'], linestyle=(0,(3,2)), color="#4DB6AC", linewidth=3, label='validation')
+    if 'loss' in data.history.keys(): 
+        ax.plot(data.history['loss'], linestyle=(0,()), color="#1A237E", 
+                linewidth=3, label='training')
+    if 'val_loss' in data.history.keys():
+        ax.plot(data.history['val_loss'], linestyle=(0,(3,2)), color="#4DB6AC", 
+                linewidth=3, label='validation')
     ax.legend(loc="upper right", frameon=False)
     ax.set_yscale('log')
     if xlims is not None: ax.set_xlim(xlims)
     if title is not None: ax.set_title(title)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
-    plt.show()
+    plt.show(block=False)
     return (fig,ax)
     
 ### plot an array of mse values and get the mean and std value
@@ -347,7 +351,6 @@ def plot_score_dist( scores, labels, nbins=20, normalize=False,
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
     ax.legend()
-    plt.show()
     return (fig,ax)
 
 def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False, 
