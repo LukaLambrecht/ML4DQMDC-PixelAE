@@ -82,6 +82,50 @@ class HistStruct(object):
         self.extscores = {}
         self.extglobalscores = {}
         
+    def __str__( self ):
+        ### get a printable representation of a HistStruct
+        info = ''
+        # histogram names:
+        info += '- histogram types ({}): \n'.format(len(self.histnames))
+        for histname in self.histnames: info += '  -- {} (nbins: {})\n'.format(histname,self.histograms[histname].shape[1])
+        # size of histogram sets:
+        info += '- number of lumisections: {}\n'.format(len(self.lsnbs))
+        # masks:
+        info += '- masks ({}): \n'.format(len(self.get_masknames()))
+        for maskname in self.get_masknames(): info += '  -- {}\n'.format(maskname)
+        # classifiers:
+        info += '- classifiers: \n'
+        if len(self.classifiers.keys())==0: info += '    not initialized \n'
+        else:
+            for histname in self.histnames: info += '  -- {}: {}\n'.format(histname,type(self.classifiers[histname]))
+        # scores:
+        info += '- scores: \n'
+        if len(self.scores.keys())==0: info += '    not initialized \n'
+        else:
+            for histname in self.histnames: 
+                txt = 'initialized' if histname in self.scores.keys() else 'not initialized'
+                info += '  -- {}: {}\n'.format(histname,txt)
+        info += '- global scores: \n'
+        if len(self.globalscores)==0: info += '    not initialized \n'
+        else: info += '    initialized \n'
+        # extra histograms sets
+        info += '- extra histogram sets: {}\n'.format(len(self.exthistograms.keys()))
+        for extname in self.exthistograms.keys(): 
+            info += '  -- {}\n'.format(extname)
+            info += '     --- histogram types ({})\n'.format(len(self.exthistograms[extname].keys()))
+            for histname in self.exthistograms[extname].keys():
+                info += '         ---- {} (shape: {})\n'.format(histname, self.exthistograms[extname][histname].shape)
+            info += '     --- scores: \n'
+            if extname not in self.extscores.keys(): info += '           not initialized \n'
+            else:
+                for histname in self.exthistograms[extname].keys(): 
+                    txt = 'initialized' if histname in self.extscores[extname].keys() else 'not initialized'
+                    info += '         ---- {}: {}\n'.format(histname,txt)
+            info += '     --- global scores: \n'
+            if extname not in self.extglobalscores.keys(): info += '           not initialized \n'
+            else: info += '           initialized \n'
+        return info
+        
     def save( self, path, save_classifiers=True ):
         ### save a HistStruct object to a pkl file
         # input arguments:
@@ -132,33 +176,28 @@ class HistStruct(object):
         # - path to a zip file containing a HistStruct object
         # - load_classifiers: a boolean whether to load the classifiers if present
         # - verbose: boolean whether to print some information
-        pklpath = os.path.splitext(path)[0]+'.pkl'
         zippath = os.path.splitext(path)[0]+'.zip'
-        cpath = os.path.splitext(path)[0]+'_classifiers_storage'
+        unzippath = os.path.splitext(path)[0]+'_unzipped'
+        basename = os.path.splitext(os.path.basename(zippath))[0]
+        pklbasename = basename+'.pkl'
+        cbasename = basename+'_classifiers_storage'
         zipcontents = []
         # extract the zip file
         with zipfile.ZipFile( zippath, 'r' ) as zipf:
             zipcontents = zipf.namelist()
-            zipf.extractall()
-        with open(pklpath,'rb') as f:
+            zipf.extractall( path=unzippath )
+        with open(os.path.join(unzippath,pklbasename),'rb') as f:
             obj = pickle.load(f)
-        if verbose:
-            print('loaded a HistStruct object with the following properties:')
-            print('- histogram types: {}'.format(len(obj.histnames)))
-            for histname in obj.histnames: print('  - {}'.format(histname))
-            print('- number of lumisections: {}'.format(len(obj.lsnbs)))
-            print('- masks: {}'.format(len(obj.masks.keys())))
-            for mask in obj.masks.keys(): print('  - {}'.format(mask))
-            print('- extra histogram sets: {}'.format(len(obj.exthistograms.keys())))
-            for extname in obj.exthistograms.keys(): print('  - {}'.format(extname))
         if( load_classifiers ):
             if len(zipcontents)==1:
                 print('WARNING: requested to load classifiers, but this stored HistStruct object does not seem to contain any.')     
             for histname in obj.classifier_histnames:
-                obj.classifiers[histname] = obj.classifier_types[histname].load( os.path.join(cpath,histname) )
+                obj.classifiers[histname] = obj.classifier_types[histname].load( os.path.join(unzippath,cbasename,histname) )
         # remove individual files
-        for f in zipcontents: os.system('rm {}'.format(f))
-        if os.path.exists(cpath): os.system('rm -r {}'.format(cpath))
+        if os.path.exists(unzippath): os.system('rm -r {}'.format(unzippath))
+        if verbose:
+            print('Loaded a HistStruct object with following properties:')
+            print(obj)
         return obj
         
     def add_dataframe( self, df, cropslices=None, donormalize=True, rebinningfactor=None ):
