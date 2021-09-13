@@ -1,8 +1,9 @@
 # to do:
 # - see to do's in the code
-# - add functionality for plotting the contours with the test sets
+# - fix issue with histstruct saving
 # - continue making styling more uniform (e.g. everything in a Frame)
 # - add functionality for making the initial HistStruct through the GUI
+#   -> started and first version seems to work, check more extensively later
 # - add functionality to define the classifiers through the GUI
 
 # external modules
@@ -235,6 +236,238 @@ class ScrolledTextFrame(ScrolledFrame):
         self.set_widget(text)
 
 ### GUI windows
+
+class NewHistStructWindow(tk.Toplevel):
+    ### popup window class for creating a new histstruct
+
+    def __init__(self, master, emptyhiststruct):
+        super().__init__(master=master)
+        self.title('New HistStruct')
+        self.histstruct = emptyhiststruct
+        self.run_mask_widgets = []
+        self.highstat_mask_widgets = []
+
+        # create a frame for general options
+        self.general_options_frame = tk.Frame(self)
+        set_frame_default_style( self.general_options_frame )
+        self.general_options_frame.grid(row=0, column=0, sticky='nsew')
+        self.general_options_label = tk.Label(self.general_options_frame, 
+                                              text='General options')
+        self.general_options_label.grid(row=0, column=0)
+
+        # add general options
+        self.training_mode_box = ttk.Combobox(self.general_options_frame, 
+                                    values=['global','local'])
+        self.training_mode_box.current(0)
+        self.training_mode_box.grid(row=1,column=0)
+        self.year_box = ttk.Combobox(self.general_options_frame,
+                                     values=['2017'])
+        self.year_box.current(0)
+        self.year_box.grid(row=2,column=0)
+        self.histnames_listbox = tk.Listbox(self.general_options_frame, 
+                                            selectmode='multiple',
+                                            exportselection=False)
+        for histname in (['chargeInner_PXLayer_2',
+                          'chargeInner_PXLayer_3',
+                          'charge_PXDisk_+1','charge_PXDisk_+2','charge_PXDisk_+3',
+                          'size_PXLayer_1','size_PXLayer_2',
+                          'size_PXLayer_3']):
+            # to do: extract the options automatically (e.g. from the available files)
+            self.histnames_listbox.insert(tk.END, histname)
+        self.histnames_listbox.grid(row=3, column=0)
+
+        # create a frame for local options
+        self.local_options_frame = tk.Frame(self)
+        set_frame_default_style(self.local_options_frame)
+        self.local_options_frame.grid(row=1, column=0)
+        self.local_options_label = tk.Label(self.local_options_frame, 
+                                    text='Options for local training')
+        self.local_options_label.grid(row=0, column=0)
+
+        # add local options
+        tk.Label(self.local_options_frame, text='target run').grid(row=1, column=0)
+        self.target_run_text = tk.Text(self.local_options_frame, height=1, width=8)
+        self.target_run_text.grid(row=1, column=1)
+        tk.Label(self.local_options_frame, text='ntraining').grid(row=2, column=0)
+        self.ntraining_text = tk.Text(self.local_options_frame, height=1, width=3)
+        self.ntraining_text.insert(tk.INSERT, '5')
+        self.ntraining_text.grid(row=2, column=1)
+        tk.Label(self.local_options_frame, text='offset').grid(row=3, column=0)
+        self.offset_text = tk.Text(self.local_options_frame, height=1, width=3)
+        self.offset_text.insert(tk.INSERT, '0')
+        self.offset_text.grid(row=3, column=1)
+        self.remove_var = tk.IntVar()
+        tk.Checkbutton(self.local_options_frame, text='remove unneeded runs',
+                    variable=self.remove_var).grid(row=4, column=0)
+
+        # create a frame for run mask addition
+        self.run_mask_frame = tk.Frame(self)
+        set_frame_default_style( self.run_mask_frame )
+        self.run_mask_frame.grid(row=0, column=1, sticky='nsew')
+
+        # add buttons for run mask addition
+        self.add_run_mask_button = tk.Button(self.run_mask_frame, text='Add a run mask',
+                                command=functools.partial(self.add_run_mask, self.run_mask_frame))
+        self.add_run_mask_button.grid(row=0, column=0, columnspan=2)
+        name_label = tk.Label(self.run_mask_frame, text='Name:')
+        name_label.grid(row=1, column=0)
+        run_label = tk.Label(self.run_mask_frame, text='Run number:')
+        run_label.grid(row=1, column=1)
+
+        # create a frame for highstat mask addition
+        self.highstat_mask_frame = tk.Frame(self)
+        set_frame_default_style( self.highstat_mask_frame )
+        self.highstat_mask_frame.grid(row=0, column=2, sticky='nsew')
+
+        # add buttons for highstat mask additions
+        self.add_highstat_mask_button = tk.Button(self.highstat_mask_frame, 
+                        text='Add a statistics mask',
+                        command=functools.partial(self.add_highstat_mask,self.highstat_mask_frame))
+        self.add_highstat_mask_button.grid(row=0, column=0, columnspan=2)
+        name_label = tk.Label(self.highstat_mask_frame, text='Name:')
+        name_label.grid(row=1, column=0)
+        threshold_label = tk.Label(self.highstat_mask_frame, text='Threshold:')
+        threshold_label.grid(row=1, column=1)
+
+        # add button to start HistStruct creation
+        self.make_histstruct_button = tk.Button(self, text='Make HistStruct',
+                                        command=self.make_histstruct)
+        self.make_histstruct_button.grid(row=2, column=0)
+
+    def get_target_run(self):
+        target_run_text = self.target_run_text.get(1.0, tk.END).strip(' \t\n')
+        if len(target_run_text)==0: return None
+        return int(target_run_text)
+
+    def get_local_training_runs(self, filename):
+        target_run = self.get_target_run()
+        ntraining = int(self.ntraining_text.get(1.0, tk.END).strip(' \t\n'))
+        offset = int(self.offset_text.get(1.0, tk.END).strip(' \t\n'))
+        #runs = dfu.get_runs( dfu.select_dcson( csvu.read_csv( filename ) ) )
+        # for testing (no json available):
+        runs = dfu.get_runs( csvu.read_csv( filename ) )
+        target_run_index = runs.index(target_run)
+        training_runs = runs[target_run_index-ntraining-offset:target_run_index-offset]
+        return training_runs
+
+    def get_needed_runs(self, is_local=False, filename=None):
+        all_runs = []
+        # add the run from all run masks
+        for run in self.get_run_masks().values():
+            all_runs.append(run)
+        # for local training: add target and training runs
+        if is_local:
+            if filename is None:
+                raise Exception('ERROR: a filename must be specified'
+                                +' for getting needed runs for local training.')
+            if not os.path.exists(filename):
+                raise Exception('ERROR: the file {} does not seem to exist.'.format(filename))
+            target_run = self.get_target_run()
+            training_runs = self.get_local_training_runs( filename )
+            all_runs.append(target_run)
+            for run in training_runs: all_runs.append(run)
+        return all_runs
+
+    def add_run_mask(self, parent=None):
+        if parent is None: parent = self
+        row = len(self.run_mask_widgets)+2
+        column = 0
+        name_text = tk.Text(parent, height=1, width=25)
+        name_text.grid(row=row, column=column)
+        run_text = tk.Text(parent, height=1, width=8)
+        run_text.grid(row=row, column=column+1)
+        self.run_mask_widgets.append({'name_text':name_text,'run_text':run_text})
+
+    def add_highstat_mask(self, parent=None):
+        if parent is None: parent = self
+        row = len(self.highstat_mask_widgets)+2
+        column = 0
+        name_text = tk.Text(parent, height=1, width=25)
+        name_text.grid(row=row, column=column)
+        threshold_text = tk.Text(parent, height=1, width=8)
+        threshold_text.grid(row=row, column=column+1)
+        self.highstat_mask_widgets.append({'name_text':name_text,'threshold_text':threshold_text})
+
+    def get_run_masks(self):
+        run_masks = {}
+        for el in self.run_mask_widgets:
+            name = el['name_text'].get(1.0, tk.END).strip(' \t\n')
+            run = int(el['run_text'].get(1.0, tk.END).strip(' \t\n'))
+            run_masks[name] = run
+        return run_masks
+
+    def get_highstat_masks(self):
+        highstat_masks = {}
+        for el in self.highstat_mask_widgets:
+            name = el['name_text'].get(1.0, tk.END).strip(' \t\n')
+            threshold = float(el['threshold_text'].get(1.0, tk.END).strip(' \t\n'))
+            highstat_masks[name] = threshold
+        return highstat_masks
+
+    def get_histnames(self):
+        histnames = ([self.histnames_listbox.get(idx)
+                    for idx in self.histnames_listbox.curselection() ])
+        return histnames
+
+    def make_histstruct(self):
+
+        # get general settings
+        histnames = self.get_histnames()
+        year = self.year_box.get()
+        training_mode = self.training_mode_box.get()
+        print(histnames)
+        print(year)
+        print(training_mode)
+        # get a comprehensive set of all explicitly needed runs (for throwing away the rest)
+        firstfilename = '../data/DF'+year+'_'+histnames[0]+'.csv'
+        needed_runs = self.get_needed_runs( is_local=(training_mode=='local'), 
+                                            filename=firstfilename )
+        # loop over the histogram types to take into account
+        for histname in histnames:
+            print('adding {}...'.format(histname))
+            # read the histograms from the csv file
+            filename = '../data/DF'+year+'_'+histname+'.csv'
+            if not os.path.exists(filename):
+                raise Exception('ERROR: the file {} does not seem to exist.'.format(filename))
+            df = csvu.read_csv( filename )
+            # in case of local training, we can remove most of the histograms
+            if( training_mode=='local' and self.remove_var.get()>0 ):
+                needed_runsls = {str(run): [[-1]] for run in needed_runs}
+                df = dfu.select_runsls( df, needed_runsls )
+            # add the histograms to the HistStuct 
+            self.histstruct.add_dataframe( df )
+        print('added {} lumisections with {} histograms each to the HistStruct.'.format(
+                len(self.histstruct.runnbs),len(self.histstruct.histnames)))
+    
+        # add default masks for DCS-bit on and golden json
+        # to do: make this more flexible with user options
+        #self.histstruct.add_dcsonjson_mask( 'dcson' )
+        #self.histstruct.add_goldenjson_mask('golden' )
+
+        # add training and target mask for local training
+        # to do: make this more flexible (e.g. choosing names)
+        if training_mode=='local':
+            json = {self.get_target_run(): [[-1]]}
+            self.histstruct.add_json_mask( 'target_run', json )
+            json = {run: [[-1]] for run in self.get_local_training_runs(firstfilename)}
+            self.histstruct.add_json_mask( 'local_training', json )
+
+        # add high statistics mask(s)
+        highstat_masks = self.get_highstat_masks()
+        for name, threshold in highstat_masks.items():
+            self.histstruct.add_highstat_mask( name, entries_to_bins_ratio=threshold )
+
+        # add run mask(s)
+        run_masks = self.get_run_masks()
+        for name, run in run_masks.items():
+            json = {run:[-1]}
+            self.histstruct.add_json_mask( name, json )
+
+        # close the window
+        self.destroy()
+        self.update()
+        print('done')
+
 
 class PlotSetsWindow(tk.Toplevel):
     ### popup window class for plotting the histograms in a histstruct
@@ -632,6 +865,10 @@ class FitWindow(tk.Toplevel):
                                     **plot_options_dict)
                 fitfunclist.append(fitfunc)
                 plt.show(block=False)
+            self.histstruct.fitfunclist = fitfunclist
+            self.histstruct.dimslist = dimslist
+            self.histstruct.fitting_scores = fitting_scores
+            # to do: same comment as below
         self.histstruct.fitfunc = fitter( fitting_scores, **fitter_options )
         # to do: extend HistStruct class to contain the fitfunc in a cleaner way!
         #        (or decide on another way to make this ad-hod attribute assignment more clean)
@@ -807,60 +1044,115 @@ class EvaluateWindow(tk.Toplevel):
         self.test_set_type_box_list = []
         self.test_set_selector_list = []
 
-        # add a button to add more test sets
-        self.add_button = tk.Button(self, text='Add', command=self.add_set)
-        self.add_button.grid(row=0, column=0)
+        # create a frame for the addition of test sets
+        self.test_set_frame = tk.Frame(self)
+        self.test_set_frame.grid(row=0, column=0, sticky='nsew')
+        set_frame_default_style( self.test_set_frame )
+        self.test_set_label = tk.Label(self.test_set_frame, text='Select test set')
+        self.test_set_label.grid(row=0, column=0)
 
-        # add one test set
-        self.add_set()
+         # create a frame for the test sets
+        self.test_set_container_frame = tk.Frame(self)
+        self.test_set_container_frame.grid(row=0, column=1, sticky='nsew')
+        set_frame_default_style( self.test_set_container_frame )
+        self.test_set_container_label = tk.Label(self.test_set_container_frame, text='Test sets')
+        self.test_set_container_label.grid(row=0, column=0)
+
+        # add a button to add more test sets
+        self.add_button = tk.Button(self.test_set_frame, text='Add test set', 
+                                    command=functools.partial(self.add_set, 
+                                                              self.test_set_container_frame))
+        self.add_button.grid(row=1, column=0)
+
+        # add one test set for type good and one for type bad
+        self.add_set( parent=self.test_set_container_frame, default_type='Good' )
+        self.add_set( parent=self.test_set_container_frame, default_type='Bad' )
+
+        # create frame for other options
+        self.evaluation_options_frame = tk.Frame(self)
+        self.evaluation_options_frame.grid(row=1, column=0, columnspan=2, sticky='nsew')
+        set_frame_default_style( self.evaluation_options_frame )
 
         # add widgets for score distribution
-        self.score_dist_options_label = tk.Label(self, text='Options for score plot')
-        self.score_dist_options_label.grid(row=3, column=0)
-        score_dist_default_options = ({'siglabel':'anomalous', 'sigcolor':'r', 
-                   'bcklabel':'good', 'bckcolor':'g', 
-                   'nbins':'200', 'normalize':'True',
-                   'xaxtitle':'negative logarithmic probability',
-                   'yaxtitle':'number of lumisections (normalized)'})
-        self.score_dist_options_frame = OptionsFrame(self, 
+        self.score_dist_options_label = tk.Label(self.evaluation_options_frame, 
+                                                 text='Options for score plot')
+        self.score_dist_options_label.grid(row=0, column=0)
+        score_dist_default_options = ({
+                    # options needed at this level
+                    'make score distribution':'True',
+                    # options passed down
+                    'siglabel':'anomalous', 'sigcolor':'r', 
+                    'bcklabel':'good', 'bckcolor':'g', 
+                    'nbins':'200', 'normalize':'True',
+                    'xaxtitle':'negative logarithmic probability',
+                    'yaxtitle':'number of lumisections (normalized)'})
+        self.score_dist_options_frame = OptionsFrame(self.evaluation_options_frame, 
                                             labels=score_dist_default_options.keys(),
                                             values=score_dist_default_options.values())
-        self.score_dist_options_frame.frame.grid(row=4, column=0)
+        self.score_dist_options_frame.frame.grid(row=1, column=0)
 
         # add widgets for roc curve
-        self.roc_options_label = tk.Label(self, text='Options for ROC curve')
-        self.roc_options_label.grid(row=3, column=1)
-        roc_default_options = ({'mode':'geom', 'doprint':'False'})
-        self.roc_options_frame = OptionsFrame(self,
+        self.roc_options_label = tk.Label(self.evaluation_options_frame, 
+                                          text='Options for ROC curve')
+        self.roc_options_label.grid(row=0, column=1)
+        roc_default_options = ({
+                    # options needed at this level
+                    'make ROC curve':'True',
+                    # options passed down
+                    'mode':'geom', 'doprint':'False'})
+        self.roc_options_frame = OptionsFrame(self.evaluation_options_frame,
                                             labels=roc_default_options.keys(),
                                             values=roc_default_options.values())
-        self.roc_options_frame.frame.grid(row=4, column=1)
+        self.roc_options_frame.frame.grid(row=1, column=1)
 
         # add widgets for confusion matrix
-        self.cm_options_label = tk.Label(self, text='Options for confusion matrix')
-        self.cm_options_label.grid(row=3, column=2)
-        cm_default_options = ({'wp':'50'})
-        self.cm_options_frame = OptionsFrame(self,
+        self.cm_options_label = tk.Label(self.evaluation_options_frame, 
+                                         text='Options for confusion matrix')
+        self.cm_options_label.grid(row=0, column=2)
+        cm_default_options = ({
+                    # options needed at this level
+                    'make confusion matrix': 'True',
+                    # options passed down
+                    'wp':'50'})
+        self.cm_options_frame = OptionsFrame(self.evaluation_options_frame,
                                             labels=cm_default_options.keys(),
                                             values=cm_default_options.values())
-        self.cm_options_frame.frame.grid(row=4, column=2)
+        self.cm_options_frame.frame.grid(row=1, column=2)
+
+        # add widgets for 2D contour plots
+        self.contour_options_label = tk.Label(self.evaluation_options_frame, 
+                                              text='Options for fit plots')
+        self.contour_options_label.grid(row=0, column=3)
+        contour_default_options = ({
+                        # options needed at this level
+                        'make fit plots':'False',
+                        'logprob':'True', 'clipprob':'True',
+                        'xlims':'60', 'ylims':'60',
+                        'onlypositive':'True', 'transparency':'0.5',
+                        'title':'density fit of lumisection MSE'})
+        self.contour_options_frame = OptionsFrame(self.evaluation_options_frame,
+                                            labels=contour_default_options.keys(),
+                                            values=contour_default_options.values())
+        self.contour_options_frame.frame.grid(row=1, column=3)
 
         # add a button to start the evaluation
         self.evaluate_button = tk.Button(self, text='Evaluate', command=self.evaluate)
-        self.evaluate_button.grid(row=5, column=0)
+        self.evaluate_button.grid(row=2, column=0)
 
-    def add_set(self):
+    def add_set(self, parent=None, default_type='Good'):
         ### add one test set
-        row = 1
+        if parent is None: parent = self
+        row = 0
         column = len(self.select_test_set_button_list)+1
         idx = len(self.select_test_set_button_list)
-        select_button = tk.Button(self, text='Select test set', 
+        select_button = tk.Button(parent, text='Select test set', 
                                     command=functools.partial(self.open_select_window,idx),
                                     bg='orange')
         select_button.grid(row=row, column=column)
         self.select_test_set_button_list.append( select_button )
-        type_box = ttk.Combobox(self, values=['Good','Bad'])
-        type_box.current(0)
+        type_box = ttk.Combobox(parent, values=['Good','Bad'])
+        if default_type=='Bad': type_box.current(1)
+        else: type_box.current(0)
         type_box.grid(row=row+1,column=column)
         self.test_set_type_box_list.append( type_box )
         self.test_set_selector_list.append( None )
@@ -874,6 +1166,15 @@ class EvaluateWindow(tk.Toplevel):
         if None in self.test_set_selector_list: return False
         else: return True
 
+    def get_scores(self, test_set_type):
+        scores = []
+        for i in range(len(self.test_set_selector_list)):
+            if self.test_set_type_box_list[i].get()!=test_set_type: continue
+            scores.append(self.test_set_selector_list[i].get_scores())
+        if len(scores)==0:
+            print('WARNING: there are no test sets with label {}'.format(test_set_type))
+        return scores
+
     def get_globalscores(self, test_set_type):
         globalscores = []
         for i in range(len(self.test_set_selector_list)):
@@ -886,6 +1187,8 @@ class EvaluateWindow(tk.Toplevel):
     def evaluate(self):
         if not self.check_all_selected():
             raise Exception('ERROR: some test sets were declared but not defined')
+        scores_good_parts = self.get_scores('Good')
+        scores_bad_parts = self.get_scores('Bad')
         globalscores_good_parts = self.get_globalscores('Good')
         globalscores_good = np.concatenate(tuple(globalscores_good_parts))
         globalscores_bad_parts = self.get_globalscores('Bad')
@@ -897,10 +1200,48 @@ class EvaluateWindow(tk.Toplevel):
         scores = np.concatenate(tuple([-globalscores_good,-globalscores_bad]))
         scores = aeu.clip_scores( scores )
 
-        pu.plot_score_dist(scores, labels, **self.score_dist_options_frame.get_dict())
-        auc = aeu.get_roc(scores, labels, **self.roc_options_frame.get_dict())
-        aeu.get_confusion_matrix(scores,labels, **self.cm_options_frame.get_dict())
+        score_dist_options = self.score_dist_options_frame.get_dict()
+        do_score_dist = score_dist_options.pop('make score distribution')
+        if do_score_dist: pu.plot_score_dist(scores, labels, **score_dist_options)
+        roc_options = self.roc_options_frame.get_dict()
+        do_roc = roc_options.pop('make ROC curve')
+        if do_roc: auc = aeu.get_roc(scores, labels, **roc_options)
+        cm_options = self.cm_options_frame.get_dict()
+        do_cm = cm_options.pop('make confusion matrix')
+        if do_cm: aeu.get_confusion_matrix(scores,labels, **cm_options)
         plt.show(block=False)
+        contour_options = self.contour_options_frame.get_dict()
+        do_contour = contour_options.pop('make fit plots')
+        if do_contour:
+            if( not hasattr(self.histstruct,'fitfunclist')
+                or not hasattr(self.histstruct,'dimslist') ):
+                print('ERROR: cannot make contour plots with test data overlaid'
+                        +' as they were not initialized for the training set.')
+            badcolorlist = (['red','lightcoral','firebrick','chocolate',
+                             'fuchsia','orange','purple'])
+            goodcolorlist = ['blue']
+            if len(badcolorlist)<len(scores_bad_parts):
+                print('WARNING: too many bad test sets for available colors, putting all to red')
+                badcolorist = ['red']*len(scores_bad_parts)
+            if len(goodcolorlist)<len(scores_good_parts):
+                print('WARNING: too many good test sets for available colors, putting all to blue')
+                goodcolorist = ['blue']*len(scores_good_parts)
+
+            for dims,partialfitfunc in zip(self.histstruct.dimslist,self.histstruct.fitfunclist):
+                fig,ax = pu.plot_fit_2d(self.histstruct.fitting_scores, fitfunc=partialfitfunc, 
+                    xaxtitle=self.histstruct.histnames[dims[0]],
+                    yaxtitle=self.histstruct.histnames[dims[1]],
+                    onlycontour=True,
+                    **contour_options)
+                for j in range(len(scores_bad_parts)):
+                    ax.plot(    scores_bad_parts[j][self.histstruct.histnames[dims[0]]],
+                                scores_bad_parts[j][self.histstruct.histnames[dims[1]]],
+                                '.',color=badcolorlist[j],markersize=4)
+                for j in range(len(scores_good_parts)): 
+                    ax.plot(    scores_good_parts[j][self.histstruct.histnames[dims[0]]],
+                                scores_good_parts[j][self.histstruct.histnames[dims[1]]],
+                                '.',color=goodcolorlist[j],markersize=4)
+            plt.show(block=False)
 
 class ApplyClassifiersWindow(tk.Toplevel):
     ### popup window class for evaluating the classifiers 
@@ -1111,6 +1452,18 @@ class ML4DQMGUI:
         self.button_frames = []
         self.all_frames = []
 
+        # add widgets for creating a new histstruct
+        self.newhs_frame = tk.Frame(master)
+        self.newhs_label = tk.Label(self.newhs_frame, text='HistStruct creation')
+        self.newhs_label.grid(row=0, column=0)
+        self.newhs_button = tk.Button(self.newhs_frame, text='New', 
+                                        command=self.open_new_histstruct_window)
+        self.newhs_button.grid(row=1, column=0)
+        # add the frame to the window
+        self.newhs_frame.grid(row=0, column=0, sticky='nsew')
+        self.button_frames.append(self.newhs_frame)
+        self.all_frames.append(self.newhs_frame)
+
         # add widgets for loading and saving a HistStruct
         self.iobutton_frame = tk.Frame(master)
         self.iobutton_label = tk.Label(self.iobutton_frame, text='HistStruct I/O')
@@ -1129,7 +1482,7 @@ class ML4DQMGUI:
                                                 command=self.update_histstruct_info)
         self.update_histstruct_info_button.grid(row=4, column=0)
         # add the frame to the window
-        self.iobutton_frame.grid(row=0, column=0, sticky='nsew')
+        self.iobutton_frame.grid(row=1, column=0, sticky='nsew')
         self.button_frames.append(self.iobutton_frame)
         self.all_frames.append(self.iobutton_frame)
 
@@ -1142,7 +1495,7 @@ class ML4DQMGUI:
         self.plot_sets_button.grid(row=1, column=0)
         # to do: add button and functionality for plotting runs/lumisections
         # add the frame to the window
-        self.plotbutton_frame.grid(row=1, column=0, sticky='nsew')
+        self.plotbutton_frame.grid(row=2, column=0, sticky='nsew')
         self.button_frames.append(self.plotbutton_frame)
         self.all_frames.append(self.plotbutton_frame)
 
@@ -1154,7 +1507,7 @@ class ML4DQMGUI:
                                     command=self.open_resample_window)
         self.resample_button.grid(row=1, column=0)
         # add the frame to the window
-        self.resampling_frame.grid(row=2, column=0, sticky='nsew')
+        self.resampling_frame.grid(row=3, column=0, sticky='nsew')
         self.button_frames.append(self.resampling_frame)
         self.all_frames.append(self.resampling_frame)
 
@@ -1183,7 +1536,7 @@ class ML4DQMGUI:
                                                 command=self.open_plot_lumisection_window)
         self.plot_lumisection_button.grid(row=6, column=0)
         # add the frame to the window
-        self.model_frame.grid(row=3, column=0, sticky='nsew')
+        self.model_frame.grid(row=4, column=0, sticky='nsew')
         self.button_frames.append(self.model_frame)
         self.all_frames.append(self.model_frame)
 
@@ -1291,6 +1644,11 @@ class ML4DQMGUI:
             return
         # save the histstruct
         self.histstruct.save( filename )
+
+    def open_new_histstruct_window(self):
+        self.histstruct = HistStruct.HistStruct()
+        _ = NewHistStructWindow(self.master, self.histstruct)
+        return
 
     def open_plot_sets_window(self):
         if not self.histstruct:
