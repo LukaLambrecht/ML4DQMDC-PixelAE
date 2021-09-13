@@ -1,14 +1,16 @@
 # to do:
 # - see to do's in the code
 # - add functionality for plotting the contours with the test sets
-# - add functionality for plotting single runs/lumisections
 # - continue making styling more uniform (e.g. everything in a Frame)
+# - add functionality for making the initial HistStruct through the GUI
+# - add functionality to define the classifiers through the GUI
 
 # external modules
 
 print('importing external modules...')
 print('  import os'); import os
 print('  import sys'); import sys
+print('  import math'); import math
 print('  import pandas as pd'); import pandas as pd
 print('  import numpy as np'); import numpy as np
 print('  import matplotlib.pyplot as plt'); import matplotlib.pyplot as plt
@@ -964,6 +966,137 @@ class ApplyFitWindow(ApplyClassifiersWindow):
         self.update()
         print('done')
 
+class PlotLumisectionWindow(tk.Toplevel):
+    ### popup window class for plotting a run/lumisection
+
+    def __init__(self, master, histstruct):
+        super().__init__(master)
+        self.title('Lumisection plotting')
+        self.histstruct = histstruct
+        self.inspect_set_selector = None
+        self.ref_set_selector = None
+
+        # create a frame for the buttons
+        self.buttons_frame = tk.Frame(self)
+        self.buttons_frame.grid(row=0, column=0, sticky='nsew')
+        set_frame_default_style( self.buttons_frame )
+
+        # add widgets with options
+        options = {'mode':'ls', 'run': '', 'lumisection':'', 'plot score':'False',
+                    'reco mode':'auto'}
+        self.options_frame = OptionsFrame(self.buttons_frame, 
+                                labels=options.keys(), values=options.values())
+        self.options_frame.frame.grid(row=0, column=0, sticky='nsew')
+        self.plot_button = tk.Button(self.buttons_frame, text='Plot', command=self.plot)
+        self.plot_button.grid(row=1, column=0)
+
+        # add widgets for selecting inspect datasets
+        self.inspect_set_frame = tk.Frame(self)
+        self.inspect_set_frame.grid(row=0, column=1, sticky='nsew')
+        set_frame_default_style( self.inspect_set_frame )
+        self.inspect_set_label = tk.Label(self.inspect_set_frame, text='Select masks for plotting')
+        self.inspect_set_label.grid(row=0, column=0)
+        self.inspect_set_button = tk.Button(self.inspect_set_frame, text='Select masks',
+                                            command=self.open_select_inspect_set_window,
+                                            bg='orange')
+        self.inspect_set_button.grid(row=1, column=0)
+
+        # add widgets for selecting reference datasets
+        self.ref_set_frame = tk.Frame(self)
+        self.ref_set_frame.grid(row=0, column=2, sticky='nsew')
+        set_frame_default_style( self.ref_set_frame )
+        self.ref_set_label = tk.Label(self.ref_set_frame, text='Choose reference dataset')
+        self.ref_set_label.grid(row=0, column=0)
+        self.ref_set_button = tk.Button(self.ref_set_frame, text='Select dataset',
+                                            command=self.open_select_ref_set_window,
+                                            bg='orange')
+        self.ref_set_button.grid(row=1, column=0)
+        options = {'partitions':'-1'}
+        self.ref_set_options_frame = OptionsFrame(self.ref_set_frame,
+                                    labels=options.keys(), values=options.values())
+        self.ref_set_options_frame.frame.grid(row=2, column=0)
+
+    def open_select_inspect_set_window(self):
+        self.inspect_set_selector = SelectorWindow(self.master, self.histstruct, 
+                                                    only_mask_selection=True)
+        self.inspect_set_button['bg'] = 'green'
+
+    def open_select_ref_set_window(self):
+        self.ref_set_selector = SelectorWindow(self.master, self.histstruct)
+        self.ref_set_button['bg'] = 'green'
+
+    def get_reference_histograms(self):
+        if self.ref_set_selector is None: return None
+        histograms = self.ref_set_selector.histograms
+        if histograms is None: return None
+        partitions = self.ref_set_options_frame.get_dict()['partitions']
+        if partitions<0: return histograms
+        for histname in histograms.keys():
+            histograms[histname] = hu.averagehists( histograms[histname], partitions )
+        return histograms
+
+    def get_inspect_masks(self):
+        if self.inspect_set_selector is None: return None
+        masks = self.inspect_set_selector.masks
+        return masks
+
+    def plot(self):
+
+        # get the correct options depending on the mode
+        options = self.options_frame.get_dict()
+        runnb = options['run']
+        recomode = options['reco mode']
+        plotscore = options['plot score']
+        if options['mode']=='ls':
+            lsnbs = [options['lumisection']]
+        elif options['mode']=='run':
+            runnbs = self.histstruct.get_runnbs( masknames=self.get_inspect_masks() )
+            lsnbs = self.histstruct.get_lsnbs( masknames=self.get_inspect_masks() )
+            runsel = np.where(runnbs==runnb)
+            lsnbs = lsnbs[runsel]
+            plotscore = False # disable for now for mode==run,
+                              # maybe enable later.
+            print('plotting {} lumisections...'.format(len(lsnbs)))
+        else: raise Exception('ERROR: option mode = {} not recognized;'.format(options['mode'])
+                                +' should be either "run" or "ls".')
+
+        # get the reference histograms
+        refhists = self.get_reference_histograms()
+
+        # run over lumisections to plot
+        for i, lsnb in enumerate(lsnbs):
+            # only for quick testing:
+            if i>4: 
+                print('WARNING: plotting loop closed after 5 iterations for testing')
+                break
+            fig,ax = self.histstruct.plot_ls(runnb, lsnb, recohist=recomode, refhists=refhists )
+            plt.show(block=False)
+            scorepoint = self.histstruct.get_scores_ls( runnb, lsnb )
+            logprob = self.histstruct.get_globalscore_ls( runnb, lsnb )
+            print('-------------')
+            print('scores:')
+            for histname in self.histstruct.histnames: 
+                print('{} : {}'.format(histname,scorepoint[histname]))
+            print('-------------')
+            print('logprob: '+str(logprob))
+
+            if plotscore:
+                ncols = min(4,len(self.histstruct.histnames))
+                nrows = int(math.ceil(len(self.histstruct.histnames)/ncols))
+                fig,axs = plt.subplots(nrows,ncols,figsize=(6*ncols,6*nrows),squeeze=False)
+                for dim,histname in enumerate(self.histstruct.histnames):
+                    scores = self.histstruct.get_scores( histname=histname, 
+                                                     masknames=self.get_inspect_masks() )
+                    nscores = len(scores)
+                    labels = np.zeros(nscores)
+                    scores = np.concatenate((scores,np.ones(int(nscores/15))*scorepoint[histname]))
+                    labels = np.concatenate((labels,np.ones(int(nscores/15))))
+                    pu.plot_score_dist( scores, labels, fig=fig, ax=axs[int(dim/ncols),dim%ncols], 
+                            nbins=200, normalize=False,
+                            siglabel='this lumisection', bcklabel='all (masked) lumisections',
+                            title=histname )
+                plt.show(block=False)
+
 
 class ML4DQMGUI:
 
@@ -1046,6 +1179,9 @@ class ML4DQMGUI:
         self.evaluate_button = tk.Button(self.model_frame, text='Evaluate model',
                                                 command=self.open_evaluate_window)
         self.evaluate_button.grid(row=5, column=0)
+        self.plot_lumisection_button = tk.Button(self.model_frame, text='Plot lumisection',
+                                                command=self.open_plot_lumisection_window)
+        self.plot_lumisection_button.grid(row=6, column=0)
         # add the frame to the window
         self.model_frame.grid(row=3, column=0, sticky='nsew')
         self.button_frames.append(self.model_frame)
@@ -1210,6 +1346,13 @@ class ML4DQMGUI:
             print('ERROR: need to load a HistStruct first')
             return
         _ = ApplyFitWindow(self.master, self.histstruct)
+        return
+
+    def open_plot_lumisection_window(self):
+        if not self.histstruct:
+            print('ERROR: need to load a HistStruct first')
+            return
+        _ = PlotLumisectionWindow(self.master, self.histstruct)
         return
 
 

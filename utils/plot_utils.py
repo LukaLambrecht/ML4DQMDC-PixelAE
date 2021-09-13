@@ -327,7 +327,7 @@ def plot_mse(mse, rmlargest=0., doplot=True,
     return (obj1,obj2)
 
 
-def plot_score_dist( scores, labels, nbins=20, normalize=False,
+def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False,
                         siglabel='signal', sigcolor='g',
                         bcklabel='background', bckcolor='r',
                         title=None, xaxtitle=None, yaxtitle=None):
@@ -343,7 +343,8 @@ def plot_score_dist( scores, labels, nbins=20, normalize=False,
     if normalize:
         sighist = sighist/np.sum(sighist)
         bckhist = bckhist/np.sum(bckhist)
-    (fig,ax) = plt.subplots()
+    if( fig is None or ax is None ):
+        (fig,ax) = plt.subplots()
     ax.step(scoreax,sighist,color=sigcolor,label=siglabel,where='mid')
     ax.step(scoreax,bckhist,color=bckcolor,label=bcklabel,where='mid')
     ax.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
