@@ -2,8 +2,6 @@
 # - see to do's in the code
 # - fix issue with histstruct saving
 # - continue making styling more uniform (e.g. everything in a Frame)
-# - add functionality for making the initial HistStruct through the GUI
-#   -> started and first version seems to work, check more extensively later
 # - add functionality to define the classifiers through the GUI
 
 # external modules
@@ -343,8 +341,12 @@ class NewHistStructWindow(tk.Toplevel):
         target_run = self.get_target_run()
         ntraining = int(self.ntraining_text.get(1.0, tk.END).strip(' \t\n'))
         offset = int(self.offset_text.get(1.0, tk.END).strip(' \t\n'))
-        #runs = dfu.get_runs( dfu.select_dcson( csvu.read_csv( filename ) ) )
-        # for testing (no json available):
+        try:
+            runs = dfu.get_runs( dfu.select_dcson( csvu.read_csv( filename ) ) )
+        except:
+            print('WARNING in get_local_training_runs: could not filter runs by DCS-on.'
+                    +' Check access to the DCS-on json file.')
+            runs = dfu.get_runs( csvu.read_csv( filename ) )
         runs = dfu.get_runs( csvu.read_csv( filename ) )
         target_run_index = runs.index(target_run)
         training_runs = runs[target_run_index-ntraining-offset:target_run_index-offset]
@@ -415,9 +417,12 @@ class NewHistStructWindow(tk.Toplevel):
         histnames = self.get_histnames()
         year = self.year_box.get()
         training_mode = self.training_mode_box.get()
-        print(histnames)
-        print(year)
-        print(training_mode)
+        print('creating a new HistStruct...')
+        print('found following settings:')
+        print('  - histogram names: {}'.format(histnames))
+        print('  - year: {}'.format(year))
+        print('  - training mode: {}'.format(training_mode))
+        print('finding all available runs...')
         # get a comprehensive set of all explicitly needed runs (for throwing away the rest)
         firstfilename = '../data/DF'+year+'_'+histnames[0]+'.csv'
         needed_runs = self.get_needed_runs( is_local=(training_mode=='local'), 
@@ -441,28 +446,92 @@ class NewHistStructWindow(tk.Toplevel):
     
         # add default masks for DCS-bit on and golden json
         # to do: make this more flexible with user options
-        #self.histstruct.add_dcsonjson_mask( 'dcson' )
-        #self.histstruct.add_goldenjson_mask('golden' )
+        print('adding default DCS-on and golden json masks...')
+        try: self.histstruct.add_dcsonjson_mask( 'dcson' )
+        except: print('WARNING: could not add a mask for DCS-on data.'
+                      +' Check access to DCS-on json file.')
+        try: self.histstruct.add_goldenjson_mask( 'golden' )
+        except: print('WARNING: could not add a mask for golden data.'
+                        +' Check access to golden json file.')
 
         # add training and target mask for local training
         # to do: make this more flexible (e.g. choosing names)
         if training_mode=='local':
-            json = {self.get_target_run(): [[-1]]}
+            print('adding masks for target run and local training runs...')
+            json = {str(self.get_target_run()): [[-1]]}
             self.histstruct.add_json_mask( 'target_run', json )
-            json = {run: [[-1]] for run in self.get_local_training_runs(firstfilename)}
+            json = {str(run): [[-1]] for run in self.get_local_training_runs(firstfilename)}
             self.histstruct.add_json_mask( 'local_training', json )
 
         # add high statistics mask(s)
         highstat_masks = self.get_highstat_masks()
         for name, threshold in highstat_masks.items():
+            print('adding mask "{}"'.format(name))
             self.histstruct.add_highstat_mask( name, entries_to_bins_ratio=threshold )
 
         # add run mask(s)
         run_masks = self.get_run_masks()
         for name, run in run_masks.items():
-            json = {run:[-1]}
+            print('adding mask "{}"'.format(name))
+            json = {str(run):[[-1]]}
             self.histstruct.add_json_mask( name, json )
 
+        # close the window
+        self.destroy()
+        self.update()
+        print('done creating HistStruct.')
+
+
+class AddClassifiersWindow(tk.Toplevel):
+    ### popup window class for adding classifiers to a histstruct
+    # note: preliminary version, where the user just inputs python code in a text widget.
+    #       probably not 'safe', to check later.
+    
+    def __init__(self, master, histstruct):
+        super().__init__(master=master)
+        self.title('Add classifiers')
+        self.histstruct = histstruct
+        
+        # create a frame for the code
+        self.code_frame = tk.Frame(self)
+        set_frame_default_style( self.code_frame )
+        self.code_frame.grid(row=0, column=0, sticky='nsew')
+        label_text = 'Write code for adding classifiers to the HistStruct'
+        tk.Label(self.code_frame, text=label_text).grid(row=0, column=0)
+        info_text = 'Tips:\n'
+        info_text += '\t- The current HistStruct object is available as "histstruct".\n'
+        info_text += '\t- See the documentation for src/HistStruct on how to add classifiers.\n'
+        info_text += '\t- See the documentation for src/classifiers on the available classifers.\n'
+        tk.Label(self.code_frame, text=info_text, justify=tk.LEFT).grid(row=1, column=0)
+        tk.Label(self.code_frame, text='Example:').grid(row=2, column=0)
+        example_text = 'for histname in histstruct.histnames\n:'
+        example_text += '\tinput_size = histstruct.get_histograms( histname=histname ).shape[1]\n'
+        example_text += '\tarch = [int(input_size/2.)]\n'
+        example_text += '\tmodel = aeu.getautoencoder(input_size, arch)\n'
+        example_text += '\tclassifier = AutoEncoder.AutoEncoder( model=model )\n'
+        example_text += '\thiststruct.add_classifier(histname, classifier)\n'
+        tk.Label(self.code_frame, text=example_text, justify=tk.LEFT).grid(row=3, column=0)
+
+        # add a text widget for the code
+        self.code_text = ScrolledTextFrame(self.code_frame, txtheight=15, txtwidth=50)
+        self.code_text.frame.grid(row=4, column=0)
+
+        # add a button to evaluate the code
+        self.run_code_button = tk.Button(self, text='Run code', command=self.run_code)
+        self.run_code_button.grid(row=2, column=0)
+
+    def get_code_text(self):
+        codestr = self.code_text.widget.get(1.0, tk.END)
+        return codestr
+
+    def run_code(self):
+        codestr = self.get_code_text()
+        codestr = codestr.replace('histstruct','self.histstruct')
+        if( '__' in codestr
+            or 'system' in codestr):
+            print('WARNING: code not executed as it contains suspicious content.')
+            return
+        exec(codestr)
         # close the window
         self.destroy()
         self.update()
@@ -1459,6 +1528,9 @@ class ML4DQMGUI:
         self.newhs_button = tk.Button(self.newhs_frame, text='New', 
                                         command=self.open_new_histstruct_window)
         self.newhs_button.grid(row=1, column=0)
+        self.addclassifiers_button = tk.Button(self.newhs_frame, text='Add classifiers',
+                                        command=self.open_add_classifiers_window)
+        self.addclassifiers_button.grid(row=2, column=0)
         # add the frame to the window
         self.newhs_frame.grid(row=0, column=0, sticky='nsew')
         self.button_frames.append(self.newhs_frame)
@@ -1605,7 +1677,8 @@ class ML4DQMGUI:
 
     def update_histstruct_info(self):
         self.clear_histstruct_info()
-        self.histstruct_filename_text.widget.insert(tk.INSERT, self.histstruct_filename)
+        filename = self.histstruct_filename if self.histstruct_filename is not None else '[None]'
+        self.histstruct_filename_text.widget.insert(tk.INSERT, filename)
         masknames = self.histstruct.get_masknames()
         if len(masknames)>0: 
             self.histstruct_masknames_text.widget.insert(tk.INSERT, '\n'.join(masknames))
@@ -1648,6 +1721,13 @@ class ML4DQMGUI:
     def open_new_histstruct_window(self):
         self.histstruct = HistStruct.HistStruct()
         _ = NewHistStructWindow(self.master, self.histstruct)
+        return
+
+    def open_add_classifiers_window(self):
+        if not self.histstruct:
+            print('ERROR: need to load a HistStruct first')
+            return
+        _ = AddClassifiersWindow(self.master, self.histstruct)
         return
 
     def open_plot_sets_window(self):
