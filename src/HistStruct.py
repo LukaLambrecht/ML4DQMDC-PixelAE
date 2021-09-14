@@ -134,14 +134,15 @@ class HistStruct(object):
         pklpath = os.path.splitext(path)[0]+'.pkl'
         zippath = os.path.splitext(path)[0]+'.zip'
         cpath = os.path.splitext(path)[0]+'_classifiers_storage'
-        zipcontents = []
+        rootpath = os.path.dirname(path)
+        zipcontents = {}
         if( len(self.classifiers.keys())==0 or not save_classifiers ):
             classifiers = dict(self.classifiers)
             self.classifiers = {}
             with open(pklpath,'wb') as f:
                 pickle.dump(self,f)
             self.classifiers = classifiers
-            zipcontents.append(pklpath)
+            zipcontents[pklpath] = os.path.relpath(pklpath, start=rootpath)
         else:
             # save the classifiers and store the types in the HistStruct
             self.classifier_types = {}
@@ -153,18 +154,19 @@ class HistStruct(object):
             # get all files to store in the zip file
             for root, dirs, files in os.walk(cpath):
                 for name in files:
-                    zipcontents.append(os.path.join(root, name))
+                    thispath = os.path.join(root, name)
+                    zipcontents[thispath] = os.path.relpath(thispath, start=rootpath)
             # remove the classifiers and pickle the rest
             self.classifiers = {}
             with open(pklpath,'wb') as f:
                 pickle.dump(self,f)
-            zipcontents.append(pklpath)
+            zipcontents[pklpath] = os.path.relpath(pklpath, start=rootpath)
             # restore the classifiers
             for histname in self.classifier_histnames:
                 self.classifiers[histname] = self.classifier_types[histname].load( os.path.join(cpath,histname) )
         # put everything in a zip file
         with zipfile.ZipFile( zippath, 'w' ) as zipf:
-            for f in zipcontents: zipf.write(f)
+            for f, fname in zipcontents.items(): zipf.write(f, fname)
         # remove individual files
         for f in zipcontents: os.system('rm {}'.format(f))
         if os.path.exists(cpath): os.system('rm -r {}'.format(cpath))
