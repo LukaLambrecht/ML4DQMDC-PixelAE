@@ -216,6 +216,7 @@ def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True,
         if auc>0.99:
             auctext = '1 - '+'{:.3e}'.format(1-auc)
         ax.text(0.7,0.1,'AUC: '+auctext,transform=ax.transAxes)
+        plt.show()
         
     else:
         print('ERROR: mode not recognized: '+str(mode))
@@ -311,7 +312,9 @@ def getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10):
     autoencoder.summary()
     return autoencoder
 
-def train_simple_autoencoder(hists,nepochs=-1,modelname=''):
+def train_simple_autoencoder(hists, nepochs=-1, modelname='', 
+                             batch_size=500, shuffle=False, 
+                             verbose=1, validation_split=0.1):
     ### create and train a very simple keras model
     # the model consists of one hidden layer (with half as many units as there are input bins), tanh activation, adam optimizer and mseTop10 loss.
     # input args: 
@@ -325,7 +328,9 @@ def train_simple_autoencoder(hists,nepochs=-1,modelname=''):
     loss = mseTop10
     if nepochs<0: nepochs = int(min(40,len(hists)/400))
     model = getautoencoder(input_size,arch,act=act,opt=opt,loss=loss)
-    history = model.fit(hists, hists, epochs=nepochs, batch_size=500, shuffle=False, verbose=1, validation_split=0.1)
+    history = model.fit(hists, hists, epochs=nepochs, batch_size=batch_size, 
+                        shuffle=shuffle, verbose=verbose, 
+                        validation_split=validation_split)
     plot_utils.plot_loss(history)
     if len(modelname)>0: model.save(modelname.split('.')[0]+'.h5')
     return model
