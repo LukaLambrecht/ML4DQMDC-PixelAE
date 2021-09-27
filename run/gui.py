@@ -1,8 +1,7 @@
 # to do:
 # - see to do's in the code
-# - fix issue with histstruct saving
 # - continue making styling more uniform (e.g. everything in a Frame)
-# - add functionality to define the classifiers through the GUI
+# - find a solution for json file access that works from anywhere
 
 # external modules
 
@@ -71,11 +70,12 @@ def get_resampling_function( key=None ):
 
 def get_fitter_class( key=None ):
     
-    allowed = ['GaussianKdeFitter']
+    allowed = ['GaussianKdeFitter', 'SeminormalFitter']
     if key is None: return allowed
 
     key = key.strip(' \t\n')
     if key=='GaussianKdeFitter': return GaussianKdeFitter.GaussianKdeFitter
+    if key=='SeminormalFitter': return SeminormalFitter.SeminormalFitter
     else:
         raise Exception('ERROR: fitter class {} not recognized'.format(key))
 
@@ -341,12 +341,12 @@ class NewHistStructWindow(tk.Toplevel):
         target_run = self.get_target_run()
         ntraining = int(self.ntraining_text.get(1.0, tk.END).strip(' \t\n'))
         offset = int(self.offset_text.get(1.0, tk.END).strip(' \t\n'))
-        try:
-            runs = dfu.get_runs( dfu.select_dcson( csvu.read_csv( filename ) ) )
-        except:
-            print('WARNING in get_local_training_runs: could not filter runs by DCS-on.'
-                    +' Check access to the DCS-on json file.')
-            runs = dfu.get_runs( csvu.read_csv( filename ) )
+        #try:
+        runs = dfu.get_runs( dfu.select_dcson( csvu.read_csv( filename ) ) )
+        #except:
+        #    print('WARNING in get_local_training_runs: could not filter runs by DCS-on.'
+        #            +' Check access to the DCS-on json file.')
+        #    runs = dfu.get_runs( csvu.read_csv( filename ) )
         runs = dfu.get_runs( csvu.read_csv( filename ) )
         target_run_index = runs.index(target_run)
         training_runs = runs[target_run_index-ntraining-offset:target_run_index-offset]
