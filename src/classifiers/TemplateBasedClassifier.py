@@ -99,7 +99,7 @@ class TemplateBasedClassifier(HistogramClassifier):
         ### 'train' the classifier, i.e. set the templates (reference histograms)
         # input arguments:
         # - templates: a 2D numpy array of shape (nhistograms,nbins)
-        super(TemplateBasedClassifier,self).evaluate( histograms )
+        super(TemplateBasedClassifier,self).train( templates )
         self.templates = templates
         
     def evaluate( self, histograms ):

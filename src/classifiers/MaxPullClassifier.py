@@ -53,12 +53,17 @@ class MaxPullClassifier(HistogramClassifier):
     # specifically intended for 2D histograms, but should in principle work for 1D as well.
     # see static function pull (above) for definition of bin-per-bin pull and other notes.
     
-    def __init__( self, n=1 ):
+    def __init__( self, nmaxpulls=1 ):
         ### initializer
         # input arguments:
-        # - n: number of largest pull values to average over (default: 1, just take single maximum)
+        # - nmaxpulls: number of largest pull values to average over 
+        #   (default: 1, just take single maximum)
         super( MaxPullClassifier,self ).__init__()
-        self.n = n
+        self.n = nmaxpulls
+        
+    def set_nmaxpulls( self, nmaxpulls ):
+        ### set the nmaxpulls parameter (see also initializer)
+        self.n = nmaxpulls
         
     def train( self, refhist ):
         ### 'train' the classifier, i.e. set the reference histogram.

@@ -325,7 +325,7 @@ class HistStruct(object):
         self.extglobalscores[extname] = globalscores
             
         
-    def add_exthistograms( self, extname, histname, histograms ):
+    def add_exthistograms( self, extname, histname, histograms, overwrite=False ):
         ### add a set of extra histograms to a HistStruct
         # these histograms are not assumed to correspond to physical run/lumisections numbers (e.g. resampled ones),
         # and no consistency checks are done
@@ -333,10 +333,12 @@ class HistStruct(object):
         # - extname: name of the extra histogram set (you can add multiple, e.g. resampled_good, resampled_bad and/or resampled_training)
         # - histname: name of the histogram type
         # - histograms: a numpy array of shape (nhistograms,nbins)
+        # - overwrite: boolean whether to overwrite a set of histograms of the same name if present (default: raise exception)
         if extname in self.exthistograms.keys():
             if histname in self.exthistograms[extname].keys():
-                raise Exception('ERROR in HistStruct.add_exthistograms: histogram name is {}'.format(histname)
-                               +' but this is already present in the set of extra histogram with name {}'.format(extname))
+                if not overwrite:
+                    raise Exception('ERROR in HistStruct.add_exthistograms: histogram name is {}'.format(histname)
+                                   +' but this is already present in the set of extra histogram with name {}'.format(extname))
         else: 
             self.exthistograms[extname] = {}
             self.extscores[extname] = {}
@@ -484,6 +486,16 @@ class HistStruct(object):
         if histname is None: return res
         return res[histname]
     
+    def get_scores_array( self, masknames=None ):
+        ### similar to get_scores, but with different return type:
+        # np array of shape (nhistograms, nhistogramtypes)
+        scores = self.get_scores( masknames=masknames )
+        scores_array = []
+        for histname in self.histnames:
+            scores_array.append(scores[histname])
+        scores_array = np.transpose(np.array(scores_array))
+        return scores_array
+    
     def get_extscores( self, extname, histname=None ):
         ### get the array of scores for a given histogram type in a given extra set.
         # input arguments:
@@ -513,6 +525,16 @@ class HistStruct(object):
             res[hname] = self.extscores[extname][hname]
         if histname is None: return res
         return res[histname]
+    
+    def get_extscores_array( self, extname ):
+        ### similar to get_extscores, but with different return type:
+        # np array of shape (nhistograms, nhistogramtypes)
+        scores = self.get_extscores( extname )
+        scores_array = []
+        for histname in self.histnames:
+            scores_array.append(scores[histname])
+        scores_array = np.transpose(np.array(scores_array))
+        return scores_array
     
     def get_scores_ls( self, runnb, lsnb, histnames=None, suppresswarnings=False ):
         ### get the scores for a given run/lumisection number and for given histogram names

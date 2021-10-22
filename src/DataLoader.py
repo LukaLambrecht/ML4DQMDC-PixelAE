@@ -133,7 +133,7 @@ class DataLoader(object):
         ### load histograms from a given file
         if not os.path.exists( csvfile ):
             raise Exception('ERROR in DataLoader.get_histograms_from_file:'
-                           +' the requested file {}'.format(csvile)
+                           +' the requested file {}'.format(csvfile)
                            +' does not seem to exist.')
         df = csvu.read_csv(csvfile)
         if len(histnames)>0: df = dfu.select_histnames(df, histnames)
@@ -146,7 +146,7 @@ class DataLoader(object):
         for csvfile in csvfiles:
             if not os.path.exists( csvfile ):
                 raise Exception('ERROR in DataLoader.get_histograms_from_file:'
-                           +' the requested file {}'.format(csvile)
+                           +' the requested file {}'.format(csvfile)
                            +' does not seem to exist.')
         df = csvu.read_and_merge_csv( csvfiles, histnames=histnames )
         return df

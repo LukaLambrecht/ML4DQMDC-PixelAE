@@ -1,19 +1,27 @@
 # Some utilities and example notebooks for ML4DQM/DC
   
 This repository contains example code for the ML4DQM/DC project.  
-It was developed with the idea of training autoencoders on the per-lumisection histograms stored in dedicated DQMIO files in order to (partially) automate the DQM and/or DC process. In the future, this repository is intended to be generally useful for any ML4DQM/DC study (i.e. any subsystem, any type of histogram, any classification method), but for historical reasons it is at this moment focused on the following subtopics:  
+It was developed with the idea of training autoencoders on the per-lumisection histograms stored in dedicated DQMIO files in order to (partially) automate the DQM and/or DC process. However, it is intended to be generally useful for any ML4DQM/DC study (i.e. any subsystem, any type of histogram, any classification method).  
 
-- some 1D histograms related to the status of the pixel tracker.  
-  (support for 2D histograms is being added, currently loading the dataframes, getting numpy arrays of histograms and some plotting methods are implemented, see specifically the tutorial plot\_histograms\_2d.ipynb)  
-- using an autoencoder as classification algorithm, i.e. looking at the mean-squared-error between a histogram and its reconstruction as a measure for anomality.  
-  (support for other algorithms is in principle present, one just needs to define a class deriving from src/classifiers/HistogramClassifier. See some basic examples in src/classifiers based on an autoencoder or on a direct comparison with reference histograms. See also the tutorial autoencoder\_combine.ipynb and template\_combine.ipynb for example usage. Planned to be extended, especially for 2D histograms.)  
+In more detail:  
+
+- The framework has been developed based on a number of 1D histograms related to the status of the pixel tracker. Support for 2D histograms was added later and tested preliminarily, but some parts of the code may not yet support them. Please feel free to contact me if you notice a place in the code where this is the case.
+- Likewise, most of the development effort went into using an autoencoder as classification algorithm, i.e. looking at the mean-squared-difference between a histogram and its reconstruction as a measure for anomality. Support for other algorithms is also present, one just needs to define a class deriving from src/classifiers/HistogramClassifier. Working examples for NMF, PCA and a couple of other classifiers are present in the tutorials.
 
 ### Structure of this repository:  
-There are three important directories: tutorials, utils and src.  
+There are five important directories: tutorials, utils, src, run and omsapi.  
+The other directories in the repository contain either data or meta-information (e.g. for documentation).  
+In more detail:  
 
-- utils contains a number of python notebooks and equivalent scripts with static functions for general use.  
-- src contains a class structure that should in principle allow a modular approach and easy extensions, for example towards other single-histogram classification algorithms (see subfolder classifiers) or ways of combining the output for several histogram types (see subfolder cloudfitters).  
-- tutorials contains a number of notebooks that can be used to get familiar with the code and its capabilities.  
+- utils: contains a number of python notebooks and equivalent scripts with static utility functions for general use. They are being called and used in various places throughout the code.  
+- src: contains the classes for this repository:
+    - DataLoader: class for convenient loading of histograms from the input csv files.
+    - HistStruct: a histogram container for easy handling of multiple types of histograms simultaneously and consistently.
+    - classifiers: folder containing an abstract base HistogramClassifier class and derived classes representing concrete examples of histogram classification algorithms.
+    - cloudfitters: folder containing an abstract base CloudFitter class and derived classes representing concrete examples of point cloud fitting algorithms (used when working with multiple types of histograms simultaneously).
+- tutorials: contains a number of notebooks that can be used to get familiar with the code and its capabilities.  
+- run: contains code for alternative ways of running the workflow, e.g. with configuration files or with a GUI. Note: under development, recommended to start with script-based workflows first (as exemplified in the tutorials).
+- omsapi: standalone API for retrieving information from OMS.
 
 ### Tutorials:  
 Some tutorials are located in the tutorials folder in this repository, that should help you get started with the code. They can be grouped into different steps:  
@@ -25,7 +33,8 @@ Some tutorials are located in the tutorials folder in this repository, that shou
 ### Other remarks:  
 
 - The repository contains no data files. I was planning to put some example data files in a data folder, but the files are too big for github. However, the tutorial read\_and\_write\_data.ipynb should help you get the data from where it is stored and put it in a useful format for further processing.  
-- Disclaimer: still largely in development stage...  
+- Another way to get started is to get them from my [CERNBox](https://cernbox.cern.ch/index.php/s/E9GzJ4WMZs3jbPd)
+- Disclaimer: the whole repository is still in development stage. Feel free to contact me in case you found bugs or if you have other suggestions.  
   
 ### To get the tutorial notebooks running in SWAN  
 #### (preferred method):  
@@ -33,7 +42,7 @@ Some tutorials are located in the tutorials folder in this repository, that shou
 - Log in to SWAN.  
 - Go to Projects.  
 - Click the cloud icon that says 'Download Project from git'  
-- Paste the following url: https://github.com/LukaLambrecht/ML4DQM-DC.git.  
+- Paste the following url: [https://github.com/LukaLambrecht/ML4DQM-DC.git](https://github.com/LukaLambrecht/ML4DQM-DC.git).
 
 #### (alternative method):  
 
