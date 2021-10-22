@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>connectiontools - Documentation for the ML4DQM/DC notebooks</title>
+        <title>mask_utils - Documentation for the ML4DQM/DC notebooks</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -65,32 +65,32 @@
 </li>
                                 </ul>
                             </li>
-                            <li class="dropdown active">
+                            <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">omsinterface <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../readme/">readme</a>
+    <a href="../../omsinterface/readme/">readme</a>
 </li>
                                     
 <li >
-    <a href="../cert/">cert</a>
-</li>
-                                    
-<li class="active">
-    <a href="./">connectiontools</a>
+    <a href="../../omsinterface/cert/">cert</a>
 </li>
                                     
 <li >
-    <a href="../get_oms_data/">get_oms_data</a>
+    <a href="../../omsinterface/connectiontools/">connectiontools</a>
 </li>
                                     
 <li >
-    <a href="../omstools/">omstools</a>
+    <a href="../../omsinterface/get_oms_data/">get_oms_data</a>
 </li>
                                     
 <li >
-    <a href="../urls/">urls</a>
+    <a href="../../omsinterface/omstools/">omstools</a>
+</li>
+                                    
+<li >
+    <a href="../../omsinterface/urls/">urls</a>
 </li>
                                 </ul>
                             </li>
@@ -167,52 +167,52 @@
   </li>
                                 </ul>
                             </li>
-                            <li class="dropdown">
+                            <li class="dropdown active">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">utils <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../../utils/autoencoder_utils/">autoencoder_utils</a>
+    <a href="../autoencoder_utils/">autoencoder_utils</a>
 </li>
                                     
 <li >
-    <a href="../../utils/clustering_utils/">clustering_utils</a>
+    <a href="../clustering_utils/">clustering_utils</a>
 </li>
                                     
 <li >
-    <a href="../../utils/csv_utils/">csv_utils</a>
+    <a href="../csv_utils/">csv_utils</a>
 </li>
                                     
 <li >
-    <a href="../../utils/dataframe_utils/">dataframe_utils</a>
+    <a href="../dataframe_utils/">dataframe_utils</a>
 </li>
                                     
 <li >
-    <a href="../../utils/generate_data_2d_utils/">generate_data_2d_utils</a>
+    <a href="../generate_data_2d_utils/">generate_data_2d_utils</a>
 </li>
                                     
 <li >
-    <a href="../../utils/generate_data_utils/">generate_data_utils</a>
+    <a href="../generate_data_utils/">generate_data_utils</a>
 </li>
                                     
 <li >
-    <a href="../../utils/hist_utils/">hist_utils</a>
+    <a href="../hist_utils/">hist_utils</a>
 </li>
                                     
 <li >
-    <a href="../../utils/json_utils/">json_utils</a>
+    <a href="../json_utils/">json_utils</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">mask_utils</a>
 </li>
                                     
 <li >
-    <a href="../../utils/mask_utils/">mask_utils</a>
+    <a href="../plot_utils/">plot_utils</a>
 </li>
                                     
 <li >
-    <a href="../../utils/plot_utils/">plot_utils</a>
-</li>
-                                    
-<li >
-    <a href="../../utils/refruns_utils/">refruns_utils</a>
+    <a href="../refruns_utils/">refruns_utils</a>
 </li>
                                 </ul>
                             </li>
@@ -225,12 +225,12 @@
                             </a>
                         </li>
                             <li >
-                                <a rel="next" href="../cert/">
+                                <a rel="next" href="../json_utils/">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li >
-                                <a rel="prev" href="../get_oms_data/">
+                                <a rel="prev" href="../plot_utils/">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -242,51 +242,22 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#connectiontools">connectiontools</a></li>
-            <li><a href="#check95connectivityurl">check_connectivity(url)</a></li>
-            <li><a href="#get95cookiesurl-authmode-kwargs">get_cookies(url, authmode, **kwargs)</a></li>
-            <li><a href="#get95cookies95from95certificateurl-certificate-kwargs">get_cookies_from_certificate(url, certificate, **kwargs)</a></li>
-            <li><a href="#get95cookies95from95loginurl-login-kwargs">get_cookies_from_login(url, login, **kwargs)</a></li>
-            <li><a href="#95construct95certificate95authentication95urllogin95redirect95url">_construct_certificate_authentication_url(login_redirect_url)</a></li>
-            <li><a href="#95extract95login95form-xml95response95content">_extract_login_form( xml_response_content )</a></li>
-            <li><a href="#95modify95xml95content-xml95response95content">_modify_xml_content( xml_response_content )</a></li>
+        <li class="main active"><a href="#mask-utils">mask utils</a></li>
+            <li><a href="#get95combined95name-masklist">get_combined_name( masklist )</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="connectiontools">connectiontools</h1>
-<p><strong>Tools for checking connectivity to specific URLs and obtaining cookies</strong>  </p>
-<p>The functions in this script are not my own, but largely based on the wbmcrawler and cernrequests packages.<br />
-See the readme file in this directory for more information.  </p>
-<p>For normal users these functions should not be called directly, everything is handled by a single call to get_oms_data.py / get_oms_data.<br />
-See get_oms_data.py in this directory for more information.</p>
+<h1 id="mask-utils">mask utils</h1>
+<p><strong>Utilities for working with HistStruct masks</strong></p>
+<p>Mostly meant for internal use.</p>
 <hr />
-<h3 id="check95connectivityurl">check_connectivity(url)</h3>
-<pre><code class="text">(no valid documentation found)  
-</code></pre>
-
-<h3 id="get95cookiesurl-authmode-kwargs">get_cookies(url, authmode, **kwargs)</h3>
-<pre><code class="text">(no valid documentation found)  
-</code></pre>
-
-<h3 id="get95cookies95from95certificateurl-certificate-kwargs">get_cookies_from_certificate(url, certificate, **kwargs)</h3>
-<pre><code class="text">(no valid documentation found)  
-</code></pre>
-
-<h3 id="get95cookies95from95loginurl-login-kwargs">get_cookies_from_login(url, login, **kwargs)</h3>
-<pre><code class="text">(no valid documentation found)  
-</code></pre>
-
-<h3 id="95construct95certificate95authentication95urllogin95redirect95url">_construct_certificate_authentication_url(login_redirect_url)</h3>
-<pre><code class="text">(no valid documentation found)  
-</code></pre>
-
-<h3 id="95extract95login95form-xml95response95content">_extract_login_form( xml_response_content )</h3>
-<pre><code class="text">(no valid documentation found)  
-</code></pre>
-
-<h3 id="95modify95xml95content-xml95response95content">_modify_xml_content( xml_response_content )</h3>
-<pre><code class="text">(no valid documentation found)  
+<h3 id="get95combined95name-masklist">get_combined_name( masklist )</h3>
+<pre><code class="text">concatenate all the masknames in masklist to a combined name  
+input arguments:  
+- masklist: list of strings  
+output:  
+string with contatenated name  
 </code></pre></div>
         </div>
 

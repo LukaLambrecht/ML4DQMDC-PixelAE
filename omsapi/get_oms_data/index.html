@@ -99,6 +99,10 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
+    <a href="../../src/DataLoader/">DataLoader</a>
+</li>
+                                    
+<li >
     <a href="../../src/HistStruct/">HistStruct</a>
 </li>
                                     
@@ -123,6 +127,10 @@
 </li>
             
 <li >
+    <a href="../../src/classifiers/PCAClassifier/">PCAClassifier</a>
+</li>
+            
+<li >
     <a href="../../src/classifiers/TemplateBasedClassifier/">TemplateBasedClassifier</a>
 </li>
     </ul>
@@ -142,6 +150,10 @@
             
 <li >
     <a href="../../src/cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/HyperRectangleFitter/">HyperRectangleFitter</a>
 </li>
             
 <li >
@@ -192,6 +204,10 @@
 </li>
                                     
 <li >
+    <a href="../../utils/mask_utils/">mask_utils</a>
+</li>
+                                    
+<li >
     <a href="../../utils/plot_utils/">plot_utils</a>
 </li>
                                     
@@ -228,7 +244,7 @@
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#get-oms-data">get oms data</a></li>
             <li><a href="#get95oms95api">get_oms_api()</a></li>
-            <li><a href="#get95oms95data-omsapi-api95endpoint-runnb-extrafilters-extraargs-sortnone-attributes">get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[])</a></li>
+            <li><a href="#get95oms95data-omsapi-api95endpoint-runnb-extrafilters-extraargs-sortnone-attributes-limit95entries1000">get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[], limit_entries=1000)</a></li>
             <li><a href="#get95oms95response95attribute-omsresponse-attribute">get_oms_response_attribute( omsresponse, attribute )</a></li>
     </ul>
 </div></div>
@@ -256,7 +272,7 @@ takes no input arguments, as the configuration parameters are unlikely to change
 if needed, these parameters can be changed in the file urls.py  
 </code></pre>
 
-<h3 id="get95oms95data-omsapi-api95endpoint-runnb-extrafilters-extraargs-sortnone-attributes">get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[])</h3>
+<h3 id="get95oms95data-omsapi-api95endpoint-runnb-extrafilters-extraargs-sortnone-attributes-limit95entries1000">get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[], limit_entries=1000)</h3>
 <pre><code class="text">query some data from OMS  
 input arguments:  
 - omsapi: an OMSAPI instance, e.g. created by get_oms_api()  
@@ -272,6 +288,7 @@ input arguments:
   (still experimental, potentially usable for changing the granularity from 'run' to 'lumisection' for e.g. L1 trigger rates, see example.ipynb)  
 - sort: valid field name in the OMS data by which to sort  
 - attributes: list of valid field names in the OMS data to return (if not specified, all information is returned)  
+- limit_entries: entry limit for output json object  
 </code></pre>
 
 <h3 id="get95oms95response95attribute-omsresponse-attribute">get_oms_response_attribute( omsresponse, attribute )</h3>

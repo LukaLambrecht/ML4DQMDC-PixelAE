@@ -98,6 +98,10 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">src <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
+<li >
+    <a href="../DataLoader/">DataLoader</a>
+</li>
+                                    
 <li class="active">
     <a href="./">HistStruct</a>
 </li>
@@ -123,6 +127,10 @@
 </li>
             
 <li >
+    <a href="../classifiers/PCAClassifier/">PCAClassifier</a>
+</li>
+            
+<li >
     <a href="../classifiers/TemplateBasedClassifier/">TemplateBasedClassifier</a>
 </li>
     </ul>
@@ -142,6 +150,10 @@
             
 <li >
     <a href="../cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../cloudfitters/HyperRectangleFitter/">HyperRectangleFitter</a>
 </li>
             
 <li >
@@ -192,6 +204,10 @@
 </li>
                                     
 <li >
+    <a href="../../utils/mask_utils/">mask_utils</a>
+</li>
+                                    
+<li >
     <a href="../../utils/plot_utils/">plot_utils</a>
 </li>
                                     
@@ -209,7 +225,7 @@
                             </a>
                         </li>
                             <li >
-                                <a rel="next" href="../../omsinterface/urls/">
+                                <a rel="next" href="../DataLoader/">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
@@ -228,6 +244,8 @@
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#histstruct">HistStruct</a></li>
             <li><a href="#class-histstructobject">[class] HistStruct(object)</a></li>
+            <li><a href="#class-classifiers-dictselfclassifiers">[class] classifiers = dict(self.classifiers)</a></li>
+            <li><a href="#class-classifiersave-ospathjoincpathhistname">[class] classifier.save( os.path.join(cpath,histname) )</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -263,22 +281,44 @@ histograms: dict mapping histogram name to 2D numpy array of histograms (shape (
 nentries: dict mapping histogram name to 1D numpy array of number of entries per histogram (same length as histograms)  
 runnbs: 1D numpy array of run numbers (same length as histograms)  
 lsnbs: 1D numpy array of lumisection numbers (same length as histograms)  
+globalscores: 1D numpy array of global score per lumisection (same length as histograms)  
 classifiers: dict mapping histogram name to object of type HistogramClassifier  
 scores: dict mapping histogram name to 1D numpy array of values associated to the histograms (same length as histograms)  
 masks: dict mapping name to 1D numpy array of booleans (same length as histograms) that can be used for masking  
-exthistograms: dict similar to histograms for additional (e.g. artificially generated) histograms  
+exthistograms: dict of dicts similar to histograms for additional (e.g. artificially generated) histograms  
+extscores: dict of dicts similar to scores for additional (e.g. artificially generated) histograms  
+extglobalscores: dict of lists similar to scores for additional (e.g. artificially generated) histograms  
 </code></pre>
 
-<h3 id="save-self-path">&#10551; save( self, path )</h3>
+<h3 id="9595str9595-self">&#10551; __str__( self )</h3>
+<pre><code class="text">get a printable representation of a HistStruct  
+</code></pre>
+
+<h3 id="save-self-path-save95classifierstrue">&#10551; save( self, path, save_classifiers=True )</h3>
 <pre><code class="text">save a HistStruct object to a pkl file  
 input arguments:  
-- path where to store the file (appendix .pkl is automatically appended)  
+- path where to store the file (appendix .zip is automatically appended)  
+- save_classifiers: a boolean whether to include the classifiers if present in the HistStruct  
 </code></pre>
 
-<h3 id="load-self-path">&#10551; load( self, path )</h3>
+<hr />
+<hr />
+<h2 id="class-classifiers-dictselfclassifiers">[class] classifiers = dict(self.classifiers)</h2>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-classifiersave-ospathjoincpathhistname">[class] classifier.save( os.path.join(cpath,histname) )</h2>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="load-self-path-load95classifierstrue-verbosefalse">&#10551; load( self, path, load_classifiers=True, verbose=False )</h3>
 <pre><code class="text">load a HistStruct object from a pkl file  
 input arguments:  
-- path to a pkl file containing a HistStruct object  
+- path to a zip file containing a HistStruct object  
+- load_classifiers: a boolean whether to load the classifiers if present  
+- verbose: boolean whether to print some information  
 </code></pre>
 
 <h3 id="add95dataframe-self-df-cropslicesnone-donormalizetrue-rebinningfactornone">&#10551; add_dataframe( self, df, cropslices=None, donormalize=True, rebinningfactor=None )</h3>
@@ -318,6 +358,33 @@ notes:
 - see also add_dataframe for an alternative way of adding histograms  
 </code></pre>
 
+<h3 id="add95globalscores-self-globalscores">&#10551; add_globalscores( self, globalscores )</h3>
+<pre><code class="text">add an array of global scores (one per lumisection)  
+input arguments:  
+- globalscores: 1D numpy array of scores (must have same length as lumisection and run numbers)  
+</code></pre>
+
+<h3 id="add95extglobalscores-self-extname-globalscores">&#10551; add_extglobalscores( self, extname, globalscores )</h3>
+<pre><code class="text">add an array of global scores (one per lumisection) for a specified extra set of histograms in the HistStruct  
+input arguments:  
+- extname: name of extra histogram set  
+- globalscores: 1D numpy array of scores  
+note: this function checks if all histogram types in this set contain the same number of histograms,  
+      (and that this number corresponds to the length of globalscores)  
+      else adding globalscores is meaningless  
+</code></pre>
+
+<h3 id="add95exthistograms-self-extname-histname-histograms-overwritefalse">&#10551; add_exthistograms( self, extname, histname, histograms, overwrite=False )</h3>
+<pre><code class="text">add a set of extra histograms to a HistStruct  
+these histograms are not assumed to correspond to physical run/lumisections numbers (e.g. resampled ones),  
+and no consistency checks are done  
+input arguments:  
+- extname: name of the extra histogram set (you can add multiple, e.g. resampled_good, resampled_bad and/or resampled_training)  
+- histname: name of the histogram type  
+- histograms: a numpy array of shape (nhistograms,nbins)  
+- overwrite: boolean whether to overwrite a set of histograms of the same name if present (default: raise exception)  
+</code></pre>
+
 <h3 id="add95mask-self-name-mask">&#10551; add_mask( self, name, mask )</h3>
 <pre><code class="text">add a mask to a HistStruct  
 input arguments:  
@@ -349,16 +416,28 @@ input arguments:
 - name: a name for the mask  
 </code></pre>
 
-<h3 id="add95hightstat95mask-self-name-histnamesnone-entries95to95bins95ratio100">&#10551; add_hightstat_mask( self, name, histnames=None, entries_to_bins_ratio=100 )</h3>
-<pre><code class="text">add a mask corresponding to lumisections where all histograms have sufficient statistics  
+<h3 id="add95stat95mask-self-name-histnamesnone-min95entries95to95bins95ratio-1-max95entries95to95bins95ratio-1">&#10551; add_stat_mask( self, name, histnames=None, min_entries_to_bins_ratio=-1, max_entries_to_bins_ratio=-1 )</h3>
+<pre><code class="text">add a mask corresponding to lumisections where all histograms have statistics within given bounds  
 input arguments:  
 - histnames: list of histogram names to take into account for making the mask (default: all in the HistStruct)  
-- entries_to_bins_ratio: criterion to determine if a histogram has sufficient statistics, number of entries divided by number of bins  
+- min_entries_to_bins_ratio: number of entries divided by number of bins, lower boundary for statistics (default: no lower boundary)  
+- max_entries_to_bins_ratio: same but upper boundary instead of lower boundary (default: no upper boundary)  
+</code></pre>
+
+<h3 id="add95highstat95mask-self-name-histnamesnone-entries95to95bins95ratio100">&#10551; add_highstat_mask( self, name, histnames=None, entries_to_bins_ratio=100 )</h3>
+<pre><code class="text">shorthand call to add_stat_mask with only lower boundary and no upper boundary for statistics  
+input arguments:  
+- entries_to_bins_ratio: number of entries divided by number of bins, lower boundary for statistics  
+others: see add_stat_mask  
 </code></pre>
 
 <h3 id="get95combined95mask-self-names">&#10551; get_combined_mask( self, names )</h3>
 <pre><code class="text">get a combined mask given multiple mask names  
 mostly for internal use; externally you can use get_histograms( histname, &lt;list of mask names&gt;) directly  
+</code></pre>
+
+<h3 id="get95masknames-self">&#10551; get_masknames( self )</h3>
+<pre><code class="text">return a simple list of all mask names in the current HistStruct  
 </code></pre>
 
 <h3 id="get95runnbs-self-masknamesnone">&#10551; get_runnbs( self, masknames=None )</h3>
@@ -391,6 +470,28 @@ notes:
   else an exception will be thrown.  
 </code></pre>
 
+<h3 id="get95scores95array-self-masknamesnone">&#10551; get_scores_array( self, masknames=None )</h3>
+<pre><code class="text">similar to get_scores, but with different return type:  
+np array of shape (nhistograms, nhistogramtypes)  
+</code></pre>
+
+<h3 id="get95extscores-self-extname-histnamenone">&#10551; get_extscores( self, extname, histname=None )</h3>
+<pre><code class="text">get the array of scores for a given histogram type in a given extra set.  
+input arguments:  
+- extname: name of the extra set (see also add_exthistograms)  
+- histname: name of the histogram type for which to retrieve the score.   
+  if None, return a dict matching histnames to arrays of scores  
+notes:  
+- this method takes the scores from the HistStruct.extscores attribute;  
+  make sure to have evaluated the classifiers before calling this method,  
+  else an exception will be thrown.  
+</code></pre>
+
+<h3 id="get95extscores95array-self-extname">&#10551; get_extscores_array( self, extname )</h3>
+<pre><code class="text">similar to get_extscores, but with different return type:  
+np array of shape (nhistograms, nhistogramtypes)  
+</code></pre>
+
 <h3 id="get95scores95ls-self-runnb-lsnb-histnamesnone-suppresswarningsfalse">&#10551; get_scores_ls( self, runnb, lsnb, histnames=None, suppresswarnings=False )</h3>
 <pre><code class="text">get the scores for a given run/lumisection number and for given histogram names  
 input arguments:  
@@ -405,12 +506,54 @@ notes:
   else the returned scores will be None.  
 </code></pre>
 
+<h3 id="get95globalscores-self-masknamesnone">&#10551; get_globalscores( self, masknames=None )</h3>
+<pre><code class="text">get the array of global scores, optionally after masking  
+input arguments:  
+- masknames: list of names of masks (default: no masking, return full array)  
+notes:  
+- this method takes the scores from the HistStruct.globalscores attribute;  
+  make sure to have set this attribute with add_globalscores,  
+  else an exception will be thrown.  
+</code></pre>
+
+<h3 id="get95globalscore95ls-self-runnb-lsnb">&#10551; get_globalscore_ls( self, runnb, lsnb )</h3>
+<pre><code class="text">get the global score for a given run/lumisection number  
+input arguments:  
+- runnb: run number  
+- lsnb: lumisection number  
+- histnames: names of the histogram types for which to retrieve the score.   
+returns:  
+- a dict matching each name in histnames to a score (or None if no valid score)  
+notes:  
+- this method takes the scores from the HistStruct.scores attribute;  
+  make sure to have evaluated the classifiers before calling this method,  
+  else the returned scores will be None.  
+</code></pre>
+
+<h3 id="get95extglobalscores-self-extname">&#10551; get_extglobalscores( self, extname )</h3>
+<pre><code class="text">get the array of global scores for one of the extra histogram sets  
+input arguments:  
+- extname: name of the extra histogram set  
+notes:  
+- this method takes the scores from the HistStruct.extglobalscores attribute;  
+  make sure to have set this attribute with add_extglobalscores,  
+  else an exception will be thrown.  
+</code></pre>
+
 <h3 id="get95histograms-self-histnamenone-masknamesnone">&#10551; get_histograms( self, histname=None, masknames=None )</h3>
 <pre><code class="text">get the array of histograms for a given type, optionally after masking  
 input arguments:  
 - histname: name of the histogram type to retrieve   
   if None, return a dict matching histnames to arrays of histograms  
 - masknames: list of names of masks (default: no masking, return full array)  
+</code></pre>
+
+<h3 id="get95exthistograms-self-extname-histnamenone">&#10551; get_exthistograms( self, extname, histname=None )</h3>
+<pre><code class="text">get the array of extra histograms for a given set name and type name  
+input arguments:  
+- extname: name of the set of extra histograms (see also add_exthistograms)  
+- histname: name of the histogram type to retrieve   
+  if None, return a dict matching histnames to arrays of histograms  
 </code></pre>
 
 <h3 id="add95classifier-self-histname-classifier-evaluatefalse">&#10551; add_classifier( self, histname, classifier, evaluate=False )</h3>
@@ -422,12 +565,29 @@ input arguments:
   if set to True, the result is both returned and stored in the 'scores' attribute.  
 </code></pre>
 
-<h3 id="evaluate95classifier-self-histname">&#10551; evaluate_classifier( self, histname )</h3>
+<h3 id="evaluate95classifier-self-histname-extnamenone">&#10551; evaluate_classifier( self, histname, extname=None )</h3>
 <pre><code class="text">evaluate a histogram classifier for a given histogram name in the HistStruct  
 input arguments:  
 - histname: a valid histogram name present in the HistStruct for which to evaluate the classifier  
+- extname: name of a set of extra histograms (see add_exthistograms)  
+           if None, will evaluate the classifer for the main set of histograms  
 notes:  
 - the result is both returned and stored in the 'scores' attribute  
+</code></pre>
+
+<h3 id="plot95histograms-self-histnamesnone-masknamesnone-colorlist-labellist-transparencylist">&#10551; plot_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[] )</h3>
+<pre><code class="text">plot the histograms in a HistStruct, optionally after msking  
+note: so far only for 1D hsitograms.  
+      case of 2D histograms requires different plotting method since they cannot be clearly overlaid.  
+      if a HistStruct contains both 1D and 2D histograms, the 1D histograms must be selected with the histnames argument.  
+input arguments:  
+- histnames: list of names of the histogram types to plot (default: all)  
+- masknames: list of list of mask names  
+  note: each element in masknames represents a set of masks to apply;   
+        the histograms passing different sets of masks are plotted in different colors  
+- colorlist: list of matplotlib colors, must have same length as masknames  
+- labellist: list of labels for the legend, must have same legnth as masknames  
+- transparencylist: list of transparency values, must have same length as masknames  
 </code></pre>
 
 <h3 id="plot95ls-self-runnb-lsnb-histnamesnone-recohistnone-recohistlabelreco-refhistsnone-refhistslabelreference">&#10551; plot_ls( self, runnb, lsnb, histnames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference')</h3>
@@ -451,7 +611,7 @@ input arguments:
 - refhistslabel: legend entry for the reference histograms  
 </code></pre>
 
-<h3 id="plot95run-self-runnb-recohistnone-recohistlabelreco-refhistsnone-refhistslabelreference-doprintfalse">&#10551; plot_run( self, runnb, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False)</h3>
+<h3 id="plot95run-self-runnb-masknamesnone-recohistnone-recohistlabelreco-refhistsnone-refhistslabelreference-doprintfalse">&#10551; plot_run( self, runnb, masknames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False)</h3>
 <pre><code class="text">call plot_ls for all lumisections in a given run  
 </code></pre>
 

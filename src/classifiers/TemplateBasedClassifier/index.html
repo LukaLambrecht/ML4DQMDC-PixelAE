@@ -99,6 +99,10 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
+    <a href="../../DataLoader/">DataLoader</a>
+</li>
+                                    
+<li >
     <a href="../../HistStruct/">HistStruct</a>
 </li>
                                     
@@ -122,6 +126,10 @@
     <a href="../NMFClassifier/">NMFClassifier</a>
 </li>
             
+<li >
+    <a href="../PCAClassifier/">PCAClassifier</a>
+</li>
+            
 <li class="active">
     <a href="./">TemplateBasedClassifier</a>
 </li>
@@ -142,6 +150,10 @@
             
 <li >
     <a href="../../cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../../cloudfitters/HyperRectangleFitter/">HyperRectangleFitter</a>
 </li>
             
 <li >
@@ -192,6 +204,10 @@
 </li>
                                     
 <li >
+    <a href="../../../utils/mask_utils/">mask_utils</a>
+</li>
+                                    
+<li >
     <a href="../../../utils/plot_utils/">plot_utils</a>
 </li>
                                     
@@ -209,7 +225,7 @@
                             </a>
                         </li>
                             <li >
-                                <a rel="next" href="../NMFClassifier/">
+                                <a rel="next" href="../PCAClassifier/">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
@@ -283,14 +299,19 @@ output:
 <pre><code class="text">histogram classifier based on a direct comparison with templates (i.e. reference histograms)  
 </code></pre>
 
-<h3 id="9595init9595-self-templates-comparemethodminmse">&#10551; __init__( self, templates, comparemethod='minmse' )</h3>
-<pre><code class="text">initializer from a set of templates (reference histograms)  
+<h3 id="9595init9595-self-comparemethodminmse">&#10551; __init__( self, comparemethod='minmse' )</h3>
+<pre><code class="text">initializer  
 input arguments:  
-- templates: a 2D numpy array of shape (nhistograms,nbins)  
 - comparemethod: string representing the method by which to compare a histogram with a set of templates  
   currently supported methods are:  
   - minmse: minimum mean square error between histogram and all templates  
   - avgmse: average mean square error between histogram and all templates  
+</code></pre>
+
+<h3 id="train-self-templates">&#10551; train( self, templates )</h3>
+<pre><code class="text">'train' the classifier, i.e. set the templates (reference histograms)  
+input arguments:  
+- templates: a 2D numpy array of shape (nhistograms,nbins)  
 </code></pre>
 
 <h3 id="evaluate-self-histograms">&#10551; evaluate( self, histograms )</h3>

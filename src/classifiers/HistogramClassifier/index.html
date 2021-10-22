@@ -99,6 +99,10 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
+    <a href="../../DataLoader/">DataLoader</a>
+</li>
+                                    
+<li >
     <a href="../../HistStruct/">HistStruct</a>
 </li>
                                     
@@ -123,6 +127,10 @@
 </li>
             
 <li >
+    <a href="../PCAClassifier/">PCAClassifier</a>
+</li>
+            
+<li >
     <a href="../TemplateBasedClassifier/">TemplateBasedClassifier</a>
 </li>
     </ul>
@@ -142,6 +150,10 @@
             
 <li >
     <a href="../../cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../../cloudfitters/HyperRectangleFitter/">HyperRectangleFitter</a>
 </li>
             
 <li >
@@ -189,6 +201,10 @@
                                     
 <li >
     <a href="../../../utils/json_utils/">json_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../../utils/mask_utils/">mask_utils</a>
 </li>
                                     
 <li >
@@ -265,12 +281,30 @@ see also the existing examples!
 this is an @abstractmethod and must be overridden in any concrete deriving class!  
 </code></pre>
 
-<h3 id="evaluate-self-histograms">&#10551; evaluate( self, histograms )</h3>
-<pre><code class="text">main function used to process a set of histograms  
+<h3 id="train-self-histograms">&#10551; train( self, histograms )</h3>
+<pre><code class="text">train the classifier on a set of input histograms  
 this is an @abstractmethod and must be overridden in any concrete deriving class!  
 input arguments:  
 - histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins).  
-output: 1D numpy array of shape (nhists), one number per histogram.  
+output: expected to be none.  
+</code></pre>
+
+<h3 id="evaluate-self-histograms">&#10551; evaluate( self, histograms )</h3>
+<pre><code class="text">main function used to evaluate a set of histograms  
+this is an @abstractmethod and must be overridden in any concrete deriving class!  
+input arguments:  
+- histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins).  
+output: expected to be a 1D numpy array of shape (nhists), one number per histogram.  
+</code></pre>
+
+<h3 id="save-self-path">&#10551; save( self, path )</h3>
+<pre><code class="text">save a classifier to disk  
+specific implementation in concrete classes, here only path creation  
+</code></pre>
+
+<h3 id="load-self-path">&#10551; load( self, path )</h3>
+<pre><code class="text">load a classifier object from disk  
+specific implementation in concrete classes, here only path checking  
 </code></pre>
 
 <hr /></div>

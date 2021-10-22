@@ -99,6 +99,10 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
+    <a href="../../DataLoader/">DataLoader</a>
+</li>
+                                    
+<li >
     <a href="../../HistStruct/">HistStruct</a>
 </li>
                                     
@@ -123,6 +127,10 @@
 </li>
             
 <li >
+    <a href="../PCAClassifier/">PCAClassifier</a>
+</li>
+            
+<li >
     <a href="../TemplateBasedClassifier/">TemplateBasedClassifier</a>
 </li>
     </ul>
@@ -142,6 +150,10 @@
             
 <li >
     <a href="../../cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../../cloudfitters/HyperRectangleFitter/">HyperRectangleFitter</a>
 </li>
             
 <li >
@@ -192,6 +204,10 @@
 </li>
                                     
 <li >
+    <a href="../../../utils/mask_utils/">mask_utils</a>
+</li>
+                                    
+<li >
     <a href="../../../utils/plot_utils/">plot_utils</a>
 </li>
                                     
@@ -228,6 +244,7 @@
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#autoencoder">AutoEncoder</a></li>
             <li><a href="#class-autoencoderhistogramclassifier">[class] AutoEncoder(HistogramClassifier)</a></li>
+            <li><a href="#class-classifier-autoencoder-modelmodel">[class] classifier = AutoEncoder( model=model )</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -249,9 +266,13 @@ in essence, it is just a wrapper for a tensorflow model.
 
 <h3 id="9595init9595-self-modelnone">&#10551; __init__( self, model=None )</h3>
 <pre><code class="text">intializer from a tensorflow model  
-the model is assumed to be fully trained on a suitable training set and ready for use  
-TODO: perhaps the functionality for initializing and training the model can be absorbed in the AutoEncoder class,  
-      but this is not yet supported currently  
+the model is assumed to be a valid tensorflow model;  
+it can be already trained before wrapping it in an AutoEncoder object,  
+but if this is not the case, the AutoEncoder.train function can be called afterwards.  
+</code></pre>
+
+<h3 id="train-self-histograms-doplottrue-kwargs">&#10551; train( self, histograms, doplot=True, **kwargs )</h3>
+<pre><code class="text">train the model on a given set of input histograms  
 </code></pre>
 
 <h3 id="evaluate-self-histograms">&#10551; evaluate( self, histograms )</h3>
@@ -260,6 +281,22 @@ TODO: perhaps the functionality for initializing and training the model can be a
 
 <h3 id="reconstruct-self-histograms">&#10551; reconstruct( self, histograms )</h3>
 <pre><code class="text">return the autoencoder reconstruction of a set of histograms  
+</code></pre>
+
+<h3 id="save-self-path">&#10551; save( self, path )</h3>
+<pre><code class="text">save the underlying tensorflow model to a tensorflow SavedModel or H5 format.  
+note: depending on the extension specified in path, the SavedModel or H5 format is chosen,  
+      see https://www.tensorflow.org/guide/keras/save_and_serialize  
+</code></pre>
+
+<h3 id="load-self-path-kwargs">&#10551; load( self, path, **kwargs )</h3>
+<pre><code class="text">get an AutoEncoder instance from a saved tensorflow SavedModel or H5 file  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-classifier-autoencoder-modelmodel">[class] classifier = AutoEncoder( model=model )</h2>
+<pre><code class="text">(no valid documentation found)  
 </code></pre>
 
 <hr /></div>

@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>connectiontools - Documentation for the ML4DQM/DC notebooks</title>
+        <title>DataLoader - Documentation for the ML4DQM/DC notebooks</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -65,45 +65,45 @@
 </li>
                                 </ul>
                             </li>
-                            <li class="dropdown active">
+                            <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">omsinterface <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../readme/">readme</a>
+    <a href="../../omsinterface/readme/">readme</a>
 </li>
                                     
 <li >
-    <a href="../cert/">cert</a>
-</li>
-                                    
-<li class="active">
-    <a href="./">connectiontools</a>
+    <a href="../../omsinterface/cert/">cert</a>
 </li>
                                     
 <li >
-    <a href="../get_oms_data/">get_oms_data</a>
+    <a href="../../omsinterface/connectiontools/">connectiontools</a>
 </li>
                                     
 <li >
-    <a href="../omstools/">omstools</a>
+    <a href="../../omsinterface/get_oms_data/">get_oms_data</a>
 </li>
                                     
 <li >
-    <a href="../urls/">urls</a>
+    <a href="../../omsinterface/omstools/">omstools</a>
+</li>
+                                    
+<li >
+    <a href="../../omsinterface/urls/">urls</a>
 </li>
                                 </ul>
                             </li>
-                            <li class="dropdown">
+                            <li class="dropdown active">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">src <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
-<li >
-    <a href="../../src/DataLoader/">DataLoader</a>
+<li class="active">
+    <a href="./">DataLoader</a>
 </li>
                                     
 <li >
-    <a href="../../src/HistStruct/">HistStruct</a>
+    <a href="../HistStruct/">HistStruct</a>
 </li>
                                     
   <li class="dropdown-submenu">
@@ -111,27 +111,27 @@
     <ul class="dropdown-menu">
             
 <li >
-    <a href="../../src/classifiers/AutoEncoder/">AutoEncoder</a>
+    <a href="../classifiers/AutoEncoder/">AutoEncoder</a>
 </li>
             
 <li >
-    <a href="../../src/classifiers/HistogramClassifier/">HistogramClassifier</a>
+    <a href="../classifiers/HistogramClassifier/">HistogramClassifier</a>
 </li>
             
 <li >
-    <a href="../../src/classifiers/MaxPullClassifier/">MaxPullClassifier</a>
+    <a href="../classifiers/MaxPullClassifier/">MaxPullClassifier</a>
 </li>
             
 <li >
-    <a href="../../src/classifiers/NMFClassifier/">NMFClassifier</a>
+    <a href="../classifiers/NMFClassifier/">NMFClassifier</a>
 </li>
             
 <li >
-    <a href="../../src/classifiers/PCAClassifier/">PCAClassifier</a>
+    <a href="../classifiers/PCAClassifier/">PCAClassifier</a>
 </li>
             
 <li >
-    <a href="../../src/classifiers/TemplateBasedClassifier/">TemplateBasedClassifier</a>
+    <a href="../classifiers/TemplateBasedClassifier/">TemplateBasedClassifier</a>
 </li>
     </ul>
   </li>
@@ -141,27 +141,27 @@
     <ul class="dropdown-menu">
             
 <li >
-    <a href="../../src/cloudfitters/CloudFitter/">CloudFitter</a>
+    <a href="../cloudfitters/CloudFitter/">CloudFitter</a>
 </li>
             
 <li >
-    <a href="../../src/cloudfitters/ExponentialFitter/">ExponentialFitter</a>
+    <a href="../cloudfitters/ExponentialFitter/">ExponentialFitter</a>
 </li>
             
 <li >
-    <a href="../../src/cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+    <a href="../cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
 </li>
             
 <li >
-    <a href="../../src/cloudfitters/HyperRectangleFitter/">HyperRectangleFitter</a>
+    <a href="../cloudfitters/HyperRectangleFitter/">HyperRectangleFitter</a>
 </li>
             
 <li >
-    <a href="../../src/cloudfitters/LogNormalFitter/">LogNormalFitter</a>
+    <a href="../cloudfitters/LogNormalFitter/">LogNormalFitter</a>
 </li>
             
 <li >
-    <a href="../../src/cloudfitters/SeminormalFitter/">SeminormalFitter</a>
+    <a href="../cloudfitters/SeminormalFitter/">SeminormalFitter</a>
 </li>
     </ul>
   </li>
@@ -225,12 +225,12 @@
                             </a>
                         </li>
                             <li >
-                                <a rel="next" href="../cert/">
+                                <a rel="next" href="../../omsinterface/urls/">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li >
-                                <a rel="prev" href="../get_oms_data/">
+                                <a rel="prev" href="../HistStruct/">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -242,52 +242,92 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#connectiontools">connectiontools</a></li>
-            <li><a href="#check95connectivityurl">check_connectivity(url)</a></li>
-            <li><a href="#get95cookiesurl-authmode-kwargs">get_cookies(url, authmode, **kwargs)</a></li>
-            <li><a href="#get95cookies95from95certificateurl-certificate-kwargs">get_cookies_from_certificate(url, certificate, **kwargs)</a></li>
-            <li><a href="#get95cookies95from95loginurl-login-kwargs">get_cookies_from_login(url, login, **kwargs)</a></li>
-            <li><a href="#95construct95certificate95authentication95urllogin95redirect95url">_construct_certificate_authentication_url(login_redirect_url)</a></li>
-            <li><a href="#95extract95login95form-xml95response95content">_extract_login_form( xml_response_content )</a></li>
-            <li><a href="#95modify95xml95content-xml95response95content">_modify_xml_content( xml_response_content )</a></li>
+        <li class="main active"><a href="#dataloader">DataLoader</a></li>
+            <li><a href="#class-dataloaderobject">[class] DataLoader(object)</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="connectiontools">connectiontools</h1>
-<p><strong>Tools for checking connectivity to specific URLs and obtaining cookies</strong>  </p>
-<p>The functions in this script are not my own, but largely based on the wbmcrawler and cernrequests packages.<br />
-See the readme file in this directory for more information.  </p>
-<p>For normal users these functions should not be called directly, everything is handled by a single call to get_oms_data.py / get_oms_data.<br />
-See get_oms_data.py in this directory for more information.</p>
+<h1 id="dataloader">DataLoader</h1>
 <hr />
-<h3 id="check95connectivityurl">check_connectivity(url)</h3>
+<h2 id="class-dataloaderobject">[class] DataLoader(object)</h2>
+<pre><code class="text">class for loading histograms from disk  
+the input usually consists of:  
+- a csv file or a folder containing csv files in the correct format  
+- a set of histogram names to load  
+- a specification in terms of eras or years  
+the output typically consists of pandas dataframes containing the requested histograms.  
+</code></pre>
+
+<h3 id="9595init9595-self">&#10551; __init__( self )</h3>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="check95year-self-year">&#10551; check_year( self, year )</h3>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="get95cookiesurl-authmode-kwargs">get_cookies(url, authmode, **kwargs)</h3>
+<h3 id="check95eras-self-eras-year">&#10551; check_eras( self, eras, year )</h3>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="get95cookies95from95certificateurl-certificate-kwargs">get_cookies_from_certificate(url, certificate, **kwargs)</h3>
+<h3 id="check95dim-self-dim">&#10551; check_dim( self, dim )</h3>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="get95cookies95from95loginurl-login-kwargs">get_cookies_from_login(url, login, **kwargs)</h3>
+<h3 id="check95eos-self">&#10551; check_eos( self )</h3>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="95construct95certificate95authentication95urllogin95redirect95url">_construct_certificate_authentication_url(login_redirect_url)</h3>
-<pre><code class="text">(no valid documentation found)  
+<h3 id="get95default95data95dirs-self-year2017-eras-dim1">&#10551; get_default_data_dirs( self, year='2017', eras=[], dim=1 )</h3>
+<pre><code class="text">get the default data directories for the data for this project  
+note: this returns the directories where the data is currently stored;  
+      might change in future reprocessings of the data,  
+      and should be extended for upcoming Run-III data.  
+note: default directories are on the /eos file system.  
+      this function will throw an exception if it has not access to /eos.  
+input arguments:  
+- year: data-taking year, should be '2017' or '2018' so far (default: 2017)  
+- eras: list of valid eras for the given data-taking year (default: all eras)  
+- dim: dimension of requested histograms (1 or 2)  
 </code></pre>
 
-<h3 id="95extract95login95form-xml95response95content">_extract_login_form( xml_response_content )</h3>
-<pre><code class="text">(no valid documentation found)  
+<h3 id="get95csv95files95in95dir-self-inputdir-sorttrue">&#10551; get_csv_files_in_dir( self, inputdir, sort=True )</h3>
+<pre><code class="text">get a (sorted) list of csv files in a given input directory  
+input arguments:  
+- inputdir: directory to scan for csv files  
+- sort: boolean whether to sort the files  
 </code></pre>
 
-<h3 id="95modify95xml95content-xml95response95content">_modify_xml_content( xml_response_content )</h3>
-<pre><code class="text">(no valid documentation found)  
-</code></pre></div>
+<h3 id="get95csv95files95in95dirs-self-inputdirs-sorttrue">&#10551; get_csv_files_in_dirs( self, inputdirs, sort=True )</h3>
+<pre><code class="text">find the csv files in a set of input directories and return them in one list  
+input arguments:  
+- list of input directories where to look for csv files  
+- sort: see get_csv_files_in_dir  
+</code></pre>
+
+<h3 id="get95default95csv95files-self-year2017-eras-dim1-sorttrue">&#10551; get_default_csv_files( self, year='2017', eras=[], dim=1, sort=True )</h3>
+<pre><code class="text">read the csv files from the default directories with input data for this project  
+note: default directories are on the /eos file system.  
+      this function will throw an exception if it has not access to /eos.  
+input arguments:   
+- year, eras, dim: see get_default_data_dirs!  
+- sort: see get_csv_files_in_dir!  
+</code></pre>
+
+<h3 id="get95dataframe95from95file-self-csvfile-histnames">&#10551; get_dataframe_from_file( self, csvfile, histnames=[] )</h3>
+<pre><code class="text">load histograms from a given file  
+</code></pre>
+
+<h3 id="get95dataframe95from95files-self-csvfiles-histnames">&#10551; get_dataframe_from_files( self, csvfiles, histnames=[] )</h3>
+<pre><code class="text">load histograms from a given set of files  
+</code></pre>
+
+<h3 id="write95dataframe95to95file-self-df-csvfile">&#10551; write_dataframe_to_file( self, df, csvfile )</h3>
+<pre><code class="text">write a dataframe to a csv file  
+</code></pre>
+
+<hr /></div>
         </div>
 
         <footer class="col-md-12">

@@ -99,6 +99,10 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
+    <a href="../../DataLoader/">DataLoader</a>
+</li>
+                                    
+<li >
     <a href="../../HistStruct/">HistStruct</a>
 </li>
                                     
@@ -123,6 +127,10 @@
 </li>
             
 <li >
+    <a href="../PCAClassifier/">PCAClassifier</a>
+</li>
+            
+<li >
     <a href="../TemplateBasedClassifier/">TemplateBasedClassifier</a>
 </li>
     </ul>
@@ -142,6 +150,10 @@
             
 <li >
     <a href="../../cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../../cloudfitters/HyperRectangleFitter/">HyperRectangleFitter</a>
 </li>
             
 <li >
@@ -192,6 +204,10 @@
 </li>
                                     
 <li >
+    <a href="../../../utils/mask_utils/">mask_utils</a>
+</li>
+                                    
+<li >
     <a href="../../../utils/plot_utils/">plot_utils</a>
 </li>
                                     
@@ -214,7 +230,7 @@
                                 </a>
                             </li>
                             <li >
-                                <a rel="prev" href="../TemplateBasedClassifier/">
+                                <a rel="prev" href="../PCAClassifier/">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -244,22 +260,42 @@ specifically intended for 2D histograms, but should in principle work for 1D as 
 it is basically a wrapper for a sklearn.decomposition.NMF instance.  
 </code></pre>
 
-<h3 id="9595init9595-self-histograms-ncomponents">&#10551; __init__( self, histograms, ncomponents )</h3>
-<pre><code class="text">initializer from a collection of histograms  
+<h3 id="9595init9595-self-ncomponents-loss95typemse-nmax10">&#10551; __init__( self, ncomponents, loss_type='mse', nmax=10 )</h3>
+<pre><code class="text">initializer  
 input arguments:  
-- histograms: a numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins) that will be used to fit a NMF model  
 - ncomponents: number of NMF components (aka clusters aka basis vectors) to use in the decomposition  
+- loss_type: choose from 'mse' (mean-squared-error) or 'chi2' (chi squared error)  
+- nmax: number of largest elements to keep in error calculation  
 TODO: add keyword arguments to pass down to sklearn.decomposition.NMF  
 </code></pre>
 
-<h3 id="evaluate-self-histograms-nmax">&#10551; evaluate( self, histograms, nmax )</h3>
-<pre><code class="text">classify the given histograms based on the MSE with respect to their reconstructed version  
+<h3 id="train-self-histograms">&#10551; train( self, histograms )</h3>
+<pre><code class="text">train the NMF model on a given set of input histograms  
 input arguments:  
-- histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins)  
+- histograms: a numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins) that will be used to fit a NMF model  
+</code></pre>
+
+<h3 id="set95nmax-self-nmax">&#10551; set_nmax( self, nmax )</h3>
+<pre><code class="text">set number of largest elements to keep in mean square error calculation  
+useful to quickly re-evaluate the model with different nmax without retraining  
+input arguments:  
 - nmax: number of largest elements to keep in mean square error calculation  
 </code></pre>
 
-<h3 id="getcomponents-self">&#10551; getcomponents( self )</h3>
+<h3 id="set95loss95type-self-loss95type">&#10551; set_loss_type( self, loss_type )</h3>
+<pre><code class="text">set loss type  
+useful to quickly re-evaluate the model with different loss without retraining  
+input arguments:  
+- loss_type: choose from 'mse' (mean-squared-error) or 'chi2' (chi squared error)  
+</code></pre>
+
+<h3 id="evaluate-self-histograms">&#10551; evaluate( self, histograms )</h3>
+<pre><code class="text">classify the given histograms based on the MSE with respect to their reconstructed version  
+input arguments:  
+- histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins)  
+</code></pre>
+
+<h3 id="get95components-self">&#10551; get_components( self )</h3>
 <pre><code class="text">return the NMF components (aka cluster centers aka basis vectors)  
 output:  
 a numpy array of shape (ncomponents,nbins) or (ncomponents,nybins,nxbins)  

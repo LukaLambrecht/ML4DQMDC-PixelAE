@@ -99,6 +99,10 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
+    <a href="../../src/DataLoader/">DataLoader</a>
+</li>
+                                    
+<li >
     <a href="../../src/HistStruct/">HistStruct</a>
 </li>
                                     
@@ -123,6 +127,10 @@
 </li>
             
 <li >
+    <a href="../../src/classifiers/PCAClassifier/">PCAClassifier</a>
+</li>
+            
+<li >
     <a href="../../src/classifiers/TemplateBasedClassifier/">TemplateBasedClassifier</a>
 </li>
     </ul>
@@ -142,6 +150,10 @@
             
 <li >
     <a href="../../src/cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/HyperRectangleFitter/">HyperRectangleFitter</a>
 </li>
             
 <li >
@@ -192,6 +204,10 @@
 </li>
                                     
 <li >
+    <a href="../mask_utils/">mask_utils</a>
+</li>
+                                    
+<li >
     <a href="../plot_utils/">plot_utils</a>
 </li>
                                     
@@ -239,7 +255,7 @@
             <li><a href="#plot95noisenoise-histstdnone-fignamefigpng">plot_noise(noise, histstd=None, figname='fig.png')</a></li>
             <li><a href="#fourier95noise95on95meanhists-outfilename-figname-nresamples0-nonnegativetrue">fourier_noise_on_mean(hists, outfilename='', figname='', nresamples=0, nonnegative=True)</a></li>
             <li><a href="#fourier95noisehists-outfilename-figname-nresamples1-nonnegativetrue-stdfactor15">fourier_noise(hists, outfilename='', figname='', nresamples=1, nonnegative=True, stdfactor=15.)</a></li>
-            <li><a href="#upsample95hist95sethistsntargetfourierstdfactor15fignamef">upsample_hist_set(hists,ntarget,fourierstdfactor=15.,figname='f')</a></li>
+            <li><a href="#upsample95hist95sethistsntargetfourierstdfactor15figname">upsample_hist_set(hists,ntarget,fourierstdfactor=15.,figname='')</a></li>
             <li><a href="#white95noisehists-figname-stdfactor15">white_noise(hists, figname='', stdfactor=15.)</a></li>
             <li><a href="#resample95bin95per95binhists-outfilename-figname-nresamples0-nonnegativetrue-smoothinghalfwidth2">resample_bin_per_bin(hists, outfilename='', figname='', nresamples=0, nonnegative=True, smoothinghalfwidth=2)</a></li>
             <li><a href="#resample95similar95bin95per95bin-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue-keeppercentage1">resample_similar_bin_per_bin( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True, keeppercentage=1.)</a></li>
@@ -350,7 +366,7 @@ advantages: resampled histograms will have statistically same features as origin
 disadvantages: also 'bad' histograms will be resampled if included in hists  
 </code></pre>
 
-<h3 id="upsample95hist95sethistsntargetfourierstdfactor15fignamef">upsample_hist_set(hists,ntarget,fourierstdfactor=15.,figname='f')</h3>
+<h3 id="upsample95hist95sethistsntargetfourierstdfactor15figname">upsample_hist_set(hists,ntarget,fourierstdfactor=15.,figname='')</h3>
 <pre><code class="text">wrapper for fourier_noise allowing for a fixed target number of histograms instead of a fixed resampling factor  
 useful function for quickly generating a fixed number of resampled histograms,  
 without bothering too much about what exact resampling technique or detailed settings would be most appropriate.  

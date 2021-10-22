@@ -99,6 +99,10 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
+    <a href="../../src/DataLoader/">DataLoader</a>
+</li>
+                                    
+<li >
     <a href="../../src/HistStruct/">HistStruct</a>
 </li>
                                     
@@ -123,6 +127,10 @@
 </li>
             
 <li >
+    <a href="../../src/classifiers/PCAClassifier/">PCAClassifier</a>
+</li>
+            
+<li >
     <a href="../../src/classifiers/TemplateBasedClassifier/">TemplateBasedClassifier</a>
 </li>
     </ul>
@@ -142,6 +150,10 @@
             
 <li >
     <a href="../../src/cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/HyperRectangleFitter/">HyperRectangleFitter</a>
 </li>
             
 <li >
@@ -192,6 +204,10 @@
 </li>
                                     
 <li >
+    <a href="../mask_utils/">mask_utils</a>
+</li>
+                                    
+<li >
     <a href="../plot_utils/">plot_utils</a>
 </li>
                                     
@@ -231,14 +247,15 @@
             <li><a href="#msetop10rawy95true-y95pred">mseTop10Raw(y_true, y_pred)</a></li>
             <li><a href="#msetopnrawy95true-y95pred-n10">mseTopNRaw(y_true, y_pred, n=10)</a></li>
             <li><a href="#chisquaredy95true-y95pred">chiSquared(y_true, y_pred)</a></li>
-            <li><a href="#chisquaredtop10y95true-y95pred">chiSquaredTop10(y_true, y_pred)</a></li>
+            <li><a href="#chisquaredtopnrawy95true-y95pred-n10">chiSquaredTopNRaw(y_true, y_pred, n=10)</a></li>
             <li><a href="#calculate95rocscores-labels-scoreax">calculate_roc(scores, labels, scoreax)</a></li>
             <li><a href="#get95rocscores-labels-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic">get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')</a></li>
             <li><a href="#get95roc95from95histshists-labels-predicted95hists-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic">get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')</a></li>
-            <li><a href="#get95confusion95matrixscores-labels-wp">get_confusion_matrix(scores, labels, wp)</a></li>
+            <li><a href="#get95confusion95matrixscores-labels-wpnone">get_confusion_matrix(scores, labels, wp=None)</a></li>
             <li><a href="#get95confusion95matrix95from95histshists-labels-predicted95hists-msewp">get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp)</a></li>
             <li><a href="#getautoencoderinput95sizearchactoptadamlossmsetop10">getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10)</a></li>
-            <li><a href="#train95simple95autoencoderhistsnepochs-1modelname">train_simple_autoencoder(hists,nepochs=-1,modelname='')</a></li>
+            <li><a href="#train95simple95autoencoderhists-nepochs-1-modelname-batch95size500-shufflefalse-verbose1-validation95split01">train_simple_autoencoder(hists, nepochs=-1, modelname='',  batch_size=500, shuffle=False,  verbose=1, validation_split=0.1)</a></li>
+            <li><a href="#clip95scores-scores">clip_scores( scores )</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -282,7 +299,7 @@ numpy array of shape (nhists)
 </code></pre>
 
 <h3 id="chisquaredy95true-y95pred">chiSquared(y_true, y_pred)</h3>
-<pre><code class="text">chi2 loss functionfor autoencoder training  
+<pre><code class="text">chi2 loss function for autoencoder training  
 input arguments:  
 - y_true and y_pred: two numpy arrays of equal shape,  
   typically a histogram and its autoencoder reconstruction.  
@@ -292,8 +309,15 @@ output:
   if y_true and y_pred are 2D arrays, this function returns 1D array (chiSquared for each histogram)  
 </code></pre>
 
-<h3 id="chisquaredtop10y95true-y95pred">chiSquaredTop10(y_true, y_pred)</h3>
-<pre><code class="text">same as chiSquared but take into account only 10 largest values in averaging.  
+<h3 id="chisquaredtopnrawy95true-y95pred-n10">chiSquaredTopNRaw(y_true, y_pred, n=10)</h3>
+<pre><code class="text">generalization of chiSquared to any number of bins to take into account  
+note: should work for 2D histograms as well (i.e. arrays of shape (nhistograms,nybins,nxbins)),  
+      but not yet tested!  
+input arguments:  
+- y_true, y_pred: numpy arrays between which to calculate the mean square difference, of shape (nhists,nbins) or (nhists,nybins,nxbins)  
+- n: number of largest elements to keep for summing  
+output:  
+numpy array of shape (nhists)  
 </code></pre>
 
 <h3 id="calculate95rocscores-labels-scoreax">calculate_roc(scores, labels, scoreax)</h3>
@@ -308,7 +332,7 @@ input arguments:
 - scoreax is an array of score thresholds for which to compute the signal and background efficiency,  
   assumed to be sorted in increasing order (i.e. from loose to tight)  
 output:  
-tuple of two np arrays (signal efficiency and background efficiency)  
+- tuple of two np arrays (signal efficiency and background efficiency)  
 </code></pre>
 
 <h3 id="get95rocscores-labels-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic">get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')</h3>
@@ -340,7 +364,7 @@ the output score is the mseTop10Raw between the histograms and their reconstruct
 - other arguments: see get_roc  
 </code></pre>
 
-<h3 id="get95confusion95matrixscores-labels-wp">get_confusion_matrix(scores, labels, wp)</h3>
+<h3 id="get95confusion95matrixscores-labels-wpnone">get_confusion_matrix(scores, labels, wp=None)</h3>
 <pre><code class="text">plot a confusion matrix  
 scores and labels are defined in the same way as for get_roc  
 wp is the chosen working point   
@@ -362,13 +386,23 @@ input args:
 - loss: loss function to use (defualt: mseTop10)  
 </code></pre>
 
-<h3 id="train95simple95autoencoderhistsnepochs-1modelname">train_simple_autoencoder(hists,nepochs=-1,modelname='')</h3>
+<h3 id="train95simple95autoencoderhists-nepochs-1-modelname-batch95size500-shufflefalse-verbose1-validation95split01">train_simple_autoencoder(hists, nepochs=-1, modelname='',  batch_size=500, shuffle=False,  verbose=1, validation_split=0.1)</h3>
 <pre><code class="text">create and train a very simple keras model  
 the model consists of one hidden layer (with half as many units as there are input bins), tanh activation, adam optimizer and mseTop10 loss.  
 input args:   
 - hists is a 2D numpy array of shape (nhistograms, nbins)  
 - nepochs is the number of epochs to use (has a default value if left unspecified)  
 - modelname is a file name to save the model in (default: model is not saved to a file)  
+</code></pre>
+
+<h3 id="clip95scores-scores">clip_scores( scores )</h3>
+<pre><code class="text">clip +-inf values in scores  
++inf values in scores will be replaced by the maximum value (exclucing +inf) plus one  
+-inf values in scores will be replaced by the minimim value (exclucing -inf) minus one  
+input arguments:  
+- scores: 1D numpy array  
+returns  
+- array with same length as scores with elements replaced as explained above  
 </code></pre></div>
         </div>
 
