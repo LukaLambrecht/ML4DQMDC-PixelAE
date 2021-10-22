@@ -7,7 +7,7 @@
 # - reading the raw input csv files and producing more manageable csv files (grouped per histogram type).
 # - reading csv files into pandas dataframes and writing pandas dataframes back to csv files.
 # 
-# See the tutorial read\_and\_write\_data.ipynb for example uses!
+# **Note: the functionality of these utils has been absorbed into the DataLoader class, which is now the recommended way to read the data!**
 
 
 
@@ -40,15 +40,18 @@ def get_data_dirs(year='2017', eras=[], dim=1):
     for era in eras:
         eradir = basedir+'DF'+year+era+'_'+str(dim)+'D_Complete'
         if not os.path.exists(eradir):
-            print('ERROR in csv_utils.py / get_data_dirs: requested directory '+eradir+' does not seem to exist...')
-            return
-        yield eradir
+            print('ERROR in csv_utils.py / get_data_dirs: requested directory {}'.format(eradir)
+                  +' does not seem to exist, skipping it and continuing...')
+        else: yield eradir
 
 def get_csv_files(inputdir):
     ### yields paths to all csv files in input directory
     # note that the output paths consist of input_dir/filename
     # this function is only meant for 1-level down searching,
     # i.e. the .csv files listed directly under input_dir.
+    if not os.path.exists(inputdir):
+        raise Exception('ERROR in csv_utils.py / get_csv_files: input directory {}'.format(inputdir)
+                       +' does not seem to exist.')
     for el in os.listdir(inputdir):
         if el[-4:]=='.csv':
             yield os.path.join(inputdir,el)
@@ -98,6 +101,7 @@ def read_and_merge_csv(csv_files, histnames=[], runnbs=[]):
     df = pd.concat(dflist,ignore_index=True)
     df.sort_values(by=['fromrun','fromlumi'],inplace=True)
     df.reset_index(drop=True,inplace=True)
+    print('INFO in csv_utils.py / read_and_merge_csv: merged {} csv files.'.format(len(csv_files)))
     return df
 
 
