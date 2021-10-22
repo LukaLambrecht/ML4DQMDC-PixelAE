@@ -383,18 +383,19 @@ class HistStruct(object):
         # - name: a name for the mask
         mask = jsonu.isdcson( self.runnbs, self.lsnbs )
         self.add_mask( name, mask )
-        
-    def add_highstat_mask( self, name, histnames=None, entries_to_bins_ratio=100 ):
-        ### add a mask corresponding to lumisections where all histograms have sufficient statistics
+    
+    def add_stat_mask( self, name, histnames=None, min_entries_to_bins_ratio=-1, max_entries_to_bins_ratio=-1 ):
+        ### add a mask corresponding to lumisections where all histograms have statistics within given bounds
         # input arguments:
         # - histnames: list of histogram names to take into account for making the mask (default: all in the HistStruct)
-        # - entries_to_bins_ratio: criterion to determine if a histogram has sufficient statistics, number of entries divided by number of bins
+        # - min_entries_to_bins_ratio: number of entries divided by number of bins, lower boundary for statistics (default: no lower boundary)
+        # - max_entries_to_bins_ratio: same but upper boundary instead of lower boundary (default: no upper boundary)
         if histnames is None:
             histnames = self.histnames
         mask = np.ones(len(self.runnbs)).astype(bool)
         for histname in histnames:
             if histname not in self.histnames:
-                raise Exception('ERROR in HistStruct.add_highstat_mask: requested to take into account {}'.format(histname)
+                raise Exception('ERROR in HistStruct.add_stat_mask: requested to take into account {}'.format(histname)
                                +' but no such histogram type exists in the HistStruct.')
             # determine number of bins
             if len(self.histograms[histname].shape)==2:
@@ -402,8 +403,18 @@ class HistStruct(object):
             else:
                 nbins = self.histograms[histname].shape[1]*self.histograms[histname].shape[2]
             # add the mask for this type of histogram
-            mask = mask & (self.nentries[histname]/nbins>entries_to_bins_ratio)
+            if min_entries_to_bins_ratio > 0:
+                mask = mask & (self.nentries[histname]/nbins>min_entries_to_bins_ratio)
+            if max_entries_to_bins_ratio > 0:
+                mask = mask & (self.nentries[histname]/nbins<max_entries_to_bins_ratio)
         self.add_mask( name, mask )
+        
+    def add_highstat_mask( self, name, histnames=None, entries_to_bins_ratio=100 ):
+        ### shorthand call to add_stat_mask with only lower boundary and no upper boundary for statistics
+        # input arguments:
+        # - entries_to_bins_ratio: number of entries divided by number of bins, lower boundary for statistics
+        # others: see add_stat_mask
+        self.add_stat_mask( name, histnames=histnames, min_entries_to_bins_ratio=entries_to_bins_ratio )
         
     def get_combined_mask( self, names ):
         ### get a combined mask given multiple mask names
