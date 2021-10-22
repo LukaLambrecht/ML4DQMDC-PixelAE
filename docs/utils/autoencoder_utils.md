@@ -1,6 +1,11 @@
 # autoencoder utils  
   
-# define loss functions
+**Utilities related to the training and evaluation of autoencoder models with keras**
+
+The functionality in this script includes:
+- definition of loss functions (several flavours of MSE or chi-squared)
+- calculating and plotting ROC curves and confusion matrices
+- definition of very simple ready-to-use keras model architectures
 - - -
   
   
@@ -43,7 +48,7 @@ numpy array of shape (nhists)
   
 ### chiSquared(y\_true, y\_pred)  
 ```text  
-chi2 loss functionfor autoencoder training  
+chi2 loss function for autoencoder training  
 input arguments:  
 - y_true and y_pred: two numpy arrays of equal shape,  
   typically a histogram and its autoencoder reconstruction.  
@@ -54,9 +59,16 @@ output:
 ```  
   
   
-### chiSquaredTop10(y\_true, y\_pred)  
+### chiSquaredTopNRaw(y\_true, y\_pred, n=10)  
 ```text  
-same as chiSquared but take into account only 10 largest values in averaging.  
+generalization of chiSquared to any number of bins to take into account  
+note: should work for 2D histograms as well (i.e. arrays of shape (nhistograms,nybins,nxbins)),  
+      but not yet tested!  
+input arguments:  
+- y_true, y_pred: numpy arrays between which to calculate the mean square difference, of shape (nhists,nbins) or (nhists,nybins,nxbins)  
+- n: number of largest elements to keep for summing  
+output:  
+numpy array of shape (nhists)  
 ```  
   
   
@@ -73,7 +85,7 @@ input arguments:
 - scoreax is an array of score thresholds for which to compute the signal and background efficiency,  
   assumed to be sorted in increasing order (i.e. from loose to tight)  
 output:  
-tuple of two np arrays (signal efficiency and background efficiency)  
+- tuple of two np arrays (signal efficiency and background efficiency)  
 ```  
   
   
@@ -110,7 +122,7 @@ the output score is the mseTop10Raw between the histograms and their reconstruct
 ```  
   
   
-### get\_confusion\_matrix(scores, labels, wp)  
+### get\_confusion\_matrix(scores, labels, wp=None)  
 ```text  
 plot a confusion matrix  
 scores and labels are defined in the same way as for get_roc  
@@ -138,7 +150,7 @@ input args:
 ```  
   
   
-### train\_simple\_autoencoder(hists,nepochs=-1,modelname='')  
+### train\_simple\_autoencoder(hists, nepochs=-1, modelname='',  batch\_size=500, shuffle=False,  verbose=1, validation\_split=0.1)  
 ```text  
 create and train a very simple keras model  
 the model consists of one hidden layer (with half as many units as there are input bins), tanh activation, adam optimizer and mseTop10 loss.  
@@ -146,6 +158,18 @@ input args:
 - hists is a 2D numpy array of shape (nhistograms, nbins)  
 - nepochs is the number of epochs to use (has a default value if left unspecified)  
 - modelname is a file name to save the model in (default: model is not saved to a file)  
+```  
+  
+  
+### clip\_scores( scores )  
+```text  
+clip +-inf values in scores  
++inf values in scores will be replaced by the maximum value (exclucing +inf) plus one  
+-inf values in scores will be replaced by the minimim value (exclucing -inf) minus one  
+input arguments:  
+- scores: 1D numpy array  
+returns  
+- array with same length as scores with elements replaced as explained above  
 ```  
   
   

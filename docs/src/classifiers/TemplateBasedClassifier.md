@@ -1,5 +1,9 @@
 # TemplateBasedClassifier  
   
+**Histogram classifier based on a direct comparison with templates (i.e. reference histograms)**
+- - -
+  
+  
 ### mseTopN\_templates( histograms, templates, n=-1 )  
 ```text  
 calculate the mse between each histogram in histograms and each histogram in templates  
@@ -53,15 +57,20 @@ special case of above with n=10
 ```text  
 histogram classifier based on a direct comparison with templates (i.e. reference histograms)  
 ```  
-### &#10551; \_\_init\_\_( self, templates, comparemethod='minmse' )  
+### &#10551; \_\_init\_\_( self, comparemethod='minmse' )  
 ```text  
-initializer from a set of templates (reference histograms)  
+initializer  
 input arguments:  
-- templates: a 2D numpy array of shape (nhistograms,nbins)  
 - comparemethod: string representing the method by which to compare a histogram with a set of templates  
   currently supported methods are:  
   - minmse: minimum mean square error between histogram and all templates  
   - avgmse: average mean square error between histogram and all templates  
+```  
+### &#10551; train( self, templates )  
+```text  
+'train' the classifier, i.e. set the templates (reference histograms)  
+input arguments:  
+- templates: a 2D numpy array of shape (nhistograms,nbins)  
 ```  
 ### &#10551; evaluate( self, histograms )  
 ```text  

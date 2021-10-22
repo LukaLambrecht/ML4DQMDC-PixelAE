@@ -1,10 +1,10 @@
 # plot utils  
   
-functions for plotting 
+**A collection of useful basic functions for plotting.**  
 - - -
   
   
-### plot\_hists(histlist, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None, bkgcolor=None, bkgcmap='spring')  
+### plot\_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None,  bkgcolor=None, bkgcmap='spring', bkgrange=None, bkgtitle=None)  
 ```text  
 plot some histograms (in histlist) in one figure using specified colors and/or labels  
 - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))  
@@ -21,7 +21,7 @@ output: tuple of figure and axis objects, that can be used to further tune the l
 ```  
   
   
-### plot\_hists\_multi(histlist, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)  
+### plot\_hists\_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)  
 ```text  
 plot many histograms (in histlist) in one figure using specified colors and/or labels  
 - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))  
@@ -42,7 +42,7 @@ notes:
 ```  
   
   
-### plot\_hists\_2d(hists, ncols=4, title = None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None)  
+### plot\_hists\_2d(hists, ncols=4, title=None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None)  
 ```text  
 plot multiple 2D histograms next to each other  
 - hists: list of 2D numpy arrays of shape (nxbins,nybins), or an equivalent 3D numpy array  
@@ -50,7 +50,7 @@ plot multiple 2D histograms next to each other
 ```  
   
   
-### plot\_hists\_2d\_gif(hists, titles = None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp\_gif.gif')  
+### plot\_hists\_2d\_gif(hists, titles=None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp\_gif.gif')  
 ```text  
 (no valid documentation found)  
 ```  
@@ -115,13 +115,13 @@ input args:
 ```  
   
   
-### plot\_score\_dist( scores, labels, nbins=20, normalize=False, title='output score distributions for signal and background', xaxtitle='output score', yaxtitle=None)  
+### plot\_score\_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='signal', sigcolor='g', bcklabel='background', bckcolor='r', title=None, xaxtitle=None, yaxtitle=None)  
 ```text  
 make a plot showing the distributions of the output scores for signal and background  
 ```  
   
   
-### plot\_fit\_2d( points, fitfunc=None, logprob=False, onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, yaxtitle=None )  
+### plot\_fit\_2d( points, fitfunc=None, logprob=False, clipprob=False,  onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, yaxtitle=None, title=None, transparency=1 )  
 ```text  
 make a scatter plot of a 2D point cloud with fitted contour  
 input arguments:  
@@ -129,6 +129,7 @@ input arguments:
 - fitfunc: an object of type CloudFitter (see src/cloudfitters)   
   or any other object that implements a pdf(points) method  
 - logprob: boolean whether to plot log probability or normal probability  
+- clipprob: boolean whether to replace +- inf values by (non-inf) max and min  
 - onlycontour: a boolean whether to draw only the fit or include the data points  
 - xlims and ylims: tuples of (low,high)  
   note: can be an integer, in which case the range will be determined automatically  

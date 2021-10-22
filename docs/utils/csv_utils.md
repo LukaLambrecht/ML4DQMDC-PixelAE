@@ -1,7 +1,12 @@
 # csv utils  
   
-# some functions that point to the data directories (hard-coded for now!)
-example usage of these functions: see function write_skimmed_csv within this same notebook
+**A collection of useful basic functions for reading and processing the input csv files.**  
+
+Functionality includes:
+- reading the raw input csv files and producing more manageable csv files (grouped per histogram type).
+- reading csv files into pandas dataframes and writing pandas dataframes back to csv files.
+
+**Note: the functionality of these utils has been absorbed into the DataLoader class, which is now the recommended way to read the data!**
 - - -
   
   

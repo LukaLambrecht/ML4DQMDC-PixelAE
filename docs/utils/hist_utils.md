@@ -1,6 +1,12 @@
 # hist utils  
   
-# cropping of hisograms
+**A collection of useful basic functions for processing histograms.**  
+
+Functionality includes:
+- rebinning and normalization
+- moment calculation
+- averaging
+- higher-level functions preparing data for ML training, starting from a dataframe or input csv file.
 - - -
   
   
@@ -9,10 +15,12 @@
 perform cropping on a set of histograms  
 input arguments:  
 - hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D  
-- slices is a list of slice objects (builtin python type) of length 1 (for 1D) or 2 (for 2D)  
-  note: a slice can be created using the builtin python syntax 'slice(start,stop,step)',   
-        and the syntax 'list[slice]' is equivalent to 'list[start:stop:step]'.  
-        use 'None' to ignore one of the arguments for slice creation (equivalent to ':' in direct slicing)  
+- slices: a slice object (builtin python type) or a list of two slices (for 2D)  
+  notes:   
+    - a slice can be created using the builtin python syntax 'slice(start,stop,step)',   
+      and the syntax 'list[slice]' is equivalent to 'list[start:stop:step]'.  
+      use 'None' to ignore one of the arguments for slice creation (equivalent to ':' in direct slicing)  
+    - for 1D histograms, slices can be either a slice object or a list of length 1 containing a single slice.  
 example usage:  
 - see tutorials/plot_histograms_2d.ipynb  
 returns:  
@@ -54,10 +62,11 @@ returns:
 partition a set of histograms into equal parts and take the average histogram of each part  
 input arguments:  
 - hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D  
-- nout: number of partitions / output histograms  
+- nout: number of partitions, i.e. number of output histograms  
   note: nout=1 corresponds to simply taking the average of all histograms in hists.  
+  note: if nout is negative or if nout is larger than number of input histograms, the original set of histograms is returned.  
 returns:  
-- a numpy array of shape (nout,<input number of bins>)  
+- a numpy array of shape (nout,nbins)  
 ```  
   
   
@@ -140,7 +149,7 @@ prepare the data contained in a dataframe in the form of a numpy array
 input arguments:  
 - returnrunls: boolean whether to return a tuple of (histograms, run numbers, lumisection numbers).  
   (default: return only histograms)  
-- cropslices: list of slices by which to crop the historams (default: no cropping)  
+- cropslices: list of slices (one per dimension) by which to crop the historams (default: no cropping)  
 - rebinningfactor: an integer (or tuple of integers for 2D histograms) to downsample/rebin the histograms (default: no rebinning)  
 - donormalize: boolean whether to normalize the data  
 - doplot: if True, some example plots are made showing the histograms  
@@ -153,7 +162,7 @@ prepare the data contained in a dataframe csv file in the form of a numpy array
 input arguments:  
 - returnrunls: boolean whether to return a tuple of (histograms, run numbers, lumisection numbers).  
   (default: return only histograms)  
-- cropslices: list of slices by which to crop the historams (default: no cropping)  
+- cropslices: list of slices (one per dimension) by which to crop the historams (default: no cropping)  
 - rebinningfactor: an integer (or tuple of integers for 2D histograms) to downsample/rebin the histograms (default: no rebinning)  
 - donormalize: boolean whether to normalize the data  
 - doplot: if True, some example plots are made showing the histograms  

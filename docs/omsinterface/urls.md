@@ -1,6 +1,2 @@
 # urls  
   
-general settings
-- - -
-  
-  
