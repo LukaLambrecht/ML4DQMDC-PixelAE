@@ -94,7 +94,7 @@ def random_lico(hists):
     res = np.sum(hists*coeffs[:,np.newaxis],axis=0)
     return res
 
-def smoother(inarray, halfwidth):
+def smoother(inarray, halfwidth=1):
     ### smooth the rows of a 2D array using the 2*halfwidth+1 surrounding values.
     outarray = np.zeros(inarray.shape)
     nbins = inarray.shape[1]
@@ -127,11 +127,11 @@ def moments_correlation_vector(moments, index):
 
 ### plot functions
 
-def plot_data_and_gen(nplot, datahist, genhist, figname='fig.png'):
-    ### plot a couple of random examples from rhist (data), ghist (resampled 'good') and bhist (resampled 'bad')
+def plot_data_and_gen(datahists, genhists, nplot=10, figname='fig.png'):
+    ### plot a couple of random examples from data and generated histograms
     # input arguments:
-    # - nplot: integer, maximum number of examples to plot
     # - datahist, genhist: numpy arrays of shape (nhists,nbins)
+    # - nplot: integer, maximum number of examples to plot
     # - figname: name of figure to plot
 
     # make sure that figname contains absolute path
@@ -155,8 +155,8 @@ def plot_data_and_gen(nplot, datahist, genhist, figname='fig.png'):
     return (fig,ax)
 
 
-def plot_seed_and_gen(seedhist, genhist, figname='fig.png'):
-    ### plot a couple of random examples from rhist (data), ghist (resampled 'good') and bhist (resampled 'bad')
+def plot_seed_and_gen(seedhists, genhists, figname='fig.png'):
+    ### plot seed and generated histograms
     # input arguments:
     # - datahist, genhist: numpy arrays of shape (nhists,nbins)
     # - figname: name of figure to plot
@@ -240,7 +240,7 @@ def fourier_noise_on_mean(hists, outfilename='', figname='', nresamples=0, nonne
         noise_examples = []
         for i in range(5): noise_examples.append(goodnoise(nbins,histstd))
         plot_noise(np.array(noise_examples),histstd,figname)
-        plot_data_and_gen(50,hists,reshists,figname)
+        plot_data_and_gen(hists,reshists,nplot=50,figname=figname)
 
     # store results if requested
     if len(outfilename)>0: np.savetxt(outfilename.split('.')[0]+'.csv',reshists)
@@ -278,17 +278,22 @@ def fourier_noise(hists, outfilename='', figname='', nresamples=1, nonnegative=T
         noise_examples = []
         for i in range(5): noise_examples.append(goodnoise(nbins,hists[-1,:]/stdfactor))
         plot_noise(np.array(noise_examples),hists[-1,:]/stdfactor,figname)
-        plot_data_and_gen(50,hists,reshists,figname)
+        plot_data_and_gen(hists,reshists,nplot=50,figname=figname)
     
     # store results if requested
     if len(outfilename)>0: np.savetxt(outfilename.split('.')[0]+'.csv',reshists)
 
     return reshists
 
-def upsample_hist_set(hists,ntarget,fourierstdfactor=15.,figname=''):
+def upsample_hist_set(hists, ntarget=-1, fourierstdfactor=15., figname='f'):
     ### wrapper for fourier_noise allowing for a fixed target number of histograms instead of a fixed resampling factor
     # useful function for quickly generating a fixed number of resampled histograms,
     # without bothering too much about what exact resampling technique or detailed settings would be most appropriate.
+    # input arguments:
+    # hists: input histogram set
+    # ntarget: targetted number of resampled histograms (default: equally many as in hists)
+    # fourierstdfactor: see fourier_noise
+    if ntarget<0: ntarget = len(hists)
     nresamples = max(1,int(float(ntarget)/len(hists)))    
     hists_ext = fourier_noise(hists,figname=figname,nresamples=nresamples,nonnegative=True,stdfactor=fourierstdfactor)
     return hists_ext
@@ -310,7 +315,7 @@ def white_noise(hists, figname='', stdfactor=15.):
         reshists[i,:] = hists[i,:] + np.multiply(np.random.normal(size=nbins), np.divide(hists[i,:],stdfactor) )
     
     # plot examples of generated histograms
-    if len(figname)>0: plot_data_and_gen(50,hists,reshists,figname)
+    if len(figname)>0: plot_data_and_gen(hists,reshists,nplot=50,figname=figname)
 
     return reshists
 
@@ -344,7 +349,7 @@ def resample_bin_per_bin(hists, outfilename='', figname='', nresamples=0, nonneg
     if smoothinghalfwidth>0: reshists = smoother(reshists,halfwidth=smoothinghalfwidth)
 
     # plot examples of good and bad histograms
-    if len(figname)>0: plot_data_and_gen(50,hists,reshists,figname)
+    if len(figname)>0: plot_data_and_gen(hists,reshists,nplot=50,figname=figname)
     
     # store results if requested
     if len(outfilename)>0: np.savetxt(outfilename.split('.')[0]+'.csv',reshists)
@@ -401,7 +406,7 @@ def resample_similar_bin_per_bin( allhists, selhists, outfilename='', figname=''
     print('If this number is too high, systematic shifts of histograms can be averaged out.')
         
     # plot examples of good and bad histograms
-    if len(figname)>0: plot_data_and_gen(50,selhists,reshists,figname)
+    if len(figname)>0: plot_data_and_gen(selhists,reshists,nplot=50,figname=figname)
 
     # store results if requested
     if len(outfilename)>0: np.savetxt(outfilename.split('.')[0]+'.csv',reshists)
@@ -463,7 +468,7 @@ def resample_similar_fourier_noise( allhists, selhists, outfilename='', figname=
 
     # plot examples of good and bad histograms
     # use only those histograms from real data that were used to create the resamples
-    if len(figname)>0: plot_data_and_gen(50,selhists,reshists,figname)
+    if len(figname)>0: plot_data_and_gen(selhists,reshists,nplot=50,figname=figname)
 
     # store results if requested
     if len(outfilename)>0: np.savetxt(outfilename.split('.')[0]+'.csv',reshists)
@@ -529,7 +534,7 @@ def resample_similar_lico( allhists, selhists, outfilename='', figname='', nresa
         
     # plot examples of good and bad histograms
     # use only those histograms from real data that were used to create the resamples
-    if len(figname)>0: plot_data_and_gen(50,selhists,reshists,figname)
+    if len(figname)>0: plot_data_and_gen(selhists,reshists,nplot=50,figname=figname)
         
     # store results if requested
     if len(outfilename)>0: np.savetxt(outfilename.split('.')[0]+'.csv',reshists)
@@ -562,7 +567,7 @@ def mc_sampling(hists, nMC=10000 , nresamples=10):
                 y_r=rn.random()*np.max(hists[i])
                 if( y_r <= hists[i][x_r]):
                     output[i*nresamples+j][x_r]+=weight
-    plot_data_and_gen(50,hists,output,'temp')
+    plot_data_and_gen(hists,output,nplot=50,figname='temp')
     return output
 
 

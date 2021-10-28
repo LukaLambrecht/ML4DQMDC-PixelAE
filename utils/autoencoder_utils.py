@@ -264,7 +264,7 @@ def get_confusion_matrix(scores, labels, wp=None):
     plt.figure()
     sn.heatmap(df_cm, annot=True, cmap=plt.cm.Blues)
     
-def get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp):
+def get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp=None):
     ### plot a confusion matrix without manually calculating the scores
     # the output score is the mse between the histograms and their reconstruction
     

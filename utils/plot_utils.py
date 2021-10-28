@@ -14,8 +14,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
 from copy import copy
-try: import imageio
-except ImportError: print('WARNING: could not import module imageio')
+import imageio
 import importlib
 
 # local modules
@@ -214,9 +213,11 @@ def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparen
     return (fig,ax)
 
 def plot_anomalous(histlist, ls, highlight=-1, hrange=-1):
-    # histlist and ls are a list of histograms and corresponding lumisection numbers
-    # lsnumber is the lumisection number of the histogram to highlight
-    # hrange is the number of histograms before and after lsnumber to plot (default: whole run)
+    ### plot a range of histograms and highlight one of them
+    # input arguments:
+    # - histlist and ls: a list of histograms and corresponding lumisection numbers
+    # - highlight: the lumisection number of the histogram to highlight
+    # - hrange: the number of histograms before and after lsnumber to plot (default: whole run)
     lshist = None
     if highlight >= 0:
         if not highlight in ls:
@@ -238,9 +239,11 @@ def plot_anomalous(histlist, ls, highlight=-1, hrange=-1):
         ax.step(xax,lshist,where='mid',color='black',linewidth=2)
     return (fig,ax)
 
-def plot_moments(moments, ls, dims, fig=None, ax=None, markersize=10):
-    # moments is an (nhists,nmoments) array
-    # dims is a tuple of two or three values between 0 and nmoments-1
+def plot_moments(moments, ls, dims=(0,1), fig=None, ax=None, markersize=10):
+    ### plot the moments of a set of histograms
+    # input arguments:
+    # - moments: a numpy array of shape (nhists,nmoments)
+    # - dims: a tuple of two or three values between 0 and nmoments-1
     from mpl_toolkits.mplot3d import Axes3D # specific import
     if fig==None: fig = plt.figure()
     if len(dims)==2:
@@ -286,6 +289,7 @@ def plot_distance(dists, ls=None, rmlargest=0., doplot=True,
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
     ax.legend()
+    plt.show()
     return (fig,ax)
 
 
@@ -298,19 +302,15 @@ def plot_loss(data, xlims=None,
     # e.g. history = <your autoencoder>.fit(<training params>)
     #      plot_loss(history,'a title')
     fig,ax = plt.subplots()
-    if 'loss' in data.history.keys(): 
-        ax.plot(data.history['loss'], linestyle=(0,()), color="#1A237E", 
-                linewidth=3, label='training')
-    if 'val_loss' in data.history.keys():
-        ax.plot(data.history['val_loss'], linestyle=(0,(3,2)), color="#4DB6AC", 
-                linewidth=3, label='validation')
+    ax.plot(data.history['loss'], linestyle=(0,()), color="#1A237E", linewidth=3, label='training')
+    ax.plot(data.history['val_loss'], linestyle=(0,(3,2)), color="#4DB6AC", linewidth=3, label='validation')
     ax.legend(loc="upper right", frameon=False)
     ax.set_yscale('log')
     if xlims is not None: ax.set_xlim(xlims)
     if title is not None: ax.set_title(title)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
-    plt.show(block=False)
+    plt.show()
     return (fig,ax)
     
 ### plot an array of mse values and get the mean and std value
@@ -327,7 +327,7 @@ def plot_mse(mse, rmlargest=0., doplot=True,
     return (obj1,obj2)
 
 
-def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False,
+def plot_score_dist( scores, labels, nbins=20, normalize=False,
                         siglabel='signal', sigcolor='g',
                         bcklabel='background', bckcolor='r',
                         title=None, xaxtitle=None, yaxtitle=None):
@@ -343,8 +343,7 @@ def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=Fals
     if normalize:
         sighist = sighist/np.sum(sighist)
         bckhist = bckhist/np.sum(bckhist)
-    if( fig is None or ax is None ):
-        (fig,ax) = plt.subplots()
+    (fig,ax) = plt.subplots()
     ax.step(scoreax,sighist,color=sigcolor,label=siglabel,where='mid')
     ax.step(scoreax,bckhist,color=bckcolor,label=bcklabel,where='mid')
     ax.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
@@ -352,6 +351,7 @@ def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=Fals
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
     ax.legend()
+    plt.show()
     return (fig,ax)
 
 def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False, 

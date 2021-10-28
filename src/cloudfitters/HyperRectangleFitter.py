@@ -45,7 +45,7 @@ class HyperRectangleFitter(CloudFitter):
     ### Simple fitter making a hard cut in each dimension
     # 
     
-    def __init__(self, points, quantiles, side='both', verbose=False ):
+    def __init__(self, points, quantiles=0, side='both', verbose=False ):
         ### constructor
         # input arguments:
         # - points: a np array of shape (npoints,ndims)

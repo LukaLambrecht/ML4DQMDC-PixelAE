@@ -31,7 +31,7 @@ importlib.reload(plot_utils)
 
 ### cropping of hisograms
 
-def crophists(hists, slices):
+def crophists(hists, slices=None):
     ### perform cropping on a set of histograms
     # input arguments:
     # - hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D
@@ -45,6 +45,7 @@ def crophists(hists, slices):
     # - see tutorials/plot_histograms_2d.ipynb
     # returns:
     # - a numpy array containing the same histograms as input but cropped according to the slices argument
+    if slices is None: return hists
     if len(hists.shape)==2:
         if isinstance(slices,slice): slices=[slices]
         return hists[:,slices[0]]
@@ -55,7 +56,7 @@ def crophists(hists, slices):
         
 ### rebinning of histograms
 
-def rebinhists(hists, factor):
+def rebinhists(hists, factor=None):
     ### perform rebinning on a set of histograms
     # input arguments:
     # - hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D
@@ -66,6 +67,7 @@ def rebinhists(hists, factor):
     # - see tutorials/plot_histograms_2d.ipynb
     # returns:
     # - a numpy array containing the same histograms as input but rebinned according to the factor argument
+    if factor is None: return hists
     if len(hists.shape)==2:
         if(not hists.shape[1]%factor==0): 
             print('WARNING in hist_utils.py / rebinhists: no rebinning performed since no suitable reduction factor was given.'
@@ -120,7 +122,7 @@ def normalizehists(hists):
 
 ### averaging a collection of histograms (e.g. for template definition)
 
-def averagehists(hists, nout):
+def averagehists(hists, nout=None):
     ### partition a set of histograms into equal parts and take the average histogram of each part
     # input arguments:
     # - hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D
@@ -129,6 +131,7 @@ def averagehists(hists, nout):
     #   note: if nout is negative or if nout is larger than number of input histograms, the original set of histograms is returned.
     # returns:
     # - a numpy array of shape (nout,nbins)
+    if nout is None: return hists
     if nout<0: return hists
     if nout > len(hists):
         print('WARNING in hist_utils.py / averagehists: requested number of output histograms ({})'.format(nout)
@@ -153,11 +156,11 @@ def averagehists(hists, nout):
     else:
         raise Exception('ERROR in hist_utils.py / averagehists: histograms have invalid input shape: {}'.format(hists.shape))
         
-def running_average_hists(hists, window, weights=None):
+def running_average_hists(hists, window=None, weights=None):
     ### replace each histogram in a collection of histograms by its running average
     # input arguments:
     # - hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D
-    # - nwindow: number of histograms to consider for the averaging
+    # - window: number of histograms to consider for the averaging
     #   if window is an integer, it is the number of previous histograms in hists used for averaging
     #   (so window=0 would correspond to no averaging)
     #   if window is a tuple, it corresponds to (nprevious,nnext), and the nprevious previous and nnext next histograms in hists are used for averaging
@@ -173,6 +176,7 @@ def running_average_hists(hists, window, weights=None):
     # - this function will crash when the length of the set of histograms is smaller than the total window length,
     #   maybe extend later (although this is not normally needed)
     
+    if window is None: return hists
     # check input arguments
     if isinstance(window,int):
         window = (window,0)
