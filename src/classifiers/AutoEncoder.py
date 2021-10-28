@@ -48,10 +48,18 @@ class AutoEncoder(HistogramClassifier):
                            +' while a tensorflow model is expected')
         self.model = model
         
-    def train( self, histograms, doplot=True, **kwargs ):
+    def train( self, histograms, doplot=True, epochs=10, batch_size=500, shuffle=False, verbose=1, validation_split=0.1, **kwargs ):
         ### train the model on a given set of input histograms
+        # input arguments:
+        # - histograms: set of training histograms, a numpy array of shape (nhistograms,nbins)
+        # - doplot: boolean whether to make a plot of the loss value
+        # - others: see the keras fit function
+        # - kwargs: additional arguments passed down to keras fit function
         super( AutoEncoder,self ).train( histograms )
-        history = self.model.fit(histograms, histograms, **kwargs)
+        history = self.model.fit(histograms, histograms, epochs=epochs, 
+                                 batch_size=batch_size, shuffle=shuffle, 
+                                 verbose=verbose, validation_split=validation_split, 
+                                 **kwargs)
         if doplot: plot_utils.plot_loss(history)
         
     def evaluate( self, histograms ):
