@@ -1,7 +1,6 @@
 # to do:
 # - see to do's in the code
 # - continue making styling more uniform (e.g. everything in a Frame)
-# - find a solution for json file access that works from anywhere
 
 # external modules
 
@@ -14,6 +13,7 @@ print('  import numpy as np'); import numpy as np
 print('  import matplotlib.pyplot as plt'); import matplotlib.pyplot as plt
 print('  import pickle'); import pickle
 print('  import functools'); import functools
+print('  import inspect'); import inspect
 try: 
     print('importing tkinter for python3')
     import tkinter as tk
@@ -52,34 +52,89 @@ print('  import HyperRectangleFitter'); import HyperRectangleFitter
 
 print('done')
 
-### mappings
 
-# to do: get list of arguments (and default values) per resampling function / fitter class
-#        and return it, so that all key/value text box pairs can be replaced by OptionsFrames!
+### styling
+
+def set_frame_default_style( frame ):
+    ### apply some default stylings to a tk.Frame
+    frame['padx'] = 10
+    frame['pady'] = 10
+    frame['borderwidth'] = 2
+    frame['relief'] = 'groove'
+
+
+### mappings of names to functions, classes, etc.
+
+def get_args_dict( function ):
+    ### get a dict of keyword arguments to a function
+    sig = inspect.signature(function)
+    args = {}
+    for argname in sig.parameters:
+        arg = sig.parameters[argname]
+        if arg.default!=arg.empty: args[argname]=arg.default
+    return args
 
 def get_resampling_function( key=None ):
+    ### get a resampling function from its name (or other key)
+    # note: a dict of keyword arguments with default values is returned as well!
+    # input arguments:
+    # - key: string representing name or key of resampling function
 
+    # return all valid keys
     allowed = ['None','upsample_hist_set']
     if key is None: return allowed
 
+    # map key to function
     key = key.strip(' \t\n')
-    if key=='None': return None
-    if key=='upsample_hist_set': return gdu.upsample_hist_set
+    if key=='None': return (None,{})
+    if key=='upsample_hist_set': f = gdu.upsample_hist_set
+    elif key=='dummy1': pass
+    elif key=='dummy2': pass
     else:
         raise Exception('ERROR: resampling function {} not recognized.'.format(key))
+    return (f,get_args_dict(f))
 
 def get_fitter_class( key=None ):
+    ### get a fitter class from its name (or other key)
+    # note: a dict of keyword initialization arguments with default values is returned as well!
+    # input arguments:
+    # - key: string representing name or key of fitter class
     
     allowed = ['GaussianKdeFitter', 'SeminormalFitter']
     if key is None: return allowed
 
     key = key.strip(' \t\n')
-    if key=='GaussianKdeFitter': return GaussianKdeFitter.GaussianKdeFitter
-    if key=='SeminormalFitter': return SeminormalFitter.SeminormalFitter
+    if key=='GaussianKdeFitter': c = GaussianKdeFitter.GaussianKdeFitter
+    elif key=='SeminormalFitter': c = SeminormalFitter.SeminormalFitter
     else:
         raise Exception('ERROR: fitter class {} not recognized'.format(key))
+    return (c,get_args_dict(c))
 
-### help functions
+def get_training_options( histstruct ):
+    ### get options for training classifiers
+    # note: the classifiers are assumed to be already present in the histstruct
+    # note: different types of classifiers for different types of histograms
+    #       are not supported for now... need to do.
+    ctype = None
+    classifier = None
+    for histname in histstruct.histnames:
+        if histname not in histstruct.classifiers.keys():
+            print('WARNING: the histstruct seems not to contain a classifier'
+                    +' for {}'.format(histname))
+            continue
+        classifier = histstruct.classifiers[histname]
+        if( ctype is None ): ctype = type(classifier)
+        if( type(classifier)!=ctype ):
+            raise Exception('ERROR: the histstruct seems to contain different types of classifiers'
+                    +' for different types of histograms.'
+                    +' This is currently not yet supported in the GUI.')
+    if classifier is None:
+        print('WARNING: could not retrieve options for classifier training.'
+                +' (Have any classifiers been initialized?)')
+        return {}
+    return get_args_dict(classifier.train)
+
+### other help functions
 
 def is_float(s):
     try: float(s); return True
@@ -96,25 +151,6 @@ def is_bool(s):
 def to_bool(s):
     # note: do not use builtin bool() since it appears to return True for every not-None variable
     return (s=='True' or s=='true')
-
-def make_options_dict( keystr, valstr ):
-    keys = [key.strip(' ').strip('\t') for key in keystr.split('\n')]
-    values = [value.strip(' ').strip('\t') for value in valstr.split('\n')]
-    res = {}
-    for key, value in zip(keys, values):
-        if len(key)==0: continue
-        if is_int(value): value = int(value)
-        elif is_float(value): value = float(value)
-        elif is_bool(value): value = to_bool(value)
-        res[key] = value
-    return res
-
-def set_frame_default_style( frame ):
-    ### apply some default stylings to a tk.Frame
-    frame['padx'] = 10
-    frame['pady'] = 10
-    frame['borderwidth'] = 2
-    frame['relief'] = 'groove'
 
 ### help classes
 
@@ -157,6 +193,13 @@ class OptionsFrame:
         self.labels = []
         self.wtypes = []
         self.widgets = []
+        self.set_options( labels=labels, types=types, values=values)
+
+    def set_options(self, labels=None, types=None, values=None):
+        ### set the options of an option frame
+        # serves both as initializer and as resetter (? to be tested!)
+
+        # check arguments
         if labels is None: 
             raise Exception('ERROR in OptionsFrame initialization:'
                             +' argument "labels" must be specified.')
@@ -166,6 +209,14 @@ class OptionsFrame:
             raise Exception('ERROR in OptionsFrame initialization:'
                             +' argument lists have unequal lengths.')
             # (to extend error checking)
+
+        # clear current OptionsFrame
+        self.labels.clear()
+        self.wtypes.clear()
+        self.widgets.clear()
+        for widget in self.frame.winfo_children(): widget.destroy()
+
+        # set widgets
         for i, (label, wtype, value) in enumerate(zip(labels, types, values)):
             tklabel = tk.Label(self.frame, text=label)
             tklabel.grid(row=i, column=0)
@@ -207,11 +258,13 @@ class ScrolledFrame:
     #       since the widget must have its master (i.e. this frame) set on creation.
     #       therefore, first create the ScrolledFrame f, then the widget (using the f as master),
     #       and then call set_widget to position the widgt correctly in the frame.
-    #       to do: find out if this can be simplified...
+    #       to simplify this, make subclasses (e.g. ScrolledTextFrame below)
 
-    def __init__(self, master, height=50, width=50, adaptable_size=False):
+    def __init__(self, master, height=50, width=50, 
+                    adaptable_size=False, showscrollbars=False):
         # note: if adaptable_size is True, the Frame will take its size from the child widget
         self.frame = tk.Frame(master, height=height, width=width)
+        self.showscrollbars = showscrollbars
         if not adaptable_size: self.frame.grid_propagate(0)
 
     def set_widget(self, widget):
@@ -219,8 +272,11 @@ class ScrolledFrame:
         widget.grid(row=0, column=0, sticky='nsew')
         self.yscrollbar = tk.Scrollbar(self.frame, orient="vertical", command=widget.yview)
         self.xscrollbar = tk.Scrollbar(self.frame, orient="horizontal", command=widget.xview)
-        self.frame.grid_rowconfigure(0, weight=1)
-        self.frame.grid_columnconfigure(0, weight=1)
+        if self.showscrollbars:
+            self.yscrollbar.grid(row=0, column=1)
+            self.xscrollbar.grid(row=1, column=0)
+            self.frame.grid_rowconfigure(0, weight=1)
+            self.frame.grid_columnconfigure(0, weight=1)
 
 class ScrolledTextFrame(ScrolledFrame):
     ### specific case of ScrolledFrame, where the widget is tk.Text.
@@ -228,9 +284,9 @@ class ScrolledTextFrame(ScrolledFrame):
     #       does not need to be created manually;
     #       it is created internally and accessible via the .widget attribute.
 
-    def __init__(self, master, txtheight=50, txtwidth=50):
-        super().__init__(master, adaptable_size=True)
-        text = tk.Text(self.frame, height=txtheight, width=txtwidth)
+    def __init__(self, master, txtheight=50, txtwidth=50, showscrollbars=False):
+        super().__init__(master, adaptable_size=True, showscrollbars=showscrollbars)
+        text = tk.Text(self.frame, wrap=tk.NONE, height=txtheight, width=txtwidth)
         self.set_widget(text)
 
 ### GUI windows
@@ -768,14 +824,14 @@ class TrainClassifiersWindow(tk.Toplevel):
         self.select_train_button.grid(row=1, column=0, columnspan=2)
 
         # add widgets for training options
-        self.key_label = tk.Label(self.train_options_frame, text='Keys')
+        self.key_label = tk.Label(self.train_options_frame, text='Parameters')
         self.key_label.grid(row=2, column=0)
-        self.key_text = ScrolledTextFrame(self.train_options_frame, txtheight=5, txtwidth=25)
-        self.key_text.frame.grid(row=3, column=0)
         self.value_label = tk.Label(self.train_options_frame, text='Values')
         self.value_label.grid(row=2, column=1)
-        self.value_text = ScrolledTextFrame(self.train_options_frame, txtheight=5, txtwidth=25)
-        self.value_text.frame.grid(row=3, column=1)
+        options = get_training_options( self.histstruct )
+        self.options_frame = OptionsFrame(self.train_options_frame, 
+                labels=options.keys(),values=options.values())
+        self.options_frame.frame.grid(row=3, column=0, columnspan=2)
 
         # add button to start training
         self.train_button = tk.Button(self, text='Start training', command=self.do_training)
@@ -786,14 +842,8 @@ class TrainClassifiersWindow(tk.Toplevel):
         self.select_train_button['bg'] = 'green'
         return
 
-    def get_training_options(self):
-        ### get current options entered by the user
-        keystr = self.key_text.widget.get(1.0,tk.END)
-        valstr = self.value_text.widget.get(1.0,tk.END)
-        return make_options_dict( keystr, valstr )
-
     def do_training(self):
-        training_options = self.get_training_options()
+        training_options = self.options_frame.get_dict()
         if self.training_set_selector is None:
             raise Exception('ERROR: please select a training set before starting training.')
         training_histograms = self.training_set_selector.get_histograms()
@@ -845,17 +895,16 @@ class FitWindow(tk.Toplevel):
         self.fitter_label.grid(row=2,column=0)
         self.fitter_box = ttk.Combobox(self.fit_options_frame, values=get_fitter_class())
         self.fitter_box.current(0)
+        self.fitter_box.bind('<<ComboboxSelected>>', self.set_fitter_options)
         self.fitter_box.grid(row=2,column=1)
-        self.fitter_keys_label = tk.Label(self.fit_options_frame, text='Keys')
-        self.fitter_keys_label.grid(row=3,column=0)
-        self.fitter_keys_text = ScrolledTextFrame(self.fit_options_frame, 
-                                                    txtheight=5, txtwidth=15)
-        self.fitter_keys_text.frame.grid(row=4,column=0)
-        self.fitter_values_label = tk.Label(self.fit_options_frame, text='Values')
-        self.fitter_values_label.grid(row=3,column=1)
-        self.fitter_values_text = ScrolledTextFrame(self.fit_options_frame, 
-                                                    txtheight=5, txtwidth=15)
-        self.fitter_values_text.frame.grid(row=4,column=1)
+        self.key_label = tk.Label(self.fit_options_frame, text='Parameters')
+        self.key_label.grid(row=3, column=0)
+        self.value_label = tk.Label(self.fit_options_frame, text='Values')
+        self.value_label.grid(row=3, column=1)
+        self.fitter_options_frame = OptionsFrame(self.fit_options_frame, 
+                labels=[], values=[])
+        self.fitter_options_frame.frame.grid(row=4, column=0, columnspan=2)
+        self.set_fitter_options(None)
 
         # create frame for plotting options
         self.plot_options_frame = tk.Frame(self)
@@ -865,14 +914,9 @@ class FitWindow(tk.Toplevel):
         self.plot_options_label.grid(row=0, column=0)
     
         # add widgets for plotting options
-        plot_options_dict = ({
-                         # options needed at this level:
-                         'do_plot':'True',
-                         # options passed to plot function:
-                         'logprob':'True', 'clipprob':'True',
-                         'onlycontour':'False', 'xlims':'30', 'ylims':'30',
-                         'onlypositive':'True', 'transparency':'0.5',
-                         'title':'density fit of lumisection MSE'})
+        plot_options_dict = get_args_dict(pu.plot_fit_2d)
+        meta_args = {'do_plot':'True'}
+        plot_options_dict = {**meta_args, **plot_options_dict}
         self.plot_options = OptionsFrame(self.plot_options_frame,
                                             labels=plot_options_dict.keys(),
                                             values=plot_options_dict.values())
@@ -881,6 +925,11 @@ class FitWindow(tk.Toplevel):
         # add widgets to start the fit
         self.fit_button = tk.Button(self, text='Start fit', command=self.do_fit)
         self.fit_button.grid(row=2, column=0, columnspan=2)
+
+    def set_fitter_options(self, event):
+        fitter_name = self.fitter_box.get()
+        (_, coptions) = get_fitter_class(fitter_name)
+        self.fitter_options_frame.set_options(labels=coptions.keys(), values=coptions.values())
 
     def open_fitting_set_selection_window(self):
         self.fitting_set_selector = SelectorWindow(self.master, self.histstruct)
@@ -906,10 +955,8 @@ class FitWindow(tk.Toplevel):
 
     def get_fitter(self):
         fitter_name = self.fitter_box.get()
-        fitter = get_fitter_class( fitter_name )
-        fitter_keystr = self.fitter_keys_text.widget.get(1.0,tk.END)
-        fitter_valstr = self.fitter_values_text.widget.get(1.0,tk.END)
-        fitter_options = make_options_dict(fitter_keystr, fitter_valstr)
+        (fitter, _) = get_fitter_class(fitter_name)
+        fitter_options = self.fitter_options_frame.get_dict()
         return (fitter,fitter_options)
 
     def do_fit(self):
@@ -1032,22 +1079,28 @@ class ResampleWindow(tk.Toplevel):
         function_label.grid(row=3, column=0)
         function_box = ttk.Combobox(set_frame, values=get_resampling_function())
         function_box.current(0)
+        function_box.bind('<<ComboboxSelected>>', functools.partial(
+            self.set_function_options, setindex=idx))
         function_box.grid(row=3, column=1)
-        function_keys_label = tk.Label(set_frame, text='Keys')
-        function_keys_label.grid(row=4, column=0)
-        function_keys_text = tk.Text(set_frame, height=5, width=15)
-        function_keys_text.grid(row=5, column=0)
-        function_values_label = tk.Label(set_frame, text='Values')
-        function_values_label.grid(row=4, column=1)
-        function_values_text = tk.Text(set_frame, height=5, width=15)
-        function_values_text.grid(row=5, column=1)
+        key_label = tk.Label(set_frame, text='Parameters')
+        key_label.grid(row=4, column=0)
+        value_label = tk.Label(set_frame, text='Values')
+        value_label.grid(row=4, column=1)
+        function_options_frame = OptionsFrame(set_frame, labels=[], values=[])
+        function_options_frame.frame.grid(row=5, column=0, columnspan=2)
 
         self.set_widget_list.append({'select_button':select_button,
                                     'name':name_text,'partitions':partitions_text,
-                                    'function':function_box,'function_keys':function_keys_text,
-                                    'function_values':function_values_text})
+                                    'function':function_box,
+                                    'function_options':function_options_frame})
+        self.set_function_options(None, idx)
         self.set_selector_list.append( None )
 
+    def set_function_options(self, event, setindex):
+        fname = self.get_function_name(setindex)
+        (_, foptions) = get_resampling_function(key=fname)
+        self.set_widget_list[setindex]['function_options'].set_options( 
+            labels=foptions.keys(), values=foptions.values())
 
     def open_select_window(self, idx):
         self.set_selector_list[idx] = SelectorWindow(self.master, self.histstruct)
@@ -1070,13 +1123,15 @@ class ResampleWindow(tk.Toplevel):
         pstr = text.get(1.0,tk.END)
         return int(pstr)
 
-    def get_function(self, setindex):
+    def get_function_name(self, setindex):
         widgets = self.set_widget_list[setindex]
         function_name = widgets['function'].get()
-        function = get_resampling_function( function_name )
-        function_keystr = widgets['function_keys'].get(1.0,tk.END)
-        function_valstr = widgets['function_values'].get(1.0,tk.END)
-        function_options = make_options_dict(function_keystr, function_valstr)
+        return function_name
+
+    def get_function(self, setindex):
+        fname = self.get_function_name(setindex)
+        (function, _) = get_resampling_function(fname)
+        function_options = self.set_widget_list[setindex]['function_options'].get_dict()
         return (function, function_options)
 
     def do_resampling(self):
@@ -1456,6 +1511,7 @@ class PlotLumisectionWindow(tk.Toplevel):
         options = self.options_frame.get_dict()
         runnb = options['run']
         recomode = options['reco mode']
+        if recomode != 'auto': recomode=None
         plotscore = options['plot score']
         if options['mode']=='ls':
             lsnbs = [options['lumisection']]
@@ -1524,13 +1580,13 @@ class ML4DQMGUI:
         # add widgets for creating a new histstruct
         self.newhs_frame = tk.Frame(master)
         self.newhs_label = tk.Label(self.newhs_frame, text='HistStruct creation')
-        self.newhs_label.grid(row=0, column=0)
+        self.newhs_label.grid(row=0, column=0, sticky='ew')
         self.newhs_button = tk.Button(self.newhs_frame, text='New', 
                                         command=self.open_new_histstruct_window)
-        self.newhs_button.grid(row=1, column=0)
+        self.newhs_button.grid(row=1, column=0, sticky='ew')
         self.addclassifiers_button = tk.Button(self.newhs_frame, text='Add classifiers',
                                         command=self.open_add_classifiers_window)
-        self.addclassifiers_button.grid(row=2, column=0)
+        self.addclassifiers_button.grid(row=2, column=0, sticky='ew')
         # add the frame to the window
         self.newhs_frame.grid(row=0, column=0, sticky='nsew')
         self.button_frames.append(self.newhs_frame)
@@ -1539,20 +1595,20 @@ class ML4DQMGUI:
         # add widgets for loading and saving a HistStruct
         self.iobutton_frame = tk.Frame(master)
         self.iobutton_label = tk.Label(self.iobutton_frame, text='HistStruct I/O')
-        self.iobutton_label.grid(row=0, column=0)
+        self.iobutton_label.grid(row=0, column=0, sticky='ew')
         self.load_button = tk.Button(self.iobutton_frame, text='Load',
                                      command=self.load_histstruct)
-        self.load_button.grid(row=1, column=0)
+        self.load_button.grid(row=1, column=0, sticky='ew')
         self.save_button = tk.Button(self.iobutton_frame, text='Save',
                                      command=self.save_histstruct)
-        self.save_button.grid(row=2, column=0)
+        self.save_button.grid(row=2, column=0, sticky='ew')
         self.display_histstruct_button = tk.Button(self.iobutton_frame, 
                                                     text='Display',
                                                     command=self.open_display_histstruct_window)
-        self.display_histstruct_button.grid(row=3, column=0)
+        self.display_histstruct_button.grid(row=3, column=0, sticky='ew')
         self.update_histstruct_info_button = tk.Button(self.iobutton_frame, text='Refresh',
                                                 command=self.update_histstruct_info)
-        self.update_histstruct_info_button.grid(row=4, column=0)
+        self.update_histstruct_info_button.grid(row=4, column=0, sticky='ew')
         # add the frame to the window
         self.iobutton_frame.grid(row=1, column=0, sticky='nsew')
         self.button_frames.append(self.iobutton_frame)
@@ -1561,11 +1617,10 @@ class ML4DQMGUI:
         # add widgets for plotting
         self.plotbutton_frame = tk.Frame(master)
         self.plotbutton_label = tk.Label(self.plotbutton_frame, text='Plotting')
-        self.plotbutton_label.grid(row=0, column=0)
+        self.plotbutton_label.grid(row=0, column=0, sticky='ew')
         self.plot_sets_button = tk.Button(self.plotbutton_frame, text='Plot',
                                           command=self.open_plot_sets_window)
-        self.plot_sets_button.grid(row=1, column=0)
-        # to do: add button and functionality for plotting runs/lumisections
+        self.plot_sets_button.grid(row=1, column=0, sticky='ew')
         # add the frame to the window
         self.plotbutton_frame.grid(row=2, column=0, sticky='nsew')
         self.button_frames.append(self.plotbutton_frame)
@@ -1574,10 +1629,10 @@ class ML4DQMGUI:
         # add widgets for resampling
         self.resampling_frame = tk.Frame(master)
         self.resampling_label = tk.Label(self.resampling_frame, text='Resampling')
-        self.resampling_label.grid(row=0, column=0)
+        self.resampling_label.grid(row=0, column=0, sticky='ew')
         self.resample_button = tk.Button(self.resampling_frame, text='Resample',
                                     command=self.open_resample_window)
-        self.resample_button.grid(row=1, column=0)
+        self.resample_button.grid(row=1, column=0, sticky='ew')
         # add the frame to the window
         self.resampling_frame.grid(row=3, column=0, sticky='nsew')
         self.button_frames.append(self.resampling_frame)
@@ -1586,27 +1641,27 @@ class ML4DQMGUI:
         # add widgets for classifier training, fitting and evaluation
         self.model_frame = tk.Frame(master)
         self.model_label = tk.Label(self.model_frame, text='Model building')
-        self.model_label.grid(row=0, column=0)
+        self.model_label.grid(row=0, column=0, sticky='ew')
         self.train_button = tk.Button(self.model_frame, text='Train classifiers',
                                       command=self.open_train_window)
-        self.train_button.grid(row=1, column=0)
+        self.train_button.grid(row=1, column=0, sticky='ew')
         self.apply_classifiers_button = tk.Button(self.model_frame, 
                                         text='Evaluate classifiers',
                                         command=self.open_apply_classifiers_window)
-        self.apply_classifiers_button.grid(row=2, column=0)
+        self.apply_classifiers_button.grid(row=2, column=0, sticky='ew')
         self.fit_button = tk.Button(self.model_frame, text='Fit', 
                                     command=self.open_fit_window)
-        self.fit_button.grid(row=3, column=0)
+        self.fit_button.grid(row=3, column=0, sticky='ew')
         self.apply_fit_button = tk.Button(self.model_frame,
                                             text='Evaluate fit',
                                             command=self.open_apply_fit_window)
-        self.apply_fit_button.grid(row=4, column=0)
+        self.apply_fit_button.grid(row=4, column=0, sticky='ew')
         self.evaluate_button = tk.Button(self.model_frame, text='Evaluate model',
                                                 command=self.open_evaluate_window)
-        self.evaluate_button.grid(row=5, column=0)
+        self.evaluate_button.grid(row=5, column=0, sticky='ew')
         self.plot_lumisection_button = tk.Button(self.model_frame, text='Plot lumisection',
                                                 command=self.open_plot_lumisection_window)
-        self.plot_lumisection_button.grid(row=6, column=0)
+        self.plot_lumisection_button.grid(row=6, column=0, sticky='ew')
         # add the frame to the window
         self.model_frame.grid(row=4, column=0, sticky='nsew')
         self.button_frames.append(self.model_frame)
