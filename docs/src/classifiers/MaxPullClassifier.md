@@ -1,5 +1,12 @@
 # MaxPullClassifier  
   
+**Histogram classification based on maximum pull between test histogram and reference histogram.**
+
+Specifically intended for 2D histograms, but should in principle work for 1D as well.  
+Ssee static function 'pull' for definition of bin-per-bin pull and other notes.
+- - -
+  
+  
 ### pull( testhist, refhist )  
 ```text  
 calculate bin-per-bin pull between two histograms  
@@ -33,12 +40,22 @@ histogram classification based on maximum pull between test histogram and refere
 specifically intended for 2D histograms, but should in principle work for 1D as well.  
 see static function pull (above) for definition of bin-per-bin pull and other notes.  
 ```  
-### &#10551; \_\_init\_\_( self, refhist, n=1 )  
+### &#10551; \_\_init\_\_( self, nmaxpulls=1 )  
 ```text  
-initializer from a reference histogram  
+initializer  
 input arguments:  
-- refhist: a numpy array of shape (nbins) or (nybins,nxbins)  
-- n: number of largest pull values to average over (default: 1, just take single maximum)  
+- nmaxpulls: number of largest pull values to average over   
+  (default: 1, just take single maximum)  
+```  
+### &#10551; set\_nmaxpulls( self, nmaxpulls )  
+```text  
+set the nmaxpulls parameter (see also initializer)  
+```  
+### &#10551; train( self, refhist )  
+```text  
+'train' the classifier, i.e. set the reference histogram.  
+input arguments:  
+- refhist: a numpy array of shape (1,nbins) or (1,nybins,nxbins)  
 ```  
 ### &#10551; evaluate( self, histograms )  
 ```text  

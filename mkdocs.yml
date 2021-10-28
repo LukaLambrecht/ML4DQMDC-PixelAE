@@ -14,17 +14,20 @@ nav:
         - omstools: 'omsinterface/omstools.md'
         - urls: 'omsinterface/urls.md'
     - src:
+        - DataLoader: 'src/DataLoader.md'
         - HistStruct: 'src/HistStruct.md'
         - classifiers:
             - AutoEncoder: 'src/classifiers/AutoEncoder.md'
             - HistogramClassifier: 'src/classifiers/HistogramClassifier.md'
             - MaxPullClassifier: 'src/classifiers/MaxPullClassifier.md'
             - NMFClassifier: 'src/classifiers/NMFClassifier.md'
+            - PCAClassifier: 'src/classifiers/PCAClassifier.md'
             - TemplateBasedClassifier: 'src/classifiers/TemplateBasedClassifier.md'
         - cloudfitters:
             - CloudFitter: 'src/cloudfitters/CloudFitter.md'
             - ExponentialFitter: 'src/cloudfitters/ExponentialFitter.md'
             - GaussianKdeFitter: 'src/cloudfitters/GaussianKdeFitter.md'
+            - HyperRectangleFitter: 'src/cloudfitters/HyperRectangleFitter.md'
             - LogNormalFitter: 'src/cloudfitters/LogNormalFitter.md'
             - SeminormalFitter: 'src/cloudfitters/SeminormalFitter.md'
     - utils:
@@ -36,5 +39,6 @@ nav:
         - generate_data_utils: 'utils/generate_data_utils.md'
         - hist_utils: 'utils/hist_utils.md'
         - json_utils: 'utils/json_utils.md'
+        - mask_utils: 'utils/mask_utils.md'
         - plot_utils: 'utils/plot_utils.md'
         - refruns_utils: 'utils/refruns_utils.md'

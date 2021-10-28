@@ -1,6 +1,6 @@
 # generate data 2d utils  
   
-# help functions
+**Extension of generate\_data\_utils.py towards 2D histograms** 
 - - -
   
   

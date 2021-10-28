@@ -1,5 +1,11 @@
 # LogNormalFitter  
   
+**Class for fitting a log-normal distribution to a point cloud**
+
+A log-normal distribution is constructed by fitting a normal distribution to the logarithm of the point coordinates.
+- - -
+  
+  
 - - -
 ## [class] LogNormalFitter(CloudFitter)  
 ```text  
@@ -12,7 +18,8 @@ parameters:
 ### &#10551; \_\_init\_\_(self,points)  
 ```text  
 constructor  
-points is a np array of shape (npoints,ndims)  
+input arguments:  
+- points: a np array of shape (npoints,ndims)  
 ```  
 ### &#10551; pdf(self,points)  
 ```text  

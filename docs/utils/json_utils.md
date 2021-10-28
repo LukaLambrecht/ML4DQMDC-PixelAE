@@ -1,6 +1,21 @@
 # json utils  
   
-# reading and writing json files
+**A collection of useful basic functions for manipulating json files.**  
+Functionality includes:
+- reading and writing json files for given sets of run numbers and lumisection numbers
+- checking if a given run number, lumisection number or combination is present in a given json file
+
+Note that the json files are always assumed to contain the following structure:  
+- dict  
+  - run number (in string format)  
+    - list  
+      - list of two elements  
+        - starting lumisection number, ending lumisection number  
+
+Example:  
+{ "294927": \[ \[ 55,85 \], \[ 95,105\] \] } 
+
+There is one exception to this rule: instead of \[ start, stop \], the lumisection list can also be \[ -1 \], which is short for all lumisections within that run.
 - - -
   
   
@@ -52,6 +67,12 @@ boolean or array of booleans (depending on run and lumi)
 ```  
   
   
+### getjsondir()  
+```text  
+internal helper function returning the path to where json files are stored  
+```  
+  
+  
 ### isgolden(run, lumi)  
 ```text  
 find if a run and lumi combination is in the golden json file  
@@ -65,21 +86,6 @@ input arguments:
 find if a run and lumi combination is in DCS-only json file  
 input arguments:  
 - run and lumi: either integers or (equally long) arrays of integers  
-```  
-  
-  
-### ispixelgood(run, lumi)  
-```text  
-find if a run and lumi combination is in the json with good pixel flag  
-note: this json was custom generated in run regisitry and not official!  
-```  
-  
-  
-### ispixelbad(run, lumi)  
-```text  
-find if a run and lumi combination is in the json with bad pixel flag  
-note: this json was custom generated in run registry and not official!  
-note: not simply the negation of ispixelgood! json has more relaxed conditions on DCS-like criteria.  
 ```  
   
   

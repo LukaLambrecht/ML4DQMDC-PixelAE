@@ -1,5 +1,15 @@
 # connectiontools  
   
+**Tools for checking connectivity to specific URLs and obtaining cookies**  
+
+The functions in this script are not my own, but largely based on the wbmcrawler and cernrequests packages.  
+See the readme file in this directory for more information.  
+
+For normal users these functions should not be called directly, everything is handled by a single call to get_oms_data.py / get_oms_data.  
+See get_oms_data.py in this directory for more information.
+- - -
+  
+  
 ### check\_connectivity(url)  
 ```text  
 (no valid documentation found)  

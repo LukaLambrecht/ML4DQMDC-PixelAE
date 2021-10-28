@@ -225,6 +225,10 @@ class CommentCollection(object):
                         or line=='# local modules\n'): 
                     i += 1
                     continue
+                # also require that the line has bold syntax
+                if not '**' in line: 
+                    i+= 1
+                    continue
                 # else it is probably a valid comment, start looking for next lines
                 j = i
                 rawtext = line

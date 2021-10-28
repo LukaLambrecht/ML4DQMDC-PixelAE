@@ -1,6 +1,9 @@
 # generate data utils  
   
-# help functions
+**A collection of functions for artificially creating a labeled dataset.**  
+
+See the function documentation below for more details on the implemented methods.  
+Also check the tutorial generate\_data.ipynb for examples!
 - - -
   
   
@@ -123,7 +126,7 @@ disadvantages: also 'bad' histograms will be resampled if included in hists
 ```  
   
   
-### upsample\_hist\_set(hists,ntarget,fourierstdfactor=15.,figname='f')  
+### upsample\_hist\_set(hists,ntarget,fourierstdfactor=15.,figname='')  
 ```text  
 wrapper for fourier_noise allowing for a fixed target number of histograms instead of a fixed resampling factor  
 useful function for quickly generating a fixed number of resampled histograms,  
