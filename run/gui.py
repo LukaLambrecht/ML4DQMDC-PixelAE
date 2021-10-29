@@ -46,6 +46,10 @@ sys.path.append('../src/cloudfitters')
 print('  import HistStruct'); import HistStruct
 print('  import HistogramClassifier'); import HistogramClassifier
 print('  import AutoEncoder'); import AutoEncoder
+print('  import MaxPullClassifier'); import MaxPullClassifier
+print('  import NMFClassifier'); import NMFClassifier
+print('  import PCAClassifier'); import PCAClassifier
+print('  import TemplateBasedClassifier'); import TemplateBasedClassifier
 print('  import SeminormalFitter'); import SeminormalFitter
 print('  import GaussianKdeFitter'); import GaussianKdeFitter
 print('  import HyperRectangleFitter'); import HyperRectangleFitter
@@ -110,11 +114,35 @@ def get_fitter_class( key=None ):
         raise Exception('ERROR: fitter class {} not recognized'.format(key))
     return (c,get_args_dict(c))
 
+def get_classifier_class( key=None ):
+    ### get a classifier class from its name (or other key)
+    # note: a dict of keyword initialization arguments with default values is returned as well!
+    # input arguments:
+    # - key: string representing name or key of classifier class
+
+    allowed = (['AutoEncoder', 'MaxPullClassifier', 'NMFClassifier', 
+                'PCAClassifier', 'TemplateBasedClassifier'])
+    if key is None: return allowed
+
+    key = key.strip(' \t\n')
+    if key=='AutoEncoder': c = AutoEncoder.AutoEncoder
+    elif key=='MaxPullClassifier': c = MaxPullClassifier.MaxPullClassifier
+    elif key=='NMFClassifier': c = NMFClassifier.NMFClassifier
+    elif key=='PCAClassifier': c = PCAClassifier.PCAClassifier
+    elif key=='TemplateBasedClassifier': c = TemplateBasedClassifier.TemplateBasedClassifier
+    else:
+        raise Exception('ERROR: classifier class {} not recognized'.format(key))
+    return (c,get_args_dict(c))
+
 def get_training_options( histstruct ):
     ### get options for training classifiers
     # note: the classifiers are assumed to be already present in the histstruct
     # note: different types of classifiers for different types of histograms
     #       are not supported for now... need to do.
+    # to do: deal with special cases of non-trival arguments, e.g.
+    #        - reference histogram for MaxPullClassifier
+    #           (can work with usual mask but not practical for one histogram, 
+    #            maybe add option in classifier to average 'training' histograms)
     ctype = None
     classifier = None
     for histname in histstruct.histnames:
@@ -175,6 +203,35 @@ class StdOutRedirector:
         # (empty) flush attribute needed to avoid exception on destroying the window
         pass
 
+class GenericFileLoader:
+    ### contains a button to open a file loader dialog and stores the result
+
+    def __init__(self, master, buttontext=None, filetypes=None):
+        if buttontext is None: buttontext = 'open...'
+        if filetypes is None: filetypes = (('all files','*.*'),)
+        self.filename = None
+        self.frame = tk.Frame(master)
+        self.load_button = tk.Button(self.frame, text=buttontext, 
+                command=functools.partial(self.load_filename,filetypes=filetypes))
+        self.load_button.grid(row=0, column=0, sticky='nsew')
+
+    def load_filename(self, filetypes=None):
+        if filetypes is None: filetypes = (('all files','*.*'),)
+        initialdir = os.path.abspath(os.path.dirname(__file__))
+        filename = fldlg.askopenfilename(initialdir=initialdir,
+                    title='Choose file',
+                    filetypes=filetypes)
+        # if filename is invalid, print a warning
+        if len(filename)==0: print('WARNING: file loading canceled')
+        # else set the filename
+        else: self.filename = filename
+
+    def get_filename(self):
+        return self.filename
+
+    def grid(self, row=None, column=None):
+        self.frame.grid(row=row, column=column, sticky='nsew')
+
 class OptionsFrame:
     ### contains a tk.Frame holding a list of customization options
 
@@ -227,6 +284,8 @@ class OptionsFrame:
                 widget = tk.Text(self.frame, height=1, width=25)
                 if value is not None:
                     widget.insert(tk.INSERT, value)
+            elif wtype is GenericFileLoader:
+                widget = GenericFileLoader(self.frame)
             else:
                 raise Exception('ERROR in OptionsFrame initialization:'
                                 +' widget type {} not recognized'.format(wtype))
@@ -242,6 +301,8 @@ class OptionsFrame:
             value = None
             if wtype is tk.Text:
                 value = widget.get('1.0', tk.END)
+            if wtype is GenericFileLoader:
+                value = widget.get_filename()
             else:
                 raise Exception('ERROR in OptionsFrame get_dict:'
                                +' no getter method implemented for widget type {}'.format(wtype))
@@ -253,7 +314,7 @@ class OptionsFrame:
         return res
 
 class ScrolledFrame:
-    ### contains a tk.Frame holding a text widget with vertical and horizontal scrollbars
+    ### contains a tk.Frame holding a widget with vertical and horizontal scrollbars
     # note: it does not seem possible to just pass an arbitrary widget in the constructor,
     #       since the widget must have its master (i.e. this frame) set on creation.
     #       therefore, first create the ScrolledFrame f, then the widget (using the f as master),
@@ -288,6 +349,24 @@ class ScrolledTextFrame(ScrolledFrame):
         super().__init__(master, adaptable_size=True, showscrollbars=showscrollbars)
         text = tk.Text(self.frame, wrap=tk.NONE, height=txtheight, width=txtwidth)
         self.set_widget(text)
+
+class ScrolledFrameFrame(ScrolledFrame):
+    ### specific case of ScrolledFrame, where the widget is a tk.Frame
+    # note: need special treatment since no scrollbar can be added to a Frame directly,
+    #       needs an intermediate Canvas object.
+    # to do: does not work yet (frame does not show), so need to fix...
+
+    def __init__(self, master, height=50, width=50, showscrollbars=False):
+        super().__init__(master, height=height, width=width, showscrollbars=showscrollbars)
+        canvas = tk.Canvas(self.frame)
+        # add the scrollbars to the canvas
+        self.set_widget(canvas)
+        # create a frame within the canvas
+        frame = tk.Frame(canvas)
+        frame.grid(row=0, column=0, sticky='nsew')
+        # overwrite self.widget attribute
+        self.widget = frame
+
 
 ### GUI windows
 
@@ -540,6 +619,76 @@ class NewHistStructWindow(tk.Toplevel):
 
 class AddClassifiersWindow(tk.Toplevel):
     ### popup window class for adding classifiers to a histstruct
+
+    def __init__(self, master, histstruct):
+        super().__init__(master=master)
+        self.title('Add classifiers')
+        self.histstruct = histstruct
+
+        # add widgets for setting the classifier type and options
+        #self.containerframe = ScrolledFrameFrame(self, height=500, width=500, showscrollbars=True)
+        self.containerframe = tk.Frame(self)
+        setattr(self.containerframe, 'widget', self.containerframe) # to quickly switch between Frame and ScrolledFrameFrame
+        self.containerframe.widget.grid(row=0, column=0, sticky='nsew')
+        self.classifier_widgets = {}
+        for i,histname in enumerate(self.histstruct.histnames):
+            row = int(i/4)
+            column = int(i%4)
+            frame = tk.Frame(self.containerframe.widget)
+            frame.grid(row=row, column=column)
+            set_frame_default_style( frame )
+            histname_label = tk.Label(frame, text=histname)
+            histname_label.grid(row=0, column=0, columnspan=2)
+            classifier_type_label = tk.Label(frame, text='Classifier type')
+            classifier_type_label.grid(row=1, column=0)
+            classifier_type_box = ttk.Combobox(frame, values=get_classifier_class())
+            classifier_type_box.current(0)
+            classifier_type_box.bind('<<ComboboxSelected>>', functools.partial(
+                self.set_classifier_options, histname=histname) )
+            classifier_type_box.grid(row=1, column=1)
+            key_label = tk.Label(frame, text='Parameters')
+            key_label.grid(row=2, column=0)
+            value_label = tk.Label(frame, text='Values')
+            value_label.grid(row=2, column=1)
+            classifier_options_frame = OptionsFrame(frame, labels=[], values=[])
+            classifier_options_frame.frame.grid(row=3, column=0, columnspan=2)
+
+            self.classifier_widgets[histname] = {'type':classifier_type_box, 
+                                                 'options':classifier_options_frame}
+            self.set_classifier_options(None, histname)
+
+        # add a button for adding the classifiers
+        self.add_button = tk.Button(self, text='Add classifiers', command=self.add_classifiers)
+        self.add_button.grid(row=1, column=0, columnspan=2)
+
+    def set_classifier_options(self, event, histname):
+        classifier_name = self.classifier_widgets[histname]['type'].get()
+        (ctype, coptions) = get_classifier_class(classifier_name)
+        # do special overridings if needed
+        optiontypes = [None]*len(coptions.keys())
+        if ctype is AutoEncoder.AutoEncoder:
+            if 'modelpath' in list(coptions.keys()):
+                idx = list(coptions.keys()).index('modelpath')
+                optiontypes[idx] = GenericFileLoader
+        self.classifier_widgets[histname]['options'].set_options(
+                labels=coptions.keys(), types=optiontypes, values=coptions.values())
+
+    def get_classifier(self, histname):
+        classifier_name = self.classifier_widgets[histname]['type'].get()
+        (classifier, _) = get_classifier_class(classifier_name)
+        classifier_options = self.classifier_widgets[histname]['options'].get_dict()
+        return (classifier, classifier_options)
+
+    def add_classifiers(self):
+        for histname in self.histstruct.histnames:
+            (classifier, classifier_options) = self.get_classifier()
+            classifier = classifier( **classifier_options )
+            self.histstruct.add_classifier( histname, classifier )
+
+
+# old version (do not use anymore but keep for reference):
+'''class AddClassifiersWindow(tk.Toplevel):
+    ### popup window class for adding classifiers to a histstruct
     # note: preliminary version, where the user just inputs python code in a text widget.
     #       probably not 'safe', to check later.
     
@@ -591,7 +740,7 @@ class AddClassifiersWindow(tk.Toplevel):
         # close the window
         self.destroy()
         self.update()
-        print('done')
+        print('done')'''
 
 
 class PlotSetsWindow(tk.Toplevel):
