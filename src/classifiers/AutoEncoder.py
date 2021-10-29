@@ -35,18 +35,32 @@ class AutoEncoder(HistogramClassifier):
     # between the original histogram and its autoencoder reconstruction.
     # in essence, it is just a wrapper for a tensorflow model.
     
-    def __init__( self, model=None ):
+    def __init__( self, model=None, modelpath=None ):
         ### intializer from a tensorflow model
-        # the model is assumed to be a valid tensorflow model;
-        # it can be already trained before wrapping it in an AutoEncoder object,
-        # but if this is not the case, the AutoEncoder.train function can be called afterwards.
+        # input arguments:
+        # - model: a valid tensorflow model;
+        #          it does not have to be trained already,
+        #          the AutoEncoder.train function will take care of this.
+        # - modelpath: path to a stored tensorflow model,
+        #              it does not have to be trained already,
+        #              the AutoEncoder.train function will take care of this.
+        # note: model and modelpath are alternative options, they should not both be used simultaneously.
         super( AutoEncoder,self ).__init__()
-        if model is None:
-            raise NotYetImplementedError('ERROR in AutoEncoder.__init__: init must take a fully trained and ready tensorflow model as input (for now)')
-        if not isinstance( model, tensorflow.keras.Model ):
-            raise Exception('ERROR in AutoEncoder.init: model has type {}'.format(type(model))
-                           +' while a tensorflow model is expected')
-        self.model = model
+        if( model is None and modelpath is None ):
+            raise Exception('ERROR in AutoEncoder.__init__: model and modelpath cannot both be None.')
+        if( model is not None and modelpath is not None ):
+            raise Exception('ERROR in AutoEncoder.__init__: model and modelpath cannot both be specified.')
+        # case 1: model is specified directly:
+        if( model is not None ):
+            if not isinstance( model, tensorflow.keras.Model ):
+                raise Exception('ERROR in AutoEncoder.init: model has type {}'.format(type(model))
+                               +' while a tensorflow model is expected.')
+            self.model = model
+        # case 2: model path is specified
+        if( modelpath is not None ):
+            if not os.path.exists(modelpath):
+                raise Exception('ERROR in AutoEncoder.init: model path {} does not exist.'.format(modelpath))
+            model = load_model(modelpath,custom_objects={'mseTop10':mseTop10})
         
     def train( self, histograms, doplot=True, epochs=10, batch_size=500, shuffle=False, verbose=1, validation_split=0.1, **kwargs ):
         ### train the model on a given set of input histograms
