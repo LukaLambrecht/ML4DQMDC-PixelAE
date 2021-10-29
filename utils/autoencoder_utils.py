@@ -130,7 +130,7 @@ def calculate_roc(scores, labels, scoreax):
         bkg_eff[i] = np.sum(np.where((labels==0) & (scores>scorethreshold),1,0))/nback
     return (sig_eff,bkg_eff)
 
-def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic'):
+def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic', doshow=True):
     ### make a ROC curve
     # input arguments:
     # - scores is a 1D numpy array containing output scores of any algorithm
@@ -216,7 +216,7 @@ def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True,
         if auc>0.99:
             auctext = '1 - '+'{:.3e}'.format(1-auc)
         ax.text(0.7,0.1,'AUC: '+auctext,transform=ax.transAxes)
-        plt.show()
+        if doshow: plt.show()
         
     else:
         print('ERROR: mode not recognized: '+str(mode))

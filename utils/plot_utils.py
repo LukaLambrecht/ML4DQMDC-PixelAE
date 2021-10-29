@@ -297,7 +297,8 @@ def plot_distance(dists, ls=None, rmlargest=0., doplot=True,
 ### plot model loss as a function of training epoch
 # credits to Francesco for this function
 def plot_loss(data, xlims=None,
-              title=None, xaxtitle='epoch', yaxtitle='loss'):
+              title=None, xaxtitle='epoch', yaxtitle='loss',
+              doshow=True):
     ### plot the training and validation loss
     # data is the object returned by the .fit method when called upon a keras model
     # e.g. history = <your autoencoder>.fit(<training params>)
@@ -311,7 +312,7 @@ def plot_loss(data, xlims=None,
     if title is not None: ax.set_title(title)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
-    plt.show()
+    if doshow: plt.show()
     return (fig,ax)
     
 ### plot an array of mse values and get the mean and std value
@@ -331,7 +332,8 @@ def plot_mse(mse, rmlargest=0., doplot=True,
 def plot_score_dist( scores, labels, nbins=20, normalize=False,
                         siglabel='signal', sigcolor='g',
                         bcklabel='background', bckcolor='r',
-                        title=None, xaxtitle=None, yaxtitle=None):
+                        title=None, xaxtitle=None, yaxtitle=None,
+                        doshow=True):
     ### make a plot showing the distributions of the output scores for signal and background
     minscore = np.min(scores)
     maxscore = np.max(scores)
@@ -352,7 +354,7 @@ def plot_score_dist( scores, labels, nbins=20, normalize=False,
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
     ax.legend()
-    plt.show()
+    if doshow: plt.show()
     return (fig,ax)
 
 def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False, 
