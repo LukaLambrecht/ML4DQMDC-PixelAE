@@ -60,7 +60,7 @@ class AutoEncoder(HistogramClassifier):
         if( modelpath is not None ):
             if not os.path.exists(modelpath):
                 raise Exception('ERROR in AutoEncoder.init: model path {} does not exist.'.format(modelpath))
-            model = load_model(modelpath,custom_objects={'mseTop10':mseTop10})
+            self.model = load_model(modelpath,custom_objects={'mseTop10':mseTop10})
         
     def train( self, histograms, doplot=True, epochs=10, batch_size=500, shuffle=False, verbose=1, validation_split=0.1, **kwargs ):
         ### train the model on a given set of input histograms

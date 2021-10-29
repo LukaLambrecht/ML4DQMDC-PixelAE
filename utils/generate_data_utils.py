@@ -130,7 +130,7 @@ def moments_correlation_vector(moments, index):
 def plot_data_and_gen(datahists, genhists, nplot=10, figname='fig.png'):
     ### plot a couple of random examples from data and generated histograms
     # input arguments:
-    # - datahist, genhist: numpy arrays of shape (nhists,nbins)
+    # - datahists, genhists: numpy arrays of shape (nhists,nbins)
     # - nplot: integer, maximum number of examples to plot
     # - figname: name of figure to plot
 
@@ -138,17 +138,17 @@ def plot_data_and_gen(datahists, genhists, nplot=10, figname='fig.png'):
     figname = os.path.abspath(figname)
 
     # data
-    xlims = (0,len(datahist[0]))
-    xax = np.linspace(xlims[0],xlims[1],num=len(datahist[0]))
-    randint = np.random.choice(np.arange(len(datahist)),size=min(len(datahist),nplot),replace=False)
+    xlims = (0,len(datahists[0]))
+    xax = np.linspace(xlims[0],xlims[1],num=len(datahists[0]))
+    randint = np.random.choice(np.arange(len(datahists)),size=min(len(datahists),nplot),replace=False)
     fig,ax = plt.subplots()
-    for i in randint: ax.step(xax,datahist[i,:],color='r')
+    for i in randint: ax.step(xax,datahists[i,:],color='r')
     ax.set_title('histograms from data')
     #plt.savefig(figname.split('.')[0]+'_data.png')
     # artificial histograms
-    randint = np.random.choice(np.arange(len(genhist)),size=min(len(genhist),nplot),replace=False)
+    randint = np.random.choice(np.arange(len(genhists)),size=min(len(genhists),nplot),replace=False)
     fig,ax = plt.subplots()
-    for i in randint: ax.step(xax,genhist[int(i),:],color='r')
+    for i in randint: ax.step(xax,genhists[int(i),:],color='r')
     ax.set_title('artificially generated histograms')
     #plt.savefig(figname.split('.')[0]+'_gen.png')
     #plt.close()
@@ -158,7 +158,7 @@ def plot_data_and_gen(datahists, genhists, nplot=10, figname='fig.png'):
 def plot_seed_and_gen(seedhists, genhists, figname='fig.png'):
     ### plot seed and generated histograms
     # input arguments:
-    # - datahist, genhist: numpy arrays of shape (nhists,nbins)
+    # - seedhists, genhists: numpy arrays of shape (nhists,nbins)
     # - figname: name of figure to plot
 
     # make sure that figname contains absolute path
@@ -166,10 +166,10 @@ def plot_seed_and_gen(seedhists, genhists, figname='fig.png'):
 
     # data
     fig,ax = plt.subplots()
-    gen_colors = [cm.viridis(i) for i in np.linspace(0, 1, len( genhist ))]
-    seed_colors = [cm.Reds(i) for i in np.linspace(0, 1, len( seedhist ))]
-    for i in range(len(genhist)): ax.plot(genhist[i,:], color = gen_colors[i] )
-    for i in range(len(seedhist)): ax.plot(seedhist[i,:], color = 'r',label='seed')
+    gen_colors = [cm.viridis(i) for i in np.linspace(0, 1, len( genhists ))]
+    seed_colors = [cm.Reds(i) for i in np.linspace(0, 1, len( seedhists ))]
+    for i in range(len(genhists)): ax.plot(genhists[i,:], color = gen_colors[i] )
+    for i in range(len(seedhists)): ax.plot(seedhists[i,:], color = 'r',label='seed')
     ax.set_title('seed and resampled histograms')
     ax.legend()
     #plt.savefig(figname.split('.')[0]+'_show.png')
