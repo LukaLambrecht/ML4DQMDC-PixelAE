@@ -207,7 +207,7 @@ class GenericFileLoader:
     ### contains a button to open a file loader dialog and stores the result
 
     def __init__(self, master, buttontext=None, filetypes=None):
-        if buttontext is None: buttontext = 'open...'
+        if buttontext is None: buttontext = '(no file chosen)'
         if filetypes is None: filetypes = (('all files','*.*'),)
         self.filename = None
         self.frame = tk.Frame(master)
@@ -224,7 +224,9 @@ class GenericFileLoader:
         # if filename is invalid, print a warning
         if len(filename)==0: print('WARNING: file loading canceled')
         # else set the filename
-        else: self.filename = filename
+        else: 
+            self.filename = filename
+            self.load_button.text = os.path.basename(filename)
 
     def get_filename(self):
         return self.filename
@@ -379,6 +381,7 @@ class NewHistStructWindow(tk.Toplevel):
         self.histstruct = emptyhiststruct
         self.run_mask_widgets = []
         self.highstat_mask_widgets = []
+        self.json_mask_widgets = []
 
         # create a frame for general options
         self.general_options_frame = tk.Frame(self)
@@ -462,6 +465,21 @@ class NewHistStructWindow(tk.Toplevel):
         threshold_label = tk.Label(self.highstat_mask_frame, text='Threshold:')
         threshold_label.grid(row=1, column=1)
 
+        # create a frame for json mask addition
+        self.json_mask_frame = tk.Frame(self)
+        set_frame_default_style( self.json_mask_frame )
+        self.json_mask_frame.grid(row=0, column=3, sticky='nsew')
+
+        # add buttons for highstat mask additions
+        self.add_json_mask_button = tk.Button(self.json_mask_frame,
+                        text='Add a json mask',
+                        command=functools.partial(self.add_json_mask,self.json_mask_frame))
+        self.add_json_mask_button.grid(row=0, column=0, columnspan=2)
+        name_label = tk.Label(self.json_mask_frame, text='Name:')
+        name_label.grid(row=1, column=0)
+        file_label = tk.Label(self.json_mask_frame, text='File:')
+        file_label.grid(row=1, column=1)
+
         # add button to start HistStruct creation
         self.make_histstruct_button = tk.Button(self, text='Make HistStruct',
                                         command=self.make_histstruct)
@@ -525,6 +543,16 @@ class NewHistStructWindow(tk.Toplevel):
         threshold_text.grid(row=row, column=column+1)
         self.highstat_mask_widgets.append({'name_text':name_text,'threshold_text':threshold_text})
 
+    def add_json_mask(self, parent=None):
+        if parent is None: parent = self
+        row = len(self.json_mask_widgets)+2
+        column = 0
+        name_text = tk.Text(parent, height=1, width=25)
+        name_text.grid(row=row, column=column)
+        file_loader = GenericFileLoader(parent, filetypes=(('json','*.json'),('txt','*.txt')))
+        file_loader.grid(row=row, column=column+1)
+        self.json_mask_widgets.append({'name_text':name_text,'file_loader':file_loader})
+
     def get_run_masks(self):
         run_masks = {}
         for el in self.run_mask_widgets:
@@ -540,6 +568,14 @@ class NewHistStructWindow(tk.Toplevel):
             threshold = float(el['threshold_text'].get(1.0, tk.END).strip(' \t\n'))
             highstat_masks[name] = threshold
         return highstat_masks
+
+    def get_json_masks(self):
+        json_masks = {}
+        for el in self.json_mask_widgets:
+            name = el['name_text'].get(1.0, tk.END).strip(' \t\n')
+            filename = el['file_loader'].get_filename()
+            json_masks[name] = filename
+        return json_masks
 
     def get_histnames(self):
         histnames = ([self.histnames_listbox.get(idx)
@@ -609,6 +645,13 @@ class NewHistStructWindow(tk.Toplevel):
         for name, run in run_masks.items():
             print('adding mask "{}"'.format(name))
             json = {str(run):[[-1]]}
+            self.histstruct.add_json_mask( name, json )
+
+        # add json mask(s)
+        json_masks = self.get_json_masks()
+        for name, filename in json_masks.items():
+            print('adding mask "{}"'.format(name))
+            json = jsonu.loadjson( filename )
             self.histstruct.add_json_mask( name, json )
 
         # close the window
