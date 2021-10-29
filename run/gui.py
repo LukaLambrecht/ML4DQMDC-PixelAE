@@ -1771,7 +1771,7 @@ class PlotLumisectionWindow(tk.Toplevel):
                     pu.plot_score_dist( scores, labels, fig=fig, ax=axs[int(dim/ncols),dim%ncols], 
                             nbins=200, normalize=False,
                             siglabel='this lumisection', bcklabel='all (masked) lumisections',
-                            title=histname )
+                            title=histname, doshow=False )
                 plt.show(block=False)
 
 
