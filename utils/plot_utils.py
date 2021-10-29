@@ -14,7 +14,8 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
 from copy import copy
-import imageio
+try: import imageio
+except: print('WARNING: could not import package "imageio". This is only used to create gif animations, so it should be safe to proceed without, if you do not plan to do just that.')
 import importlib
 
 # local modules
