@@ -49,7 +49,7 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../../../omsapi/readme/">readme</a>
+    <a href="../../../omsapi/">README</a>
 </li>
                                     
 <li >
@@ -70,7 +70,7 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../../../omsinterface/readme/">readme</a>
+    <a href="../../../omsinterface/">README</a>
 </li>
                                     
 <li >
@@ -172,6 +172,10 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
+    <a href="../../../utils/">README</a>
+</li>
+                                    
+<li >
     <a href="../../../utils/autoencoder_utils/">autoencoder_utils</a>
 </li>
                                     
@@ -264,15 +268,25 @@ between the original histogram and its autoencoder reconstruction.
 in essence, it is just a wrapper for a tensorflow model.  
 </code></pre>
 
-<h3 id="9595init9595-self-modelnone">&#10551; __init__( self, model=None )</h3>
+<h3 id="9595init9595-self-modelnone-modelpathnone">&#10551; __init__( self, model=None, modelpath=None )</h3>
 <pre><code class="text">intializer from a tensorflow model  
-the model is assumed to be a valid tensorflow model;  
-it can be already trained before wrapping it in an AutoEncoder object,  
-but if this is not the case, the AutoEncoder.train function can be called afterwards.  
+input arguments:  
+- model: a valid tensorflow model;  
+         it does not have to be trained already,  
+         the AutoEncoder.train function will take care of this.  
+- modelpath: path to a stored tensorflow model,  
+             it does not have to be trained already,  
+             the AutoEncoder.train function will take care of this.  
+note: model and modelpath are alternative options, they should not both be used simultaneously.  
 </code></pre>
 
-<h3 id="train-self-histograms-doplottrue-kwargs">&#10551; train( self, histograms, doplot=True, **kwargs )</h3>
+<h3 id="train-self-histograms-doplottrue-epochs10-batch95size500-shufflefalse-verbose1-validation95split01-kwargs">&#10551; train( self, histograms, doplot=True, epochs=10, batch_size=500, shuffle=False, verbose=1, validation_split=0.1, **kwargs )</h3>
 <pre><code class="text">train the model on a given set of input histograms  
+input arguments:  
+- histograms: set of training histograms, a numpy array of shape (nhistograms,nbins)  
+- doplot: boolean whether to make a plot of the loss value  
+- others: see the keras fit function  
+- kwargs: additional arguments passed down to keras fit function  
 </code></pre>
 
 <h3 id="evaluate-self-histograms">&#10551; evaluate( self, histograms )</h3>

@@ -49,7 +49,7 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../../omsapi/readme/">readme</a>
+    <a href="../../omsapi/">README</a>
 </li>
                                     
 <li >
@@ -70,7 +70,7 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../../omsinterface/readme/">readme</a>
+    <a href="../../omsinterface/">README</a>
 </li>
                                     
 <li >
@@ -172,6 +172,10 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
+    <a href="../">README</a>
+</li>
+                                    
+<li >
     <a href="../autoencoder_utils/">autoencoder_utils</a>
 </li>
                                     
@@ -243,11 +247,11 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#hist-utils">hist utils</a></li>
-            <li><a href="#crophistshists-slices">crophists(hists, slices)</a></li>
-            <li><a href="#rebinhistshists-factor">rebinhists(hists, factor)</a></li>
+            <li><a href="#crophistshists-slicesnone">crophists(hists, slices=None)</a></li>
+            <li><a href="#rebinhistshists-factornone">rebinhists(hists, factor=None)</a></li>
             <li><a href="#normalizehistshists">normalizehists(hists)</a></li>
-            <li><a href="#averagehistshists-nout">averagehists(hists, nout)</a></li>
-            <li><a href="#running95average95histshists-window-weightsnone">running_average_hists(hists, window, weights=None)</a></li>
+            <li><a href="#averagehistshists-noutnone">averagehists(hists, nout=None)</a></li>
+            <li><a href="#running95average95histshists-windownone-weightsnone">running_average_hists(hists, window=None, weights=None)</a></li>
             <li><a href="#momentbins-counts-order">moment(bins, counts, order)</a></li>
             <li><a href="#histmeanbins-counts">histmean(bins, counts)</a></li>
             <li><a href="#histrmsbins-counts">histrms(bins, counts)</a></li>
@@ -267,7 +271,7 @@
 - averaging
 - higher-level functions preparing data for ML training, starting from a dataframe or input csv file.</p>
 <hr />
-<h3 id="crophistshists-slices">crophists(hists, slices)</h3>
+<h3 id="crophistshists-slicesnone">crophists(hists, slices=None)</h3>
 <pre><code class="text">perform cropping on a set of histograms  
 input arguments:  
 - hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D  
@@ -283,7 +287,7 @@ returns:
 - a numpy array containing the same histograms as input but cropped according to the slices argument  
 </code></pre>
 
-<h3 id="rebinhistshists-factor">rebinhists(hists, factor)</h3>
+<h3 id="rebinhistshists-factornone">rebinhists(hists, factor=None)</h3>
 <pre><code class="text">perform rebinning on a set of histograms  
 input arguments:  
 - hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D  
@@ -308,7 +312,7 @@ returns:
 - a numpy array containing the same histograms as input but normalized  
 </code></pre>
 
-<h3 id="averagehistshists-nout">averagehists(hists, nout)</h3>
+<h3 id="averagehistshists-noutnone">averagehists(hists, nout=None)</h3>
 <pre><code class="text">partition a set of histograms into equal parts and take the average histogram of each part  
 input arguments:  
 - hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D  
@@ -319,11 +323,11 @@ returns:
 - a numpy array of shape (nout,nbins)  
 </code></pre>
 
-<h3 id="running95average95histshists-window-weightsnone">running_average_hists(hists, window, weights=None)</h3>
+<h3 id="running95average95histshists-windownone-weightsnone">running_average_hists(hists, window=None, weights=None)</h3>
 <pre><code class="text">replace each histogram in a collection of histograms by its running average  
 input arguments:  
 - hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D  
-- nwindow: number of histograms to consider for the averaging  
+- window: number of histograms to consider for the averaging  
   if window is an integer, it is the number of previous histograms in hists used for averaging  
   (so window=0 would correspond to no averaging)  
   if window is a tuple, it corresponds to (nprevious,nnext), and the nprevious previous and nnext next histograms in hists are used for averaging  

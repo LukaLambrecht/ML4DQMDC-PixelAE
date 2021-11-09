@@ -49,7 +49,7 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../../omsapi/readme/">readme</a>
+    <a href="../../omsapi/">README</a>
 </li>
                                     
 <li >
@@ -70,7 +70,7 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../../omsinterface/readme/">readme</a>
+    <a href="../../omsinterface/">README</a>
 </li>
                                     
 <li >
@@ -170,6 +170,10 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">utils <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../utils/">README</a>
+</li>
                                     
 <li >
     <a href="../../utils/autoencoder_utils/">autoencoder_utils</a>
@@ -575,7 +579,7 @@ notes:
 - the result is both returned and stored in the 'scores' attribute  
 </code></pre>
 
-<h3 id="plot95histograms-self-histnamesnone-masknamesnone-colorlist-labellist-transparencylist">&#10551; plot_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[] )</h3>
+<h3 id="plot95histograms-self-histnamesnone-masknamesnone-colorlist-labellist-transparencylist-titledictnone-kwargs">&#10551; plot_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[],  titledict=None, **kwargs )</h3>
 <pre><code class="text">plot the histograms in a HistStruct, optionally after msking  
 note: so far only for 1D hsitograms.  
       case of 2D histograms requires different plotting method since they cannot be clearly overlaid.  
@@ -588,9 +592,11 @@ input arguments:
 - colorlist: list of matplotlib colors, must have same length as masknames  
 - labellist: list of labels for the legend, must have same legnth as masknames  
 - transparencylist: list of transparency values, must have same length as masknames  
+- titledict: dict mapping histogram names to titles for the subplots (default: title = histogram name)  
+- kwargs: keyword arguments passed down to plot_utils.plot_sets   
 </code></pre>
 
-<h3 id="plot95ls-self-runnb-lsnb-histnamesnone-recohistnone-recohistlabelreco-refhistsnone-refhistslabelreference">&#10551; plot_ls( self, runnb, lsnb, histnames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference')</h3>
+<h3 id="plot95ls-self-runnb-lsnb-histnamesnone-histlabelnone-recohistnone-recohistlabelreco-refhistsnone-refhistslabelreference-refhiststransparencynone-titledictnone-kwargs">&#10551; plot_ls( self, runnb, lsnb, histnames=None, histlabel=None, recohist=None, recohistlabel='reco',  refhists=None, refhistslabel='reference', refhiststransparency=None, titledict=None, **kwargs)</h3>
 <pre><code class="text">plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction  
 note: so far only for 1D histograms.  
       case of 2D histograms requires different plotting method since they cannot be clearly overlaid.  
@@ -599,6 +605,7 @@ input arguments:
 - runnb: run number  
 - lsnb: lumisection number  
 - histnames: names of histogram types to plot (default: all)  
+- histlabel: legend entry for the histogram (default: run and lumisection number)  
 - recohist: dict matching histogram names to reconstructed histograms  
   notes: - 'reconstructed histograms' refers to e.g. autoencoder or NMF reconstructions;  
            some models (e.g. simply looking at histogram moments) might not have this kind of reconstruction  
@@ -609,6 +616,8 @@ input arguments:
   notes: - multiple histograms (i.e. a 2D array) per key are expected;  
            in case there is only one reference histogram, it must be reshaped into (1,nbins)  
 - refhistslabel: legend entry for the reference histograms  
+- titledict: dict mapping histogram names to titles for the subplots (default: title = histogram name)  
+- kwargs: keyword arguments passed down to plot_utils.plot_sets   
 </code></pre>
 
 <h3 id="plot95run-self-runnb-masknamesnone-recohistnone-recohistlabelreco-refhistsnone-refhistslabelreference-doprintfalse">&#10551; plot_run( self, runnb, masknames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False)</h3>

@@ -49,7 +49,7 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../../omsapi/readme/">readme</a>
+    <a href="../../omsapi/">README</a>
 </li>
                                     
 <li >
@@ -70,7 +70,7 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../../omsinterface/readme/">readme</a>
+    <a href="../../omsinterface/">README</a>
 </li>
                                     
 <li >
@@ -171,6 +171,10 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">utils <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
+<li >
+    <a href="../">README</a>
+</li>
+                                    
 <li class="active">
     <a href="./">autoencoder_utils</a>
 </li>
@@ -225,7 +229,7 @@
                             </a>
                         </li>
                             <li >
-                                <a rel="next" href="../../src/cloudfitters/SeminormalFitter/">
+                                <a rel="next" href="../">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
@@ -249,10 +253,10 @@
             <li><a href="#chisquaredy95true-y95pred">chiSquared(y_true, y_pred)</a></li>
             <li><a href="#chisquaredtopnrawy95true-y95pred-n10">chiSquaredTopNRaw(y_true, y_pred, n=10)</a></li>
             <li><a href="#calculate95rocscores-labels-scoreax">calculate_roc(scores, labels, scoreax)</a></li>
-            <li><a href="#get95rocscores-labels-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic">get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')</a></li>
+            <li><a href="#get95rocscores-labels-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic-doshowtrue">get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic', doshow=True)</a></li>
             <li><a href="#get95roc95from95histshists-labels-predicted95hists-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic">get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')</a></li>
             <li><a href="#get95confusion95matrixscores-labels-wpnone">get_confusion_matrix(scores, labels, wp=None)</a></li>
-            <li><a href="#get95confusion95matrix95from95histshists-labels-predicted95hists-msewp">get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp)</a></li>
+            <li><a href="#get95confusion95matrix95from95histshists-labels-predicted95hists-msewpnone">get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp=None)</a></li>
             <li><a href="#getautoencoderinput95sizearchactoptadamlossmsetop10">getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10)</a></li>
             <li><a href="#train95simple95autoencoderhists-nepochs-1-modelname-batch95size500-shufflefalse-verbose1-validation95split01">train_simple_autoencoder(hists, nepochs=-1, modelname='',  batch_size=500, shuffle=False,  verbose=1, validation_split=0.1)</a></li>
             <li><a href="#clip95scores-scores">clip_scores( scores )</a></li>
@@ -335,7 +339,7 @@ output:
 - tuple of two np arrays (signal efficiency and background efficiency)  
 </code></pre>
 
-<h3 id="get95rocscores-labels-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic">get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')</h3>
+<h3 id="get95rocscores-labels-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic-doshowtrue">get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic', doshow=True)</h3>
 <pre><code class="text">make a ROC curve  
 input arguments:  
 - scores is a 1D numpy array containing output scores of any algorithm  
@@ -371,7 +375,7 @@ wp is the chosen working point
 (i.e. any score above wp is flagged as signal, any below is flagged as background)  
 </code></pre>
 
-<h3 id="get95confusion95matrix95from95histshists-labels-predicted95hists-msewp">get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp)</h3>
+<h3 id="get95confusion95matrix95from95histshists-labels-predicted95hists-msewpnone">get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp=None)</h3>
 <pre><code class="text">plot a confusion matrix without manually calculating the scores  
 the output score is the mse between the histograms and their reconstruction  
 </code></pre>

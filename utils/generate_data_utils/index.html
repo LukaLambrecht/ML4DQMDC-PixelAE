@@ -49,7 +49,7 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../../omsapi/readme/">readme</a>
+    <a href="../../omsapi/">README</a>
 </li>
                                     
 <li >
@@ -70,7 +70,7 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="../../omsinterface/readme/">readme</a>
+    <a href="../../omsinterface/">README</a>
 </li>
                                     
 <li >
@@ -172,6 +172,10 @@
                                 <ul class="dropdown-menu">
                                     
 <li >
+    <a href="../">README</a>
+</li>
+                                    
+<li >
     <a href="../autoencoder_utils/">autoencoder_utils</a>
 </li>
                                     
@@ -247,15 +251,15 @@
             <li><a href="#badnoisenbins-fstdnone">badnoise(nbins, fstd=None)</a></li>
             <li><a href="#whitenoisenbins-fstdnone">whitenoise(nbins, fstd=None)</a></li>
             <li><a href="#random95licohists">random_lico(hists)</a></li>
-            <li><a href="#smootherinarray-halfwidth">smoother(inarray, halfwidth)</a></li>
+            <li><a href="#smootherinarray-halfwidth1">smoother(inarray, halfwidth=1)</a></li>
             <li><a href="#mse95correlation95vectorhists-index">mse_correlation_vector(hists, index)</a></li>
             <li><a href="#moments95correlation95vectormoments-index">moments_correlation_vector(moments, index)</a></li>
-            <li><a href="#plot95data95and95gennplot-datahist-genhist-fignamefigpng">plot_data_and_gen(nplot, datahist, genhist, figname='fig.png')</a></li>
-            <li><a href="#plot95seed95and95genseedhist-genhist-fignamefigpng">plot_seed_and_gen(seedhist, genhist, figname='fig.png')</a></li>
+            <li><a href="#plot95data95and95gendatahists-genhists-nplot10-fignamefigpng">plot_data_and_gen(datahists, genhists, nplot=10, figname='fig.png')</a></li>
+            <li><a href="#plot95seed95and95genseedhists-genhists-fignamefigpng">plot_seed_and_gen(seedhists, genhists, figname='fig.png')</a></li>
             <li><a href="#plot95noisenoise-histstdnone-fignamefigpng">plot_noise(noise, histstd=None, figname='fig.png')</a></li>
             <li><a href="#fourier95noise95on95meanhists-outfilename-figname-nresamples0-nonnegativetrue">fourier_noise_on_mean(hists, outfilename='', figname='', nresamples=0, nonnegative=True)</a></li>
             <li><a href="#fourier95noisehists-outfilename-figname-nresamples1-nonnegativetrue-stdfactor15">fourier_noise(hists, outfilename='', figname='', nresamples=1, nonnegative=True, stdfactor=15.)</a></li>
-            <li><a href="#upsample95hist95sethistsntargetfourierstdfactor15figname">upsample_hist_set(hists,ntarget,fourierstdfactor=15.,figname='')</a></li>
+            <li><a href="#upsample95hist95sethists-ntarget-1-fourierstdfactor15-fignamef">upsample_hist_set(hists, ntarget=-1, fourierstdfactor=15., figname='f')</a></li>
             <li><a href="#white95noisehists-figname-stdfactor15">white_noise(hists, figname='', stdfactor=15.)</a></li>
             <li><a href="#resample95bin95per95binhists-outfilename-figname-nresamples0-nonnegativetrue-smoothinghalfwidth2">resample_bin_per_bin(hists, outfilename='', figname='', nresamples=0, nonnegative=True, smoothinghalfwidth=2)</a></li>
             <li><a href="#resample95similar95bin95per95bin-allhists-selhists-outfilename-figname-nresamples1-nonnegativetrue-keeppercentage1">resample_similar_bin_per_bin( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True, keeppercentage=1.)</a></li>
@@ -301,7 +305,7 @@ output:
 - numpy array of shape (nbins), containing the new histogram  
 </code></pre>
 
-<h3 id="smootherinarray-halfwidth">smoother(inarray, halfwidth)</h3>
+<h3 id="smootherinarray-halfwidth1">smoother(inarray, halfwidth=1)</h3>
 <pre><code class="text">smooth the rows of a 2D array using the 2*halfwidth+1 surrounding values.  
 </code></pre>
 
@@ -320,18 +324,18 @@ WARNING: can be slow if called many times on a large collection of histograms wi
 very similar to mse_correlation_vector but using histogram moments instead of full histograms for speed-up  
 </code></pre>
 
-<h3 id="plot95data95and95gennplot-datahist-genhist-fignamefigpng">plot_data_and_gen(nplot, datahist, genhist, figname='fig.png')</h3>
-<pre><code class="text">plot a couple of random examples from rhist (data), ghist (resampled 'good') and bhist (resampled 'bad')  
+<h3 id="plot95data95and95gendatahists-genhists-nplot10-fignamefigpng">plot_data_and_gen(datahists, genhists, nplot=10, figname='fig.png')</h3>
+<pre><code class="text">plot a couple of random examples from data and generated histograms  
 input arguments:  
+- datahists, genhists: numpy arrays of shape (nhists,nbins)  
 - nplot: integer, maximum number of examples to plot  
-- datahist, genhist: numpy arrays of shape (nhists,nbins)  
 - figname: name of figure to plot  
 </code></pre>
 
-<h3 id="plot95seed95and95genseedhist-genhist-fignamefigpng">plot_seed_and_gen(seedhist, genhist, figname='fig.png')</h3>
-<pre><code class="text">plot a couple of random examples from rhist (data), ghist (resampled 'good') and bhist (resampled 'bad')  
+<h3 id="plot95seed95and95genseedhists-genhists-fignamefigpng">plot_seed_and_gen(seedhists, genhists, figname='fig.png')</h3>
+<pre><code class="text">plot seed and generated histograms  
 input arguments:  
-- datahist, genhist: numpy arrays of shape (nhists,nbins)  
+- seedhists, genhists: numpy arrays of shape (nhists,nbins)  
 - figname: name of figure to plot  
 </code></pre>
 
@@ -366,10 +370,14 @@ advantages: resampled histograms will have statistically same features as origin
 disadvantages: also 'bad' histograms will be resampled if included in hists  
 </code></pre>
 
-<h3 id="upsample95hist95sethistsntargetfourierstdfactor15figname">upsample_hist_set(hists,ntarget,fourierstdfactor=15.,figname='')</h3>
+<h3 id="upsample95hist95sethists-ntarget-1-fourierstdfactor15-fignamef">upsample_hist_set(hists, ntarget=-1, fourierstdfactor=15., figname='f')</h3>
 <pre><code class="text">wrapper for fourier_noise allowing for a fixed target number of histograms instead of a fixed resampling factor  
 useful function for quickly generating a fixed number of resampled histograms,  
 without bothering too much about what exact resampling technique or detailed settings would be most appropriate.  
+input arguments:  
+hists: input histogram set  
+ntarget: targetted number of resampled histograms (default: equally many as in hists)  
+fourierstdfactor: see fourier_noise  
 </code></pre>
 
 <h3 id="white95noisehists-figname-stdfactor15">white_noise(hists, figname='', stdfactor=15.)</h3>
