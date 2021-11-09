@@ -226,7 +226,7 @@ class GenericFileLoader:
         # else set the filename
         else: 
             self.filename = filename
-            self.load_button.text = os.path.basename(filename)
+            self.load_button.config(text=os.path.basename(filename))
 
     def get_filename(self):
         return self.filename
@@ -303,7 +303,7 @@ class OptionsFrame:
             value = None
             if wtype is tk.Text:
                 value = widget.get('1.0', tk.END)
-            if wtype is GenericFileLoader:
+            elif wtype is GenericFileLoader:
                 value = widget.get_filename()
             else:
                 raise Exception('ERROR in OptionsFrame get_dict:'
@@ -312,6 +312,7 @@ class OptionsFrame:
             if is_int(value): value = int(value)
             elif is_float(value): value = float(value)
             elif is_bool(value): value = to_bool(value)
+            elif value=='None': value = None
             res[key] = value
         return res
 
@@ -713,6 +714,11 @@ class AddClassifiersWindow(tk.Toplevel):
             if 'modelpath' in list(coptions.keys()):
                 idx = list(coptions.keys()).index('modelpath')
                 optiontypes[idx] = GenericFileLoader
+            if 'model' in list(coptions.keys()):
+                idx = list(coptions.keys()).index('model')
+                coptions.pop('model')
+                optiontypes.pop(idx)
+        # now set the options
         self.classifier_widgets[histname]['options'].set_options(
                 labels=coptions.keys(), types=optiontypes, values=coptions.values())
 
@@ -724,9 +730,13 @@ class AddClassifiersWindow(tk.Toplevel):
 
     def add_classifiers(self):
         for histname in self.histstruct.histnames:
-            (classifier, classifier_options) = self.get_classifier()
+            (classifier, classifier_options) = self.get_classifier(histname)
             classifier = classifier( **classifier_options )
             self.histstruct.add_classifier( histname, classifier )
+        # close the window
+        self.destroy()
+        self.update()
+        print('done')
 
 
 # old version (do not use anymore but keep for reference):
@@ -1109,6 +1119,11 @@ class FitWindow(tk.Toplevel):
         plot_options_dict = get_args_dict(pu.plot_fit_2d)
         meta_args = {'do_plot':'True'}
         plot_options_dict = {**meta_args, **plot_options_dict}
+        # do special overridings
+        for key in ['fitfunc','xaxtitle','yaxtitle']:
+            if key in list(plot_options_dict.keys()):
+                plot_options_dict.pop(key)
+
         self.plot_options = OptionsFrame(self.plot_options_frame,
                                             labels=plot_options_dict.keys(),
                                             values=plot_options_dict.values())
@@ -1518,10 +1533,14 @@ class EvaluateWindow(tk.Toplevel):
 
         score_dist_options = self.score_dist_options_frame.get_dict()
         do_score_dist = score_dist_options.pop('make score distribution')
-        if do_score_dist: pu.plot_score_dist(scores, labels, **score_dist_options)
+        if do_score_dist:
+            score_dist_options['doshow'] = False # gui blocks if this is True
+            pu.plot_score_dist(scores, labels, **score_dist_options)
         roc_options = self.roc_options_frame.get_dict()
         do_roc = roc_options.pop('make ROC curve')
-        if do_roc: auc = aeu.get_roc(scores, labels, **roc_options)
+        if do_roc: 
+            roc_options['doshow'] = False # gui blocks if this is True
+            auc = aeu.get_roc(scores, labels, **roc_options)
         cm_options = self.cm_options_frame.get_dict()
         do_cm = cm_options.pop('make confusion matrix')
         if do_cm: aeu.get_confusion_matrix(scores,labels, **cm_options)
@@ -1531,7 +1550,7 @@ class EvaluateWindow(tk.Toplevel):
         if do_contour:
             if( not hasattr(self.histstruct,'fitfunclist')
                 or not hasattr(self.histstruct,'dimslist') ):
-                print('ERROR: cannot make contour plots with test data overlaid'
+                raise Exception('ERROR: cannot make contour plots with test data overlaid'
                         +' as they were not initialized for the training set.')
             badcolorlist = (['red','lightcoral','firebrick','chocolate',
                              'fuchsia','orange','purple'])
@@ -1752,7 +1771,7 @@ class PlotLumisectionWindow(tk.Toplevel):
                     pu.plot_score_dist( scores, labels, fig=fig, ax=axs[int(dim/ncols),dim%ncols], 
                             nbins=200, normalize=False,
                             siglabel='this lumisection', bcklabel='all (masked) lumisections',
-                            title=histname )
+                            title=histname, doshow=False )
                 plt.show(block=False)
 
 
