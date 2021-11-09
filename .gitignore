@@ -4,5 +4,8 @@ omsapi/clientid.py
 # ignore all .pyc files
 **.pyc
 
+# ignore notebook version files
+**.sys.v#*
+
 # ignore /site folder as it is automatically created with doctools
 site

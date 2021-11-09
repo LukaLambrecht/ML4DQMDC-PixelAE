@@ -701,7 +701,8 @@ class HistStruct(object):
             self.extscores[extname][histname] = scores
         return scores
     
-    def plot_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[] ):
+    def plot_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[], 
+                         titledict=None, **kwargs ):
         ### plot the histograms in a HistStruct, optionally after msking
         # note: so far only for 1D hsitograms.
         #       case of 2D histograms requires different plotting method since they cannot be clearly overlaid.
@@ -714,6 +715,8 @@ class HistStruct(object):
         # - colorlist: list of matplotlib colors, must have same length as masknames
         # - labellist: list of labels for the legend, must have same legnth as masknames
         # - transparencylist: list of transparency values, must have same length as masknames
+        # - titledict: dict mapping histogram names to titles for the subplots (default: title = histogram name)
+        # - kwargs: keyword arguments passed down to plot_utils.plot_sets 
         
         # check validity of requested histnames
         if histnames is None: histnames = self.histnames
@@ -727,17 +730,24 @@ class HistStruct(object):
         fig,axs = plt.subplots(nrows,ncols,figsize=(6*ncols,6*nrows),squeeze=False)
         # loop over all histogram types
         for j,name in enumerate(histnames):
-             # get the histograms to plot
+            # get the histograms to plot
             histlist = []
             for maskset in masknames:
                 histlist.append( self.get_histograms(histname=name, masknames=maskset) )
-            pu.plot_sets(histlist,
-                  fig=fig,ax=axs[int(j/ncols),j%ncols],
-                  title=name,
-                  colorlist=colorlist,labellist=labellist,transparencylist=transparencylist)
+            # get the title
+            title = name
+            if( titledict is not None and name in titledict ): title = titledict[name]
+            # make the plot
+            pu.plot_sets( histlist,
+                        fig=fig,ax=axs[int(j/ncols),j%ncols],
+                        title=title,
+                        colorlist=colorlist,labellist=labellist,transparencylist=transparencylist,
+                        **kwargs )
         return fig,axs
     
-    def plot_ls( self, runnb, lsnb, histnames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference'):
+    def plot_ls( self, runnb, lsnb, histnames=None, histlabel=None, recohist=None, recohistlabel='reco', 
+                 refhists=None, refhistslabel='reference', refhiststransparency=None,
+                 titledict=None, **kwargs):
         ### plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction
         # note: so far only for 1D histograms.
         #       case of 2D histograms requires different plotting method since they cannot be clearly overlaid.
@@ -746,6 +756,7 @@ class HistStruct(object):
         # - runnb: run number
         # - lsnb: lumisection number
         # - histnames: names of histogram types to plot (default: all)
+        # - histlabel: legend entry for the histogram (default: run and lumisection number)
         # - recohist: dict matching histogram names to reconstructed histograms
         #   notes: - 'reconstructed histograms' refers to e.g. autoencoder or NMF reconstructions;
         #            some models (e.g. simply looking at histogram moments) might not have this kind of reconstruction
@@ -756,8 +767,10 @@ class HistStruct(object):
         #   notes: - multiple histograms (i.e. a 2D array) per key are expected;
         #            in case there is only one reference histogram, it must be reshaped into (1,nbins)
         # - refhistslabel: legend entry for the reference histograms
+        # - titledict: dict mapping histogram names to titles for the subplots (default: title = histogram name)
+        # - kwargs: keyword arguments passed down to plot_utils.plot_sets 
         
-        # check validity of requested histnames
+        # check validity of arguments
         if histnames is None: histnames = self.histnames
         for histname in histnames:
             if not histname in self.histnames:
@@ -771,22 +784,29 @@ class HistStruct(object):
                 if( histname not in recohist.keys() ):
                     raise Exception('ERROR in HistStruct.plot_ls: reco histograms provided, but type {}'.format(histname)
                                     +' seems to be missing.')
+                if( not isinstance(recohist[histname], np.ndarray) ):
+                    raise Exception('ERROR: recohist has unexpected structure, it is supposed to be a dict matching strings to 2D numpy arrays')
             if( refhists is not None and histname not in refhists.keys() ):
                 raise Exception('ERROR in HistStruct.plot_ls: reference histograms provided, but type {}'.format(histname)
                                +' seems to be missing.')
+                if( not isinstance(refhists[histname], np.ndarray) ):
+                    raise Exception('ERROR: refhists has unexpected structure, it is supposed to be a dict matching strings to 2D numpy arrays')
         # find index that given run and ls number correspond to
         index = self.get_index( runnb, lsnb )
         # initializations
         ncols = min(4,len(histnames))
         nrows = int(math.ceil(len(histnames)/ncols))
         fig,axs = plt.subplots(nrows,ncols,figsize=(6*ncols,6*nrows),squeeze=False)
+        if histlabel is None: histlabel = 'hist (run: '+str(int(runnb))+', ls: '+str(int(lsnb))+')'
         # loop over all histograms belonging to this lumisection and make the plots
         for j,name in enumerate(histnames):
+            # get the original histogram
             hist = self.histograms[name][index:index+1,:]
             histlist = [hist]
             colorlist = ['black']
-            labellist = ['hist (run: '+str(int(runnb))+', ls: '+str(int(lsnb))+')']
+            labellist = [histlabel]
             transparencylist = [1.]
+            # get the automatically reconstructed histogram
             if recohist=='auto':
                 if not hasattr(self.classifiers[name],'reconstruct'):
                     raise Exception('ERROR in HistStruct.plot_ls: automatic calculation of reco hist requires the classifiers '
@@ -797,21 +817,28 @@ class HistStruct(object):
                 colorlist.insert(0,'red')
                 labellist.insert(0,recohistlabel)
                 transparencylist.insert(0,1.)
+            # get the provided reconstructed histogram
             elif recohist is not None:
                 reco = recohist[name]
                 histlist.insert(0,reco)
                 colorlist.insert(0,'red')
                 labellist.insert(0,recohistlabel)
                 transparencylist.insert(0,1.)
+            # get the provided reference histograms
             if refhists is not None:
                 histlist.insert(0,refhists[name])
                 colorlist.insert(0,'blue')
                 labellist.insert(0,refhistslabel)
-                transparencylist.insert(0,0.3)
+                if refhiststransparency is None: refhiststransparency=0.3
+                transparencylist.insert(0,refhiststransparency)
+            # get the title
+            title = name
+            if( titledict is not None and name in titledict ): title = titledict[name]
             pu.plot_sets(histlist,
                   fig=fig,ax=axs[int(j/ncols),j%ncols],
-                  title=name,
-                  colorlist=colorlist,labellist=labellist,transparencylist=transparencylist)
+                  title=title,
+                  colorlist=colorlist,labellist=labellist,transparencylist=transparencylist,
+                  **kwargs)
         return fig,axs
 
     def plot_run( self, runnb, masknames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False):

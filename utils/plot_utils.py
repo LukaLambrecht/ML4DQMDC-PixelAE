@@ -16,11 +16,38 @@ import numpy as np
 from copy import copy
 try: import imageio
 except: print('WARNING: could not import package "imageio". This is only used to create gif animations, so it should be safe to proceed without, if you do not plan to do just that.')
+try:
+    from matplotlib import rc
+    rc('text', usetex=True)
+except: print('WARNING: could not set LaTEX rendering for matplotlib. Any TEX commands in figure labels might not work as expected.')
 import importlib
 
 # local modules
 import autoencoder_utils as aeu # needed for clip_scores in plot_fit_2d
 importlib.reload(aeu)
+
+
+
+
+# help functions
+
+def make_legend_opaque( leg ):
+    ### set the transparency of all entries in a legend to zero
+    for lh in leg.legendHandles: 
+        try: lh.set_alpha(1)
+        except: lh._legmarker.set_alpha(1)
+            
+def add_cms_label( ax, pos=(0.1,0.9), extratext=None, fontsize=10, 
+                   background_facecolor=None, background_alpha=None, background_edgecolor=None ):
+    ### add the CMS label and extra text (e.g. 'Preliminary') to a plot
+    text = r'\textbf{CMS}'
+    if extratext is not None: text += r' \textit{'+str(extratext)+r'}'
+    cmslabel = ax.text(pos[0], pos[1], text, fontsize=fontsize, horizontalalignment='left', verticalalignment='bottom', transform=ax.transAxes)
+    if( background_facecolor is not None or background_alpha is not None or background_edgecolor is not None ):
+        if background_facecolor is None: background_facecolor = 'white'
+        if background_alpha is None: background_alpha = 1.
+        if background_edgecolor is None: background_edgecolor = 'black'
+        cmslabel.set_bbox(dict(facecolor=background_facecolor, alpha=background_alpha, edgecolor=background_edgecolor))
 
 
 
@@ -180,8 +207,11 @@ def plot_hists_from_df(df, histtype, nhists):
     val = get_hist_values(dfs)[0]
     plot_hists(val)
     
-def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], xlims=(-0.5,-1),
-             title=None, xaxtitle=None, yaxtitle=None):
+def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[],
+             title=None, titlesize=None, 
+             xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1), 
+             yaxtitle=None, yaxtitlesize=None, ymaxfactor=None, 
+             legendsize=None, opaque_legend=False):
     ### plot multiple sets of histograms to compare the shapes
     # - setlist is a list of 2D numpy arrays containing histograms
     # - fig and ax: a pyplot figure and axis object (if one of both is none a new figure is created)
@@ -207,10 +237,15 @@ def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparen
         if len(histlist)<2: continue
         for j,row in enumerate(histlist[1:,:]):
             ax.step(xax,row,where='mid',color=colorlist[i],alpha=transparencylist[i])
-    if dolabel: ax.legend(loc='upper right')
-    if title is not None: ax.set_title(title)
-    if xaxtitle is not None: ax.set_xlabel(xaxtitle)
-    if yaxtitle is not None: ax.set_ylabel(yaxtitle)
+    if ymaxfactor is not None:
+        ymin,ymax = ax.get_ylim()
+        ax.set_ylim( (ymin, ymax*ymaxfactor) )
+    if dolabel: 
+        leg = ax.legend(loc='upper right', fontsize=legendsize)
+        if opaque_legend: make_legend_opaque(leg)
+    if title is not None: ax.set_title(title, fontsize=titlesize)
+    if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
+    if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
     return (fig,ax)
 
 def plot_anomalous(histlist, ls, highlight=-1, hrange=-1):
@@ -359,7 +394,8 @@ def plot_score_dist( scores, labels, nbins=20, normalize=False,
 
 def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False, 
                 onlycontour=False, xlims=5, ylims=5, onlypositive=False,
-                xaxtitle=None, yaxtitle=None, title=None,
+                xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, 
+                title=None, titlesize=None, caxtitle=None, caxtitlesize=None,
                 transparency=1 ):
     ### make a scatter plot of a 2D point cloud with fitted contour
     # input arguments:
@@ -405,7 +441,8 @@ def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,
 
         # make a plot of probability contours
         contourplot = ax.contourf(x, y, z, 30, alpha=transparency)
-        plt.colorbar(contourplot)
+        colorbar = plt.colorbar(contourplot)
+        if caxtitle is not None: colorbar.set_label(caxtitle, fontsize=caxtitlesize)
         
     if not onlycontour:
         
@@ -414,12 +451,33 @@ def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,
     
     ax.set_xlim(xlims)
     ax.set_ylim(ylims)
-    if title is not None: ax.set_title(title)
-    if xaxtitle is not None: ax.set_xlabel(xaxtitle)
-    if yaxtitle is not None: ax.set_ylabel(yaxtitle)
+    if title is not None: ax.set_title(title, fontsize=titlesize)
+    if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
+    if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
     ax.ticklabel_format(axis='both', style='sci', scilimits=(0,0))
     
     return (fig,ax)
+
+def plot_fit_2d_clusters( points, clusters, labels, colors, **kwargs ):
+    ### make a scatter plot of a fitted contour with point clouds superimposed
+    # input arguments: 
+    # - points: numpy arrays of shape (npoints,ndims), usually the points to which the fit was done
+    #           note: only used to determine plotting range, these points are not plotted!
+    # - clusters: list of numpy arrays of shape (npoints,ndims), clouds of points to plot
+    # - labels: list with legend entries (must be same length as clusters)
+    # - colors: list with colors (must be same length as clusters)
+    # - kwargs: passed down to plot_fit_2d 
+    #           note: onlycontour is set automatically and should not be in kwargs
+    
+    # first make contour plot
+    fig,ax = plot_fit_2d(points, onlycontour=True, **kwargs )
+    for j in range(len(clusters)):
+        cluster = clusters[j]
+        label = labels[j]
+        color = colors[j]
+        ax.plot( cluster[:,0], cluster[:,1], '.', color=color, markersize=4,label=label )
+    ax.legend()
+    return fig,ax
 
 
 
