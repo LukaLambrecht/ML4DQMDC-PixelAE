@@ -60,6 +60,7 @@ class HistStruct(object):
         # histnames: list of histogram names
         # histograms: dict mapping histogram name to 2D numpy array of histograms (shape (nhists,nbins))
         # nentries: dict mapping histogram name to 1D numpy array of number of entries per histogram (same length as histograms)
+        # histranges: dict mapping histogram name to tuple with (xmin, xmax)
         # runnbs: 1D numpy array of run numbers (same length as histograms)
         # lsnbs: 1D numpy array of lumisection numbers (same length as histograms)
         # globalscores: 1D numpy array of global score per lumisection (same length as histograms)
@@ -72,6 +73,7 @@ class HistStruct(object):
         self.histnames = []
         self.histograms = {}
         self.nentries = {}
+        self.histranges = {}
         self.runnbs = []
         self.lsnbs = []
         self.globalscores = []
@@ -228,6 +230,9 @@ class HistStruct(object):
             thisdf = dfu.select_histnames( df, [histname] )
             # determine statistics (must be done before normalizing)
             nentries = np.array(thisdf['entries'])
+            # get physical xmin and xmax
+            xmin = thisdf.at[0, 'Xmin']
+            xmax = thisdf.at[0, 'Xmax']
             # prepare the data
             (hists_all,runnbs_all,lsnbs_all) = hu.preparedatafromdf(thisdf,returnrunls=True,
                                                                     donormalize=donormalize,
@@ -242,6 +247,7 @@ class HistStruct(object):
             self.histnames.append(histname)
             self.histograms[histname] = hists_all
             self.nentries[histname] = nentries
+            self.histranges[histname] = (xmin,xmax)
             self.runnbs = runnbs_all
             self.lsnbs = lsnbs_all
             
@@ -702,7 +708,7 @@ class HistStruct(object):
         return scores
     
     def plot_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[], 
-                         titledict=None, **kwargs ):
+                         titledict=None, xaxtitledict=None, physicalxax=False, **kwargs ):
         ### plot the histograms in a HistStruct, optionally after msking
         # note: so far only for 1D hsitograms.
         #       case of 2D histograms requires different plotting method since they cannot be clearly overlaid.
@@ -716,6 +722,8 @@ class HistStruct(object):
         # - labellist: list of labels for the legend, must have same legnth as masknames
         # - transparencylist: list of transparency values, must have same length as masknames
         # - titledict: dict mapping histogram names to titles for the subplots (default: title = histogram name)
+        # - xaxtitledict: dict mapping histogram names to x-axis titles for the subplots (default: no x-axis title)
+        # - physicalxax: bool whether to use physical x-axis range or simply use bin number (default)
         # - kwargs: keyword arguments passed down to plot_utils.plot_sets 
         
         # check validity of requested histnames
@@ -734,20 +742,24 @@ class HistStruct(object):
             histlist = []
             for maskset in masknames:
                 histlist.append( self.get_histograms(histname=name, masknames=maskset) )
-            # get the title
+            # get the title and x-axis
             title = name
             if( titledict is not None and name in titledict ): title = titledict[name]
+            xaxtitle = None
+            if( xaxtitledict is not None and name in xaxtitledict ): xaxtitle = xaxtitledict[name]
+            xlims = (-0.5,-1)
+            if physicalxax: xlims = self.histranges[name]
             # make the plot
             pu.plot_sets( histlist,
                         fig=fig,ax=axs[int(j/ncols),j%ncols],
-                        title=title,
+                        title=title, xaxtitle=xaxtitle, xlims=xlims,
                         colorlist=colorlist,labellist=labellist,transparencylist=transparencylist,
                         **kwargs )
         return fig,axs
     
     def plot_ls( self, runnb, lsnb, histnames=None, histlabel=None, recohist=None, recohistlabel='reco', 
                  refhists=None, refhistslabel='reference', refhiststransparency=None,
-                 titledict=None, **kwargs):
+                 titledict=None, xaxtitledict=None, physicalxax=False, **kwargs):
         ### plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction
         # note: so far only for 1D histograms.
         #       case of 2D histograms requires different plotting method since they cannot be clearly overlaid.
@@ -768,6 +780,8 @@ class HistStruct(object):
         #            in case there is only one reference histogram, it must be reshaped into (1,nbins)
         # - refhistslabel: legend entry for the reference histograms
         # - titledict: dict mapping histogram names to titles for the subplots (default: title = histogram name)
+        # - xaxtitledict: dict mapping histogram names to x-axis titles for the subplots (default: no x-axis title)
+        # - physicalxax: bool whether to use physical x-axis range or simply use bin number (default)
         # - kwargs: keyword arguments passed down to plot_utils.plot_sets 
         
         # check validity of arguments
@@ -831,12 +845,17 @@ class HistStruct(object):
                 labellist.insert(0,refhistslabel)
                 if refhiststransparency is None: refhiststransparency=0.3
                 transparencylist.insert(0,refhiststransparency)
-            # get the title
+            # get the title and x-axis
             title = name
             if( titledict is not None and name in titledict ): title = titledict[name]
+            xaxtitle = None
+            if( xaxtitledict is not None and name in xaxtitledict ): xaxtitle = xaxtitledict[name]
+            xlims = (-0.5,-1)
+            if physicalxax: xlims = self.histranges[name]
+            # make the plot
             pu.plot_sets(histlist,
                   fig=fig,ax=axs[int(j/ncols),j%ncols],
-                  title=title,
+                  title=title, xaxtitle=xaxtitle, xlims=xlims,
                   colorlist=colorlist,labellist=labellist,transparencylist=transparencylist,
                   **kwargs)
         return fig,axs

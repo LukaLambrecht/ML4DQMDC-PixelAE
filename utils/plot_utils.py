@@ -27,8 +27,6 @@ import autoencoder_utils as aeu # needed for clip_scores in plot_fit_2d
 importlib.reload(aeu)
 
 
-
-
 # help functions
 
 def make_legend_opaque( leg ):
@@ -37,20 +35,29 @@ def make_legend_opaque( leg ):
         try: lh.set_alpha(1)
         except: lh._legmarker.set_alpha(1)
             
-def add_cms_label( ax, pos=(0.1,0.9), extratext=None, fontsize=10, 
-                   background_facecolor=None, background_alpha=None, background_edgecolor=None ):
-    ### add the CMS label and extra text (e.g. 'Preliminary') to a plot
-    text = r'\textbf{CMS}'
-    if extratext is not None: text += r' \textit{'+str(extratext)+r'}'
-    cmslabel = ax.text(pos[0], pos[1], text, fontsize=fontsize, horizontalalignment='left', verticalalignment='bottom', transform=ax.transAxes)
+def add_text( ax, text, pos, 
+              fontsize=10, background_facecolor=None, 
+              background_alpha=None, background_edgecolor=None ):
+    ### add text to an axis at a specified position (in relative figure coordinates)
+    # input arguments:
+    # - ax: matplotlib axis object
+    # - text: string, can contain latex syntax such as /textbf{} and /textit{}
+    # - pos: tuple with relative x- and y-axis coordinates of bottom left corner
+    text = ax.text(pos[0], pos[1], text, fontsize=fontsize, 
+                   horizontalalignment='left', verticalalignment='bottom', transform=ax.transAxes)
     if( background_facecolor is not None or background_alpha is not None or background_edgecolor is not None ):
         if background_facecolor is None: background_facecolor = 'white'
         if background_alpha is None: background_alpha = 1.
         if background_edgecolor is None: background_edgecolor = 'black'
-        cmslabel.set_bbox(dict(facecolor=background_facecolor, alpha=background_alpha, edgecolor=background_edgecolor))
-
-
-
+        text.set_bbox(dict(facecolor=background_facecolor, alpha=background_alpha, edgecolor=background_edgecolor))
+        
+def add_cms_label( ax, pos=(0.1,0.9), extratext=None, **kwargs ):
+    ### add the CMS label and extra text (e.g. 'Preliminary') to a plot
+    # special case of add_text, for convenience
+    text = r'\textbf{CMS}'
+    if extratext is not None: text += r' \textit{'+str(extratext)+r'}'
+    add_text( ax, text, pos, **kwargs)
+    
 
 # functions for plotting 
       
