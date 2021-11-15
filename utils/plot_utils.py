@@ -19,7 +19,10 @@ except: print('WARNING: could not import package "imageio". This is only used to
 try:
     from matplotlib import rc
     rc('text', usetex=True)
-except: print('WARNING: could not set LaTEX rendering for matplotlib. Any TEX commands in figure labels might not work as expected.')
+    plot_utils_latex_formatting = True
+except: 
+    print('WARNING: could not set LaTEX rendering for matplotlib. Any TEX commands in figure labels might not work as expected.')
+    plot_utils_latex_formatting = False
 import importlib
 
 # local modules
@@ -57,7 +60,14 @@ def add_cms_label( ax, pos=(0.1,0.9), extratext=None, **kwargs ):
     text = r'\textbf{CMS}'
     if extratext is not None: text += r' \textit{'+str(extratext)+r'}'
     add_text( ax, text, pos, **kwargs)
-    
+
+def make_text_latex_safe( text ):
+    ### make a string safe to process with matplotlib's latex parser in case no tex parsing is wanted
+    # (e.g. escape underscores)
+    # to be extended when the need arises!
+    if not plot_utils_latex_formatting: return
+    text = text.replace('_','\_')
+    return text
 
 # functions for plotting 
       
@@ -354,7 +364,7 @@ def plot_loss(data, xlims=None,
     if title is not None: ax.set_title(title)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
-    if doshow: plt.show()
+    if doshow: plt.show(block=False)
     return (fig,ax)
     
 ### plot an array of mse values and get the mean and std value

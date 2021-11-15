@@ -1,5 +1,7 @@
 # to do:
 # - see to do's in the code
+# - see Gabriele's feedback on 15/11/2021
+# - make gui visibly inactive while processing a longer task
 # - continue making styling more uniform (e.g. everything in a Frame)
 
 # external modules
@@ -44,6 +46,7 @@ sys.path.append('../src')
 sys.path.append('../src/classifiers')
 sys.path.append('../src/cloudfitters')
 print('  import HistStruct'); import HistStruct
+print('  import PlotStyleParser'); import PlotStyleParser
 print('  import HistogramClassifier'); import HistogramClassifier
 print('  import AutoEncoder'); import AutoEncoder
 print('  import MaxPullClassifier'); import MaxPullClassifier
@@ -799,10 +802,11 @@ class AddClassifiersWindow(tk.Toplevel):
 class PlotSetsWindow(tk.Toplevel):
     ### popup window class for plotting the histograms in a histstruct
 
-    def __init__(self, master, histstruct):
+    def __init__(self, master, histstruct, plotstyleparser=None):
         super().__init__(master=master)
         self.title('Plotting')
         self.histstruct = histstruct
+        self.plotstyleparser = plotstyleparser
         self.set_optionsframe_list = []
         self.select_set_button_list = []
         self.set_selector_list = []
@@ -813,15 +817,38 @@ class PlotSetsWindow(tk.Toplevel):
         set_frame_default_style(self.buttons_frame)
 
         # add a button to allow adding more sets of options
-        self.more_button = tk.Button(self.buttons_frame, text='Add...', command=self.add_set)
-        self.more_button.grid(row=0, column=0)
+        self.more_button = tk.Button(self.buttons_frame, text='Add a set', command=self.add_set)
+        self.more_button.grid(row=0, column=0, sticky='nsew')
+
+        # add a button to overwrite the plot style
+        self.load_plotstyle_button = tk.Button(self.buttons_frame, text='Load plot style', 
+                                        command = self.load_plotstyle)
+        self.load_plotstyle_button.grid(row=0, column=1, sticky='nsew')
+
+        # add a button to close this window
+        self.close_button = tk.Button(self.buttons_frame, text='Close', command = self.close)
+        self.close_button.grid(row=0, column=2, sticky='nsew')
 
         # add a button to make the plot
-        self.plot_button = tk.Button(self.buttons_frame, text='Plot', command=self.make_plot)
-        self.plot_button.grid(row=0, column=1)
+        self.plot_button = tk.Button(self.buttons_frame, text='Make plot', command=self.make_plot)
+        self.plot_button.grid(row=1, column=0, columnspan=3, sticky='nsew')
 
         # add one set of options
         self.add_set()
+
+    def load_plotstyle(self):
+        initialdir = os.path.abspath(os.path.dirname(__file__))
+        filename = fldlg.askopenfilename(initialdir=initialdir,
+                    title='Load a plot style',
+                    filetypes=(('json files','*.json'),('all files','*.*')))
+        # if filename is invalid, return
+        if len(filename)==0:
+            print('Loading of plot style canceled')
+            return
+        # clear current plotstyleparser and related info before loading new one
+        self.plotstyleparser = None
+        # load a new histstruct
+        self.plotstyleparser = PlotStyleParser.PlotStyleParser( filename )
 
     def add_set(self):
         ### add widgets for one more histogram set to plot
@@ -866,17 +893,47 @@ class PlotSetsWindow(tk.Toplevel):
             setoptions = optionsframe.get_dict()
             optionsdict['labellist'].append( setoptions['label'] )
             optionsdict['colorlist'].append( setoptions['color'] )
+        if self.plotstyleparser is not None:
+            optionsdict['titledict'] = self.plotstyleparser.get_title()
+            optionsdict['titlesize'] = self.plotstyleparser.get_titlesize()
+            optionsdict['xaxtitledict'] = self.plotstyleparser.get_xaxtitle()
+            optionsdict['xaxtitlesize'] = self.plotstyleparser.get_xaxtitlesize()
+            optionsdict['yaxtitledict'] = self.plotstyleparser.get_yaxtitle()
+            optionsdict['yaxtitlesize'] = self.plotstyleparser.get_yaxtitlesize()
+            optionsdict['ymaxfactor'] = self.plotstyleparser.get_ymaxfactor()
+            optionsdict['legendsize'] = self.plotstyleparser.get_legendsize()
         print('found following plotting options:')
         print(optionsdict)
         print('making plot...')
         fig,axs = self.histstruct.plot_histograms( **optionsdict )
+        # add extra text to the axes
+        # (might need updates to make it more flexible)
+        if self.plotstyleparser is not None:
+            counter = -1
+            for i in range(axs.shape[0]):
+                for j in range(axs.shape[1]):
+                    counter += 1
+                    histname = self.histstruct.histnames[counter]
+                    ax = axs[i,j]
+                    pu.add_cms_label( ax, pos=(0.05,0.9), 
+                                  extratext=self.plotstyleparser.get_extracmstext(), 
+                                  fontsize=self.plotstyleparser.get_cmstextsize() )
+                    extratext = self.plotstyleparser.get_extratext(histname=histname)
+                    if extratext is not None:
+                        pu.add_text( ax, extratext,
+                                 (0.5,0.75), fontsize=self.plotstyleparser.get_extratextsize() )
+                    condtext = self.plotstyleparser.get_condtext()
+                    if condtext is not None: 
+                        pu.add_text( ax, condtext, (0.75,1.01), 
+                                 fontsize=self.plotstyleparser.get_condtextsize() )
         # save or plot the figure
         #fig.savefig('test.png')
         plt.show(block=False)
-        # close the window
+
+    def close(self):
+        ### close the window
         self.destroy()
         self.update()
-        print('done')
 
 class DisplayHistStructWindow(tk.Toplevel):
     ### popup window class for displaying full info on a HistStruct
@@ -1183,8 +1240,8 @@ class FitWindow(tk.Toplevel):
                 thismse = fitting_scores[:,dims]
                 fitfunc = fitter( thismse, **fitter_options )
                 (fig,ax) = pu.plot_fit_2d(thismse, fitfunc=fitfunc,
-                                    xaxtitle=self.histstruct.histnames[dims[0]],
-                                    yaxtitle=self.histstruct.histnames[dims[1]],
+                                    xaxtitle=pu.make_text_latex_safe(self.histstruct.histnames[dims[0]]),
+                                    yaxtitle=pu.make_text_latex_safe(self.histstruct.histnames[dims[1]]),
                                     **plot_options_dict)
                 fitfunclist.append(fitfunc)
                 plt.show(block=False)
@@ -1564,8 +1621,8 @@ class EvaluateWindow(tk.Toplevel):
 
             for dims,partialfitfunc in zip(self.histstruct.dimslist,self.histstruct.fitfunclist):
                 fig,ax = pu.plot_fit_2d(self.histstruct.fitting_scores, fitfunc=partialfitfunc, 
-                    xaxtitle=self.histstruct.histnames[dims[0]],
-                    yaxtitle=self.histstruct.histnames[dims[1]],
+                    xaxtitle=pu.make_text_latex_safe(self.histstruct.histnames[dims[0]]),
+                    yaxtitle=pu.make_text_latex_safe(self.histstruct.histnames[dims[1]]),
                     onlycontour=True,
                     **contour_options)
                 for j in range(len(scores_bad_parts)):
@@ -1645,10 +1702,11 @@ class ApplyFitWindow(ApplyClassifiersWindow):
 class PlotLumisectionWindow(tk.Toplevel):
     ### popup window class for plotting a run/lumisection
 
-    def __init__(self, master, histstruct):
+    def __init__(self, master, histstruct, plotstyleparser):
         super().__init__(master)
         self.title('Lumisection plotting')
         self.histstruct = histstruct
+        self.plotstyleparser = plotstyleparser
         self.inspect_set_selector = None
         self.ref_set_selector = None
 
@@ -1658,13 +1716,29 @@ class PlotLumisectionWindow(tk.Toplevel):
         set_frame_default_style( self.buttons_frame )
 
         # add widgets with options
-        options = {'mode':'ls', 'run': '', 'lumisection':'', 'plot score':'False',
-                    'reco mode':'auto'}
+        options = {'mode':'ls', 'run': '', 'lumisection':'', 
+                    'histlabel': 'Original histogram',
+                    'recomode':'auto',
+                    'recohistlabel': 'Reconstruction',
+                    'refhistslabel': 'Reference histograms',
+                    'refhiststransparency': 0.2,
+                    'plotscore': False}
         self.options_frame = OptionsFrame(self.buttons_frame, 
                                 labels=options.keys(), values=options.values())
         self.options_frame.frame.grid(row=0, column=0, sticky='nsew')
+        
+        # add button to overwrite plotting style
+        self.load_plotstyle_button = tk.Button(self.buttons_frame, text='Load plot style', 
+                                        command=self.load_plotstyle)
+        self.load_plotstyle_button.grid(row=1, column=0, sticky='nsew')
+
+        # add button to close this window
+        self.close_button = tk.Button(self.buttons_frame, text='Close', command=self.close)
+        self.close_button.grid(row=1, column=1, sticky='nsew')
+
+        # add button to make the plot
         self.plot_button = tk.Button(self.buttons_frame, text='Plot', command=self.plot)
-        self.plot_button.grid(row=1, column=0)
+        self.plot_button.grid(row=2, column=0, columnspan=2, sticky='nsew')
 
         # add widgets for selecting inspect datasets
         self.inspect_set_frame = tk.Frame(self)
@@ -1691,6 +1765,20 @@ class PlotLumisectionWindow(tk.Toplevel):
         self.ref_set_options_frame = OptionsFrame(self.ref_set_frame,
                                     labels=options.keys(), values=options.values())
         self.ref_set_options_frame.frame.grid(row=2, column=0)
+
+    def load_plotstyle(self):
+        initialdir = os.path.abspath(os.path.dirname(__file__))
+        filename = fldlg.askopenfilename(initialdir=initialdir,
+                    title='Load a plot style',
+                    filetypes=(('json files','*.json'),('all files','*.*')))
+        # if filename is invalid, return
+        if len(filename)==0:
+            print('Loading of plot style canceled')
+            return
+        # clear current plotstyleparser and related info before loading new one
+        self.plotstyleparser = None
+        # load a new histstruct
+        self.plotstyleparser = PlotStyleParser.PlotStyleParser( filename )
 
     def open_select_inspect_set_window(self):
         self.inspect_set_selector = SelectorWindow(self.master, self.histstruct, 
@@ -1720,13 +1808,13 @@ class PlotLumisectionWindow(tk.Toplevel):
 
         # get the correct options depending on the mode
         options = self.options_frame.get_dict()
-        runnb = options['run']
-        recomode = options['reco mode']
-        if recomode != 'auto': recomode=None
-        plotscore = options['plot score']
-        if options['mode']=='ls':
-            lsnbs = [options['lumisection']]
-        elif options['mode']=='run':
+        mode = options.pop('mode')
+        runnb = options.pop('run')
+        lsnbs = [options.pop('lumisection')]
+        plotscore = options.pop('plotscore')
+        options['recohist'] = options.pop('recomode')
+        if mode=='ls': pass
+        elif mode=='run':
             runnbs = self.histstruct.get_runnbs( masknames=self.get_inspect_masks() )
             lsnbs = self.histstruct.get_lsnbs( masknames=self.get_inspect_masks() )
             runsel = np.where(runnbs==runnb)
@@ -1740,16 +1828,57 @@ class PlotLumisectionWindow(tk.Toplevel):
         # get the reference histograms
         refhists = self.get_reference_histograms()
 
+        # get plot style options
+        plotstyle_options = {}
+        if self.plotstyleparser is not None:
+            plotstyle_options['titledict'] = self.plotstyleparser.get_title()
+            plotstyle_options['titlesize'] = self.plotstyleparser.get_titlesize()
+            plotstyle_options['xaxtitledict'] = self.plotstyleparser.get_xaxtitle()
+            plotstyle_options['xaxtitlesize'] = self.plotstyleparser.get_xaxtitlesize()
+            plotstyle_options['yaxtitledict'] = self.plotstyleparser.get_yaxtitle()
+            plotstyle_options['yaxtitlesize'] = self.plotstyleparser.get_yaxtitlesize()
+            plotstyle_options['ymaxfactor'] = self.plotstyleparser.get_ymaxfactor()
+            plotstyle_options['legendsize'] = self.plotstyleparser.get_legendsize()
+
         # run over lumisections to plot
         for i, lsnb in enumerate(lsnbs):
             # only for quick testing:
-            if i>4: 
-                print('WARNING: plotting loop closed after 5 iterations for testing')
-                break
-            fig,ax = self.histstruct.plot_ls(runnb, lsnb, recohist=recomode, refhists=refhists )
+            #if i>4: 
+            #    print('WARNING: plotting loop closed after 5 iterations for testing')
+            #    break
+            fig,axs = self.histstruct.plot_ls(runnb, lsnb, refhists=refhists,
+                                             **options, 
+                                             opaque_legend=True,
+                                             **plotstyle_options )
+            # add extra text to the axes
+            # (might need updates to make it more flexible)
+            if self.plotstyleparser is not None:
+                counter = -1
+                for i in range(axs.shape[0]):
+                    for j in range(axs.shape[1]):
+                        counter += 1
+                        histname = self.histstruct.histnames[counter]
+                        ax = axs[i,j]
+                        pu.add_cms_label( ax, pos=(0.05,0.9),
+                                  extratext=self.plotstyleparser.get_extracmstext(),
+                                  fontsize=self.plotstyleparser.get_cmstextsize() )
+                        extratext = self.plotstyleparser.get_extratext(histname=histname)
+                        if extratext is not None:
+                            pu.add_text( ax, extratext,
+                                 (0.5,0.75), fontsize=self.plotstyleparser.get_extratextsize() )
+                        condtext = self.plotstyleparser.get_condtext()
+                        if condtext is not None:
+                            pu.add_text( ax, condtext, (0.75,1.01),
+                                 fontsize=self.plotstyleparser.get_condtextsize() )
             plt.show(block=False)
             scorepoint = self.histstruct.get_scores_ls( runnb, lsnb )
-            logprob = self.histstruct.get_globalscore_ls( runnb, lsnb )
+            try:
+                logprob = self.histstruct.get_globalscore_ls( runnb, lsnb )
+            except:
+                print('WARNING: could not retrieve the global score'
+                        +' for run {}, lumisection {};'.format(runnb, lsnb)
+                        +' was it initialized?')
+                logprob = None
             print('-------------')
             print('scores:')
             for histname in self.histstruct.histnames: 
@@ -1771,8 +1900,13 @@ class PlotLumisectionWindow(tk.Toplevel):
                     pu.plot_score_dist( scores, labels, fig=fig, ax=axs[int(dim/ncols),dim%ncols], 
                             nbins=200, normalize=False,
                             siglabel='this lumisection', bcklabel='all (masked) lumisections',
-                            title=histname, doshow=False )
+                            title=pu.make_text_latex_safe(histname), doshow=False )
                 plt.show(block=False)
+
+    def close(self):
+        ### close the window
+        self.destroy()
+        self.update()
 
 
 class ML4DQMGUI:
@@ -1785,6 +1919,8 @@ class ML4DQMGUI:
         # initializations
         self.histstruct = None
         self.histstruct_filename = None
+        self.plotstyleparser = PlotStyleParser.PlotStyleParser()
+        self.plotstyle_filename = None
         self.button_frames = []
         self.all_frames = []
 
@@ -1829,9 +1965,13 @@ class ML4DQMGUI:
         self.plotbutton_frame = tk.Frame(master)
         self.plotbutton_label = tk.Label(self.plotbutton_frame, text='Plotting')
         self.plotbutton_label.grid(row=0, column=0, sticky='ew')
+        self.load_plotstyle_button = tk.Button(self.plotbutton_frame, 
+                                            text='Load plot style json',
+                                            command=self.load_plotstyle)
+        self.load_plotstyle_button.grid(row=1, column=0, sticky='ew')
         self.plot_sets_button = tk.Button(self.plotbutton_frame, text='Plot',
                                           command=self.open_plot_sets_window)
-        self.plot_sets_button.grid(row=1, column=0, sticky='ew')
+        self.plot_sets_button.grid(row=2, column=0, sticky='ew')
         # add the frame to the window
         self.plotbutton_frame.grid(row=2, column=0, sticky='nsew')
         self.button_frames.append(self.plotbutton_frame)
@@ -1984,6 +2124,21 @@ class ML4DQMGUI:
         # save the histstruct
         self.histstruct.save( filename )
 
+    def load_plotstyle(self):
+        initialdir = os.path.abspath(os.path.dirname(__file__))
+        filename = fldlg.askopenfilename(initialdir=initialdir,
+                    title='Load a plot style',
+                    filetypes=(('json files','*.json'),('all files','*.*')))
+        # if filename is invalid, return
+        if len(filename)==0:
+            print('Loading of plot style canceled')
+            return
+        # clear current plotstyleparser and related info before loading new one
+        self.plotstyleparser = None
+        # load a new histstruct
+        self.plotstyleparser = PlotStyleParser.PlotStyleParser( filename )
+        self.plotstyle_filename = filename
+
     def open_new_histstruct_window(self):
         self.histstruct = HistStruct.HistStruct()
         _ = NewHistStructWindow(self.master, self.histstruct)
@@ -2000,7 +2155,7 @@ class ML4DQMGUI:
         if not self.histstruct:
             print('ERROR: need to load a HistStruct first')
             return
-        _ = PlotSetsWindow(self.master, self.histstruct)
+        _ = PlotSetsWindow(self.master, self.histstruct, self.plotstyleparser)
         return
 
     def open_train_window(self):
@@ -2056,7 +2211,7 @@ class ML4DQMGUI:
         if not self.histstruct:
             print('ERROR: need to load a HistStruct first')
             return
-        _ = PlotLumisectionWindow(self.master, self.histstruct)
+        _ = PlotLumisectionWindow(self.master, self.histstruct, self.plotstyleparser)
         return
 
 

@@ -708,7 +708,7 @@ class HistStruct(object):
         return scores
     
     def plot_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[], 
-                         titledict=None, xaxtitledict=None, physicalxax=False, **kwargs ):
+                         titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs ):
         ### plot the histograms in a HistStruct, optionally after msking
         # note: so far only for 1D hsitograms.
         #       case of 2D histograms requires different plotting method since they cannot be clearly overlaid.
@@ -723,6 +723,7 @@ class HistStruct(object):
         # - transparencylist: list of transparency values, must have same length as masknames
         # - titledict: dict mapping histogram names to titles for the subplots (default: title = histogram name)
         # - xaxtitledict: dict mapping histogram names to x-axis titles for the subplots (default: no x-axis title)
+        # - yaxtitledict: dict mapping histogram names to y-axis titles for the subplots (default: no y-axis title)
         # - physicalxax: bool whether to use physical x-axis range or simply use bin number (default)
         # - kwargs: keyword arguments passed down to plot_utils.plot_sets 
         
@@ -742,24 +743,29 @@ class HistStruct(object):
             histlist = []
             for maskset in masknames:
                 histlist.append( self.get_histograms(histname=name, masknames=maskset) )
-            # get the title and x-axis
-            title = name
+            # get the title and axes
+            print('before: {}'.format(name))
+            title = pu.make_text_latex_safe(name)
+            print('after: {}'.format(title))
             if( titledict is not None and name in titledict ): title = titledict[name]
             xaxtitle = None
             if( xaxtitledict is not None and name in xaxtitledict ): xaxtitle = xaxtitledict[name]
             xlims = (-0.5,-1)
             if physicalxax: xlims = self.histranges[name]
+            yaxtitle = None
+            if( yaxtitledict is not None and name in yaxtitledict ): yaxtitle = yaxtitledict[name]
             # make the plot
             pu.plot_sets( histlist,
                         fig=fig,ax=axs[int(j/ncols),j%ncols],
-                        title=title, xaxtitle=xaxtitle, xlims=xlims,
-                        colorlist=colorlist,labellist=labellist,transparencylist=transparencylist,
+                        title=title, xaxtitle=xaxtitle, xlims=xlims, yaxtitle=yaxtitle,
+                        colorlist=colorlist, labellist=labellist, transparencylist=transparencylist,
                         **kwargs )
         return fig,axs
     
-    def plot_ls( self, runnb, lsnb, histnames=None, histlabel=None, recohist=None, recohistlabel='reco', 
-                 refhists=None, refhistslabel='reference', refhiststransparency=None,
-                 titledict=None, xaxtitledict=None, physicalxax=False, **kwargs):
+    def plot_ls( self, runnb, lsnb, histnames=None, histlabel=None, 
+                 recohist=None, recohistlabel='Reconstruction', 
+                 refhists=None, refhistslabel='Reference histograms', refhiststransparency=None,
+                 titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs):
         ### plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction
         # note: so far only for 1D histograms.
         #       case of 2D histograms requires different plotting method since they cannot be clearly overlaid.
@@ -781,6 +787,7 @@ class HistStruct(object):
         # - refhistslabel: legend entry for the reference histograms
         # - titledict: dict mapping histogram names to titles for the subplots (default: title = histogram name)
         # - xaxtitledict: dict mapping histogram names to x-axis titles for the subplots (default: no x-axis title)
+        # - yaxtitledict: dict mapping histogram names to y-axis titles for the subplots (default: no y-axis title)
         # - physicalxax: bool whether to use physical x-axis range or simply use bin number (default)
         # - kwargs: keyword arguments passed down to plot_utils.plot_sets 
         
@@ -845,18 +852,20 @@ class HistStruct(object):
                 labellist.insert(0,refhistslabel)
                 if refhiststransparency is None: refhiststransparency=0.3
                 transparencylist.insert(0,refhiststransparency)
-            # get the title and x-axis
-            title = name
+            # get the title and axes
+            title = pu.make_text_latex_safe(name)
             if( titledict is not None and name in titledict ): title = titledict[name]
             xaxtitle = None
             if( xaxtitledict is not None and name in xaxtitledict ): xaxtitle = xaxtitledict[name]
             xlims = (-0.5,-1)
             if physicalxax: xlims = self.histranges[name]
+            yaxtitle = None
+            if( yaxtitledict is not None and name in yaxtitledict ): yaxtitle = yaxtitledict[name]
             # make the plot
             pu.plot_sets(histlist,
                   fig=fig,ax=axs[int(j/ncols),j%ncols],
-                  title=title, xaxtitle=xaxtitle, xlims=xlims,
-                  colorlist=colorlist,labellist=labellist,transparencylist=transparencylist,
+                  title=title, xaxtitle=xaxtitle, xlims=xlims, yaxtitle=yaxtitle,
+                  colorlist=colorlist, labellist=labellist, transparencylist=transparencylist,
                   **kwargs)
         return fig,axs
 
