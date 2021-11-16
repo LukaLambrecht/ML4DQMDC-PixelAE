@@ -28,7 +28,7 @@ class NMFClassifier(HistogramClassifier):
     # specifically intended for 2D histograms, but should in principle work for 1D as well.
     # it is basically a wrapper for a sklearn.decomposition.NMF instance.
     
-    def __init__( self, ncomponents, loss_type='mse', nmax=10 ):
+    def __init__( self, ncomponents=5, loss_type='mse', nmax=10 ):
         ### initializer
         # input arguments:
         # - ncomponents: number of NMF components (aka clusters aka basis vectors) to use in the decomposition
