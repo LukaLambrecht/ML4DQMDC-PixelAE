@@ -1,5 +1,6 @@
 # to do:
 # - see to do's in the code
+# - most urgent: something seems to be broken in making the fit plot, need to fix.
 # - see Gabriele's feedback on 15/11/2021
 # - make gui visibly inactive while processing a longer task
 # - continue making styling more uniform (e.g. everything in a Frame)
@@ -1213,7 +1214,7 @@ class TrainClassifiersWindow(tk.Toplevel):
             # get the options for this histogram type
             arghistname = histname
             if self.expandstate=='single': arghistname = 'all histogram types'
-            training_options = self.training_options[histname].get_dict()
+            training_options = self.training_options[arghistname].get_dict()
             # get the training histograms
             hists = training_histograms[histname]
             print('training a classifier for {}'.format(histname))
