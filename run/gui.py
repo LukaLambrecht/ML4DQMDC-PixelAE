@@ -137,18 +137,21 @@ def get_classifier_class( key=None ):
         raise Exception('ERROR: classifier class {} not recognized'.format(key))
     return (c,get_args_dict(c))
 
-def get_training_options( histstruct ):
+def get_training_options( histstruct, histname=None ):
     ### get options for training classifiers
     # note: the classifiers are assumed to be already present in the histstruct
-    # note: different types of classifiers for different types of histograms
-    #       are not supported for now... need to do.
+    # if histname is specified, the classifier options for that specific classifer are returned;
+    # if not, it is checked that all classifiers are of the same type 
+    # and a single set of options is returned belonging to that type.
     # to do: deal with special cases of non-trival arguments, e.g.
     #        - reference histogram for MaxPullClassifier
     #           (can work with usual mask but not practical for one histogram, 
     #            maybe add option in classifier to average 'training' histograms)
     ctype = None
     classifier = None
-    for histname in histstruct.histnames:
+    if histname is None: histnames = histstruct.histnames
+    else: histnames = [histname]
+    for histname in histnames:
         if histname not in histstruct.classifiers.keys():
             print('WARNING: the histstruct seems not to contain a classifier'
                     +' for {}'.format(histname))
@@ -156,9 +159,9 @@ def get_training_options( histstruct ):
         classifier = histstruct.classifiers[histname]
         if( ctype is None ): ctype = type(classifier)
         if( type(classifier)!=ctype ):
-            raise Exception('ERROR: the histstruct seems to contain different types of classifiers'
-                    +' for different types of histograms.'
-                    +' This is currently not yet supported in the GUI.')
+            print('WARNING: the histstruct seems to contain different types of classifiers'
+                    +' for different types of histograms.')
+            return None
     if classifier is None:
         print('WARNING: could not retrieve options for classifier training.'
                 +' (Have any classifiers been initialized?)')
@@ -383,6 +386,7 @@ class NewHistStructWindow(tk.Toplevel):
         super().__init__(master=master)
         self.title('New HistStruct')
         self.histstruct = emptyhiststruct
+        self.histfiles = {}
         self.run_mask_widgets = []
         self.highstat_mask_widgets = []
         self.json_mask_widgets = []
@@ -391,11 +395,10 @@ class NewHistStructWindow(tk.Toplevel):
         self.general_options_frame = tk.Frame(self)
         set_frame_default_style( self.general_options_frame )
         self.general_options_frame.grid(row=0, column=0, sticky='nsew')
+        # add widgets for general options
         self.general_options_label = tk.Label(self.general_options_frame, 
                                               text='General options')
         self.general_options_label.grid(row=0, column=0)
-
-        # add general options
         self.training_mode_box = ttk.Combobox(self.general_options_frame, 
                                     values=['global','local'])
         self.training_mode_box.current(0)
@@ -404,27 +407,31 @@ class NewHistStructWindow(tk.Toplevel):
                                      values=['2017'])
         self.year_box.current(0)
         self.year_box.grid(row=2,column=0)
-        self.histnames_listbox = tk.Listbox(self.general_options_frame, 
+
+        # create a frame for choice of histograms
+        self.histnames_frame = tk.Frame(self)
+        set_frame_default_style( self.histnames_frame )
+        self.histnames_frame.grid(row=1, column=0, sticky='nsew')
+        # add widgets for choice of histograms
+        self.add_histograms_button = tk.Button(self.histnames_frame, text='Add histograms', 
+                                        command=self.add_histnames)
+        self.add_histograms_button.grid(row=0, column=0, sticky='nsew')
+        self.clear_histograms_button = tk.Button(self.histnames_frame, text='Clear',
+                                        command=self.clear_histnames)
+        self.clear_histograms_button.grid(row=1, column=0, sticky='nsew')
+        self.histnames_listbox = tk.Listbox(self.histnames_frame, 
                                             selectmode='multiple',
                                             exportselection=False)
-        for histname in (['chargeInner_PXLayer_2',
-                          'chargeInner_PXLayer_3',
-                          'charge_PXDisk_+1','charge_PXDisk_+2','charge_PXDisk_+3',
-                          'size_PXLayer_1','size_PXLayer_2',
-                          'size_PXLayer_3']):
-            # to do: extract the options automatically (e.g. from the available files)
-            self.histnames_listbox.insert(tk.END, histname)
-        self.histnames_listbox.grid(row=3, column=0)
+        self.histnames_listbox.grid(row=2, column=0)
 
         # create a frame for local options
         self.local_options_frame = tk.Frame(self)
         set_frame_default_style(self.local_options_frame)
-        self.local_options_frame.grid(row=1, column=0)
+        self.local_options_frame.grid(row=2, column=0, sticky='nsew')
+        # add widgets for local options
         self.local_options_label = tk.Label(self.local_options_frame, 
                                     text='Options for local training')
         self.local_options_label.grid(row=0, column=0)
-
-        # add local options
         tk.Label(self.local_options_frame, text='target run').grid(row=1, column=0)
         self.target_run_text = tk.Text(self.local_options_frame, height=1, width=8)
         self.target_run_text.grid(row=1, column=1)
@@ -443,9 +450,8 @@ class NewHistStructWindow(tk.Toplevel):
         # create a frame for run mask addition
         self.run_mask_frame = tk.Frame(self)
         set_frame_default_style( self.run_mask_frame )
-        self.run_mask_frame.grid(row=0, column=1, sticky='nsew')
-
-        # add buttons for run mask addition
+        self.run_mask_frame.grid(row=0, column=1, sticky='nsew', rowspan=3)
+        # add widgets for run mask addition
         self.add_run_mask_button = tk.Button(self.run_mask_frame, text='Add a run mask',
                                 command=functools.partial(self.add_run_mask, self.run_mask_frame))
         self.add_run_mask_button.grid(row=0, column=0, columnspan=2)
@@ -457,24 +463,26 @@ class NewHistStructWindow(tk.Toplevel):
         # create a frame for highstat mask addition
         self.highstat_mask_frame = tk.Frame(self)
         set_frame_default_style( self.highstat_mask_frame )
-        self.highstat_mask_frame.grid(row=0, column=2, sticky='nsew')
-
-        # add buttons for highstat mask additions
+        self.highstat_mask_frame.grid(row=0, column=2, sticky='nsew', rowspan=3)
+        # add widgets for highstat mask additions
         self.add_highstat_mask_button = tk.Button(self.highstat_mask_frame, 
                         text='Add a statistics mask',
                         command=functools.partial(self.add_highstat_mask,self.highstat_mask_frame))
         self.add_highstat_mask_button.grid(row=0, column=0, columnspan=2)
         name_label = tk.Label(self.highstat_mask_frame, text='Name:')
         name_label.grid(row=1, column=0)
+        operator_label = tk.Label(self.highstat_mask_frame, text='Operator:')
+        operator_label.grid(row=1, column=1)
+        apply_label = tk.Label(self.highstat_mask_frame, text='Apply on:')
+        apply_label.grid(row=1, column=2)
         threshold_label = tk.Label(self.highstat_mask_frame, text='Threshold:')
-        threshold_label.grid(row=1, column=1)
+        threshold_label.grid(row=1, column=3)
 
         # create a frame for json mask addition
         self.json_mask_frame = tk.Frame(self)
         set_frame_default_style( self.json_mask_frame )
-        self.json_mask_frame.grid(row=0, column=3, sticky='nsew')
-
-        # add buttons for highstat mask additions
+        self.json_mask_frame.grid(row=0, column=3, sticky='nsew', rowspan=3)
+        # add buttons for json mask additions
         self.add_json_mask_button = tk.Button(self.json_mask_frame,
                         text='Add a json mask',
                         command=functools.partial(self.add_json_mask,self.json_mask_frame))
@@ -487,7 +495,7 @@ class NewHistStructWindow(tk.Toplevel):
         # add button to start HistStruct creation
         self.make_histstruct_button = tk.Button(self, text='Make HistStruct',
                                         command=self.make_histstruct)
-        self.make_histstruct_button.grid(row=2, column=0)
+        self.make_histstruct_button.grid(row=3, column=0)
 
     def get_target_run(self):
         target_run_text = self.target_run_text.get(1.0, tk.END).strip(' \t\n')
@@ -541,11 +549,22 @@ class NewHistStructWindow(tk.Toplevel):
         if parent is None: parent = self
         row = len(self.highstat_mask_widgets)+2
         column = 0
-        name_text = tk.Text(parent, height=1, width=25)
+        name_text = tk.Text(parent, height=1, width=15)
         name_text.grid(row=row, column=column)
+        operator_box = ttk.Combobox(parent, width=2, values=['>','<'])
+        operator_box.current(0)
+        operator_box['state'] = 'readonly'
+        operator_box.grid(row=row, column=column+1)
+        apply_box = ttk.Combobox(parent, values=['all']+self.get_histnames())
+        apply_box.current(0)
+        apply_box['state'] = 'readonly'
+        apply_box.grid(row=row, column=column+2)
         threshold_text = tk.Text(parent, height=1, width=8)
-        threshold_text.grid(row=row, column=column+1)
-        self.highstat_mask_widgets.append({'name_text':name_text,'threshold_text':threshold_text})
+        threshold_text.grid(row=row, column=column+3)
+        self.highstat_mask_widgets.append({'name_text':name_text,
+                                            'operator_box': operator_box,
+                                            'apply_box': apply_box,
+                                            'threshold_text':threshold_text})
 
     def add_json_mask(self, parent=None):
         if parent is None: parent = self
@@ -569,8 +588,10 @@ class NewHistStructWindow(tk.Toplevel):
         highstat_masks = {}
         for el in self.highstat_mask_widgets:
             name = el['name_text'].get(1.0, tk.END).strip(' \t\n')
+            operator = el['operator_box'].get()
+            applyon = el['apply_box'].get()
             threshold = float(el['threshold_text'].get(1.0, tk.END).strip(' \t\n'))
-            highstat_masks[name] = threshold
+            highstat_masks[name] = (operator,applyon,threshold)
         return highstat_masks
 
     def get_json_masks(self):
@@ -581,6 +602,25 @@ class NewHistStructWindow(tk.Toplevel):
             json_masks[name] = filename
         return json_masks
 
+    def clear_histnames(self):
+        self.histfiles = {}
+        self.histnames_listbox.delete(0, tk.END)
+
+    def add_histnames(self):
+        initialdir = os.path.abspath(os.path.dirname(__file__))
+        filenames = fldlg.askopenfilenames(initialdir=initialdir,
+                    title='Load histograms',
+                    filetypes=(('csv files','*.csv'),('all files','*.*')))
+        # if filename is invalid, return
+        if len(filenames)==0:
+            print('Loading of plot style canceled')
+            return
+        for filename in filenames:
+            histname = os.path.basename(filename).replace('.csv','')
+            self.histfiles[histname] = filename
+            self.histnames_listbox.insert(tk.END, '{} ({})'.format(histname, filename))
+            self.histnames_listbox.select_set(tk.END)
+
     def get_histnames(self):
         histnames = ([self.histnames_listbox.get(idx)
                     for idx in self.histnames_listbox.curselection() ])
@@ -590,6 +630,7 @@ class NewHistStructWindow(tk.Toplevel):
 
         # get general settings
         histnames = self.get_histnames()
+        histnames = [h.split('(')[0].strip(' ') for h in histnames]
         year = self.year_box.get()
         training_mode = self.training_mode_box.get()
         print('creating a new HistStruct...')
@@ -599,14 +640,14 @@ class NewHistStructWindow(tk.Toplevel):
         print('  - training mode: {}'.format(training_mode))
         print('finding all available runs...')
         # get a comprehensive set of all explicitly needed runs (for throwing away the rest)
-        firstfilename = '../data/DF'+year+'_'+histnames[0]+'.csv'
+        firstfilename = self.histfiles[histnames[0]]
         needed_runs = self.get_needed_runs( is_local=(training_mode=='local'), 
                                             filename=firstfilename )
         # loop over the histogram types to take into account
         for histname in histnames:
             print('adding {}...'.format(histname))
             # read the histograms from the csv file
-            filename = '../data/DF'+year+'_'+histname+'.csv'
+            filename = self.histfiles[histname]
             if not os.path.exists(filename):
                 raise Exception('ERROR: the file {} does not seem to exist.'.format(filename))
             df = csvu.read_csv( filename )
@@ -640,9 +681,23 @@ class NewHistStructWindow(tk.Toplevel):
 
         # add high statistics mask(s)
         highstat_masks = self.get_highstat_masks()
-        for name, threshold in highstat_masks.items():
+        for name, (operator,applyon,threshold) in highstat_masks.items():
             print('adding mask "{}"'.format(name))
-            self.histstruct.add_highstat_mask( name, entries_to_bins_ratio=threshold )
+            # set operator type
+            min_entries_to_bins_ratio=-1
+            max_entries_to_bins_ratio=-1
+            if operator=='>':
+                min_entries_to_bins_ratio = threshold
+            elif operator=='<':
+                max_entries_to_bins_ratio = threshold
+            else:
+                raise Exception('ERROR: highstat mask operator {} not recognized.'.format(operator))
+            # set application histograms
+            histnames = None
+            if applyon!='all': histnames=[applyon]
+            self.histstruct.add_stat_mask( name, histnames=histnames,
+                                            min_entries_to_bins_ratio=min_entries_to_bins_ratio,
+                                            max_entries_to_bins_ratio=max_entries_to_bins_ratio)
 
         # add run mask(s)
         run_masks = self.get_run_masks()
@@ -1067,30 +1122,37 @@ class TrainClassifiersWindow(tk.Toplevel):
         self.title('Training')
         self.histstruct = histstruct
         self.training_set_selector = None
+        self.training_options = {}
 
         # create frame for options
         self.train_options_frame = tk.Frame(self)
         self.train_options_frame.grid(row=0, column=0)
         set_frame_default_style( self.train_options_frame )
         self.train_options_label = tk.Label(self.train_options_frame, text='Training settings')
-        self.train_options_label.grid(row=0, column=0, columnspan=2)
+        self.train_options_label.grid(row=0, column=0)
 
         # add widget to select histograms
         self.select_train_button = tk.Button(self.train_options_frame, 
                                             text='Select training set',
                                             command=self.open_training_selection_window,
                                             bg='orange')
-        self.select_train_button.grid(row=1, column=0, columnspan=2)
+        self.select_train_button.grid(row=1, column=0)
+
+        # add widget to expand options for different histograms
+        self.expand_options_button = tk.Button(self.train_options_frame,
+                                                text='Expand/collapse',
+                                                command=self.expandcollapse)
+        self.expand_options_button.grid(row=2, column=0)
+        # set initial state to single if only one classifier is present, multi otherwise
+        self.expandstate = 'single' # set to single since one automatic expansion
+        if get_training_options( self.histstruct ) is not None:
+            self.expandstate = 'multi' # set to multi since one automatic collapse
 
         # add widgets for training options
-        self.key_label = tk.Label(self.train_options_frame, text='Parameters')
-        self.key_label.grid(row=2, column=0)
-        self.value_label = tk.Label(self.train_options_frame, text='Values')
-        self.value_label.grid(row=2, column=1)
-        options = get_training_options( self.histstruct )
-        self.options_frame = OptionsFrame(self.train_options_frame, 
-                labels=options.keys(),values=options.values())
-        self.options_frame.frame.grid(row=3, column=0, columnspan=2)
+        self.container_frame = tk.Frame(self)
+        self.container_frame.grid(row=1, column=0)
+        set_frame_default_style( self.container_frame )
+        self.expandcollapse()
 
         # add button to start training
         self.train_button = tk.Button(self, text='Start training', command=self.do_training)
@@ -1101,8 +1163,44 @@ class TrainClassifiersWindow(tk.Toplevel):
         self.select_train_button['bg'] = 'green'
         return
 
+    def expandcollapse(self):
+        # check whether need to collapse or expand
+        if self.expandstate=='multi':
+            # check if this is allowed
+            if get_training_options( self.histstruct ) is None:
+                print('WARNING: collapse not allowed'
+                        +' since different types of classifiers are present')
+                return
+            histnames = ['all histogram types']
+            self.expandstate = 'single'
+        elif self.expandstate=='single':
+            histnames = self.histstruct.histnames
+            self.expandstate = 'multi'
+        else:
+            raise Exception('ERROR: expandstate {} not recognized.'.format(self.expandstate))
+        # clear current options and frame
+        self.training_options = {}
+        for widget in self.container_frame.winfo_children(): widget.destroy()
+        # make new options and frame
+        for i,histname in enumerate(histnames):
+            this_options_frame = tk.Frame(self.container_frame)
+            this_options_frame.grid(row=0, column=i)
+            set_frame_default_style( this_options_frame )
+            hist_label = tk.Label(this_options_frame, text=histname)
+            hist_label.grid(row=0, column=0, columnspan=2)
+            key_label = tk.Label(this_options_frame, text='Parameters')
+            key_label.grid(row=1, column=0)
+            value_label = tk.Label(this_options_frame, text='Values')
+            value_label.grid(row=1, column=1)
+            arghistname = histname
+            if histname=='all histogram types': arghistname = None
+            options = get_training_options( self.histstruct, histname=arghistname )
+            options_frame = OptionsFrame(this_options_frame,
+                labels=options.keys(),values=options.values())
+            options_frame.frame.grid(row=2, column=0, columnspan=2)
+            self.training_options[histname] = options_frame
+
     def do_training(self):
-        training_options = self.options_frame.get_dict()
         if self.training_set_selector is None:
             raise Exception('ERROR: please select a training set before starting training.')
         training_histograms = self.training_set_selector.get_histograms()
@@ -1112,6 +1210,11 @@ class TrainClassifiersWindow(tk.Toplevel):
                 print('WARNING: no classifier was found in the HistStruct'
                         +' for histogram type {}; skipping.'.format(histname))
                 continue
+            # get the options for this histogram type
+            arghistname = histname
+            if self.expandstate=='single': arghistname = 'all histogram types'
+            training_options = self.training_options[histname].get_dict()
+            # get the training histograms
             hists = training_histograms[histname]
             print('training a classifier for {}'.format(histname))
             print('size of training set: {}'.format(hists.shape))
@@ -1923,9 +2026,13 @@ class ML4DQMGUI:
         self.plotstyle_filename = None
         self.button_frames = []
         self.all_frames = []
+        
+        # add a frame for all action buttons
+        self.action_button_frame = tk.Frame(master)
+        self.action_button_frame.grid(row=0, column=0, sticky='nsew')
 
         # add widgets for creating a new histstruct
-        self.newhs_frame = tk.Frame(master)
+        self.newhs_frame = tk.Frame(self.action_button_frame)
         self.newhs_label = tk.Label(self.newhs_frame, text='HistStruct creation')
         self.newhs_label.grid(row=0, column=0, sticky='ew')
         self.newhs_button = tk.Button(self.newhs_frame, text='New', 
@@ -1940,7 +2047,7 @@ class ML4DQMGUI:
         self.all_frames.append(self.newhs_frame)
 
         # add widgets for loading and saving a HistStruct
-        self.iobutton_frame = tk.Frame(master)
+        self.iobutton_frame = tk.Frame(self.action_button_frame)
         self.iobutton_label = tk.Label(self.iobutton_frame, text='HistStruct I/O')
         self.iobutton_label.grid(row=0, column=0, sticky='ew')
         self.load_button = tk.Button(self.iobutton_frame, text='Load',
@@ -1962,11 +2069,11 @@ class ML4DQMGUI:
         self.all_frames.append(self.iobutton_frame)
 
         # add widgets for plotting
-        self.plotbutton_frame = tk.Frame(master)
+        self.plotbutton_frame = tk.Frame(self.action_button_frame)
         self.plotbutton_label = tk.Label(self.plotbutton_frame, text='Plotting')
         self.plotbutton_label.grid(row=0, column=0, sticky='ew')
         self.load_plotstyle_button = tk.Button(self.plotbutton_frame, 
-                                            text='Load plot style json',
+                                            text='Load plot style',
                                             command=self.load_plotstyle)
         self.load_plotstyle_button.grid(row=1, column=0, sticky='ew')
         self.plot_sets_button = tk.Button(self.plotbutton_frame, text='Plot',
@@ -1978,7 +2085,7 @@ class ML4DQMGUI:
         self.all_frames.append(self.plotbutton_frame)
 
         # add widgets for resampling
-        self.resampling_frame = tk.Frame(master)
+        self.resampling_frame = tk.Frame(self.action_button_frame)
         self.resampling_label = tk.Label(self.resampling_frame, text='Resampling')
         self.resampling_label.grid(row=0, column=0, sticky='ew')
         self.resample_button = tk.Button(self.resampling_frame, text='Resample',
@@ -1990,7 +2097,7 @@ class ML4DQMGUI:
         self.all_frames.append(self.resampling_frame)
 
         # add widgets for classifier training, fitting and evaluation
-        self.model_frame = tk.Frame(master)
+        self.model_frame = tk.Frame(self.action_button_frame)
         self.model_label = tk.Label(self.model_frame, text='Model building')
         self.model_label.grid(row=0, column=0, sticky='ew')
         self.train_button = tk.Button(self.model_frame, text='Train classifiers',
@@ -2020,8 +2127,7 @@ class ML4DQMGUI:
 
         # add widgets for displaying text
         self.stdout_frame = tk.Frame(master)
-        self.stdout_frame.grid(row=0, column=1, rowspan=len(self.button_frames),
-                                sticky='nsew')
+        self.stdout_frame.grid(row=0, column=1, sticky='nsew')
         self.all_frames.append(self.stdout_frame)
         self.stdout_label = tk.Label(self.stdout_frame, text='Stdout')
         self.stdout_label.grid(row=0, column=0)
@@ -2038,8 +2144,7 @@ class ML4DQMGUI:
 
         # add widgets for displaying HistStruct info
         self.histstruct_info_frame = tk.Frame(master)
-        self.histstruct_info_frame.grid(row=0, column=2, rowspan=len(self.button_frames),
-                                        sticky='nsew')
+        self.histstruct_info_frame.grid(row=0, column=2, sticky='nsew')
         self.all_frames.append(self.histstruct_info_frame)
         self.histstruct_info_label = tk.Label(self.histstruct_info_frame, 
                                             text='HistStruct info')
