@@ -106,6 +106,10 @@
     <a href="../../src/HistStruct/">HistStruct</a>
 </li>
                                     
+<li >
+    <a href="../../src/PlotStyleParser/">PlotStyleParser</a>
+</li>
+                                    
   <li class="dropdown-submenu">
     <a href="#">classifiers</a>
     <ul class="dropdown-menu">
@@ -255,8 +259,10 @@
             <li><a href="#calculate95rocscores-labels-scoreax">calculate_roc(scores, labels, scoreax)</a></li>
             <li><a href="#get95rocscores-labels-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic-doshowtrue">get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic', doshow=True)</a></li>
             <li><a href="#get95roc95from95histshists-labels-predicted95hists-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic">get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')</a></li>
-            <li><a href="#get95confusion95matrixscores-labels-wpnone">get_confusion_matrix(scores, labels, wp=None)</a></li>
+            <li><a href="#get95confusion95matrixscores-labels-wpmaxauc-plotwptrue">get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True)</a></li>
             <li><a href="#get95confusion95matrix95from95histshists-labels-predicted95hists-msewpnone">get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp=None)</a></li>
+            <li><a href="#get95wpscores-labels-methodmaxauc-doplotfalse">get_wp(scores, labels, method='maxauc', doplot=False)</a></li>
+            <li><a href="#get95wp95maxaucscores-labels-doplotfalse">get_wp_maxauc(scores, labels, doplot=False)</a></li>
             <li><a href="#getautoencoderinput95sizearchactoptadamlossmsetop10">getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10)</a></li>
             <li><a href="#train95simple95autoencoderhists-nepochs-1-modelname-batch95size500-shufflefalse-verbose1-validation95split01">train_simple_autoencoder(hists, nepochs=-1, modelname='',  batch_size=500, shuffle=False,  verbose=1, validation_split=0.1)</a></li>
             <li><a href="#clip95scores-scores">clip_scores( scores )</a></li>
@@ -368,16 +374,35 @@ the output score is the mseTop10Raw between the histograms and their reconstruct
 - other arguments: see get_roc  
 </code></pre>
 
-<h3 id="get95confusion95matrixscores-labels-wpnone">get_confusion_matrix(scores, labels, wp=None)</h3>
+<h3 id="get95confusion95matrixscores-labels-wpmaxauc-plotwptrue">get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True)</h3>
 <pre><code class="text">plot a confusion matrix  
-scores and labels are defined in the same way as for get_roc  
-wp is the chosen working point   
-(i.e. any score above wp is flagged as signal, any below is flagged as background)  
+input arguments:  
+- scores and labels: defined in the same way as for get_roc  
+- wp: the chosen working point   
+      (i.e. any score above wp is flagged as signal, any below is flagged as background)  
+      note: wp can be a integer or float, in which case that value will be used directly,  
+            or it can be a string in which case it will be used as the 'method' argument in get_wp!  
+- plotwp: only relevant if wp is a string (see above), in which case plotwp will be used as the 'doplot' argument in get_wp  
 </code></pre>
 
 <h3 id="get95confusion95matrix95from95histshists-labels-predicted95hists-msewpnone">get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp=None)</h3>
 <pre><code class="text">plot a confusion matrix without manually calculating the scores  
 the output score is the mse between the histograms and their reconstruction  
+</code></pre>
+
+<h3 id="get95wpscores-labels-methodmaxauc-doplotfalse">get_wp(scores, labels, method='maxauc', doplot=False)</h3>
+<pre><code class="text">automatically calculate a suitable working point  
+input arguments:  
+- scores, labels: equally long 1d numpy arrays of predictions and true labels respectively  
+                  note: in all methods, the labels are assumed to be 0 (for background) or 1 (for signal)!  
+- method: method to calculate the working point  
+          currently supported: 'maxauc'  
+- doplot: make a plot (if a plotting method exists for the chosen method)  
+</code></pre>
+
+<h3 id="get95wp95maxaucscores-labels-doplotfalse">get_wp_maxauc(scores, labels, doplot=False)</h3>
+<pre><code class="text">calculate the working point corresponding to maximum pseudo-AUC  
+(i.e. maximize the rectangular area enclosed by the working point)  
 </code></pre>
 
 <h3 id="getautoencoderinput95sizearchactoptadamlossmsetop10">getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10)</h3>

@@ -106,6 +106,10 @@
     <a href="../../src/HistStruct/">HistStruct</a>
 </li>
                                     
+<li >
+    <a href="../../src/PlotStyleParser/">PlotStyleParser</a>
+</li>
+                                    
   <li class="dropdown-submenu">
     <a href="#">classifiers</a>
     <ul class="dropdown-menu">
@@ -248,7 +252,9 @@
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#plot-utils">plot utils</a></li>
             <li><a href="#make95legend95opaque-leg">make_legend_opaque( leg )</a></li>
-            <li><a href="#add95cms95label-ax-pos0109-extratextnone-fontsize10-background95facecolornone-background95alphanone-background95edgecolornone">add_cms_label( ax, pos=(0.1,0.9), extratext=None, fontsize=10,  background_facecolor=None, background_alpha=None, background_edgecolor=None )</a></li>
+            <li><a href="#add95text-ax-text-pos-fontsize10-background95facecolornone-background95alphanone-background95edgecolornone">add_text( ax, text, pos,  fontsize=10, background_facecolor=None,  background_alpha=None, background_edgecolor=None )</a></li>
+            <li><a href="#add95cms95label-ax-pos0109-extratextnone-kwargs">add_cms_label( ax, pos=(0.1,0.9), extratext=None, **kwargs )</a></li>
+            <li><a href="#make95text95latex95safe-text">make_text_latex_safe( text )</a></li>
             <li><a href="#plot95histshistlist-fignone-axnone-colorlist-labellist-transparency1-xlims-05-1-titlenone-xaxtitlenone-yaxtitlenone-bkgcolornone-bkgcmapspring-bkgrangenone-bkgtitlenone">plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None,  bkgcolor=None, bkgcmap='spring', bkgrange=None, bkgtitle=None)</a></li>
             <li><a href="#plot95hists95multihistlist-fignone-axnone-colorlist-labellist-transparency1-xlims-05-1-titlenone-xaxtitlenone-yaxtitlenone">plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)</a></li>
             <li><a href="#plot95hist952dhist-fignone-axnone-titlenone-xaxtitlenone-yaxtitlenone-caxrangenone">plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None, caxrange=None)</a></li>
@@ -262,6 +268,7 @@
             <li><a href="#plot95lossdata-xlimsnone-titlenone-xaxtitleepoch-yaxtitleloss-doshowtrue">plot_loss(data, xlims=None, title=None, xaxtitle='epoch', yaxtitle='loss', doshow=True)</a></li>
             <li><a href="#plot95msemse-rmlargest0-doplottrue-titlenone-xaxtitlelumisection-number-yaxtitlemse">plot_mse(mse, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='mse')</a></li>
             <li><a href="#plot95score95dist-scores-labels-fignone-axnone-nbins20-normalizefalse-siglabelsignal-sigcolorg-bcklabelbackground-bckcolorr-titlenone-xaxtitlenone-yaxtitlenone-doshowtrue">plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='signal', sigcolor='g', bcklabel='background', bckcolor='r', title=None, xaxtitle=None, yaxtitle=None, doshow=True)</a></li>
+            <li><a href="#plot95metric-wprange-metric-labelnone-colornone-sig95effnone-sig95labelnone-sig95colornone-bck95effnone-bck95labelnone-bck95colornone-titlenone-xaxtitleworking-point-yaxlogfalse-ymaxfactor13-yaxtitlemetric">plot_metric( wprange, metric, label=None, color=None, sig_eff=None, sig_label=None, sig_color=None, bck_eff=None, bck_label=None, bck_color=None, title=None, xaxtitle='working point', yaxlog=False, ymaxfactor=1.3, yaxtitle='metric' )</a></li>
             <li><a href="#plot95fit952d-points-fitfuncnone-logprobfalse-clipprobfalse-onlycontourfalse-xlims5-ylims5-onlypositivefalse-xaxtitlenone-xaxtitlesizenone-yaxtitlenone-yaxtitlesizenone-titlenone-titlesizenone-caxtitlenone-caxtitlesizenone-transparency1">plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,  onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,  title=None, titlesize=None, caxtitle=None, caxtitlesize=None, transparency=1 )</a></li>
             <li><a href="#plot95fit952d95clusters-points-clusters-labels-colors-kwargs">plot_fit_2d_clusters( points, clusters, labels, colors, **kwargs )</a></li>
     </ul>
@@ -275,8 +282,23 @@
 <pre><code class="text">set the transparency of all entries in a legend to zero  
 </code></pre>
 
-<h3 id="add95cms95label-ax-pos0109-extratextnone-fontsize10-background95facecolornone-background95alphanone-background95edgecolornone">add_cms_label( ax, pos=(0.1,0.9), extratext=None, fontsize=10,  background_facecolor=None, background_alpha=None, background_edgecolor=None )</h3>
+<h3 id="add95text-ax-text-pos-fontsize10-background95facecolornone-background95alphanone-background95edgecolornone">add_text( ax, text, pos,  fontsize=10, background_facecolor=None,  background_alpha=None, background_edgecolor=None )</h3>
+<pre><code class="text">add text to an axis at a specified position (in relative figure coordinates)  
+input arguments:  
+- ax: matplotlib axis object  
+- text: string, can contain latex syntax such as /textbf{} and /textit{}  
+- pos: tuple with relative x- and y-axis coordinates of bottom left corner  
+</code></pre>
+
+<h3 id="add95cms95label-ax-pos0109-extratextnone-kwargs">add_cms_label( ax, pos=(0.1,0.9), extratext=None, **kwargs )</h3>
 <pre><code class="text">add the CMS label and extra text (e.g. 'Preliminary') to a plot  
+special case of add_text, for convenience  
+</code></pre>
+
+<h3 id="make95text95latex95safe-text">make_text_latex_safe( text )</h3>
+<pre><code class="text">make a string safe to process with matplotlib's latex parser in case no tex parsing is wanted  
+(e.g. escape underscores)  
+to be extended when the need arises!  
 </code></pre>
 
 <h3 id="plot95histshistlist-fignone-axnone-colorlist-labellist-transparency1-xlims-05-1-titlenone-xaxtitlenone-yaxtitlenone-bkgcolornone-bkgcmapspring-bkgrangenone-bkgtitlenone">plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None,  bkgcolor=None, bkgcmap='spring', bkgrange=None, bkgtitle=None)</h3>
@@ -372,6 +394,22 @@ input args:
 
 <h3 id="plot95score95dist-scores-labels-fignone-axnone-nbins20-normalizefalse-siglabelsignal-sigcolorg-bcklabelbackground-bckcolorr-titlenone-xaxtitlenone-yaxtitlenone-doshowtrue">plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='signal', sigcolor='g', bcklabel='background', bckcolor='r', title=None, xaxtitle=None, yaxtitle=None, doshow=True)</h3>
 <pre><code class="text">make a plot showing the distributions of the output scores for signal and background  
+</code></pre>
+
+<h3 id="plot95metric-wprange-metric-labelnone-colornone-sig95effnone-sig95labelnone-sig95colornone-bck95effnone-bck95labelnone-bck95colornone-titlenone-xaxtitleworking-point-yaxlogfalse-ymaxfactor13-yaxtitlemetric">plot_metric( wprange, metric, label=None, color=None, sig_eff=None, sig_label=None, sig_color=None, bck_eff=None, bck_label=None, bck_color=None, title=None, xaxtitle='working point', yaxlog=False, ymaxfactor=1.3, yaxtitle='metric' )</h3>
+<pre><code class="text">plot a metric based on signal and background efficiencies.  
+along with the metric, the actual signal and background efficiencies can be plotted as well.  
+input arguments:  
+- wprange, metric: equally long 1D-numpy arrays, x- and y-data respectively  
+- label: label for the metric to put in the legend  
+- color: color for the metric (default: blue)  
+- sig_eff: 1D-numpy array of signal efficiencies corresponding to wprange  
+- sig_label: label for sig_eff in the legend  
+- color: color for sig_eff (default: green)  
+- bck_eff, bck_label, bck_color: same as for signal  
+- title, xaxtitle and yaxtitle: titles for the plot and axes  
+- yaxlog: boolean whether to put y axis in log scale  
+- ymaxfactor: factor to add extra space on the top of the plot (for the legend)  
 </code></pre>
 
 <h3 id="plot95fit952d-points-fitfuncnone-logprobfalse-clipprobfalse-onlycontourfalse-xlims5-ylims5-onlypositivefalse-xaxtitlenone-xaxtitlesizenone-yaxtitlenone-yaxtitlesizenone-titlenone-titlesizenone-caxtitlenone-caxtitlesizenone-transparency1">plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,  onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,  title=None, titlesize=None, caxtitle=None, caxtitlesize=None, transparency=1 )</h3>
