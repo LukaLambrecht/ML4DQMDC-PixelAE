@@ -17,13 +17,14 @@ parameters
 - cov: covariance matrix   
 (use np.cov for now, maybe later replace by internal kernel.covariance)  
 ```  
-### &#10551; \_\_init\_\_(self, points, bw\_method='scott')  
+### &#10551; \_\_init\_\_(self, points, bw\_method='scott', bw\_scott\_factor=None)  
 ```text  
 constructor  
 input arguments:  
 - points: a np array of shape (npoints,ndims)  
 - bw_method: method to calculate the bandwidth of the gaussians,  
   see https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.gaussian_kde.html  
+- bw_scott_factor: additional multiplication factor applied to bandwidth in case it is set to 'scott'  
 ```  
 ### &#10551; pdf(self,points)  
 ```text  

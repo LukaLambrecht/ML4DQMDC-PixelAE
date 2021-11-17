@@ -89,7 +89,7 @@ output:
 ```  
   
   
-### get\_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')  
+### get\_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic', doshow=True)  
 ```text  
 make a ROC curve  
 input arguments:  
@@ -122,19 +122,42 @@ the output score is the mseTop10Raw between the histograms and their reconstruct
 ```  
   
   
-### get\_confusion\_matrix(scores, labels, wp=None)  
+### get\_confusion\_matrix(scores, labels, wp='maxauc', plotwp=True)  
 ```text  
 plot a confusion matrix  
-scores and labels are defined in the same way as for get_roc  
-wp is the chosen working point   
-(i.e. any score above wp is flagged as signal, any below is flagged as background)  
+input arguments:  
+- scores and labels: defined in the same way as for get_roc  
+- wp: the chosen working point   
+      (i.e. any score above wp is flagged as signal, any below is flagged as background)  
+      note: wp can be a integer or float, in which case that value will be used directly,  
+            or it can be a string in which case it will be used as the 'method' argument in get_wp!  
+- plotwp: only relevant if wp is a string (see above), in which case plotwp will be used as the 'doplot' argument in get_wp  
 ```  
   
   
-### get\_confusion\_matrix\_from\_hists(hists, labels, predicted\_hists, msewp)  
+### get\_confusion\_matrix\_from\_hists(hists, labels, predicted\_hists, msewp=None)  
 ```text  
 plot a confusion matrix without manually calculating the scores  
 the output score is the mse between the histograms and their reconstruction  
+```  
+  
+  
+### get\_wp(scores, labels, method='maxauc', doplot=False)  
+```text  
+automatically calculate a suitable working point  
+input arguments:  
+- scores, labels: equally long 1d numpy arrays of predictions and true labels respectively  
+                  note: in all methods, the labels are assumed to be 0 (for background) or 1 (for signal)!  
+- method: method to calculate the working point  
+          currently supported: 'maxauc'  
+- doplot: make a plot (if a plotting method exists for the chosen method)  
+```  
+  
+  
+### get\_wp\_maxauc(scores, labels, doplot=False)  
+```text  
+calculate the working point corresponding to maximum pseudo-AUC  
+(i.e. maximize the rectangular area enclosed by the working point)  
 ```  
   
   

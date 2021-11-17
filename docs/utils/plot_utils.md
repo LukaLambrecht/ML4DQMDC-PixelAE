@@ -4,6 +4,37 @@
 - - -
   
   
+### make\_legend\_opaque( leg )  
+```text  
+set the transparency of all entries in a legend to zero  
+```  
+  
+  
+### add\_text( ax, text, pos,  fontsize=10, background\_facecolor=None,  background\_alpha=None, background\_edgecolor=None )  
+```text  
+add text to an axis at a specified position (in relative figure coordinates)  
+input arguments:  
+- ax: matplotlib axis object  
+- text: string, can contain latex syntax such as /textbf{} and /textit{}  
+- pos: tuple with relative x- and y-axis coordinates of bottom left corner  
+```  
+  
+  
+### add\_cms\_label( ax, pos=(0.1,0.9), extratext=None, **kwargs )  
+```text  
+add the CMS label and extra text (e.g. 'Preliminary') to a plot  
+special case of add_text, for convenience  
+```  
+  
+  
+### make\_text\_latex\_safe( text )  
+```text  
+make a string safe to process with matplotlib's latex parser in case no tex parsing is wanted  
+(e.g. escape underscores)  
+to be extended when the need arises!  
+```  
+  
+  
 ### plot\_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None,  bkgcolor=None, bkgcmap='spring', bkgrange=None, bkgtitle=None)  
 ```text  
 plot some histograms (in histlist) in one figure using specified colors and/or labels  
@@ -65,7 +96,7 @@ plot a number of histograms in a dataframe
 ```  
   
   
-### plot\_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)  
+### plot\_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], title=None, titlesize=None,  xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1),  yaxtitle=None, yaxtitlesize=None, ymaxfactor=None,  legendsize=None, opaque\_legend=False)  
 ```text  
 plot multiple sets of histograms to compare the shapes  
 - setlist is a list of 2D numpy arrays containing histograms  
@@ -77,16 +108,20 @@ other parameters are lists of which each element applies to one list of histogra
   
 ### plot\_anomalous(histlist, ls, highlight=-1, hrange=-1)  
 ```text  
-histlist and ls are a list of histograms and corresponding lumisection numbers  
-lsnumber is the lumisection number of the histogram to highlight  
-hrange is the number of histograms before and after lsnumber to plot (default: whole run)  
+plot a range of histograms and highlight one of them  
+input arguments:  
+- histlist and ls: a list of histograms and corresponding lumisection numbers  
+- highlight: the lumisection number of the histogram to highlight  
+- hrange: the number of histograms before and after lsnumber to plot (default: whole run)  
 ```  
   
   
-### plot\_moments(moments, ls, dims, fig=None, ax=None, markersize=10)  
+### plot\_moments(moments, ls, dims=(0,1), fig=None, ax=None, markersize=10)  
 ```text  
-moments is an (nhists,nmoments) array  
-dims is a tuple of two or three values between 0 and nmoments-1  
+plot the moments of a set of histograms  
+input arguments:  
+- moments: a numpy array of shape (nhists,nmoments)  
+- dims: a tuple of two or three values between 0 and nmoments-1  
 ```  
   
   
@@ -96,7 +131,7 @@ dims is a tuple of two or three values between 0 and nmoments-1
 ```  
   
   
-### plot\_loss(data, xlims=None, title=None, xaxtitle='epoch', yaxtitle='loss')  
+### plot\_loss(data, xlims=None, title=None, xaxtitle='epoch', yaxtitle='loss', doshow=True)  
 ```text  
 plot the training and validation loss  
 data is the object returned by the .fit method when called upon a keras model  
@@ -115,13 +150,31 @@ input args:
 ```  
   
   
-### plot\_score\_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='signal', sigcolor='g', bcklabel='background', bckcolor='r', title=None, xaxtitle=None, yaxtitle=None)  
+### plot\_score\_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='signal', sigcolor='g', bcklabel='background', bckcolor='r', title=None, xaxtitle=None, yaxtitle=None, doshow=True)  
 ```text  
 make a plot showing the distributions of the output scores for signal and background  
 ```  
   
   
-### plot\_fit\_2d( points, fitfunc=None, logprob=False, clipprob=False,  onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, yaxtitle=None, title=None, transparency=1 )  
+### plot\_metric( wprange, metric, label=None, color=None, sig\_eff=None, sig\_label=None, sig\_color=None, bck\_eff=None, bck\_label=None, bck\_color=None, title=None, xaxtitle='working point', yaxlog=False, ymaxfactor=1.3, yaxtitle='metric' )  
+```text  
+plot a metric based on signal and background efficiencies.  
+along with the metric, the actual signal and background efficiencies can be plotted as well.  
+input arguments:  
+- wprange, metric: equally long 1D-numpy arrays, x- and y-data respectively  
+- label: label for the metric to put in the legend  
+- color: color for the metric (default: blue)  
+- sig_eff: 1D-numpy array of signal efficiencies corresponding to wprange  
+- sig_label: label for sig_eff in the legend  
+- color: color for sig_eff (default: green)  
+- bck_eff, bck_label, bck_color: same as for signal  
+- title, xaxtitle and yaxtitle: titles for the plot and axes  
+- yaxlog: boolean whether to put y axis in log scale  
+- ymaxfactor: factor to add extra space on the top of the plot (for the legend)  
+```  
+  
+  
+### plot\_fit\_2d( points, fitfunc=None, logprob=False, clipprob=False,  onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,  title=None, titlesize=None, caxtitle=None, caxtitlesize=None, transparency=1 )  
 ```text  
 make a scatter plot of a 2D point cloud with fitted contour  
 input arguments:  
@@ -137,6 +190,20 @@ input arguments:
         where mean and std are determined from the points array.  
 - onlypositive: overrides previous argument to set lower bound of plotting range at 0 in both dimensions.  
 - xaxtitle and yaxtitle: titles for axes.  
+```  
+  
+  
+### plot\_fit\_2d\_clusters( points, clusters, labels, colors, **kwargs )  
+```text  
+make a scatter plot of a fitted contour with point clouds superimposed  
+input arguments:   
+- points: numpy arrays of shape (npoints,ndims), usually the points to which the fit was done  
+          note: only used to determine plotting range, these points are not plotted!  
+- clusters: list of numpy arrays of shape (npoints,ndims), clouds of points to plot  
+- labels: list with legend entries (must be same length as clusters)  
+- colors: list with colors (must be same length as clusters)  
+- kwargs: passed down to plot_fit_2d   
+          note: onlycontour is set automatically and should not be in kwargs  
 ```  
   
   

@@ -14,7 +14,7 @@ histogram classification based on nonnegative matrix factorization
 specifically intended for 2D histograms, but should in principle work for 1D as well.  
 it is basically a wrapper for a sklearn.decomposition.NMF instance.  
 ```  
-### &#10551; \_\_init\_\_( self, ncomponents, loss\_type='mse', nmax=10 )  
+### &#10551; \_\_init\_\_( self, ncomponents=5, loss\_type='mse', nmax=10 )  
 ```text  
 initializer  
 input arguments:  

@@ -45,7 +45,7 @@ output:
 ```  
   
   
-### smoother(inarray, halfwidth)  
+### smoother(inarray, halfwidth=1)  
 ```text  
 smooth the rows of a 2D array using the 2*halfwidth+1 surrounding values.  
 ```  
@@ -70,21 +70,21 @@ very similar to mse_correlation_vector but using histogram moments instead of fu
 ```  
   
   
-### plot\_data\_and\_gen(nplot, datahist, genhist, figname='fig.png')  
+### plot\_data\_and\_gen(datahists, genhists, nplot=10, figname='fig.png')  
 ```text  
-plot a couple of random examples from rhist (data), ghist (resampled 'good') and bhist (resampled 'bad')  
+plot a couple of random examples from data and generated histograms  
 input arguments:  
+- datahists, genhists: numpy arrays of shape (nhists,nbins)  
 - nplot: integer, maximum number of examples to plot  
-- datahist, genhist: numpy arrays of shape (nhists,nbins)  
 - figname: name of figure to plot  
 ```  
   
   
-### plot\_seed\_and\_gen(seedhist, genhist, figname='fig.png')  
+### plot\_seed\_and\_gen(seedhists, genhists, figname='fig.png')  
 ```text  
-plot a couple of random examples from rhist (data), ghist (resampled 'good') and bhist (resampled 'bad')  
+plot seed and generated histograms  
 input arguments:  
-- datahist, genhist: numpy arrays of shape (nhists,nbins)  
+- seedhists, genhists: numpy arrays of shape (nhists,nbins)  
 - figname: name of figure to plot  
 ```  
   
@@ -126,11 +126,15 @@ disadvantages: also 'bad' histograms will be resampled if included in hists
 ```  
   
   
-### upsample\_hist\_set(hists,ntarget,fourierstdfactor=15.,figname='')  
+### upsample\_hist\_set(hists, ntarget=-1, fourierstdfactor=15., figname='f')  
 ```text  
 wrapper for fourier_noise allowing for a fixed target number of histograms instead of a fixed resampling factor  
 useful function for quickly generating a fixed number of resampled histograms,  
 without bothering too much about what exact resampling technique or detailed settings would be most appropriate.  
+input arguments:  
+hists: input histogram set  
+ntarget: targetted number of resampled histograms (default: equally many as in hists)  
+fourierstdfactor: see fourier_noise  
 ```  
   
   

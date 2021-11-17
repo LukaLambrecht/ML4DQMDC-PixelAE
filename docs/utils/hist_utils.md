@@ -10,7 +10,7 @@ Functionality includes:
 - - -
   
   
-### crophists(hists, slices)  
+### crophists(hists, slices=None)  
 ```text  
 perform cropping on a set of histograms  
 input arguments:  
@@ -28,7 +28,7 @@ returns:
 ```  
   
   
-### rebinhists(hists, factor)  
+### rebinhists(hists, factor=None)  
 ```text  
 perform rebinning on a set of histograms  
 input arguments:  
@@ -57,7 +57,7 @@ returns:
 ```  
   
   
-### averagehists(hists, nout)  
+### averagehists(hists, nout=None)  
 ```text  
 partition a set of histograms into equal parts and take the average histogram of each part  
 input arguments:  
@@ -70,12 +70,12 @@ returns:
 ```  
   
   
-### running\_average\_hists(hists, window, weights=None)  
+### running\_average\_hists(hists, window=None, weights=None)  
 ```text  
 replace each histogram in a collection of histograms by its running average  
 input arguments:  
 - hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D  
-- nwindow: number of histograms to consider for the averaging  
+- window: number of histograms to consider for the averaging  
   if window is an integer, it is the number of previous histograms in hists used for averaging  
   (so window=0 would correspond to no averaging)  
   if window is a tuple, it corresponds to (nprevious,nnext), and the nprevious previous and nnext next histograms in hists are used for averaging  

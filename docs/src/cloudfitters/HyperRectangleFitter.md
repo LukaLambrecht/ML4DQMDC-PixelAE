@@ -27,7 +27,7 @@ returns:
 ```text  
 Simple fitter making a hard cut in each dimension  
 ```  
-### &#10551; \_\_init\_\_(self, points, quantiles, side='both', verbose=False )  
+### &#10551; \_\_init\_\_(self, points, quantiles=0, side='both', verbose=False )  
 ```text  
 constructor  
 input arguments:  

@@ -34,6 +34,7 @@ a HistStruct object has the following properties:
 histnames: list of histogram names  
 histograms: dict mapping histogram name to 2D numpy array of histograms (shape (nhists,nbins))  
 nentries: dict mapping histogram name to 1D numpy array of number of entries per histogram (same length as histograms)  
+histranges: dict mapping histogram name to tuple with (xmin, xmax)  
 runnbs: 1D numpy array of run numbers (same length as histograms)  
 lsnbs: 1D numpy array of lumisection numbers (same length as histograms)  
 globalscores: 1D numpy array of global score per lumisection (same length as histograms)  
@@ -129,6 +130,13 @@ input arguments:
 note: this function checks if all histogram types in this set contain the same number of histograms,  
       (and that this number corresponds to the length of globalscores)  
       else adding globalscores is meaningless  
+```  
+### &#10551; get\_globalscores\_jsonformat( self, working\_point=None )  
+```text  
+make a json format listing all lumisections in this histstruct  
+the output list has entries for global score, pass/fail given working point, and masks  
+input arguments:  
+- working_point: if present, an entry will be made for each lumisection whether it passes this working point  
 ```  
 ### &#10551; add\_exthistograms( self, extname, histname, histograms, overwrite=False )  
 ```text  
@@ -331,7 +339,7 @@ input arguments:
 notes:  
 - the result is both returned and stored in the 'scores' attribute  
 ```  
-### &#10551; plot\_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[] )  
+### &#10551; plot\_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[],  titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs )  
 ```text  
 plot the histograms in a HistStruct, optionally after msking  
 note: so far only for 1D hsitograms.  
@@ -345,8 +353,13 @@ input arguments:
 - colorlist: list of matplotlib colors, must have same length as masknames  
 - labellist: list of labels for the legend, must have same legnth as masknames  
 - transparencylist: list of transparency values, must have same length as masknames  
+- titledict: dict mapping histogram names to titles for the subplots (default: title = histogram name)  
+- xaxtitledict: dict mapping histogram names to x-axis titles for the subplots (default: no x-axis title)  
+- yaxtitledict: dict mapping histogram names to y-axis titles for the subplots (default: no y-axis title)  
+- physicalxax: bool whether to use physical x-axis range or simply use bin number (default)  
+- kwargs: keyword arguments passed down to plot_utils.plot_sets   
 ```  
-### &#10551; plot\_ls( self, runnb, lsnb, histnames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference')  
+### &#10551; plot\_ls( self, runnb, lsnb, histnames=None, histlabel=None,  recohist=None, recohistlabel='Reconstruction',  refhists=None, refhistslabel='Reference histograms', refhiststransparency=None, titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs)  
 ```text  
 plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction  
 note: so far only for 1D histograms.  
@@ -356,6 +369,7 @@ input arguments:
 - runnb: run number  
 - lsnb: lumisection number  
 - histnames: names of histogram types to plot (default: all)  
+- histlabel: legend entry for the histogram (default: run and lumisection number)  
 - recohist: dict matching histogram names to reconstructed histograms  
   notes: - 'reconstructed histograms' refers to e.g. autoencoder or NMF reconstructions;  
            some models (e.g. simply looking at histogram moments) might not have this kind of reconstruction  
@@ -366,6 +380,11 @@ input arguments:
   notes: - multiple histograms (i.e. a 2D array) per key are expected;  
            in case there is only one reference histogram, it must be reshaped into (1,nbins)  
 - refhistslabel: legend entry for the reference histograms  
+- titledict: dict mapping histogram names to titles for the subplots (default: title = histogram name)  
+- xaxtitledict: dict mapping histogram names to x-axis titles for the subplots (default: no x-axis title)  
+- yaxtitledict: dict mapping histogram names to y-axis titles for the subplots (default: no y-axis title)  
+- physicalxax: bool whether to use physical x-axis range or simply use bin number (default)  
+- kwargs: keyword arguments passed down to plot_utils.plot_sets   
 ```  
 ### &#10551; plot\_run( self, runnb, masknames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False)  
 ```text  

@@ -2,12 +2,12 @@ site_name: Documentation for the ML4DQM/DC notebooks
 nav:
     - Home: 'index.md'
     - omsapi:
-        - readme: 'omsapi/readme.md'
+        - README: 'omsapi/README.md'
         - get_oms_data: 'omsapi/get_oms_data.md'
         - omsapi: 'omsapi/omsapi.md'
         - urls: 'omsapi/urls.md'
     - omsinterface:
-        - readme: 'omsinterface/readme.md'
+        - README: 'omsinterface/README.md'
         - cert: 'omsinterface/cert.md'
         - connectiontools: 'omsinterface/connectiontools.md'
         - get_oms_data: 'omsinterface/get_oms_data.md'
@@ -16,6 +16,7 @@ nav:
     - src:
         - DataLoader: 'src/DataLoader.md'
         - HistStruct: 'src/HistStruct.md'
+        - PlotStyleParser: 'src/PlotStyleParser.md'
         - classifiers:
             - AutoEncoder: 'src/classifiers/AutoEncoder.md'
             - HistogramClassifier: 'src/classifiers/HistogramClassifier.md'
@@ -31,6 +32,7 @@ nav:
             - LogNormalFitter: 'src/cloudfitters/LogNormalFitter.md'
             - SeminormalFitter: 'src/cloudfitters/SeminormalFitter.md'
     - utils:
+        - README: 'utils/README.md'
         - autoencoder_utils: 'utils/autoencoder_utils.md'
         - clustering_utils: 'utils/clustering_utils.md'
         - csv_utils: 'utils/csv_utils.md'

@@ -17,16 +17,26 @@ for this specific classifier, the output score of a histogram is the mean-square
 between the original histogram and its autoencoder reconstruction.  
 in essence, it is just a wrapper for a tensorflow model.  
 ```  
-### &#10551; \_\_init\_\_( self, model=None )  
+### &#10551; \_\_init\_\_( self, model=None, modelpath=None )  
 ```text  
 intializer from a tensorflow model  
-the model is assumed to be a valid tensorflow model;  
-it can be already trained before wrapping it in an AutoEncoder object,  
-but if this is not the case, the AutoEncoder.train function can be called afterwards.  
+input arguments:  
+- model: a valid tensorflow model;  
+         it does not have to be trained already,  
+         the AutoEncoder.train function will take care of this.  
+- modelpath: path to a stored tensorflow model,  
+             it does not have to be trained already,  
+             the AutoEncoder.train function will take care of this.  
+note: model and modelpath are alternative options, they should not both be used simultaneously.  
 ```  
-### &#10551; train( self, histograms, doplot=True, **kwargs )  
+### &#10551; train( self, histograms, doplot=True, epochs=10, batch\_size=500, shuffle=False, verbose=1, validation\_split=0.1, **kwargs )  
 ```text  
 train the model on a given set of input histograms  
+input arguments:  
+- histograms: set of training histograms, a numpy array of shape (nhistograms,nbins)  
+- doplot: boolean whether to make a plot of the loss value  
+- others: see the keras fit function  
+- kwargs: additional arguments passed down to keras fit function  
 ```  
 ### &#10551; evaluate( self, histograms )  
 ```text  
