@@ -1,8 +1,8 @@
 # to do:
 # - see to do's in the code
-# - most urgent: something seems to be broken in making the fit plot, need to fix.
 # - see Gabriele's feedback on 15/11/2021
-# - make gui visibly inactive while processing a longer task
+# - small bug: when a frame is made inactive and then active again,
+#   non-editable Comboboxes become editable, probably because the state is set to 'normal'
 # - continue making styling more uniform (e.g. everything in a Frame)
 
 # external modules
@@ -70,6 +70,17 @@ def set_frame_default_style( frame ):
     frame['borderwidth'] = 2
     frame['relief'] = 'groove'
 
+def change_frame_state( frame, state ):
+    ### disable or enable all widgets in a frame
+    for widget in frame.winfo_children():
+        if isinstance(widget,tk.Frame): change_frame_state(widget,state)
+        else: widget.configure(state=state)
+
+def disable_frame( frame ):
+    change_frame_state( frame, 'disable' )
+
+def enable_frame( frame ):
+    change_frame_state( frame, 'normal' )
 
 ### mappings of names to functions, classes, etc.
 
@@ -259,7 +270,7 @@ class OptionsFrame:
         self.labels = []
         self.wtypes = []
         self.widgets = []
-        self.set_options( labels=labels, types=types, values=values)
+        self.set_options( labels=labels, types=types, values=values )
 
     def set_options(self, labels=None, types=None, values=None):
         ### set the options of an option frame
@@ -274,7 +285,7 @@ class OptionsFrame:
         if( len(types)!=len(labels) or len(values)!=len(labels) ):
             raise Exception('ERROR in OptionsFrame initialization:'
                             +' argument lists have unequal lengths.')
-            # (to extend error checking)
+            # (to do: extend error checking)
 
         # clear current OptionsFrame
         self.labels.clear()
@@ -289,12 +300,19 @@ class OptionsFrame:
             self.labels.append(tklabel)
             if wtype is None: wtype = tk.Text
             widget = None
+            # case 1: simple generic text box
             if wtype is tk.Text:
                 widget = tk.Text(self.frame, height=1, width=25)
                 if value is not None:
                     widget.insert(tk.INSERT, value)
+            # case 2: file loader
             elif wtype is GenericFileLoader:
                 widget = GenericFileLoader(self.frame)
+            # case 3: combobox with fixed options
+            elif wtype is ttk.Combobox:
+                widget = ttk.Combobox(self.frame, values=value, width=25)
+                widget['state'] = 'readonly'
+                widget.current(0)
             else:
                 raise Exception('ERROR in OptionsFrame initialization:'
                                 +' widget type {} not recognized'.format(wtype))
@@ -308,18 +326,25 @@ class OptionsFrame:
         for label, wtype, widget in zip(self.labels, self.wtypes, self.widgets):
             key = label.cget('text')
             value = None
+            # case 1: simple generic text box
             if wtype is tk.Text:
                 value = widget.get('1.0', tk.END)
+            # case 2: file loader
             elif wtype is GenericFileLoader:
                 value = widget.get_filename()
+            # case 3: combobox with fixed options
+            elif wtype is ttk.Combobox:
+                value = widget.get()
             else:
                 raise Exception('ERROR in OptionsFrame get_dict:'
                                +' no getter method implemented for widget type {}'.format(wtype))
+            # basic parsing
             value = value.strip(' \t\n')
             if is_int(value): value = int(value)
             elif is_float(value): value = float(value)
             elif is_bool(value): value = to_bool(value)
             elif value=='None': value = None
+            elif value=='': value = None
             res[key] = value
         return res
 
@@ -403,10 +428,12 @@ class NewHistStructWindow(tk.Toplevel):
         self.training_mode_box = ttk.Combobox(self.general_options_frame, 
                                     values=['global','local'])
         self.training_mode_box.current(0)
+        self.training_mode_box['state'] = 'readonly'
         self.training_mode_box.grid(row=1,column=0)
         self.year_box = ttk.Combobox(self.general_options_frame,
                                      values=['2017'])
         self.year_box.current(0)
+        self.year_box['state'] = 'readonly'
         self.year_box.grid(row=2,column=0)
 
         # create a frame for choice of histograms
@@ -629,6 +656,8 @@ class NewHistStructWindow(tk.Toplevel):
 
     def make_histstruct(self):
 
+        # disable frame for the remainder of the processing time
+        disable_frame( self )
         # get general settings
         histnames = self.get_histnames()
         histnames = [h.split('(')[0].strip(' ') for h in histnames]
@@ -746,6 +775,7 @@ class AddClassifiersWindow(tk.Toplevel):
             classifier_type_label.grid(row=1, column=0)
             classifier_type_box = ttk.Combobox(frame, values=get_classifier_class())
             classifier_type_box.current(0)
+            classifier_type_box['state'] = 'readonly'
             classifier_type_box.bind('<<ComboboxSelected>>', functools.partial(
                 self.set_classifier_options, histname=histname) )
             classifier_type_box.grid(row=1, column=1)
@@ -1233,10 +1263,11 @@ class TrainClassifiersWindow(tk.Toplevel):
 class FitWindow(tk.Toplevel):
     ### popup window class for fitting classifier outputs
 
-    def __init__(self, master, histstruct):
+    def __init__(self, master, histstruct, plotstyleparser=None):
         super().__init__(master=master)
         self.title('Fitting')
         self.histstruct = histstruct
+        self.plotstyleparser = plotstyleparser
         self.fitting_set_selector = None
 
         # create frame for options
@@ -1258,6 +1289,7 @@ class FitWindow(tk.Toplevel):
         self.fitter_label.grid(row=2,column=0)
         self.fitter_box = ttk.Combobox(self.fit_options_frame, values=get_fitter_class())
         self.fitter_box.current(0)
+        self.fitter_box['state'] = 'readonly'
         self.fitter_box.bind('<<ComboboxSelected>>', self.set_fitter_options)
         self.fitter_box.grid(row=2,column=1)
         self.key_label = tk.Label(self.fit_options_frame, text='Parameters')
@@ -1278,21 +1310,47 @@ class FitWindow(tk.Toplevel):
     
         # add widgets for plotting options
         plot_options_dict = get_args_dict(pu.plot_fit_2d)
-        meta_args = {'do_plot':'True'}
-        plot_options_dict = {**meta_args, **plot_options_dict}
-        # do special overridings
+        # remove some keys that are not user input
         for key in ['fitfunc','xaxtitle','yaxtitle']:
             if key in list(plot_options_dict.keys()):
                 plot_options_dict.pop(key)
-
+        # set default values with plotstyleparser
+        if self.plotstyleparser is not None:
+            for key in list(plot_options_dict.keys()):
+                if key=='xaxtitlesize': plot_options_dict[key] = self.plotstyleparser.get_xaxtitlesize()
+                elif key=='yaxtitlesize': plot_options_dict[key] = self.plotstyleparser.get_yaxtitlesize()
+        # set other default arguments
+        for key in list(plot_options_dict.keys()):
+            if key=='caxtitle': plot_options_dict[key] = 'Probability density'
+            if key=='caxtitlesize': plot_options_dict[key] = 12
+        # add meta arguments
+        meta_args = {'do_plot':True}
+        plot_options_dict = {**meta_args, **plot_options_dict}
+        # set the widget types
+        labels = list(plot_options_dict.keys())
+        values = list(plot_options_dict.values())
+        wtypes = [tk.Text]*len(labels)
+        for i, value in enumerate(values):
+            if isinstance(value, bool):
+                wtypes[i] = ttk.Combobox
+                values[i] = [value, not value]
+        # make the OptionsFrame
         self.plot_options = OptionsFrame(self.plot_options_frame,
-                                            labels=plot_options_dict.keys(),
-                                            values=plot_options_dict.values())
+                                            labels=labels, types=wtypes, values=values)
         self.plot_options.frame.grid(row=1, column=0)
 
-        # add widgets to start the fit
-        self.fit_button = tk.Button(self, text='Start fit', command=self.do_fit)
-        self.fit_button.grid(row=2, column=0, columnspan=2)
+        # add a frame for some buttons
+        self.action_buttons_frame = tk.Frame(self)
+        set_frame_default_style( self.action_buttons_frame )
+        self.action_buttons_frame.grid(row=2, column=0, sticky='nsew')
+
+        # add a button to start the fit
+        self.fit_button = tk.Button(self.action_buttons_frame, text='Start fit', command=self.do_fit)
+        self.fit_button.grid(row=0, column=0, sticky='nsew')
+
+        # add a button to close the window
+        self.close_button = tk.Button(self.action_buttons_frame, text='Close', command=self.close)
+        self.close_button.grid(row=0, column=1, sticky='nsew')
 
     def set_fitter_options(self, event):
         fitter_name = self.fitter_box.get()
@@ -1328,31 +1386,53 @@ class FitWindow(tk.Toplevel):
         return (fitter,fitter_options)
 
     def do_fit(self):
+        # make frame disabled for the rest of the processing time
+        disable_frame(self)
+        # get fitter and plotting options
         fitting_scores = self.get_fitting_scores()
         (fitter,fitter_options) = self.get_fitter()
         plot_options_dict = self.plot_options.get_dict()
         do_plot = plot_options_dict.pop('do_plot')
-        if do_plot:
-            dimslist = []
-            fitfunclist = []
-            nhisttypes = len(self.histstruct.histnames)
-            for i in range(0,nhisttypes-1):
-                for j in range(i+1,nhisttypes):
-                    dimslist.append((i,j))
-            plt.close('all')
-            for dims in dimslist:
-                thismse = fitting_scores[:,dims]
-                fitfunc = fitter( thismse, **fitter_options )
+        # determine all combinations of dimensions
+        dimslist = []
+        fitfunclist = []
+        nhisttypes = len(self.histstruct.histnames)
+        for i in range(0,nhisttypes-1):
+            for j in range(i+1,nhisttypes):
+                dimslist.append((i,j))
+        plt.close('all')
+        # loop over all combinations of dimensions
+        for dims in dimslist:
+            # make the partial fit and store it
+            thismse = fitting_scores[:,dims]
+            fitfunc = fitter( thismse, **fitter_options )
+            fitfunclist.append(fitfunc)
+            # make the plot if requested
+            if do_plot:
+                xaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims[0]])
+                yaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims[1]])
                 (fig,ax) = pu.plot_fit_2d(thismse, fitfunc=fitfunc,
-                                    xaxtitle=pu.make_text_latex_safe(self.histstruct.histnames[dims[0]]),
-                                    yaxtitle=pu.make_text_latex_safe(self.histstruct.histnames[dims[1]]),
+                                    xaxtitle=xaxtitle,
+                                    yaxtitle=yaxtitle,
                                     **plot_options_dict)
-                fitfunclist.append(fitfunc)
+                # add extra text to the axes
+                # (might need updates to make it more flexible)
+                pu.add_text( ax, 'Density fit of lumisection MSE', 
+                            (0.05,0.8), fontsize=12, background_alpha=0.75 )
+                if self.plotstyleparser is not None:
+                    pu.add_cms_label( ax, pos=(0.05,0.9),
+                                      extratext=self.plotstyleparser.get_extracmstext(),
+                                      fontsize=self.plotstyleparser.get_cmstextsize(),
+                                      background_alpha=0.75 )
+                    condtext = self.plotstyleparser.get_condtext()
+                    if condtext is not None:
+                        pu.add_text( ax, condtext, (0.75,1.01),
+                                    fontsize=self.plotstyleparser.get_condtextsize() )
                 plt.show(block=False)
-            self.histstruct.fitfunclist = fitfunclist
-            self.histstruct.dimslist = dimslist
-            self.histstruct.fitting_scores = fitting_scores
-            # to do: same comment as below
+        self.histstruct.fitfunclist = fitfunclist
+        self.histstruct.dimslist = dimslist
+        self.histstruct.fitting_scores = fitting_scores
+        # to do: same comment as below
         self.histstruct.fitfunc = fitter( fitting_scores, **fitter_options )
         # to do: extend HistStruct class to contain the fitfunc in a cleaner way!
         #        (or decide on another way to make this ad-hod attribute assignment more clean)
@@ -1364,10 +1444,13 @@ class FitWindow(tk.Toplevel):
         scores_all = np.array(scores_all)
         scores_all = np.transpose(scores_all)
         self.histstruct.add_globalscores( np.log(self.histstruct.fitfunc.pdf(scores_all)) )
+        # enable the frame again
+        enable_frame(self)
+
+    def close(self):
         # close the window
         self.destroy()
         self.update()
-        print('done')
 
 
 class ResampleWindow(tk.Toplevel):
@@ -1447,6 +1530,7 @@ class ResampleWindow(tk.Toplevel):
         function_label.grid(row=3, column=0)
         function_box = ttk.Combobox(set_frame, values=get_resampling_function())
         function_box.current(0)
+        function_box['state'] = 'readonly'
         function_box.bind('<<ComboboxSelected>>', functools.partial(
             self.set_function_options, setindex=idx))
         function_box.grid(row=3, column=1)
@@ -1528,10 +1612,11 @@ class ResampleWindow(tk.Toplevel):
 class EvaluateWindow(tk.Toplevel):
     ### popup window class for evaluating a given model
 
-    def __init__(self, master, histstruct):
+    def __init__(self, master, histstruct, plotstyleparser=None):
         super().__init__(master=master)
         self.title('Evaluation window')
         self.histstruct = histstruct
+        self.plotstyleparser = plotstyleparser
         self.select_test_set_button_list = []
         self.test_set_type_box_list = []
         self.test_set_selector_list = []
@@ -1569,67 +1654,129 @@ class EvaluateWindow(tk.Toplevel):
         self.score_dist_options_label = tk.Label(self.evaluation_options_frame, 
                                                  text='Options for score plot')
         self.score_dist_options_label.grid(row=0, column=0)
-        score_dist_default_options = ({
-                    # options needed at this level
-                    'make score distribution':'True',
-                    # options passed down
-                    'siglabel':'anomalous', 'sigcolor':'r', 
-                    'bcklabel':'good', 'bckcolor':'g', 
-                    'nbins':'200', 'normalize':'True',
-                    'xaxtitle':'negative logarithmic probability',
-                    'yaxtitle':'number of lumisections (normalized)'})
+        # get available options
+        score_dist_options_dict = get_args_dict(pu.plot_score_dist)
+        # remove some keys that are not user input
+        for key in ['fig','ax','doshow']:
+            if key in list(score_dist_options_dict.keys()):
+                score_dist_options_dict.pop(key)
+        # set some default arguments
+        for key in list(score_dist_options_dict.keys()):
+            if key=='siglabel': score_dist_options_dict[key] = 'anomalous'
+            elif key=='sigcolor': score_dist_options_dict[key] = 'r'
+            elif key=='bcklabel': score_dist_options_dict[key] = 'good'
+            elif key=='bckcolor': score_dist_options_dict[key] = 'g'
+            elif key=='nbins': score_dist_options_dict[key] = 200
+            elif key=='normalize': score_dist_options_dict[key] = True
+            elif key=='yaxtitle': 
+                score_dist_options_dict[key] = 'Normalized number of lumisections'
+        # add meta arguments
+        meta_args = {'make score distribution':True}
+        score_dist_options_dict = {**meta_args, **score_dist_options_dict}
+        # set the widget types
+        labels = list(score_dist_options_dict.keys())
+        values = list(score_dist_options_dict.values())
+        wtypes = [tk.Text]*len(labels)
+        for i, value in enumerate(values):
+            if isinstance(value, bool):
+                wtypes[i] = ttk.Combobox
+                values[i] = [value, not value]
+        # make the actual OptionsFrame
         self.score_dist_options_frame = OptionsFrame(self.evaluation_options_frame, 
-                                            labels=score_dist_default_options.keys(),
-                                            values=score_dist_default_options.values())
+                                            labels=labels, types=wtypes, values=values)
         self.score_dist_options_frame.frame.grid(row=1, column=0)
 
         # add widgets for roc curve
         self.roc_options_label = tk.Label(self.evaluation_options_frame, 
                                           text='Options for ROC curve')
         self.roc_options_label.grid(row=0, column=1)
-        roc_default_options = ({
-                    # options needed at this level
-                    'make ROC curve':'True',
-                    # options passed down
-                    'mode':'geom', 'doprint':'False'})
+        # get available options
+        roc_options_dict = get_args_dict(aeu.get_roc)
+        # remove some keys that are not user input
+        for key in ['doplot','doshow']:
+            if key in list(roc_options_dict.keys()):
+                roc_options_dict.pop(key)
+        # set some default arguments
+        for key in list(roc_options_dict.keys()):
+            if key=='mode': roc_options_dict[key] = 'geom'
+        # add meta arguments
+        meta_args = {'make ROC curve': True}
+        roc_options_dict = {**meta_args, **roc_options_dict}
+        # set the widget types
+        labels = list(roc_options_dict.keys())
+        values = list(roc_options_dict.values())
+        wtypes = [tk.Text]*len(labels)
+        for i, value in enumerate(values):
+            if isinstance(value, bool):
+                wtypes[i] = ttk.Combobox
+                values[i] = [value, not value]
         self.roc_options_frame = OptionsFrame(self.evaluation_options_frame,
-                                            labels=roc_default_options.keys(),
-                                            values=roc_default_options.values())
+                                            labels=labels, types=wtypes, values=values)
         self.roc_options_frame.frame.grid(row=1, column=1)
 
         # add widgets for confusion matrix
         self.cm_options_label = tk.Label(self.evaluation_options_frame, 
                                          text='Options for confusion matrix')
         self.cm_options_label.grid(row=0, column=2)
-        cm_default_options = ({
-                    # options needed at this level
-                    'make confusion matrix': 'True',
-                    # options passed down
-                    'wp':'50'})
+        # get available options
+        cm_options_dict = get_args_dict(aeu.get_confusion_matrix)
+        # add meta arguments
+        meta_args = {'make confusion matrix': True}
+        cm_options_dict = {**meta_args, **cm_options_dict}
+        # set the widget types
+        labels = list(cm_options_dict.keys())
+        values = list(cm_options_dict.values())
+        wtypes = [tk.Text]*len(labels)
+        for i, value in enumerate(values):
+            if isinstance(value, bool):
+                wtypes[i] = ttk.Combobox
+                values[i] = [value, not value]
         self.cm_options_frame = OptionsFrame(self.evaluation_options_frame,
-                                            labels=cm_default_options.keys(),
-                                            values=cm_default_options.values())
+                                            labels=labels, types=wtypes, values=values)
         self.cm_options_frame.frame.grid(row=1, column=2)
-
+        
         # add widgets for 2D contour plots
         self.contour_options_label = tk.Label(self.evaluation_options_frame, 
                                               text='Options for fit plots')
         self.contour_options_label.grid(row=0, column=3)
-        contour_default_options = ({
-                        # options needed at this level
-                        'make fit plots':'False',
-                        'logprob':'True', 'clipprob':'True',
-                        'xlims':'60', 'ylims':'60',
-                        'onlypositive':'True', 'transparency':'0.5',
-                        'title':'density fit of lumisection MSE'})
+        # add widgets for plotting options
+        contour_options_dict = get_args_dict(pu.plot_fit_2d)
+        # remove some keys that are not user input
+        for key in ['fitfunc','xaxtitle','yaxtitle','onlycontour']:
+            if key in list(contour_options_dict.keys()):
+                contour_options_dict.pop(key)
+        # set default values with plotstyleparser
+        if self.plotstyleparser is not None:
+            for key in list(contour_options_dict.keys()):
+                if key=='xaxtitlesize': contour_options_dict[key] = self.plotstyleparser.get_xaxtitlesize()
+                elif key=='yaxtitlesize': contour_options_dict[key] = self.plotstyleparser.get_yaxtitlesize()
+        # set other default arguments
+        for key in list(contour_options_dict.keys()):
+            if key=='caxtitle': contour_options_dict[key] = 'Probability density'
+            if key=='caxtitlesize': contour_options_dict[key] = 12
+        # add meta arguments
+        meta_args = {'make fit plots':False}
+        contour_options_dict = {**meta_args, **contour_options_dict}
+        # set the widget types
+        labels = list(contour_options_dict.keys())
+        values = list(contour_options_dict.values())
+        wtypes = [tk.Text]*len(labels)
+        for i, value in enumerate(values):
+            if isinstance(value, bool):
+                wtypes[i] = ttk.Combobox
+                values[i] = [value, not value]
+        # make the actual OptionsFrame
         self.contour_options_frame = OptionsFrame(self.evaluation_options_frame,
-                                            labels=contour_default_options.keys(),
-                                            values=contour_default_options.values())
+                                            labels=labels, types=wtypes, values=values)
         self.contour_options_frame.frame.grid(row=1, column=3)
 
         # add a button to start the evaluation
         self.evaluate_button = tk.Button(self, text='Evaluate', command=self.evaluate)
         self.evaluate_button.grid(row=2, column=0)
+
+        # add a button to close the window
+        self.close_button = tk.Button(self, text='Close', command=self.close)
+        self.close_button.grid(row=2, column=1)
 
     def add_set(self, parent=None, default_type='Good'):
         ### add one test set
@@ -1645,6 +1792,7 @@ class EvaluateWindow(tk.Toplevel):
         type_box = ttk.Combobox(parent, values=['Good','Bad'])
         if default_type=='Bad': type_box.current(1)
         else: type_box.current(0)
+        type_box['state'] = 'readonly'
         type_box.grid(row=row+1,column=column)
         self.test_set_type_box_list.append( type_box )
         self.test_set_selector_list.append( None )
@@ -1679,6 +1827,9 @@ class EvaluateWindow(tk.Toplevel):
     def evaluate(self):
         if not self.check_all_selected():
             raise Exception('ERROR: some test sets were declared but not defined')
+        # disable window for rest of processing time
+        disable_frame(self)
+        # load scores for good and bad test set
         scores_good_parts = self.get_scores('Good')
         scores_bad_parts = self.get_scores('Bad')
         globalscores_good_parts = self.get_globalscores('Good')
@@ -1692,11 +1843,14 @@ class EvaluateWindow(tk.Toplevel):
         scores = np.concatenate(tuple([-globalscores_good,-globalscores_bad]))
         scores = aeu.clip_scores( scores )
 
+        # score distribution
         score_dist_options = self.score_dist_options_frame.get_dict()
         do_score_dist = score_dist_options.pop('make score distribution')
         if do_score_dist:
             score_dist_options['doshow'] = False # gui blocks if this is True
             pu.plot_score_dist(scores, labels, **score_dist_options)
+
+        # roc curve
         roc_options = self.roc_options_frame.get_dict()
         do_roc = roc_options.pop('make ROC curve')
         if do_roc: 
@@ -1704,8 +1858,12 @@ class EvaluateWindow(tk.Toplevel):
             auc = aeu.get_roc(scores, labels, **roc_options)
         cm_options = self.cm_options_frame.get_dict()
         do_cm = cm_options.pop('make confusion matrix')
+
+        # confusion matrix
         if do_cm: aeu.get_confusion_matrix(scores,labels, **cm_options)
         plt.show(block=False)
+
+        # contour plots
         contour_options = self.contour_options_frame.get_dict()
         do_contour = contour_options.pop('make fit plots')
         if do_contour:
@@ -1724,9 +1882,10 @@ class EvaluateWindow(tk.Toplevel):
                 goodcolorist = ['blue']*len(scores_good_parts)
 
             for dims,partialfitfunc in zip(self.histstruct.dimslist,self.histstruct.fitfunclist):
+                xaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims[0]])
+                yaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims[1]])
                 fig,ax = pu.plot_fit_2d(self.histstruct.fitting_scores, fitfunc=partialfitfunc, 
-                    xaxtitle=pu.make_text_latex_safe(self.histstruct.histnames[dims[0]]),
-                    yaxtitle=pu.make_text_latex_safe(self.histstruct.histnames[dims[1]]),
+                    xaxtitle=xaxtitle, yaxtitle=yaxtitle,
                     onlycontour=True,
                     **contour_options)
                 for j in range(len(scores_bad_parts)):
@@ -1737,7 +1896,28 @@ class EvaluateWindow(tk.Toplevel):
                     ax.plot(    scores_good_parts[j][self.histstruct.histnames[dims[0]]],
                                 scores_good_parts[j][self.histstruct.histnames[dims[1]]],
                                 '.',color=goodcolorlist[j],markersize=4)
+                # add extra text to the axes
+                # (might need updates to make it more flexible)
+                pu.add_text( ax, 'Density fit of lumisection MSE',
+                            (0.05,0.8), fontsize=12, background_alpha=0.75 )
+                if self.plotstyleparser is not None:
+                    pu.add_cms_label( ax, pos=(0.05,0.9),
+                                      extratext=self.plotstyleparser.get_extracmstext(),
+                                      fontsize=self.plotstyleparser.get_cmstextsize(),
+                                      background_alpha=0.75 )
+                    condtext = self.plotstyleparser.get_condtext()
+                    if condtext is not None:
+                        pu.add_text( ax, condtext, (0.75,1.01),
+                                    fontsize=self.plotstyleparser.get_condtextsize() )
             plt.show(block=False)
+        # enable frame again
+        enable_frame(self)
+
+    def close(self):
+        ### close the window
+        self.destroy()
+        self.update()
+
 
 class ApplyClassifiersWindow(tk.Toplevel):
     ### popup window class for evaluating the classifiers 
@@ -2275,7 +2455,7 @@ class ML4DQMGUI:
         if not self.histstruct:
             print('ERROR: need to load a HistStruct first')
             return
-        _ = FitWindow(self.master, self.histstruct)
+        _ = FitWindow(self.master, self.histstruct, self.plotstyleparser)
         return
 
     def open_resample_window(self):
@@ -2289,7 +2469,7 @@ class ML4DQMGUI:
         if not self.histstruct:
             print('ERROR: need to load a HistStruct first')
             return
-        _ = EvaluateWindow(self.master, self.histstruct)
+        _ = EvaluateWindow(self.master, self.histstruct, self.plotstyleparser)
         return
 
     def open_display_histstruct_window(self):
