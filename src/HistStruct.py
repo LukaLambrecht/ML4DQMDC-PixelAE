@@ -329,7 +329,26 @@ class HistStruct(object):
             print('WARNING in HistStruct.add_extglobalscores: array of global scores for set {}'.format(extname)
                   +' appears to be already initialized; overwriting...')
         self.extglobalscores[extname] = globalscores
-            
+
+    def get_globalscores_jsonformat( self, working_point=None ):
+        ### make a json format listing all lumisections in this histstruct
+        # the output list has entries for global score, pass/fail given working point, and masks
+        # input arguments:
+        # - working_point: if present, an entry will be made for each lumisection whether it passes this working point
+        res = []
+        for (runnb,lsnb) in zip(self.runnbs,self.lsnbs):
+            res.append({'run':int(runnb), 'ls':int(lsnb)})
+            # (note: need explicit conversion to int since numpy data types are not understood by json serializer)
+        if( len(self.globalscores)==0 ):
+            print('WARNING in HistStruct.get_globalscores_json: array of global scores seems to be uninitialized.')
+        else:
+            for idx in range(len(res)): 
+                if working_point is not None: res[idx]['pass'] = bool(self.globalscores[idx]>working_point)
+                res[idx]['score'] = float(self.globalscores[idx])
+        for maskname in self.masks.keys():
+            for idx in range(len(res)):
+                res[idx][maskname] = bool(self.masks[maskname][idx])
+        return res
         
     def add_exthistograms( self, extname, histname, histograms, overwrite=False ):
         ### add a set of extra histograms to a HistStruct

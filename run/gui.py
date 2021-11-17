@@ -13,6 +13,7 @@ print('  import sys'); import sys
 print('  import math'); import math
 print('  import pandas as pd'); import pandas as pd
 print('  import numpy as np'); import numpy as np
+print('  import json'); import json
 print('  import matplotlib.pyplot as plt'); import matplotlib.pyplot as plt
 print('  import pickle'); import pickle
 print('  import functools'); import functools
@@ -221,6 +222,7 @@ class StdOutRedirector:
         # (empty) flush attribute needed to avoid exception on destroying the window
         pass
 
+
 class GenericFileLoader:
     ### contains a button to open a file loader dialog and stores the result
 
@@ -251,6 +253,38 @@ class GenericFileLoader:
 
     def grid(self, row=None, column=None):
         self.frame.grid(row=row, column=column, sticky='nsew')
+
+class GenericFileSaver:
+    ### same as GenericFileLoader but for saving files
+
+    def __init__(self, master, buttontext=None, filetypes=None):
+        if buttontext is None: buttontext = '(no location chosen)'
+        if filetypes is None: filetypes = (('all files','*.*'),)
+        self.filename = None
+        self.frame = tk.Frame(master)
+        self.save_button = tk.Button(self.frame, text=buttontext,
+                command=functools.partial(self.save_filename,filetypes=filetypes))
+        self.save_button.grid(row=0, column=0, sticky='nsew')
+
+    def save_filename(self, filetypes=None):
+        if filetypes is None: filetypes = (('all files','*.*'),)
+        initialdir = os.path.abspath(os.path.dirname(__file__))
+        filename = fldlg.asksaveasfilename(initialdir=initialdir,
+                    title='Save a file',
+                    filetypes=filetypes)
+        # if filename is invalid, print a warning
+        if len(filename)==0: print('WARNING: file saving canceled')
+        # else set the filename
+        else:
+            self.filename = filename
+            self.save_button.config(text=os.path.basename(filename))
+
+    def get_filename(self):
+        return self.filename
+
+    def grid(self, row=None, column=None):
+        self.frame.grid(row=row, column=column, sticky='nsew')
+
 
 class OptionsFrame:
     ### contains a tk.Frame holding a list of customization options
@@ -308,7 +342,10 @@ class OptionsFrame:
             # case 2: file loader
             elif wtype is GenericFileLoader:
                 widget = GenericFileLoader(self.frame)
-            # case 3: combobox with fixed options
+            # case 3: file saver
+            elif wtype is GenericFileSaver:
+                widget = GenericFileSaver(self.frame)
+            # case 4: combobox with fixed options
             elif wtype is ttk.Combobox:
                 widget = ttk.Combobox(self.frame, values=value, width=25)
                 widget['state'] = 'readonly'
@@ -332,7 +369,10 @@ class OptionsFrame:
             # case 2: file loader
             elif wtype is GenericFileLoader:
                 value = widget.get_filename()
-            # case 3: combobox with fixed options
+            # case 3: file saver
+            elif wtype is GenericFileSaver:
+                value = widget.get_filename()
+            # case 4: combobox with fixed options
             elif wtype is ttk.Combobox:
                 value = widget.get()
             else:
@@ -1734,11 +1774,31 @@ class EvaluateWindow(tk.Toplevel):
         self.cm_options_frame = OptionsFrame(self.evaluation_options_frame,
                                             labels=labels, types=wtypes, values=values)
         self.cm_options_frame.frame.grid(row=1, column=2)
+
+        # add widgets for output json file
+        self.json_label = tk.Label(self.evaluation_options_frame, 
+                                    text='Options for output json file')
+        self.json_label.grid(row=0, column=3)
+        json_options_dict = {'make json file': False,
+                             'json filename': ''}
+        # set the widget types
+        labels = list(json_options_dict.keys())
+        values = list(json_options_dict.values())
+        wtypes = [tk.Text]*len(labels)
+        for i, value in enumerate(values):
+            if isinstance(value, bool):
+                wtypes[i] = ttk.Combobox
+                values[i] = [value, not value]
+        for i, label in enumerate(labels):
+            if label=='json filename': wtypes[i] = GenericFileSaver
+        self.json_options_frame = OptionsFrame(self.evaluation_options_frame,
+                                            labels=labels, types=wtypes, values=values)
+        self.json_options_frame.frame.grid(row=1, column=3)
         
         # add widgets for 2D contour plots
         self.contour_options_label = tk.Label(self.evaluation_options_frame, 
                                               text='Options for fit plots')
-        self.contour_options_label.grid(row=0, column=3)
+        self.contour_options_label.grid(row=0, column=4)
         # add widgets for plotting options
         contour_options_dict = get_args_dict(pu.plot_fit_2d)
         # remove some keys that are not user input
@@ -1768,7 +1828,7 @@ class EvaluateWindow(tk.Toplevel):
         # make the actual OptionsFrame
         self.contour_options_frame = OptionsFrame(self.evaluation_options_frame,
                                             labels=labels, types=wtypes, values=values)
-        self.contour_options_frame.frame.grid(row=1, column=3)
+        self.contour_options_frame.frame.grid(row=1, column=4)
 
         # add a button to start the evaluation
         self.evaluate_button = tk.Button(self, text='Evaluate', command=self.evaluate)
@@ -1860,8 +1920,24 @@ class EvaluateWindow(tk.Toplevel):
         do_cm = cm_options.pop('make confusion matrix')
 
         # confusion matrix
-        if do_cm: aeu.get_confusion_matrix(scores,labels, **cm_options)
-        plt.show(block=False)
+        if do_cm: 
+            working_point = aeu.get_confusion_matrix(scores,labels, **cm_options)
+
+        # write output json
+        # to do: make more flexible with user options
+        json_options = self.json_options_frame.get_dict()
+        do_json = json_options.pop('make json file')
+        json_filename = json_options.pop('json filename')
+        if do_json and len(json_filename)==0:
+            print('WARNING: invalid json filename; not writing an output json')
+            do_json = False
+        if do_json:
+            if(os.path.splitext(json_filename)[1] not in ['json','txt']):
+                print('WARNING: unrecognized extension in json filename, replacing by .json')
+                json_filename = os.path.splitext(json_filename)[0]+'.json'
+            with open(json_filename,'w') as f:
+                jsonlist = self.histstruct.get_globalscores_jsonformat(working_point=working_point)
+                json.dump( jsonlist, f, indent=2 )
 
         # contour plots
         contour_options = self.contour_options_frame.get_dict()
@@ -1909,7 +1985,8 @@ class EvaluateWindow(tk.Toplevel):
                     if condtext is not None:
                         pu.add_text( ax, condtext, (0.75,1.01),
                                     fontsize=self.plotstyleparser.get_condtextsize() )
-            plt.show(block=False)
+        # show all plots (but in a non-blocking way)
+        plt.show(block=False)
         # enable frame again
         enable_frame(self)
 

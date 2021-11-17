@@ -266,6 +266,9 @@ def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True):
     #plt.figure(figsize = (10,7))
     plt.figure()
     sn.heatmap(df_cm, annot=True, cmap=plt.cm.Blues)
+
+    # return the working point (for later use if it was automatically calculated)
+    return wp
     
 def get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp=None):
     ### plot a confusion matrix without manually calculating the scores
@@ -323,7 +326,8 @@ def get_wp_maxauc(scores, labels, doplot=False):
         wptext = '{:.3f}'.format(maxscore)
         if maxauc>0.99:
             auctext = '1 - '+'{:.3e}'.format(1-maxauc)
-        text = ax.text(0.7,0.8,'WP: {}, AUC: {}'.format(wptext,auctext), transform=ax.transAxes)
+        text = ax.text(0.97,0.8,'WP: {}, AUC: {}'.format(wptext,auctext), 
+                        horizontalalignment='right', transform=ax.transAxes)
         text.set_bbox(dict(facecolor='white', edgecolor='black', alpha=0.75))
         plt.show(block=False)
     return maxscore
