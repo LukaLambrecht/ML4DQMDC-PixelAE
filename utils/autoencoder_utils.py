@@ -236,15 +236,18 @@ def get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, 
     # score equals mse, since larger mse = more signal-like (signal=anomalies)
     return get_roc(mse,labels,mode=mode,npoints=npoints,doprint=doprint,doplot=doplot,plotmode=plotmode)
 
-def get_confusion_matrix(scores, labels, wp=None):
+def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True):
     ### plot a confusion matrix
-    # scores and labels are defined in the same way as for get_roc
-    # wp is the chosen working point 
-    # (i.e. any score above wp is flagged as signal, any below is flagged as background)
+    # input arguments:
+    # - scores and labels: defined in the same way as for get_roc
+    # - wp: the chosen working point 
+    #       (i.e. any score above wp is flagged as signal, any below is flagged as background)
+    #       note: wp can be a integer or float, in which case that value will be used directly,
+    #             or it can be a string in which case it will be used as the 'method' argument in get_wp!
+    # - plotwp: only relevant if wp is a string (see above), in which case plotwp will be used as the 'doplot' argument in get_wp
     
-    if wp is None:
-        raise Exception('ERROR in get_confusion_matrix: you must provide a working point with the keyword option wp=...')
-    
+    if isinstance(wp,str): wp = get_wp(scores, labels, method=wp, doplot=plotwp)
+
     nsig = np.sum(labels)
     nback = np.sum(1-labels)
     
@@ -272,6 +275,58 @@ def get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp=None):
     mse = mseTop10Raw(hists, predicted_hists)
     get_confusion_matrix(mse, labels, wp=msewp)
 
+
+
+### automatically calculate a suitable working point
+
+def get_wp(scores, labels, method='maxauc', doplot=False):
+    ### automatically calculate a suitable working point
+    # input arguments:
+    # - scores, labels: equally long 1d numpy arrays of predictions and true labels respectively
+    #                   note: in all methods, the labels are assumed to be 0 (for background) or 1 (for signal)!
+    # - method: method to calculate the working point
+    #           currently supported: 'maxauc'
+    # - doplot: make a plot (if a plotting method exists for the chosen method)
+    allowedmethods = ['maxauc']
+    if method not in allowedmethods:
+        raise Exception('ERRR in get_wp: method {} not recognized.'.format(method)
+                +' available options are {}'.format(allowedmethods))
+    if method=='maxauc': return get_wp_maxauc(scores, labels, doplot=doplot)
+
+def get_wp_maxauc(scores, labels, doplot=False):
+    ### calculate the working point corresponding to maximum pseudo-AUC
+    # (i.e. maximize the rectangular area enclosed by the working point)
+    signal_scores = scores[labels==1]
+    background_scores = scores[labels==0]
+    nsig = len(signal_scores)
+    nbck = len(background_scores)
+    scores.sort()
+    effs = np.zeros(len(scores))
+    effb = np.zeros(len(scores))
+    aucs = np.zeros(len(scores))
+    for i,score in enumerate(scores):
+        effs[i] = np.sum(signal_scores>score)/nsig
+        effb[i] = np.sum(background_scores>score)/nbck
+        aucs[i] = effs[i]*(1-effb[i])
+    maxidx = np.argmax(aucs)
+    maxscore = scores[maxidx]
+    maxauc = aucs[maxidx]
+    if doplot:
+        fig,ax,ax2 = plot_utils.plot_metric(scores, aucs, label='pseudo-AUC',
+                    sig_eff=effs, sig_label='signal efficiency',
+                    bck_eff=effb, bck_label='background efficiency',
+                    xaxtitle='working point',
+                    yaxlog=False, ymaxfactor=1.3, yaxtitle='pseudo-AUC')
+        ax.scatter( [maxscore], [maxauc], s=50, c='black', label='maximum' )
+        ax.legend(loc='upper left', framealpha=0.75, facecolor='white')
+        auctext = '{:.3f}'.format(maxauc)
+        wptext = '{:.3f}'.format(maxscore)
+        if maxauc>0.99:
+            auctext = '1 - '+'{:.3e}'.format(1-maxauc)
+        text = ax.text(0.7,0.8,'WP: {}, AUC: {}'.format(wptext,auctext), transform=ax.transAxes)
+        text.set_bbox(dict(facecolor='white', edgecolor='black', alpha=0.75))
+        plt.show(block=False)
+    return maxscore
 
 
 
@@ -357,8 +412,3 @@ def clip_scores( scores ):
         scores = np.where(scores==-np.inf,minnoninf,scores)
         print('NOTE: scores of -inf were reset to {}'.format(minnoninf))
     return scores
-
-
-
-
-

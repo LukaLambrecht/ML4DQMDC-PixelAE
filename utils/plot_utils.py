@@ -407,8 +407,62 @@ def plot_score_dist( scores, labels, fig=None, ax=None,
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
     ax.legend()
-    if doshow: plt.show()
+    if doshow: plt.show(block=False)
     return (fig,ax)
+
+def plot_metric( wprange, metric, label=None, color=None,
+                    sig_eff=None, sig_label=None, sig_color=None,
+                    bck_eff=None, bck_label=None, bck_color=None,
+                    title=None,
+                    xaxtitle='working point',
+                    yaxlog=False, ymaxfactor=1.3, yaxtitle='metric' ):
+    ### plot a metric based on signal and background efficiencies.
+    # along with the metric, the actual signal and background efficiencies can be plotted as well.
+    # input arguments:
+    # - wprange, metric: equally long 1D-numpy arrays, x- and y-data respectively
+    # - label: label for the metric to put in the legend
+    # - color: color for the metric (default: blue)
+    # - sig_eff: 1D-numpy array of signal efficiencies corresponding to wprange
+    # - sig_label: label for sig_eff in the legend
+    # - color: color for sig_eff (default: green)
+    # - bck_eff, bck_label, bck_color: same as for signal
+    # - title, xaxtitle and yaxtitle: titles for the plot and axes
+    # - yaxlog: boolean whether to put y axis in log scale
+    # - ymaxfactor: factor to add extra space on the top of the plot (for the legend)
+    fig,ax = plt.subplots()
+    ax2 = ax.twinx()
+    # parse arguments
+    if label is None: label = ''
+    if sig_label is None: sig_label = ''
+    if bck_label is None: bck_label = ''
+    if color is None: color = 'blue'
+    if sig_color is None: sig_color = 'forestgreen'
+    if bck_color is None: bck_color = 'firebrick'
+    # make the plots
+    ax.plot( wprange, metric, label=label, color=color, linewidth=3 )
+    if sig_eff is not None: ax2.plot( wprange, sig_eff, label=sig_label,
+                                        color=sig_color, linewidth=2 )
+    if bck_eff is not None: ax2.plot( wprange, bck_eff, label=bck_label,
+                                        color=bck_color, linewidth=2 )
+    # draw a dashed line at unit efficiency
+    ax.grid()
+    ax2.plot( [wprange[0],wprange[1]], [1.,1.], color='black', linestyle='dashed')
+    # set the legends
+    ax.legend(loc='upper left')
+    ax2.legend(loc='upper right')
+    # axis properties for first axes
+    if yaxlog: ax.set_yscale('log')
+    ymin,ymax = ax.get_ylim()
+    ax.set_ylim( (ymin, ymax*ymaxfactor) )
+    if title is not None: ax.set_title(title)
+    if xaxtitle is not None: ax.set_xlabel(xaxtitle)
+    if yaxtitle is not None: ax.set_ylabel(yaxtitle, color=color)
+    # axis properties for second axes
+    ax2.set_ylabel('efficiency')
+    ymin,ymax = ax2.get_ylim()
+    ax2.set_ylim( (ymin, ymax*ymaxfactor) )
+    return (fig,ax,ax2)
+
 
 def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False, 
                 onlycontour=False, xlims=5, ylims=5, onlypositive=False,
