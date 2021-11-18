@@ -369,9 +369,15 @@ class OptionsFrame:
             # case 2: file loader
             elif wtype is GenericFileLoader:
                 value = widget.get_filename()
+                if value is None:
+                    msg = 'WARNING: file for option {} is None.'.format(key)
+                    print(msg)
             # case 3: file saver
             elif wtype is GenericFileSaver:
                 value = widget.get_filename()
+                if value is None:
+                    msg = 'WARNING: file for option {} is None.'.format(key)
+                    print(msg)
             # case 4: combobox with fixed options
             elif wtype is ttk.Combobox:
                 value = widget.get()
@@ -379,6 +385,7 @@ class OptionsFrame:
                 raise Exception('ERROR in OptionsFrame get_dict:'
                                +' no getter method implemented for widget type {}'.format(wtype))
             # basic parsing
+            if value is None: value = ''
             value = value.strip(' \t\n')
             if is_int(value): value = int(value)
             elif is_float(value): value = float(value)
