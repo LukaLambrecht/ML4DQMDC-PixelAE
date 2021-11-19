@@ -10,7 +10,12 @@ Functionality includes:
 - - -
   
   
-### get\_data\_dirs(year='2017', eras=[], dim=1)  
+### get\_data\_dirs  
+full signature:  
+```text  
+def get_data_dirs(year='2017', eras=[], dim=1)  
+```  
+comments:  
 ```text  
 yield all data directories  
 note that the location of the data is hard-coded;  
@@ -22,7 +27,12 @@ this function might break for newer or later reprocessings of the data.
 ```  
   
   
-### get\_csv\_files(inputdir)  
+### get\_csv\_files  
+full signature:  
+```text  
+def get_csv_files(inputdir)  
+```  
+comments:  
 ```text  
 yields paths to all csv files in input directory  
 note that the output paths consist of input_dir/filename  
@@ -31,28 +41,48 @@ i.e. the .csv files listed directly under input_dir.
 ```  
   
   
-### sort\_filenames(filelist)  
+### sort\_filenames  
+full signature:  
+```text  
+def sort_filenames(filelist)  
+```  
+comments:  
 ```text  
 sort filenames in numerical order (e.g. 2 before 10)  
 note that the number is supposed to be in ..._<number>.<extension> format  
 ```  
   
   
-### read\_csv(csv\_file)  
+### read\_csv  
+full signature:  
+```text  
+def read_csv(csv_file)  
+```  
+comments:  
 ```text  
 read csv file into pandas dataframe  
 csv_file is the path to the csv file to be read  
 ```  
   
   
-### write\_csv(dataframe,csvfilename)  
+### write\_csv  
+full signature:  
+```text  
+def write_csv(dataframe,csvfilename)  
+```  
+comments:  
 ```text  
 write a dataframe to a csv file  
 note: just a wrapper for builtin dataframe.to_csv  
 ```  
   
   
-### read\_and\_merge\_csv(csv\_files, histnames=[], runnbs=[])  
+### read\_and\_merge\_csv  
+full signature:  
+```text  
+def read_and_merge_csv(csv_files, histnames=[], runnbs=[])  
+```  
+comments:  
 ```text  
 read and merge list of csv files into a single df  
 csv_files is a list of paths to files to merge into a df  
@@ -61,7 +91,12 @@ runnbs is a list of run numbers to keep (default: all)
 ```  
   
   
-### write\_skimmed\_csv(histnames, year, eras=['all'], dim=1)  
+### write\_skimmed\_csv  
+full signature:  
+```text  
+def write_skimmed_csv(histnames, year, eras=['all'], dim=1)  
+```  
+comments:  
 ```text  
 read all available data for a given year/era and make a file per histogram type  
 input arguments:  

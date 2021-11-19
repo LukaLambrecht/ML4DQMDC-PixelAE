@@ -7,19 +7,30 @@ An exponential distribution in N dimensions is fully determined by an N-dimensio
   
   
 - - -
-## [class] ExponentialFitter(CloudFitter)  
+## [class] ExponentialFitter  
+comments:  
 ```text  
 class for fitting an exponential distribution to a point cloud  
 parameters  
 - l: multidimensional lambda parameter of exponential  
 ```  
-### &#10551; \_\_init\_\_(self, points)  
+### &#10551; \_\_init\_\_  
+full signature:  
+```text  
+def __init__(self, points)  
+```  
+comments:  
 ```text  
 constructor  
 input arguments:  
 - points: a np array of shape (npoints,ndims)  
 ```  
-### &#10551; pdf(self, points)  
+### &#10551; pdf  
+full signature:  
+```text  
+def pdf(self, points)  
+```  
+comments:  
 ```text  
 get pdf at points  
 ```  

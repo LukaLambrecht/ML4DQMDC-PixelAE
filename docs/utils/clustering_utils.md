@@ -7,7 +7,12 @@ Note that the functions here have not been used in a long time and might need so
 - - -
   
   
-### vecdist(moments, index)  
+### vecdist  
+full signature:  
+```text  
+def vecdist(moments, index)  
+```  
+comments:  
 ```text  
 calculate the vectorial distance between a set of moments  
 input arguments:  
@@ -23,7 +28,12 @@ notes:
 ```  
   
   
-### costhetadist(moments, index)  
+### costhetadist  
+full signature:  
+```text  
+def costhetadist(moments, index)  
+```  
+comments:  
 ```text  
 calculate the costheta distance between a set of moments  
 input arguments:  
@@ -37,7 +47,12 @@ notes:
 ```  
   
   
-### avgnndist(moments, index, nn)  
+### avgnndist  
+full signature:  
+```text  
+def avgnndist(moments, index, nn)  
+```  
+comments:  
 ```text  
 calculate average euclidean distance to neighbouring points  
 input arguments:  
@@ -52,13 +67,23 @@ notes:
 ```  
   
   
-### getavgnndist(hists, nmoments, xmin, xmax, nbins, nneighbours)  
+### getavgnndist  
+full signature:  
+```text  
+def getavgnndist(hists, nmoments, xmin, xmax, nbins, nneighbours)  
+```  
+comments:  
 ```text  
 apply avgnndist to a set of histograms  
 ```  
   
   
-### filteranomalous(df, nmoments=3, rmouterflow=True, rmlargest=0., doplot=True)  
+### filteranomalous  
+full signature:  
+```text  
+def filteranomalous(df, nmoments=3, rmouterflow=True, rmlargest=0., doplot=True)  
+```  
+comments:  
 ```text  
 do a pre-filtering, removing the histograms with anomalous moments  
 ```  

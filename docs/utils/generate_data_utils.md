@@ -7,7 +7,12 @@ Also check the tutorial generate\_data.ipynb for examples!
 - - -
   
   
-### goodnoise(nbins, fstd=None)  
+### goodnoise  
+full signature:  
+```text  
+def goodnoise(nbins, fstd=None)  
+```  
+comments:  
 ```text  
 generate one sample of 'good' noise consisting of fourier components  
 input args:  
@@ -19,7 +24,12 @@ output:
 ```  
   
   
-### badnoise(nbins, fstd=None)  
+### badnoise  
+full signature:  
+```text  
+def badnoise(nbins, fstd=None)  
+```  
+comments:  
 ```text  
 generate one sample of 'bad' noise consisting of fourier components  
 (higher frequency and amplitude than 'good' noise)  
@@ -28,14 +38,24 @@ WARNING: NOT NECESSARILY REPRESENTATIVE OF ANOMALIES TO BE EXPECTED, DO NOT USE
 ```  
   
   
-### whitenoise(nbins, fstd=None)  
+### whitenoise  
+full signature:  
+```text  
+def whitenoise(nbins, fstd=None)  
+```  
+comments:  
 ```text  
 generate one sample of white noise (uncorrelated between bins)  
 input args and output: similar to goodnoise  
 ```  
   
   
-### random\_lico(hists)  
+### random\_lico  
+full signature:  
+```text  
+def random_lico(hists)  
+```  
+comments:  
 ```text  
 generate one linear combination of histograms with random coefficients in (0,1) summing to 1  
 input args:   
@@ -45,13 +65,23 @@ output:
 ```  
   
   
-### smoother(inarray, halfwidth=1)  
+### smoother  
+full signature:  
+```text  
+def smoother(inarray, halfwidth=1)  
+```  
+comments:  
 ```text  
 smooth the rows of a 2D array using the 2*halfwidth+1 surrounding values.  
 ```  
   
   
-### mse\_correlation\_vector(hists, index)  
+### mse\_correlation\_vector  
+full signature:  
+```text  
+def mse_correlation_vector(hists, index)  
+```  
+comments:  
 ```text  
 calculate mse of a histogram at given index wrt all other histograms  
 input args:  
@@ -63,14 +93,24 @@ WARNING: can be slow if called many times on a large collection of histograms wi
 ```  
   
   
-### moments\_correlation\_vector(moments, index)  
+### moments\_correlation\_vector  
+full signature:  
+```text  
+def moments_correlation_vector(moments, index)  
+```  
+comments:  
 ```text  
 calculate moment distance of hist at index wrt all other hists  
 very similar to mse_correlation_vector but using histogram moments instead of full histograms for speed-up  
 ```  
   
   
-### plot\_data\_and\_gen(datahists, genhists, nplot=10, figname='fig.png')  
+### plot\_data\_and\_gen  
+full signature:  
+```text  
+def plot_data_and_gen(datahists, genhists, nplot=10, figname='fig.png')  
+```  
+comments:  
 ```text  
 plot a couple of random examples from data and generated histograms  
 input arguments:  
@@ -80,7 +120,12 @@ input arguments:
 ```  
   
   
-### plot\_seed\_and\_gen(seedhists, genhists, figname='fig.png')  
+### plot\_seed\_and\_gen  
+full signature:  
+```text  
+def plot_seed_and_gen(seedhists, genhists, figname='fig.png')  
+```  
+comments:  
 ```text  
 plot seed and generated histograms  
 input arguments:  
@@ -89,14 +134,24 @@ input arguments:
 ```  
   
   
-### plot\_noise(noise, histstd=None, figname='fig.png')  
+### plot\_noise  
+full signature:  
+```text  
+def plot_noise(noise, histstd=None, figname='fig.png')  
+```  
+comments:  
 ```text  
 plot histograms in noise (numpy array of shape (nhists,nbins))  
 optional argument histstd plots +- histstd as boundaries  
 ```  
   
   
-### fourier\_noise\_on\_mean(hists, outfilename='', figname='', nresamples=0, nonnegative=True)  
+### fourier\_noise\_on\_mean  
+full signature:  
+```text  
+def fourier_noise_on_mean(hists, outfilename='', figname='', nresamples=0, nonnegative=True)  
+```  
+comments:  
 ```text  
 apply fourier noise on the bin-per-bin mean histogram, with amplitude scaling based on bin-per-bin std histogram.  
 input args:  
@@ -111,7 +166,12 @@ disadvantages: deviations from mean are small, does not model systematic shifts 
 ```  
   
   
-### fourier\_noise(hists, outfilename='', figname='', nresamples=1, nonnegative=True, stdfactor=15.)  
+### fourier\_noise  
+full signature:  
+```text  
+def fourier_noise(hists, outfilename='', figname='', nresamples=1, nonnegative=True, stdfactor=15.)  
+```  
+comments:  
 ```text  
 apply fourier noise on random histograms with simple flat amplitude scaling.  
 input args:   
@@ -126,7 +186,12 @@ disadvantages: also 'bad' histograms will be resampled if included in hists
 ```  
   
   
-### upsample\_hist\_set(hists, ntarget=-1, fourierstdfactor=15., figname='f')  
+### upsample\_hist\_set  
+full signature:  
+```text  
+def upsample_hist_set(hists, ntarget=-1, fourierstdfactor=15., figname='f')  
+```  
+comments:  
 ```text  
 wrapper for fourier_noise allowing for a fixed target number of histograms instead of a fixed resampling factor  
 useful function for quickly generating a fixed number of resampled histograms,  
@@ -138,7 +203,12 @@ fourierstdfactor: see fourier_noise
 ```  
   
   
-### white\_noise(hists, figname='', stdfactor=15.)  
+### white\_noise  
+full signature:  
+```text  
+def white_noise(hists, figname='', stdfactor=15.)  
+```  
+comments:  
 ```text  
 apply white noise to the histograms in hists.  
 input args:  
@@ -148,7 +218,12 @@ input args:
 ```  
   
   
-### resample\_bin\_per\_bin(hists, outfilename='', figname='', nresamples=0, nonnegative=True, smoothinghalfwidth=2)  
+### resample\_bin\_per\_bin  
+full signature:  
+```text  
+def resample_bin_per_bin(hists, outfilename='', figname='', nresamples=0, nonnegative=True, smoothinghalfwidth=2)  
+```  
+comments:  
 ```text  
 do resampling from bin-per-bin probability distributions  
 input args:  
@@ -165,7 +240,12 @@ disadvantages: bins are considered independent, shape of historams not taken int
 ```  
   
   
-### resample\_similar\_bin\_per\_bin( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True, keeppercentage=1.)  
+### resample\_similar\_bin\_per\_bin  
+full signature:  
+```text  
+def resample_similar_bin_per_bin( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True, keeppercentage=1.)  
+```  
+comments:  
 ```text  
 resample from bin-per-bin probability distributions, but only from similar looking histograms.  
 input args:  
@@ -182,7 +262,12 @@ disadvantages: bins are treated independently from each other
 ```  
   
   
-### resample\_similar\_fourier\_noise( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True, keeppercentage=1.)  
+### resample\_similar\_fourier\_noise  
+full signature:  
+```text  
+def resample_similar_fourier_noise( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True, keeppercentage=1.)  
+```  
+comments:  
 ```text  
 apply fourier noise on mean histogram,   
 where the mean is determined from a set of similar-looking histograms  
@@ -200,7 +285,12 @@ disadvantages: does not filter out odd histograms as long as enough other odd hi
 ```  
   
   
-### resample\_similar\_lico( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True, keeppercentage=1.)  
+### resample\_similar\_lico  
+full signature:  
+```text  
+def resample_similar_lico( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True, keeppercentage=1.)  
+```  
+comments:  
 ```text  
 take linear combinations of similar histograms  
 input arguments:  
@@ -216,7 +306,12 @@ disadvantages: sensitive to outlying histograms (more than with averaging)
 ```  
   
   
-### mc\_sampling(hists, nMC=10000 , nresamples=10)  
+### mc\_sampling  
+full signature:  
+```text  
+def mc_sampling(hists, nMC=10000 , nresamples=10)  
+```  
+comments:  
 ```text  
 resampling of a histogram using MC methods  
 Drawing random points from a space defined by the range of the histogram in all axes.  

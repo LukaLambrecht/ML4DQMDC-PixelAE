@@ -10,43 +10,78 @@ See get_oms_data.py in this directory for more information.
 - - -
   
   
-### check\_connectivity(url)  
+### check\_connectivity  
+full signature:  
+```text  
+def check_connectivity(url)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### get\_cookies(url, authmode, **kwargs)  
+### get\_cookies  
+full signature:  
+```text  
+def get_cookies(url, authmode, **kwargs)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### get\_cookies\_from\_certificate(url, certificate, **kwargs)  
+### get\_cookies\_from\_certificate  
+full signature:  
+```text  
+def get_cookies_from_certificate(url, certificate, **kwargs)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### get\_cookies\_from\_login(url, login, **kwargs)  
+### get\_cookies\_from\_login  
+full signature:  
+```text  
+def get_cookies_from_login(url, login, **kwargs)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### \_construct\_certificate\_authentication\_url(login\_redirect\_url)  
+### \_construct\_certificate\_authentication\_url  
+full signature:  
+```text  
+def _construct_certificate_authentication_url(login_redirect_url)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### \_extract\_login\_form( xml\_response\_content )  
+### \_extract\_login\_form  
+full signature:  
+```text  
+def _extract_login_form( xml_response_content )  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### \_modify\_xml\_content( xml\_response\_content )  
+### \_modify\_xml\_content  
+full signature:  
+```text  
+def _modify_xml_content( xml_response_content )  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  

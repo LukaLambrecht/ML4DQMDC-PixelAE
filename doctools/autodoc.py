@@ -13,7 +13,7 @@ docdir = 'docs'
 # define which code directories to take into account, relative to project top level
 codedirs = sorted(['utils','src','src/cloudfitters','src/classifiers','omsinterface','omsapi'])
 # define title for site
-sitetitle = 'Documentation for the ML4DQM/DC notebooks'
+sitetitle = 'Documentation for the ML4DQM/DC code'
 
 # check if docs directory exists
 if not os.path.exists(os.path.join(topdir,docdir)):

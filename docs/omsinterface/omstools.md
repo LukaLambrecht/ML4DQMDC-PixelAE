@@ -10,127 +10,232 @@ See get_oms_data.py in this directory for more information.
 - - -
   
   
-### check\_oms\_connectivity()  
+### check\_oms\_connectivity  
+full signature:  
+```text  
+def check_oms_connectivity()  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### get\_oms\_cookies( authmode, **kwargs )  
+### get\_oms\_cookies  
+full signature:  
+```text  
+def get_oms_cookies( authmode, **kwargs )  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### \_get\_oms\_resource\_within\_cern\_gpn(relative\_url)  
+### \_get\_oms\_resource\_within\_cern\_gpn  
+full signature:  
+```text  
+def _get_oms_resource_within_cern_gpn(relative_url)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### \_get\_oms\_resource\_authenticated(relative\_url, cookies)  
+### \_get\_oms\_resource\_authenticated  
+full signature:  
+```text  
+def _get_oms_resource_authenticated(relative_url, cookies)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### get\_oms\_resource(table, parameters, **kwargs)  
+### get\_oms\_resource  
+full signature:  
+```text  
+def get_oms_resource(table, parameters, **kwargs)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### \_get\_single\_resource(table, parameters, **kwargs)  
+### \_get\_single\_resource  
+full signature:  
+```text  
+def _get_single_resource(table, parameters, **kwargs)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### get\_run(run\_number, **kwargs)  
+### get\_run  
+full signature:  
+```text  
+def get_run(run_number, **kwargs)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### get\_fill(fill\_number, **kwargs)  
+### get\_fill  
+full signature:  
+```text  
+def get_fill(fill_number, **kwargs)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### \_get\_resources\_page(table, parameters, page, page\_size, **kwargs)  
+### \_get\_resources\_page  
+full signature:  
+```text  
+def _get_resources_page(table, parameters, page, page_size, **kwargs)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### get\_resources(table, parameters, page\_size=PAGE\_SIZE, silent=False, **kwargs)  
+### get\_resources  
+full signature:  
+```text  
+def get_resources(table, parameters, page_size=PAGE_SIZE, silent=False, **kwargs)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### get\_runs(begin, end, **kwargs)  
+### get\_runs  
+full signature:  
+```text  
+def get_runs(begin, end, **kwargs)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### get\_fills(begin, end, **kwargs)  
+### get\_fills  
+full signature:  
+```text  
+def get_fills(begin, end, **kwargs)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### get\_lumisection\_count(run\_number, **kwargs)  
+### get\_lumisection\_count  
+full signature:  
+```text  
+def get_lumisection_count(run_number, **kwargs)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### get\_lumisections( run\_number=None, fill\_number=None, start\_time=None, end\_time=None, **kwargs)  
+### get\_lumisections  
+full signature:  
+```text  
+def get_lumisections( run_number=None, fill_number=None, start_time=None, end_time=None, **kwargs)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### get\_hltpathinfos(run\_number, **kwargs)  
+### get\_hltpathinfos  
+full signature:  
+```text  
+def get_hltpathinfos(run_number, **kwargs)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### get\_hltpathrates(run\_number, path\_name, **kwargs)  
+### get\_hltpathrates  
+full signature:  
+```text  
+def get_hltpathrates(run_number, path_name, **kwargs)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### get\_all\_hltpathrates(run\_number, silent=False, **kwargs)  
+### get\_all\_hltpathrates  
+full signature:  
+```text  
+def get_all_hltpathrates(run_number, silent=False, **kwargs)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### calc\_page\_count(resource\_count, page\_size)  
+### calc\_page\_count  
+full signature:  
+```text  
+def calc_page_count(resource_count, page_size)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### flatten\_resource(response)  
+### flatten\_resource  
+full signature:  
+```text  
+def flatten_resource(response)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### progress\_bar(current, total, text="", filler="#")  
+### progress\_bar  
+full signature:  
+```text  
+def progress_bar(current, total, text="", filler="#")  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### print\_progress(current, total, text="", *args, **kwargs)  
+### print\_progress  
+full signature:  
+```text  
+def print_progress(current, total, text="", *args, **kwargs)  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  

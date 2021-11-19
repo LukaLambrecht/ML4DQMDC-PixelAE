@@ -7,7 +7,12 @@ Ssee static function 'pull' for definition of bin-per-bin pull and other notes.
 - - -
   
   
-### pull( testhist, refhist )  
+### pull  
+full signature:  
+```text  
+def pull( testhist, refhist )  
+```  
+comments:  
 ```text  
 calculate bin-per-bin pull between two histograms  
 bin-per-bin pull is defined here preliminarily as (testhist(bin)-refhist(bin))/sqrt(refhist(bin))  
@@ -21,7 +26,12 @@ numpy array of same shape as testhist and refhist
 ```  
   
   
-### maxabspull( testhist, refhist, n=1 )  
+### maxabspull  
+full signature:  
+```text  
+def maxabspull( testhist, refhist, n=1 )  
+```  
+comments:  
 ```text  
 calculate maximum of bin-per-bin pulls (in absolute value) between two histograms  
 see definition of bin-per-bin pull in function pull (above)  
@@ -34,34 +44,60 @@ a float
   
   
 - - -
-## [class] MaxPullClassifier(HistogramClassifier)  
+## [class] MaxPullClassifier  
+comments:  
 ```text  
 histogram classification based on maximum pull between test histogram and reference histogram.  
 specifically intended for 2D histograms, but should in principle work for 1D as well.  
 see static function pull (above) for definition of bin-per-bin pull and other notes.  
 ```  
-### &#10551; \_\_init\_\_( self, nmaxpulls=1 )  
+### &#10551; \_\_init\_\_  
+full signature:  
+```text  
+def __init__( self, nmaxpulls=1 )  
+```  
+comments:  
 ```text  
 initializer  
 input arguments:  
 - nmaxpulls: number of largest pull values to average over   
   (default: 1, just take single maximum)  
 ```  
-### &#10551; set\_nmaxpulls( self, nmaxpulls )  
+### &#10551; set\_nmaxpulls  
+full signature:  
+```text  
+def set_nmaxpulls( self, nmaxpulls )  
+```  
+comments:  
 ```text  
 set the nmaxpulls parameter (see also initializer)  
 ```  
-### &#10551; train( self, refhist )  
+### &#10551; train  
+full signature:  
+```text  
+def train( self, refhist )  
+```  
+comments:  
 ```text  
 'train' the classifier, i.e. set the reference histogram.  
 input arguments:  
 - refhist: a numpy array of shape (1,nbins) or (1,nybins,nxbins)  
 ```  
-### &#10551; evaluate( self, histograms )  
+### &#10551; evaluate  
+full signature:  
+```text  
+def evaluate( self, histograms )  
+```  
+comments:  
 ```text  
 classify the histograms based on their max bin-per-bin pull (in absolute value) with respect to a reference histogram  
 ```  
-### &#10551; getpull( self, histogram )  
+### &#10551; getpull  
+full signature:  
+```text  
+def getpull( self, histogram )  
+```  
+comments:  
 ```text  
 get the pull histogram for a given test histogram  
 input arguments:  

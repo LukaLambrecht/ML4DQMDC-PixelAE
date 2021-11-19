@@ -18,7 +18,8 @@ See also the existing examples!
   
   
 - - -
-## [class] HistogramClassifier(ABC)  
+## [class] HistogramClassifier  
+comments:  
 ```text  
 abstract base class for histogram classifying objects  
 note that all concrete histogram classifiers must inherit from HistogramClassifier!  
@@ -32,12 +33,22 @@ how to make a concrete HistogramClassifier class:
 - it is recommended to start each overriding function with a call to super(), but this is not strictly necessary  
 see also the existing examples!  
 ```  
-### &#10551; \_\_init\_\_( self )  
+### &#10551; \_\_init\_\_  
+full signature:  
+```text  
+def __init__( self )  
+```  
+comments:  
 ```text  
 empty intializer  
 this is an @abstractmethod and must be overridden in any concrete deriving class!  
 ```  
-### &#10551; train( self, histograms )  
+### &#10551; train  
+full signature:  
+```text  
+def train( self, histograms )  
+```  
+comments:  
 ```text  
 train the classifier on a set of input histograms  
 this is an @abstractmethod and must be overridden in any concrete deriving class!  
@@ -45,7 +56,12 @@ input arguments:
 - histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins).  
 output: expected to be none.  
 ```  
-### &#10551; evaluate( self, histograms )  
+### &#10551; evaluate  
+full signature:  
+```text  
+def evaluate( self, histograms )  
+```  
+comments:  
 ```text  
 main function used to evaluate a set of histograms  
 this is an @abstractmethod and must be overridden in any concrete deriving class!  
@@ -53,12 +69,22 @@ input arguments:
 - histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins).  
 output: expected to be a 1D numpy array of shape (nhists), one number per histogram.  
 ```  
-### &#10551; save( self, path )  
+### &#10551; save  
+full signature:  
+```text  
+def save( self, path )  
+```  
+comments:  
 ```text  
 save a classifier to disk  
 specific implementation in concrete classes, here only path creation  
 ```  
-### &#10551; load( self, path )  
+### &#10551; load  
+full signature:  
+```text  
+def load( self, path )  
+```  
+comments:  
 ```text  
 load a classifier object from disk  
 specific implementation in concrete classes, here only path checking  

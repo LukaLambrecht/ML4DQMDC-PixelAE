@@ -1,4 +1,4 @@
-site_name: Documentation for the ML4DQM/DC notebooks
+site_name: Documentation for the ML4DQM/DC code
 nav:
     - Home: 'index.md'
     - omsapi:

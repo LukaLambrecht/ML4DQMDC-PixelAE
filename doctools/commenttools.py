@@ -50,26 +50,46 @@ class Comment(object):
 class FuncComment(Comment):
     ### comment class for function definitions
 
-    def __init__( self, funcname, rawtext, level=2 ):
+    def __init__( self, funcname, funcsignature=None, rawtext=None, level=2 ):
         ### initializer
-        # funcname: name of the definition (e.g. function signature)
+        # funcname: short name of the function
+        # funcsignature: full signature of the function
         # rawtext: raw comment text
         # level: level of funcname in title structure
         super( FuncComment, self ).__init__( rawtext )
         self.rawdefname = funcname
+        self.rawdefsignature = funcsignature
         self.level = level
 
     def format( self ):
         ### implement total formatting specific for function definition comments
-        lines = self.rawtext.split('\n')
-        for i,line in enumerate(lines):
-            # remove hashtag characters and one space
-            lines[i] = line.replace('# ','').strip('#')
-        mdtext = '\n'.join(lines)
-        mdtext = make_code_block(mdtext)
+
+        # format the name
         title = escape_underscores(self.rawdefname)
         title = make_title( title, level=self.level )
-        res = title+mdtext
+
+        # format the signature as a block of code
+        subtitle = ''
+        if self.rawdefsignature is not None: 
+            subtitle = 'full signature:\n'
+            subtitle += make_code_block(self.rawdefsignature)
+
+        mdtext = ''
+        if self.rawtext is not None:
+            # split the text by newline characters, 
+            # remove some characacters,
+            # and rejoin the lines
+            lines = self.rawtext.split('\n')
+            for i,line in enumerate(lines):
+                # remove hashtag characters and one space
+                lines[i] = line.replace('# ','').strip('#')
+            mdtext = '\n'.join(lines)
+            # format the text as a block of code
+            mdtext = 'comments:\n'+make_code_block(mdtext)
+
+        # join titles and text
+        res = title+subtitle+mdtext
+        # replace newlines by markdown newlines
         res = make_newline_markdown( res )
         return res
 
@@ -97,7 +117,8 @@ class ClassComment(Comment):
     def format( self ):
         ### implement total formatting specific for class definition comments
         res = '- - -\n'
-        res += FuncComment( self.rawdefname, self.rawtext, level=self.level ).format()
+        res += FuncComment( self.rawdefname, funcsignature=None, 
+                            rawtext=self.rawtext, level=self.level ).format()
         for funccomment in self.funccomments:
             thisfc = funccomment.format()
             res += thisfc.split(' ',1)[0] + ' &#10551; ' + thisfc.split(' ',1)[1]
@@ -163,7 +184,13 @@ class CommentCollection(object):
                 self.comments.append( defcomment )
 
     def read_defcomments_from_file( self, filename ):
+        ### read comments from a python file accompanying a class or function definition
         # experimental version with ClassComments
+        # input arguments:
+        # - filename: path to a python file
+        # output:
+        #   the current CommentCollection is appended with all class/function definitions 
+        #   in the python file, if they are commented correctly.
         f = open(filename,'r')
         lines = f.readlines()
         f.close()
@@ -174,42 +201,56 @@ class CommentCollection(object):
         for i,line in enumerate(lines):
 
             # scan for 'class' keyword
-            if( line.strip(' \t')[:5]=='class' ):
+            if( line[:5]=='class' ):
                 j = i
-                classname = '[class] '+ line.strip(' \t:\n').replace('class ','')
+                # get the pure class name from the current line
+                classname = line.split('(')[0]
+                classname = classname.strip(' \t:\n').replace('class ','')
+                # format how to display the classname
+                # to do: remove this here and move to mdfiletools?
+                classname = '[class] {}'.format(classname)
+                # read all consecutive lines that start with a '#' character
                 rawtext = ''
                 while lines[j+1].strip(' ').strip('\t')[0]=='#':
                     rawtext += lines[j+1]
                     j += 1
                 if rawtext=='': rawtext = '(no valid documentation found)'
+                # make the comment with given class name and accompanying text
                 currentclass = ClassComment( classname, rawtext, funccomments=[], level=2)
                 self.comments.append(currentclass)
             
             # scan for 'def' keyword
-            if( line.strip(' \t')[:3]=='def' ):
+            if( line[:3]=='def' ):
                 j = i
-                # special treatment for definitions spread over multiple lines
+                # get the pure function name from the current line
+                funcname = line.split('(')[0]
+                funcname = funcname.strip(' \t:\n').replace('def ','')
+                # get the full signature of the function from the current line(s)
+                # (need special treatment for definitions spread over multiple lines)
                 while (line.count('(')!=line.count(')')):
                     j += 1
                     line = line.rstrip('\n') + ' ' + lines[j]
-                # add all consecutive lines that start with a '#' character
+                funcsignature = line.strip(' \t:\n')
+                # read all consecutive lines that start with a '#' character
                 rawtext = ''
                 while lines[j+1].strip(' ').strip('\t')[0]=='#':
                     rawtext += lines[j+1]
                     j += 1
                 if rawtext=='': rawtext = '(no valid documentation found)'
                 # format the definition name
-                defname = line.strip(' \t:\n').replace('def ','')
                 if( currentclass is not None 
-                    and ('(self,' in line.replace(' ','') 
-                         or '(self)' in line.replace(' ','') ) ):
+                    and ('(self,' in funcsignature.replace(' ','') 
+                         or '(self)' in funcsignature.replace(' ','') ) ):
                     prefix = ''
-                    defname = prefix + defname
-                    currentclass.add_func_comment( FuncComment( defname, rawtext, level=3 ) )
+                    funcsignature = prefix + funcsignature
+                    currentclass.add_func_comment( FuncComment( funcname, funcsignature, 
+                                                    rawtext, level=3 ) )
                 else:
-                    self.comments.append( FuncComment( defname, rawtext, level=3 ) )
+                    self.comments.append( FuncComment( funcname, funcsignature,
+                                                    rawtext, level=3 ) )
 
     def read_markdowncomments_from_file( self, filename ):
+        ### read comments in a python file that originate from markdown cells in .ipynb format
         f = open(filename,'r')
         lines = f.readlines()
         f.close()

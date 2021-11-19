@@ -17,7 +17,8 @@ See the tutorial autoencoder_combine.ipynb for an important example!
   
   
 - - -
-## [class] HistStruct(object)  
+## [class] HistStruct  
+comments:  
 ```text  
 main data structure used within this framework  
 a HistStruct object basically consists of a mutually consistent collection of numpy arrays,  
@@ -27,7 +28,12 @@ the HistStruct has functions to easily perform the following common tasks (among
 - prepare the data for machine learning training  
 - evaluate classifiers (machine learning types or other)  
 ```  
-### &#10551; \_\_init\_\_( self )  
+### &#10551; \_\_init\_\_  
+full signature:  
+```text  
+def __init__( self )  
+```  
+comments:  
 ```text  
 empty initializer, setting all containers to empty defaults  
 a HistStruct object has the following properties:  
@@ -45,11 +51,21 @@ exthistograms: dict of dicts similar to histograms for additional (e.g. artifici
 extscores: dict of dicts similar to scores for additional (e.g. artificially generated) histograms  
 extglobalscores: dict of lists similar to scores for additional (e.g. artificially generated) histograms  
 ```  
-### &#10551; \_\_str\_\_( self )  
+### &#10551; \_\_str\_\_  
+full signature:  
+```text  
+def __str__( self )  
+```  
+comments:  
 ```text  
 get a printable representation of a HistStruct  
 ```  
-### &#10551; save( self, path, save\_classifiers=True )  
+### &#10551; save  
+full signature:  
+```text  
+def save( self, path, save_classifiers=True )  
+```  
+comments:  
 ```text  
 save a HistStruct object to a pkl file  
 input arguments:  
@@ -59,18 +75,25 @@ input arguments:
 - - -  
   
 - - -
-## [class] classifiers = dict(self.classifiers)  
+## [class] classifiers = dict  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
 - - -  
   
 - - -
-## [class] classifier.save( os.path.join(cpath,histname) )  
+## [class] classifier.save  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
-### &#10551; load( self, path, load\_classifiers=True, verbose=False )  
+### &#10551; load  
+full signature:  
+```text  
+def load( self, path, load_classifiers=True, verbose=False )  
+```  
+comments:  
 ```text  
 load a HistStruct object from a pkl file  
 input arguments:  
@@ -78,7 +101,12 @@ input arguments:
 - load_classifiers: a boolean whether to load the classifiers if present  
 - verbose: boolean whether to print some information  
 ```  
-### &#10551; add\_dataframe( self, df, cropslices=None, donormalize=True, rebinningfactor=None )  
+### &#10551; add\_dataframe  
+full signature:  
+```text  
+def add_dataframe( self, df, cropslices=None, donormalize=True, rebinningfactor=None )  
+```  
+comments:  
 ```text  
 add a dataframe to a HistStruct  
 input arguments:  
@@ -95,7 +123,12 @@ notes:
   (that will be passed down to preparedatafromdf), one can also call preparedatafromdf manually and add it  
   with add_histograms, allowing for more control over complicated preprocessing.  
 ```  
-### &#10551; add\_histograms( self, histname, histograms, runnbs, lsnbs, nentries=None )  
+### &#10551; add\_histograms  
+full signature:  
+```text  
+def add_histograms( self, histname, histograms, runnbs, lsnbs, nentries=None )  
+```  
+comments:  
 ```text  
 add a set of histograms to a HistStruct  
 input arguments:  
@@ -115,13 +148,23 @@ notes:
 - runnbs and lsnbs must correspond to what is already in the current HistStruct, except if this is the first set of histogram to be added  
 - see also add_dataframe for an alternative way of adding histograms  
 ```  
-### &#10551; add\_globalscores( self, globalscores )  
+### &#10551; add\_globalscores  
+full signature:  
+```text  
+def add_globalscores( self, globalscores )  
+```  
+comments:  
 ```text  
 add an array of global scores (one per lumisection)  
 input arguments:  
 - globalscores: 1D numpy array of scores (must have same length as lumisection and run numbers)  
 ```  
-### &#10551; add\_extglobalscores( self, extname, globalscores )  
+### &#10551; add\_extglobalscores  
+full signature:  
+```text  
+def add_extglobalscores( self, extname, globalscores )  
+```  
+comments:  
 ```text  
 add an array of global scores (one per lumisection) for a specified extra set of histograms in the HistStruct  
 input arguments:  
@@ -131,14 +174,24 @@ note: this function checks if all histogram types in this set contain the same n
       (and that this number corresponds to the length of globalscores)  
       else adding globalscores is meaningless  
 ```  
-### &#10551; get\_globalscores\_jsonformat( self, working\_point=None )  
+### &#10551; get\_globalscores\_jsonformat  
+full signature:  
+```text  
+def get_globalscores_jsonformat( self, working_point=None )  
+```  
+comments:  
 ```text  
 make a json format listing all lumisections in this histstruct  
 the output list has entries for global score, pass/fail given working point, and masks  
 input arguments:  
 - working_point: if present, an entry will be made for each lumisection whether it passes this working point  
 ```  
-### &#10551; add\_exthistograms( self, extname, histname, histograms, overwrite=False )  
+### &#10551; add\_exthistograms  
+full signature:  
+```text  
+def add_exthistograms( self, extname, histname, histograms, overwrite=False )  
+```  
+comments:  
 ```text  
 add a set of extra histograms to a HistStruct  
 these histograms are not assumed to correspond to physical run/lumisections numbers (e.g. resampled ones),  
@@ -149,18 +202,33 @@ input arguments:
 - histograms: a numpy array of shape (nhistograms,nbins)  
 - overwrite: boolean whether to overwrite a set of histograms of the same name if present (default: raise exception)  
 ```  
-### &#10551; add\_mask( self, name, mask )  
+### &#10551; add\_mask  
+full signature:  
+```text  
+def add_mask( self, name, mask )  
+```  
+comments:  
 ```text  
 add a mask to a HistStruct  
 input arguments:  
 - name: a name for the mask  
 - mask: a 1D np array of booleans  with same length as number of lumisections in HistStruct  
 ```  
-### &#10551; remove\_mask( self, name )  
+### &#10551; remove\_mask  
+full signature:  
+```text  
+def remove_mask( self, name )  
+```  
+comments:  
 ```text  
 inverse operation of add_mask  
 ```  
-### &#10551; add\_json\_mask( self, name, jsondict )  
+### &#10551; add\_json\_mask  
+full signature:  
+```text  
+def add_json_mask( self, name, jsondict )  
+```  
+comments:  
 ```text  
 add a mask corresponding to a json dict  
 input arguments:  
@@ -168,19 +236,34 @@ input arguments:
 - jsondict: a dictionary in typical json format (see the golden json file for inspiration)  
 all lumisections present in the jsondict will be masked True, the others False.  
 ```  
-### &#10551; add\_goldenjson\_mask( self, name )  
+### &#10551; add\_goldenjson\_mask  
+full signature:  
+```text  
+def add_goldenjson_mask( self, name )  
+```  
+comments:  
 ```text  
 add a mask corresponding to the golden json file  
 input arguments:  
 - name: a name for the mask  
 ```  
-### &#10551; add\_dcsonjson\_mask( self, name )  
+### &#10551; add\_dcsonjson\_mask  
+full signature:  
+```text  
+def add_dcsonjson_mask( self, name )  
+```  
+comments:  
 ```text  
 add a mask corresponding to the DCS-bit on json file  
 input arguments:  
 - name: a name for the mask  
 ```  
-### &#10551; add\_stat\_mask( self, name, histnames=None, min\_entries\_to\_bins\_ratio=-1, max\_entries\_to\_bins\_ratio=-1 )  
+### &#10551; add\_stat\_mask  
+full signature:  
+```text  
+def add_stat_mask( self, name, histnames=None, min_entries_to_bins_ratio=-1, max_entries_to_bins_ratio=-1 )  
+```  
+comments:  
 ```text  
 add a mask corresponding to lumisections where all histograms have statistics within given bounds  
 input arguments:  
@@ -188,41 +271,76 @@ input arguments:
 - min_entries_to_bins_ratio: number of entries divided by number of bins, lower boundary for statistics (default: no lower boundary)  
 - max_entries_to_bins_ratio: same but upper boundary instead of lower boundary (default: no upper boundary)  
 ```  
-### &#10551; add\_highstat\_mask( self, name, histnames=None, entries\_to\_bins\_ratio=100 )  
+### &#10551; add\_highstat\_mask  
+full signature:  
+```text  
+def add_highstat_mask( self, name, histnames=None, entries_to_bins_ratio=100 )  
+```  
+comments:  
 ```text  
 shorthand call to add_stat_mask with only lower boundary and no upper boundary for statistics  
 input arguments:  
 - entries_to_bins_ratio: number of entries divided by number of bins, lower boundary for statistics  
 others: see add_stat_mask  
 ```  
-### &#10551; get\_combined\_mask( self, names )  
+### &#10551; get\_combined\_mask  
+full signature:  
+```text  
+def get_combined_mask( self, names )  
+```  
+comments:  
 ```text  
 get a combined mask given multiple mask names  
 mostly for internal use; externally you can use get_histograms( histname, <list of mask names>) directly  
 ```  
-### &#10551; get\_masknames( self )  
+### &#10551; get\_masknames  
+full signature:  
+```text  
+def get_masknames( self )  
+```  
+comments:  
 ```text  
 return a simple list of all mask names in the current HistStruct  
 ```  
-### &#10551; get\_runnbs( self, masknames=None )  
+### &#10551; get\_runnbs  
+full signature:  
+```text  
+def get_runnbs( self, masknames=None )  
+```  
+comments:  
 ```text  
 get the array of run numbers, optionally after masking  
 input arguments:  
 - masknames: list of names of masks (default: no masking, return full array)  
 ```  
-### &#10551; get\_lsnbs( self, masknames=None )  
+### &#10551; get\_lsnbs  
+full signature:  
+```text  
+def get_lsnbs( self, masknames=None )  
+```  
+comments:  
 ```text  
 get the array of lumisection numbers, optionally after masking  
 input arguments:  
 - masknames: list of names of masks (default: no masking, return full array)  
 ```  
-### &#10551; get\_index( self, runnb, lsnb )  
+### &#10551; get\_index  
+full signature:  
+```text  
+def get_index( self, runnb, lsnb )  
+```  
+comments:  
 ```text  
 get the index in the current HistStruct of a given run and lumisection number  
 input arguments:  
 - runnb and lsnb: run and lumisection number respectively  
 ```  
-### &#10551; get\_scores( self, histname=None, masknames=None )  
+### &#10551; get\_scores  
+full signature:  
+```text  
+def get_scores( self, histname=None, masknames=None )  
+```  
+comments:  
 ```text  
 get the array of scores for a given histogram type, optionally after masking  
 input arguments:  
@@ -234,12 +352,22 @@ notes:
   make sure to have evaluated the classifiers before calling this method,  
   else an exception will be thrown.  
 ```  
-### &#10551; get\_scores\_array( self, masknames=None )  
+### &#10551; get\_scores\_array  
+full signature:  
+```text  
+def get_scores_array( self, masknames=None )  
+```  
+comments:  
 ```text  
 similar to get_scores, but with different return type:  
 np array of shape (nhistograms, nhistogramtypes)  
 ```  
-### &#10551; get\_extscores( self, extname, histname=None )  
+### &#10551; get\_extscores  
+full signature:  
+```text  
+def get_extscores( self, extname, histname=None )  
+```  
+comments:  
 ```text  
 get the array of scores for a given histogram type in a given extra set.  
 input arguments:  
@@ -251,12 +379,22 @@ notes:
   make sure to have evaluated the classifiers before calling this method,  
   else an exception will be thrown.  
 ```  
-### &#10551; get\_extscores\_array( self, extname )  
+### &#10551; get\_extscores\_array  
+full signature:  
+```text  
+def get_extscores_array( self, extname )  
+```  
+comments:  
 ```text  
 similar to get_extscores, but with different return type:  
 np array of shape (nhistograms, nhistogramtypes)  
 ```  
-### &#10551; get\_scores\_ls( self, runnb, lsnb, histnames=None, suppresswarnings=False )  
+### &#10551; get\_scores\_ls  
+full signature:  
+```text  
+def get_scores_ls( self, runnb, lsnb, histnames=None, suppresswarnings=False )  
+```  
+comments:  
 ```text  
 get the scores for a given run/lumisection number and for given histogram names  
 input arguments:  
@@ -270,7 +408,12 @@ notes:
   make sure to have evaluated the classifiers before calling this method,  
   else the returned scores will be None.  
 ```  
-### &#10551; get\_globalscores( self, masknames=None )  
+### &#10551; get\_globalscores  
+full signature:  
+```text  
+def get_globalscores( self, masknames=None )  
+```  
+comments:  
 ```text  
 get the array of global scores, optionally after masking  
 input arguments:  
@@ -280,7 +423,12 @@ notes:
   make sure to have set this attribute with add_globalscores,  
   else an exception will be thrown.  
 ```  
-### &#10551; get\_globalscore\_ls( self, runnb, lsnb )  
+### &#10551; get\_globalscore\_ls  
+full signature:  
+```text  
+def get_globalscore_ls( self, runnb, lsnb )  
+```  
+comments:  
 ```text  
 get the global score for a given run/lumisection number  
 input arguments:  
@@ -294,7 +442,12 @@ notes:
   make sure to have evaluated the classifiers before calling this method,  
   else the returned scores will be None.  
 ```  
-### &#10551; get\_extglobalscores( self, extname )  
+### &#10551; get\_extglobalscores  
+full signature:  
+```text  
+def get_extglobalscores( self, extname )  
+```  
+comments:  
 ```text  
 get the array of global scores for one of the extra histogram sets  
 input arguments:  
@@ -304,7 +457,12 @@ notes:
   make sure to have set this attribute with add_extglobalscores,  
   else an exception will be thrown.  
 ```  
-### &#10551; get\_histograms( self, histname=None, masknames=None )  
+### &#10551; get\_histograms  
+full signature:  
+```text  
+def get_histograms( self, histname=None, masknames=None )  
+```  
+comments:  
 ```text  
 get the array of histograms for a given type, optionally after masking  
 input arguments:  
@@ -312,7 +470,12 @@ input arguments:
   if None, return a dict matching histnames to arrays of histograms  
 - masknames: list of names of masks (default: no masking, return full array)  
 ```  
-### &#10551; get\_exthistograms( self, extname, histname=None )  
+### &#10551; get\_exthistograms  
+full signature:  
+```text  
+def get_exthistograms( self, extname, histname=None )  
+```  
+comments:  
 ```text  
 get the array of extra histograms for a given set name and type name  
 input arguments:  
@@ -320,7 +483,12 @@ input arguments:
 - histname: name of the histogram type to retrieve   
   if None, return a dict matching histnames to arrays of histograms  
 ```  
-### &#10551; add\_classifier( self, histname, classifier, evaluate=False )  
+### &#10551; add\_classifier  
+full signature:  
+```text  
+def add_classifier( self, histname, classifier, evaluate=False )  
+```  
+comments:  
 ```text  
 add a histogram classifier for a given histogram name to the HistStruct  
 input arguments:  
@@ -329,7 +497,12 @@ input arguments:
 - evaluate: a bool whether to evaluate the classifier (and store the result in the 'scores' attribute)  
   if set to True, the result is both returned and stored in the 'scores' attribute.  
 ```  
-### &#10551; evaluate\_classifier( self, histname, extname=None )  
+### &#10551; evaluate\_classifier  
+full signature:  
+```text  
+def evaluate_classifier( self, histname, extname=None )  
+```  
+comments:  
 ```text  
 evaluate a histogram classifier for a given histogram name in the HistStruct  
 input arguments:  
@@ -339,7 +512,12 @@ input arguments:
 notes:  
 - the result is both returned and stored in the 'scores' attribute  
 ```  
-### &#10551; plot\_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[],  titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs )  
+### &#10551; plot\_histograms  
+full signature:  
+```text  
+def plot_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[],  titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs )  
+```  
+comments:  
 ```text  
 plot the histograms in a HistStruct, optionally after msking  
 note: so far only for 1D hsitograms.  
@@ -359,7 +537,12 @@ input arguments:
 - physicalxax: bool whether to use physical x-axis range or simply use bin number (default)  
 - kwargs: keyword arguments passed down to plot_utils.plot_sets   
 ```  
-### &#10551; plot\_ls( self, runnb, lsnb, histnames=None, histlabel=None,  recohist=None, recohistlabel='Reconstruction',  refhists=None, refhistslabel='Reference histograms', refhiststransparency=None, titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs)  
+### &#10551; plot\_ls  
+full signature:  
+```text  
+def plot_ls( self, runnb, lsnb, histnames=None, histlabel=None,  recohist=None, recohistlabel='Reconstruction',  refhists=None, refhistslabel='Reference histograms', refhiststransparency=None, titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs)  
+```  
+comments:  
 ```text  
 plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction  
 note: so far only for 1D histograms.  
@@ -386,7 +569,12 @@ input arguments:
 - physicalxax: bool whether to use physical x-axis range or simply use bin number (default)  
 - kwargs: keyword arguments passed down to plot_utils.plot_sets   
 ```  
-### &#10551; plot\_run( self, runnb, masknames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False)  
+### &#10551; plot\_run  
+full signature:  
+```text  
+def plot_run( self, runnb, masknames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False)  
+```  
+comments:  
 ```text  
 call plot_ls for all lumisections in a given run  
 ```  

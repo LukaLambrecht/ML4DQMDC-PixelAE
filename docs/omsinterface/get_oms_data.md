@@ -7,7 +7,12 @@ See the readme file in this directory and the notebook example.ipynb!
 - - -
   
   
-### get\_oms\_data( mode, run, hltpathname='', authmode='login' )  
+### get\_oms\_data  
+full signature:  
+```text  
+def get_oms_data( mode, run, hltpathname='', authmode='login' )  
+```  
+comments:  
 ```text  
 main function for retrieving information from the OMS database  
 input arguments:  

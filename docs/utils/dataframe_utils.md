@@ -8,35 +8,60 @@ Functionality includes (among others):
 - - -
   
   
-### get\_histnames(df)  
+### get\_histnames  
+full signature:  
+```text  
+def get_histnames(df)  
+```  
+comments:  
 ```text  
 get a list of (unique) histogram names present in a df  
 df is a dataframe read from an input csv file.  
 ```  
   
   
-### select\_histnames(df, histnames)  
+### select\_histnames  
+full signature:  
+```text  
+def select_histnames(df, histnames)  
+```  
+comments:  
 ```text  
 keep only a subset of histograms in a df  
 histnames is a list of histogram names to keep in the df.  
 ```  
   
   
-### get\_runs(df)  
+### get\_runs  
+full signature:  
+```text  
+def get_runs(df)  
+```  
+comments:  
 ```text  
 return a list of (unique) run numbers present in a df  
 df is a dataframe read from an input csv file.  
 ```  
   
   
-### select\_runs(df, runnbs)  
+### select\_runs  
+full signature:  
+```text  
+def select_runs(df, runnbs)  
+```  
+comments:  
 ```text  
 keep only a subset of runs in a df  
 runnbs is a list of run numbers to keep in the df.  
 ```  
   
   
-### get\_ls(df)  
+### get\_ls  
+full signature:  
+```text  
+def get_ls(df)  
+```  
+comments:  
 ```text  
 return a list of ls numbers present in a df  
 note that the numbers are not required to be unique!  
@@ -44,7 +69,12 @@ note: no check is done on the run number!
 ```  
   
   
-### select\_ls(df, lsnbs)  
+### select\_ls  
+full signature:  
+```text  
+def select_ls(df, lsnbs)  
+```  
+comments:  
 ```text  
 keep only a subset of lumisection numbers in a df  
 lsnbs is a list of lumisection numbers to keep in the df.  
@@ -52,73 +82,133 @@ note: no check is done on the run number!
 ```  
   
   
-### get\_runsls(df)  
+### get\_runsls  
+full signature:  
+```text  
+def get_runsls(df)  
+```  
+comments:  
 ```text  
 return a dictionary with runs and lumisections in a dataframe (same format as e.g. golden json)  
 ```  
   
   
-### select\_json(df, jsonfile)  
+### select\_json  
+full signature:  
+```text  
+def select_json(df, jsonfile)  
+```  
+comments:  
 ```text  
 keep only lumisections that are in the given json file  
 ```  
   
   
-### select\_runsls(df, jsondict)  
+### select\_runsls  
+full signature:  
+```text  
+def select_runsls(df, jsondict)  
+```  
+comments:  
 ```text  
 equivalent to select_json but using a pre-loaded json dict instead of a json file on disk  
 ```  
   
   
-### select\_golden(df)  
+### select\_golden  
+full signature:  
+```text  
+def select_golden(df)  
+```  
+comments:  
 ```text  
 keep only golden lumisections in df  
 ```  
   
   
-### select\_notgolden(df)  
+### select\_notgolden  
+full signature:  
+```text  
+def select_notgolden(df)  
+```  
+comments:  
 ```text  
 keep all but golden lumisections in df  
 ```  
   
   
-### select\_dcson(df)  
+### select\_dcson  
+full signature:  
+```text  
+def select_dcson(df)  
+```  
+comments:  
 ```text  
 keep only lumisections in df that have DCS-bit on  
 ```  
   
   
-### select\_dcsoff(df)  
+### select\_dcsoff  
+full signature:  
+```text  
+def select_dcsoff(df)  
+```  
+comments:  
 ```text  
 keep only lumisections in df that have DCS-bit off  
 ```  
   
   
-### select\_pixelgood(df)  
+### select\_pixelgood  
+full signature:  
+```text  
+def select_pixelgood(df)  
+```  
+comments:  
 ```text  
 keep only lumisections in df that are in good pixel json  
 ```  
   
   
-### select\_pixelbad(df)  
+### select\_pixelbad  
+full signature:  
+```text  
+def select_pixelbad(df)  
+```  
+comments:  
 ```text  
 keep only lumisections in df that are in bad pixel json  
 ```  
   
   
-### get\_highstat(df, entries\_to\_bins\_ratio=100)  
+### get\_highstat  
+full signature:  
+```text  
+def get_highstat(df, entries_to_bins_ratio=100)  
+```  
+comments:  
 ```text  
 return a select object of runs and ls of histograms with high statistics  
 ```  
   
   
-### select\_highstat(df, entries\_to\_bins\_ratio=100)  
+### select\_highstat  
+full signature:  
+```text  
+def select_highstat(df, entries_to_bins_ratio=100)  
+```  
+comments:  
 ```text  
 keep only lumisection in df with high statistics  
 ```  
   
   
-### get\_hist\_values(df)  
+### get\_hist\_values  
+full signature:  
+```text  
+def get_hist_values(df)  
+```  
+comments:  
 ```text  
 same as builtin "df['histo'].values" but convert strings to np arrays  
 input arguments:  

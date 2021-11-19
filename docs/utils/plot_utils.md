@@ -4,13 +4,23 @@
 - - -
   
   
-### make\_legend\_opaque( leg )  
+### make\_legend\_opaque  
+full signature:  
+```text  
+def make_legend_opaque( leg )  
+```  
+comments:  
 ```text  
 set the transparency of all entries in a legend to zero  
 ```  
   
   
-### add\_text( ax, text, pos,  fontsize=10, background\_facecolor=None,  background\_alpha=None, background\_edgecolor=None )  
+### add\_text  
+full signature:  
+```text  
+def add_text( ax, text, pos,  fontsize=10, background_facecolor=None,  background_alpha=None, background_edgecolor=None )  
+```  
+comments:  
 ```text  
 add text to an axis at a specified position (in relative figure coordinates)  
 input arguments:  
@@ -20,14 +30,24 @@ input arguments:
 ```  
   
   
-### add\_cms\_label( ax, pos=(0.1,0.9), extratext=None, **kwargs )  
+### add\_cms\_label  
+full signature:  
+```text  
+def add_cms_label( ax, pos=(0.1,0.9), extratext=None, **kwargs )  
+```  
+comments:  
 ```text  
 add the CMS label and extra text (e.g. 'Preliminary') to a plot  
 special case of add_text, for convenience  
 ```  
   
   
-### make\_text\_latex\_safe( text )  
+### make\_text\_latex\_safe  
+full signature:  
+```text  
+def make_text_latex_safe( text )  
+```  
+comments:  
 ```text  
 make a string safe to process with matplotlib's latex parser in case no tex parsing is wanted  
 (e.g. escape underscores)  
@@ -35,7 +55,12 @@ to be extended when the need arises!
 ```  
   
   
-### plot\_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None,  bkgcolor=None, bkgcmap='spring', bkgrange=None, bkgtitle=None)  
+### plot\_hists  
+full signature:  
+```text  
+def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None,  bkgcolor=None, bkgcmap='spring', bkgrange=None, bkgtitle=None)  
+```  
+comments:  
 ```text  
 plot some histograms (in histlist) in one figure using specified colors and/or labels  
 - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))  
@@ -52,7 +77,12 @@ output: tuple of figure and axis objects, that can be used to further tune the l
 ```  
   
   
-### plot\_hists\_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)  
+### plot\_hists\_multi  
+full signature:  
+```text  
+def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)  
+```  
+comments:  
 ```text  
 plot many histograms (in histlist) in one figure using specified colors and/or labels  
 - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))  
@@ -62,7 +92,12 @@ output: tuple of figure and axis objects, that can be used to further tune the l
 ```  
   
   
-### plot\_hist\_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None, caxrange=None)  
+### plot\_hist\_2d  
+full signature:  
+```text  
+def plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None, caxrange=None)  
+```  
+comments:  
 ```text  
 plot a 2D histogram  
 - hist is a 2D numpy array of shape (nxbins, nybins)  
@@ -73,7 +108,12 @@ notes:
 ```  
   
   
-### plot\_hists\_2d(hists, ncols=4, title=None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None)  
+### plot\_hists\_2d  
+full signature:  
+```text  
+def plot_hists_2d(hists, ncols=4, title=None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None)  
+```  
+comments:  
 ```text  
 plot multiple 2D histograms next to each other  
 - hists: list of 2D numpy arrays of shape (nxbins,nybins), or an equivalent 3D numpy array  
@@ -81,13 +121,23 @@ plot multiple 2D histograms next to each other
 ```  
   
   
-### plot\_hists\_2d\_gif(hists, titles=None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp\_gif.gif')  
+### plot\_hists\_2d\_gif  
+full signature:  
+```text  
+def plot_hists_2d_gif(hists, titles=None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp_gif.gif')  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### plot\_hists\_from\_df(df, histtype, nhists)  
+### plot\_hists\_from\_df  
+full signature:  
+```text  
+def plot_hists_from_df(df, histtype, nhists)  
+```  
+comments:  
 ```text  
 plot a number of histograms in a dataframe  
 - df is the dataframe from which to plot  
@@ -96,7 +146,12 @@ plot a number of histograms in a dataframe
 ```  
   
   
-### plot\_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], title=None, titlesize=None,  xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1),  yaxtitle=None, yaxtitlesize=None, ymaxfactor=None,  legendsize=None, opaque\_legend=False)  
+### plot\_sets  
+full signature:  
+```text  
+def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], title=None, titlesize=None,  xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1),  yaxtitle=None, yaxtitlesize=None, ymaxfactor=None,  legendsize=None, opaque_legend=False)  
+```  
+comments:  
 ```text  
 plot multiple sets of histograms to compare the shapes  
 - setlist is a list of 2D numpy arrays containing histograms  
@@ -106,7 +161,12 @@ other parameters are lists of which each element applies to one list of histogra
 ```  
   
   
-### plot\_anomalous(histlist, ls, highlight=-1, hrange=-1)  
+### plot\_anomalous  
+full signature:  
+```text  
+def plot_anomalous(histlist, ls, highlight=-1, hrange=-1)  
+```  
+comments:  
 ```text  
 plot a range of histograms and highlight one of them  
 input arguments:  
@@ -116,7 +176,12 @@ input arguments:
 ```  
   
   
-### plot\_moments(moments, ls, dims=(0,1), fig=None, ax=None, markersize=10)  
+### plot\_moments  
+full signature:  
+```text  
+def plot_moments(moments, ls, dims=(0,1), fig=None, ax=None, markersize=10)  
+```  
+comments:  
 ```text  
 plot the moments of a set of histograms  
 input arguments:  
@@ -125,13 +190,23 @@ input arguments:
 ```  
   
   
-### plot\_distance(dists, ls=None, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='distance metric')  
+### plot\_distance  
+full signature:  
+```text  
+def plot_distance(dists, ls=None, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='distance metric')  
+```  
+comments:  
 ```text  
 (no valid documentation found)  
 ```  
   
   
-### plot\_loss(data, xlims=None, title=None, xaxtitle='epoch', yaxtitle='loss', doshow=True)  
+### plot\_loss  
+full signature:  
+```text  
+def plot_loss(data, xlims=None, title=None, xaxtitle='epoch', yaxtitle='loss', doshow=True)  
+```  
+comments:  
 ```text  
 plot the training and validation loss  
 data is the object returned by the .fit method when called upon a keras model  
@@ -140,7 +215,12 @@ e.g. history = <your autoencoder>.fit(<training params>)
 ```  
   
   
-### plot\_mse(mse, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='mse')  
+### plot\_mse  
+full signature:  
+```text  
+def plot_mse(mse, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='mse')  
+```  
+comments:  
 ```text  
 plot the mse's and return the mean and std  
 input args:  
@@ -150,13 +230,23 @@ input args:
 ```  
   
   
-### plot\_score\_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='signal', sigcolor='g', bcklabel='background', bckcolor='r', title=None, xaxtitle=None, yaxtitle=None, doshow=True)  
+### plot\_score\_dist  
+full signature:  
+```text  
+def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='signal', sigcolor='g', bcklabel='background', bckcolor='r', title=None, xaxtitle=None, yaxtitle=None, doshow=True)  
+```  
+comments:  
 ```text  
 make a plot showing the distributions of the output scores for signal and background  
 ```  
   
   
-### plot\_metric( wprange, metric, label=None, color=None, sig\_eff=None, sig\_label=None, sig\_color=None, bck\_eff=None, bck\_label=None, bck\_color=None, title=None, xaxtitle='working point', yaxlog=False, ymaxfactor=1.3, yaxtitle='metric' )  
+### plot\_metric  
+full signature:  
+```text  
+def plot_metric( wprange, metric, label=None, color=None, sig_eff=None, sig_label=None, sig_color=None, bck_eff=None, bck_label=None, bck_color=None, title=None, xaxtitle='working point', yaxlog=False, ymaxfactor=1.3, yaxtitle='metric' )  
+```  
+comments:  
 ```text  
 plot a metric based on signal and background efficiencies.  
 along with the metric, the actual signal and background efficiencies can be plotted as well.  
@@ -174,7 +264,12 @@ input arguments:
 ```  
   
   
-### plot\_fit\_2d( points, fitfunc=None, logprob=False, clipprob=False,  onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,  title=None, titlesize=None, caxtitle=None, caxtitlesize=None, transparency=1 )  
+### plot\_fit\_2d  
+full signature:  
+```text  
+def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,  onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,  title=None, titlesize=None, caxtitle=None, caxtitlesize=None, transparency=1 )  
+```  
+comments:  
 ```text  
 make a scatter plot of a 2D point cloud with fitted contour  
 input arguments:  
@@ -193,7 +288,12 @@ input arguments:
 ```  
   
   
-### plot\_fit\_2d\_clusters( points, clusters, labels, colors, **kwargs )  
+### plot\_fit\_2d\_clusters  
+full signature:  
+```text  
+def plot_fit_2d_clusters( points, clusters, labels, colors, **kwargs )  
+```  
+comments:  
 ```text  
 make a scatter plot of a fitted contour with point clouds superimposed  
 input arguments:   

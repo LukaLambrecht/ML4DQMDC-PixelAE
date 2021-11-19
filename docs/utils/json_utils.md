@@ -19,7 +19,12 @@ There is one exception to this rule: instead of \[ start, stop \], the lumisecti
 - - -
   
   
-### loadjson( jsonfile )  
+### loadjson  
+full signature:  
+```text  
+def loadjson( jsonfile )  
+```  
+comments:  
 ```text  
 load the content of a json file into a python object  
 input arguments:  
@@ -33,7 +38,12 @@ note: the json file is supposed to contain an object like this example:
 ```  
   
   
-### writejson( jsondict, outputfile, overwrite=False )  
+### writejson  
+full signature:  
+```text  
+def writejson( jsondict, outputfile, overwrite=False )  
+```  
+comments:  
 ```text  
 inverse function of loadjson  
 input arguments  
@@ -43,7 +53,12 @@ input arguments
 ```  
   
   
-### injson\_single( run, lumi, jsondict )  
+### injson\_single  
+full signature:  
+```text  
+def injson_single( run, lumi, jsondict )  
+```  
+comments:  
 ```text  
 helper function for injson, only for internal use  
 input arguments:  
@@ -54,7 +69,12 @@ output:
 ```  
   
   
-### injson( run, lumi, jsonfile=None, jsondict=None )  
+### injson  
+full signature:  
+```text  
+def injson( run, lumi, jsonfile=None, jsondict=None )  
+```  
+comments:  
 ```text  
 find if a run and lumi combination is in a given json file  
 input arguments:  
@@ -67,13 +87,23 @@ boolean or array of booleans (depending on run and lumi)
 ```  
   
   
-### getjsondir()  
+### getjsondir  
+full signature:  
+```text  
+def getjsondir()  
+```  
+comments:  
 ```text  
 internal helper function returning the path to where json files are stored  
 ```  
   
   
-### isgolden(run, lumi)  
+### isgolden  
+full signature:  
+```text  
+def isgolden(run, lumi)  
+```  
+comments:  
 ```text  
 find if a run and lumi combination is in the golden json file  
 input arguments:  
@@ -81,7 +111,12 @@ input arguments:
 ```  
   
   
-### isdcson(run, lumi)  
+### isdcson  
+full signature:  
+```text  
+def isdcson(run, lumi)  
+```  
+comments:  
 ```text  
 find if a run and lumi combination is in DCS-only json file  
 input arguments:  
@@ -89,7 +124,12 @@ input arguments:
 ```  
   
   
-### plainlist\_to\_rangelist( plainlist )  
+### plainlist\_to\_rangelist  
+full signature:  
+```text  
+def plainlist_to_rangelist( plainlist )  
+```  
+comments:  
 ```text  
 helper function for tuplelist_to_jsondict, only for internal use  
 input arguments:  
@@ -100,25 +140,45 @@ example: [1,2,3,5,6] -> [ [1,3], [5,6] ]
 ```  
   
   
-### rangelist\_to\_plainlist( rangelist )  
+### rangelist\_to\_plainlist  
+full signature:  
+```text  
+def rangelist_to_plainlist( rangelist )  
+```  
+comments:  
 ```text  
 inverse function of plainlist_to_rangelist, for internal use only  
 ```  
   
   
-### tuplelist\_to\_jsondict( tuplelist )  
+### tuplelist\_to\_jsondict  
+full signature:  
+```text  
+def tuplelist_to_jsondict( tuplelist )  
+```  
+comments:  
 ```text  
 convert a list of tuples of format (run number, [lumisection numbers]) to json dict  
 ```  
   
   
-### jsondict\_to\_tuplelist( jsondict )  
+### jsondict\_to\_tuplelist  
+full signature:  
+```text  
+def jsondict_to_tuplelist( jsondict )  
+```  
+comments:  
 ```text  
 inverse function of tuplelist_to_jsondict  
 ```  
   
   
-### get\_lcs( jsonlist )  
+### get\_lcs  
+full signature:  
+```text  
+def get_lcs( jsonlist )  
+```  
+comments:  
 ```text  
 return a jsondict object that is the largest common subset (LCS) between the jsondict objects in jsonlist  
 input arguments:  

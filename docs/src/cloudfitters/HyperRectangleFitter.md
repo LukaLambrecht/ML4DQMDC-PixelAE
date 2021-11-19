@@ -6,7 +6,12 @@
 - - -
   
   
-### calculate\_cut\_values( values, quantile, side='both' )  
+### calculate\_cut\_values  
+full signature:  
+```text  
+def calculate_cut_values( values, quantile, side='both' )  
+```  
+comments:  
 ```text  
 calculate the appropriate cut values to discard a given quantile of values  
 input arguments:  
@@ -23,11 +28,17 @@ returns:
   
   
 - - -
-## [class] HyperRectangleFitter(CloudFitter)  
+## [class] HyperRectangleFitter  
+comments:  
 ```text  
 Simple fitter making a hard cut in each dimension  
 ```  
-### &#10551; \_\_init\_\_(self, points, quantiles=0, side='both', verbose=False )  
+### &#10551; \_\_init\_\_  
+full signature:  
+```text  
+def __init__(self, points, quantiles=0, side='both', verbose=False )  
+```  
+comments:  
 ```text  
 constructor  
 input arguments:  
@@ -41,7 +52,12 @@ input arguments:
   for 'down', cut will discard the quantile lowest values,  
   for 'both', the cut(s) will discard the quantile values both at the high and low end.  
 ```  
-### &#10551; apply\_cuts(self, point)  
+### &#10551; apply\_cuts  
+full signature:  
+```text  
+def apply_cuts(self, point)  
+```  
+comments:  
 ```text  
 apply the cuts to a point and return whether it passes them  
 input arguments:  
@@ -49,7 +65,12 @@ input arguments:
 returns:  
 - boolean  
 ```  
-### &#10551; pdf(self, points)  
+### &#10551; pdf  
+full signature:  
+```text  
+def pdf(self, points)  
+```  
+comments:  
 ```text  
 get pdf at points  
 note that the pdf is either 0 (does not pass cuts) or 1 (passes cuts)  

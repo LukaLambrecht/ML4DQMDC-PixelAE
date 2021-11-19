@@ -4,7 +4,12 @@
 - - -
   
   
-### goodnoise\_nd(shape, fstd=None, kmaxscale=0.25, ncomponents=3)  
+### goodnoise\_nd  
+full signature:  
+```text  
+def goodnoise_nd(shape, fstd=None, kmaxscale=0.25, ncomponents=3)  
+```  
+comments:  
 ```text  
 generate one sample of 'good' noise consisting of fourier components  
 generalization of goodnoise (see generate_data_utils) to arbitrary number of dimensions  
@@ -23,7 +28,12 @@ output:
 ```  
   
   
-### whitenoise\_nd(shape, fstd=None)  
+### whitenoise\_nd  
+full signature:  
+```text  
+def whitenoise_nd(shape, fstd=None)  
+```  
+comments:  
 ```text  
 generate one sample of white noise (standard normally distributed, uncorrelated between bins)  
 generalization of whitenoise (see generate_data_utils) to arbitrary number of dimensions  
@@ -38,7 +48,12 @@ output:
 ```  
   
   
-### random\_lico\_nd(hists)  
+### random\_lico\_nd  
+full signature:  
+```text  
+def random_lico_nd(hists)  
+```  
+comments:  
 ```text  
 generate one linear combination of histograms with random coefficients in (0,1) summing to 1.  
 generalization of random_lico (see generate_data_utils) to arbitrary number of dimensions.  
@@ -49,7 +64,12 @@ output:
 ```  
   
   
-### fourier\_noise\_nd(hists, outfilename='', figname='', nresamples=1, nonnegative=True,  stdfactor=15., kmaxscale=0.25, ncomponents=3)  
+### fourier\_noise\_nd  
+full signature:  
+```text  
+def fourier_noise_nd(hists, outfilename='', figname='', nresamples=1, nonnegative=True,  stdfactor=15., kmaxscale=0.25, ncomponents=3)  
+```  
+comments:  
 ```text  
 apply fourier noise on random histograms with simple flat amplitude scaling.  
 generalization of fourier_noise (see generate_data_utils) to arbitrary number of dimensions.  
@@ -64,7 +84,12 @@ input args:
 ```  
   
   
-### white\_noise\_nd(hists, figname='', nresamples=1, nonnegative=True, stdfactor=15.)  
+### white\_noise\_nd  
+full signature:  
+```text  
+def white_noise_nd(hists, figname='', nresamples=1, nonnegative=True, stdfactor=15.)  
+```  
+comments:  
 ```text  
 apply white noise to the histograms in hists.  
 generalization of white_noise (see generate_data_utils) to arbitrary number of dimensions.  
@@ -77,7 +102,12 @@ input args:
 ```  
   
   
-### resample\_lico\_nd(hists, nresamples=1, nonnegative=True)  
+### resample\_lico\_nd  
+full signature:  
+```text  
+def resample_lico_nd(hists, nresamples=1, nonnegative=True)  
+```  
+comments:  
 ```text  
 take random linear combinations of input histograms  
 generalization of fourier_noise (see generate_data_utils) to arbitrary number of dimensions.  

@@ -7,7 +7,8 @@ A log-normal distribution is constructed by fitting a normal distribution to the
   
   
 - - -
-## [class] LogNormalFitter(CloudFitter)  
+## [class] LogNormalFitter  
+comments:  
 ```text  
 class for fitting a log-normal distribution to a point cloud  
 parameters:  
@@ -15,13 +16,23 @@ parameters:
 - cov: multidim covariance matrix of underlying normal  
 - mvn: scipy.stats multivariate_normal object built from the mean and cov  
 ```  
-### &#10551; \_\_init\_\_(self,points)  
+### &#10551; \_\_init\_\_  
+full signature:  
+```text  
+def __init__(self,points)  
+```  
+comments:  
 ```text  
 constructor  
 input arguments:  
 - points: a np array of shape (npoints,ndims)  
 ```  
-### &#10551; pdf(self,points)  
+### &#10551; pdf  
+full signature:  
+```text  
+def pdf(self,points)  
+```  
+comments:  
 ```text  
 get pdf at points  
 ```  

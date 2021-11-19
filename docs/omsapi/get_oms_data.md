@@ -20,7 +20,12 @@ See the notebook example.ipynb in this directory for some examples!
 - - -
   
   
-### get\_oms\_api()  
+### get\_oms\_api  
+full signature:  
+```text  
+def get_oms_api()  
+```  
+comments:  
 ```text  
 get an OMSAPI instance  
 takes no input arguments, as the configuration parameters are unlikely to change very often  
@@ -28,7 +33,12 @@ if needed, these parameters can be changed in the file urls.py
 ```  
   
   
-### get\_oms\_data( omsapi, api\_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[], limit\_entries=1000)  
+### get\_oms\_data  
+full signature:  
+```text  
+def get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[], limit_entries=1000)  
+```  
+comments:  
 ```text  
 query some data from OMS  
 input arguments:  
@@ -49,7 +59,12 @@ input arguments:
 ```  
   
   
-### get\_oms\_response\_attribute( omsresponse, attribute )  
+### get\_oms\_response\_attribute  
+full signature:  
+```text  
+def get_oms_response_attribute( omsresponse, attribute )  
+```  
+comments:  
 ```text  
 small helper function to retrieve a list of values for a single attribute  
 input arguments:  

@@ -10,7 +10,12 @@ Functionality includes:
 - - -
   
   
-### crophists(hists, slices=None)  
+### crophists  
+full signature:  
+```text  
+def crophists(hists, slices=None)  
+```  
+comments:  
 ```text  
 perform cropping on a set of histograms  
 input arguments:  
@@ -28,7 +33,12 @@ returns:
 ```  
   
   
-### rebinhists(hists, factor=None)  
+### rebinhists  
+full signature:  
+```text  
+def rebinhists(hists, factor=None)  
+```  
+comments:  
 ```text  
 perform rebinning on a set of histograms  
 input arguments:  
@@ -43,7 +53,12 @@ returns:
 ```  
   
   
-### normalizehists(hists)  
+### normalizehists  
+full signature:  
+```text  
+def normalizehists(hists)  
+```  
+comments:  
 ```text  
 perform normalization on a set of histograms  
 note:   
@@ -57,7 +72,12 @@ returns:
 ```  
   
   
-### averagehists(hists, nout=None)  
+### averagehists  
+full signature:  
+```text  
+def averagehists(hists, nout=None)  
+```  
+comments:  
 ```text  
 partition a set of histograms into equal parts and take the average histogram of each part  
 input arguments:  
@@ -70,7 +90,12 @@ returns:
 ```  
   
   
-### running\_average\_hists(hists, window=None, weights=None)  
+### running\_average\_hists  
+full signature:  
+```text  
+def running_average_hists(hists, window=None, weights=None)  
+```  
+comments:  
 ```text  
 replace each histogram in a collection of histograms by its running average  
 input arguments:  
@@ -93,7 +118,12 @@ notes:
 ```  
   
   
-### moment(bins, counts, order)  
+### moment  
+full signature:  
+```text  
+def moment(bins, counts, order)  
+```  
+comments:  
 ```text  
 get n-th central moment of a histogram  
 input arguments:  
@@ -110,19 +140,34 @@ notes:
 ```  
   
   
-### histmean(bins, counts)  
+### histmean  
+full signature:  
+```text  
+def histmean(bins, counts)  
+```  
+comments:  
 ```text  
 special case of moment calculation (with order=1)  
 ```  
   
   
-### histrms(bins, counts)  
+### histrms  
+full signature:  
+```text  
+def histrms(bins, counts)  
+```  
+comments:  
 ```text  
 special case of moment calculation  
 ```  
   
   
-### histmoments(bins, counts, orders)  
+### histmoments  
+full signature:  
+```text  
+def histmoments(bins, counts, orders)  
+```  
+comments:  
 ```text  
 apply moment calculation for a list of orders  
 input arguments:  
@@ -133,7 +178,12 @@ returns:
 ```  
   
   
-### preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None, donormalize=True, doplot=False)  
+### preparedatafromnpy  
+full signature:  
+```text  
+def preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None, donormalize=True, doplot=False)  
+```  
+comments:  
 ```text  
 read a .npy file and output the histograms  
 input arguments:   
@@ -143,7 +193,12 @@ notes:
 ```  
   
   
-### preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=None, donormalize=False, doplot=False)  
+### preparedatafromdf  
+full signature:  
+```text  
+def preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=None, donormalize=False, doplot=False)  
+```  
+comments:  
 ```text  
 prepare the data contained in a dataframe in the form of a numpy array  
 input arguments:  
@@ -156,7 +211,12 @@ input arguments:
 ```  
   
   
-### preparedatafromcsv(dataname, returnrunls=False, cropslices=None, rebinningfactor=None, donormalize=True, doplot=False)  
+### preparedatafromcsv  
+full signature:  
+```text  
+def preparedatafromcsv(dataname, returnrunls=False, cropslices=None, rebinningfactor=None, donormalize=True, doplot=False)  
+```  
+comments:  
 ```text  
 prepare the data contained in a dataframe csv file in the form of a numpy array  
 input arguments:  

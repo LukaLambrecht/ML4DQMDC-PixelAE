@@ -9,7 +9,12 @@ The functionality in this script includes:
 - - -
   
   
-### mseTop10(y\_true, y\_pred)  
+### mseTop10  
+full signature:  
+```text  
+def mseTop10(y_true, y_pred)  
+```  
+comments:  
 ```text  
 MSE top 10 loss function for autoencoder training  
 input arguments:  
@@ -23,7 +28,12 @@ output:
 ```  
   
   
-### mseTop10Raw(y\_true, y\_pred)  
+### mseTop10Raw  
+full signature:  
+```text  
+def mseTop10Raw(y_true, y_pred)  
+```  
+comments:  
 ```text  
 same as mseTop10 but without using tf or K  
 the version including tf or K seemed to cause randomly dying kernels, no clear reason could be found,  
@@ -33,7 +43,12 @@ contrary to mseTop10, this function only works for arrays with 2D shapes (so sha
 ```  
   
   
-### mseTopNRaw(y\_true, y\_pred, n=10)  
+### mseTopNRaw  
+full signature:  
+```text  
+def mseTopNRaw(y_true, y_pred, n=10)  
+```  
+comments:  
 ```text  
 generalization of mseTop10Raw to any number of bins to take into account  
 note: now generalized to also work for 2D histograms, i.e. arrays of shape (nhists,nybins,nxbins)!  
@@ -46,7 +61,12 @@ numpy array of shape (nhists)
 ```  
   
   
-### chiSquared(y\_true, y\_pred)  
+### chiSquared  
+full signature:  
+```text  
+def chiSquared(y_true, y_pred)  
+```  
+comments:  
 ```text  
 chi2 loss function for autoencoder training  
 input arguments:  
@@ -59,7 +79,12 @@ output:
 ```  
   
   
-### chiSquaredTopNRaw(y\_true, y\_pred, n=10)  
+### chiSquaredTopNRaw  
+full signature:  
+```text  
+def chiSquaredTopNRaw(y_true, y_pred, n=10)  
+```  
+comments:  
 ```text  
 generalization of chiSquared to any number of bins to take into account  
 note: should work for 2D histograms as well (i.e. arrays of shape (nhistograms,nybins,nxbins)),  
@@ -72,7 +97,12 @@ numpy array of shape (nhists)
 ```  
   
   
-### calculate\_roc(scores, labels, scoreax)  
+### calculate\_roc  
+full signature:  
+```text  
+def calculate_roc(scores, labels, scoreax)  
+```  
+comments:  
 ```text  
 calculate a roc curve  
 input arguments:  
@@ -89,7 +119,12 @@ output:
 ```  
   
   
-### get\_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic', doshow=True)  
+### get\_roc  
+full signature:  
+```text  
+def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic', doshow=True)  
+```  
+comments:  
 ```text  
 make a ROC curve  
 input arguments:  
@@ -112,7 +147,12 @@ input arguments:
 ```  
   
   
-### get\_roc\_from\_hists(hists, labels, predicted\_hists, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')  
+### get\_roc\_from\_hists  
+full signature:  
+```text  
+def get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')  
+```  
+comments:  
 ```text  
 make a ROC curve without manually calculating the scores  
 the output score is the mseTop10Raw between the histograms and their reconstruction  
@@ -122,7 +162,12 @@ the output score is the mseTop10Raw between the histograms and their reconstruct
 ```  
   
   
-### get\_confusion\_matrix(scores, labels, wp='maxauc', plotwp=True)  
+### get\_confusion\_matrix  
+full signature:  
+```text  
+def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True)  
+```  
+comments:  
 ```text  
 plot a confusion matrix  
 input arguments:  
@@ -135,14 +180,24 @@ input arguments:
 ```  
   
   
-### get\_confusion\_matrix\_from\_hists(hists, labels, predicted\_hists, msewp=None)  
+### get\_confusion\_matrix\_from\_hists  
+full signature:  
+```text  
+def get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp=None)  
+```  
+comments:  
 ```text  
 plot a confusion matrix without manually calculating the scores  
 the output score is the mse between the histograms and their reconstruction  
 ```  
   
   
-### get\_wp(scores, labels, method='maxauc', doplot=False)  
+### get\_wp  
+full signature:  
+```text  
+def get_wp(scores, labels, method='maxauc', doplot=False)  
+```  
+comments:  
 ```text  
 automatically calculate a suitable working point  
 input arguments:  
@@ -154,14 +209,24 @@ input arguments:
 ```  
   
   
-### get\_wp\_maxauc(scores, labels, doplot=False)  
+### get\_wp\_maxauc  
+full signature:  
+```text  
+def get_wp_maxauc(scores, labels, doplot=False)  
+```  
+comments:  
 ```text  
 calculate the working point corresponding to maximum pseudo-AUC  
 (i.e. maximize the rectangular area enclosed by the working point)  
 ```  
   
   
-### getautoencoder(input\_size,arch,act=[],opt='adam',loss=mseTop10)  
+### getautoencoder  
+full signature:  
+```text  
+def getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10)  
+```  
+comments:  
 ```text  
 get a trainable autoencoder model  
 input args:  
@@ -173,7 +238,12 @@ input args:
 ```  
   
   
-### train\_simple\_autoencoder(hists, nepochs=-1, modelname='',  batch\_size=500, shuffle=False,  verbose=1, validation\_split=0.1)  
+### train\_simple\_autoencoder  
+full signature:  
+```text  
+def train_simple_autoencoder(hists, nepochs=-1, modelname='',  batch_size=500, shuffle=False,  verbose=1, validation_split=0.1)  
+```  
+comments:  
 ```text  
 create and train a very simple keras model  
 the model consists of one hidden layer (with half as many units as there are input bins), tanh activation, adam optimizer and mseTop10 loss.  
@@ -184,7 +254,12 @@ input args:
 ```  
   
   
-### clip\_scores( scores )  
+### clip\_scores  
+full signature:  
+```text  
+def clip_scores( scores )  
+```  
+comments:  
 ```text  
 clip +-inf values in scores  
 +inf values in scores will be replaced by the maximum value (exclucing +inf) plus one  
