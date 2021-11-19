@@ -17,6 +17,7 @@ print('  import json'); import json
 print('  import matplotlib.pyplot as plt'); import matplotlib.pyplot as plt
 print('  import pickle'); import pickle
 print('  import functools'); import functools
+print('  import webbrowser'); import webbrowser
 print('  import inspect'); import inspect
 try: 
     print('importing tkinter for python3')
@@ -179,7 +180,34 @@ def get_training_options( histstruct, histname=None ):
         print('WARNING: could not retrieve options for classifier training.'
                 +' (Have any classifiers been initialized?)')
         return {}
-    return get_args_dict(classifier.train)
+    return (classifier.__class__, get_args_dict(classifier.train))
+
+### get link to documentation for an object
+
+def get_docurl( obj ):
+    if obj is None: return None
+    try:
+        # get the physical path of the file where the object is defined
+        try:
+            physicalpath = os.path.abspath(sys.modules[obj.__module__].__file__)
+            objname = obj.__name__
+        except:
+            physicalpath = os.path.abspath(sys.modules[obj.__class__.__module__].__file__)
+            objname = obj.__class__.__name__
+        # make the path relative to the top of the project and remove extensions
+        relpath = physicalpath.split('ML4DQM-DC/',-1)[1]
+        reldoc = os.path.splitext(relpath)[0]
+        # documentation-specific parts: main webpage and paragraph structure
+        # (this could be broken if the documentation structure changes!)
+        docweb = 'https://lukalambrecht.github.io/ML4DQM-DC/'
+        paragraph = '/#'+objname
+        paragraph = paragraph.replace('_','95') # not sure how universally valid this is
+        docurl = docweb+reldoc+paragraph
+        print(docurl)
+        return docurl
+    except:
+        print('WARNING: could not retrieve doc url for object "{}"'.format(obj))
+        return None
 
 ### other help functions
 
@@ -289,7 +317,8 @@ class GenericFileSaver:
 class OptionsFrame:
     ### contains a tk.Frame holding a list of customization options
 
-    def __init__(self, master, labels=None, types=None, values=None):
+    def __init__(self, master, labels=None, types=None, values=None,
+                        docurl=None):
         # input arguments:
         # - labels: list of strings with the names/labels of the options
         # - types: list of tk types, defaults to tk.Text for each option
@@ -299,14 +328,16 @@ class OptionsFrame:
         #            where values would be the options to choose from)
         # note: individual elements of types and values can also be None,
         #       in which case these elements will be set to default
-        # to do: extend to other widget types than tk.Text (especially combobox)
+        # - docurl: url to documentation for these options (not required)
         self.frame = tk.Frame(master,width=200)
         self.labels = []
         self.wtypes = []
         self.widgets = []
-        self.set_options( labels=labels, types=types, values=values )
+        self.docurl = []
+        self.docwidget = None
+        self.set_options( labels=labels, types=types, values=values, docurl=docurl )
 
-    def set_options(self, labels=None, types=None, values=None):
+    def set_options(self, labels=None, types=None, values=None, docurl=None):
         ### set the options of an option frame
         # serves both as initializer and as resetter (? to be tested!)
 
@@ -325,9 +356,11 @@ class OptionsFrame:
         self.labels.clear()
         self.wtypes.clear()
         self.widgets.clear()
+        self.docwidget = None
         for widget in self.frame.winfo_children(): widget.destroy()
 
         # set widgets
+        nrows = len(labels)
         for i, (label, wtype, value) in enumerate(zip(labels, types, values)):
             tklabel = tk.Label(self.frame, text=label)
             tklabel.grid(row=i, column=0)
@@ -356,6 +389,13 @@ class OptionsFrame:
             widget.grid(row=i, column=1)
             self.widgets.append(widget)
             self.wtypes.append(wtype)
+
+        # set link to documentation
+        if docurl is not None:
+            self.docwidget = tk.Label(self.frame, text='More info', fg='blue', cursor='hand2')
+            self.docwidget.bind('<Button-1>', self.opendoclink)
+            self.docwidget.grid(row=nrows, column=0, columnspan=2, sticky='nsew')
+            self.docurl = docurl
 
     def get_dict(self):
         ### get the options of the current OptionsFrame as a dictionary
@@ -394,6 +434,9 @@ class OptionsFrame:
             elif value=='': value = None
             res[key] = value
         return res
+
+    def opendoclink(self, event):
+        webbrowser.open_new(self.docurl)
 
 class ScrolledFrame:
     ### contains a tk.Frame holding a widget with vertical and horizontal scrollbars
@@ -854,9 +897,12 @@ class AddClassifiersWindow(tk.Toplevel):
                 idx = list(coptions.keys()).index('model')
                 coptions.pop('model')
                 optiontypes.pop(idx)
+        # retrieve the docurl
+        docurl = get_docurl(ctype)
         # now set the options
         self.classifier_widgets[histname]['options'].set_options(
-                labels=coptions.keys(), types=optiontypes, values=coptions.values())
+                labels=coptions.keys(), types=optiontypes, values=coptions.values(),
+                docurl=docurl)
 
     def get_classifier(self, histname):
         classifier_name = self.classifier_widgets[histname]['type'].get()
@@ -1272,9 +1318,12 @@ class TrainClassifiersWindow(tk.Toplevel):
             value_label.grid(row=1, column=1)
             arghistname = histname
             if histname=='all histogram types': arghistname = None
-            options = get_training_options( self.histstruct, histname=arghistname )
+            (c,options) = get_training_options( self.histstruct, histname=arghistname )
+            # get docurl
+            docurl = get_docurl(c)
             options_frame = OptionsFrame(this_options_frame,
-                labels=options.keys(),values=options.values())
+                labels=options.keys(),values=options.values(),
+                docurl=docurl)
             options_frame.frame.grid(row=2, column=0, columnspan=2)
             self.training_options[histname] = options_frame
 
@@ -1357,6 +1406,7 @@ class FitWindow(tk.Toplevel):
     
         # add widgets for plotting options
         plot_options_dict = get_args_dict(pu.plot_fit_2d)
+        plot_docurl = get_docurl(pu.plot_fit_2d)
         # remove some keys that are not user input
         for key in ['fitfunc','xaxtitle','yaxtitle']:
             if key in list(plot_options_dict.keys()):
@@ -1383,7 +1433,8 @@ class FitWindow(tk.Toplevel):
                 values[i] = [value, not value]
         # make the OptionsFrame
         self.plot_options = OptionsFrame(self.plot_options_frame,
-                                            labels=labels, types=wtypes, values=values)
+                                            labels=labels, types=wtypes, values=values,
+                                            docurl=plot_docurl)
         self.plot_options.frame.grid(row=1, column=0)
 
         # add a frame for some buttons
@@ -1401,8 +1452,10 @@ class FitWindow(tk.Toplevel):
 
     def set_fitter_options(self, event):
         fitter_name = self.fitter_box.get()
-        (_, coptions) = get_fitter_class(fitter_name)
-        self.fitter_options_frame.set_options(labels=coptions.keys(), values=coptions.values())
+        (c, coptions) = get_fitter_class(fitter_name)
+        docurl = get_docurl(c)
+        self.fitter_options_frame.set_options(labels=coptions.keys(), values=coptions.values(),
+                                                docurl=docurl)
 
     def open_fitting_set_selection_window(self):
         self.fitting_set_selector = SelectorWindow(self.master, self.histstruct)
@@ -1597,9 +1650,10 @@ class ResampleWindow(tk.Toplevel):
 
     def set_function_options(self, event, setindex):
         fname = self.get_function_name(setindex)
-        (_, foptions) = get_resampling_function(key=fname)
+        (f, foptions) = get_resampling_function(key=fname)
+        fdocurl = get_docurl(f)
         self.set_widget_list[setindex]['function_options'].set_options( 
-            labels=foptions.keys(), values=foptions.values())
+            labels=foptions.keys(), values=foptions.values(), docurl=fdocurl)
 
     def open_select_window(self, idx):
         self.set_selector_list[idx] = SelectorWindow(self.master, self.histstruct)
@@ -1675,7 +1729,7 @@ class EvaluateWindow(tk.Toplevel):
         self.test_set_label = tk.Label(self.test_set_frame, text='Select test set')
         self.test_set_label.grid(row=0, column=0)
 
-         # create a frame for the test sets
+        # create a frame for the test sets
         self.test_set_container_frame = tk.Frame(self)
         self.test_set_container_frame.grid(row=0, column=1, sticky='nsew')
         set_frame_default_style( self.test_set_container_frame )
@@ -1703,6 +1757,7 @@ class EvaluateWindow(tk.Toplevel):
         self.score_dist_options_label.grid(row=0, column=0)
         # get available options
         score_dist_options_dict = get_args_dict(pu.plot_score_dist)
+        score_dist_docurl = get_docurl(pu.plot_score_dist)
         # remove some keys that are not user input
         for key in ['fig','ax','doshow']:
             if key in list(score_dist_options_dict.keys()):
@@ -1730,7 +1785,8 @@ class EvaluateWindow(tk.Toplevel):
                 values[i] = [value, not value]
         # make the actual OptionsFrame
         self.score_dist_options_frame = OptionsFrame(self.evaluation_options_frame, 
-                                            labels=labels, types=wtypes, values=values)
+                                            labels=labels, types=wtypes, values=values,
+                                            docurl=score_dist_docurl)
         self.score_dist_options_frame.frame.grid(row=1, column=0)
 
         # add widgets for roc curve
@@ -1739,6 +1795,7 @@ class EvaluateWindow(tk.Toplevel):
         self.roc_options_label.grid(row=0, column=1)
         # get available options
         roc_options_dict = get_args_dict(aeu.get_roc)
+        roc_docurl = get_docurl(aeu.get_roc)
         # remove some keys that are not user input
         for key in ['doplot','doshow']:
             if key in list(roc_options_dict.keys()):
@@ -1758,7 +1815,8 @@ class EvaluateWindow(tk.Toplevel):
                 wtypes[i] = ttk.Combobox
                 values[i] = [value, not value]
         self.roc_options_frame = OptionsFrame(self.evaluation_options_frame,
-                                            labels=labels, types=wtypes, values=values)
+                                            labels=labels, types=wtypes, values=values,
+                                            docurl=roc_docurl)
         self.roc_options_frame.frame.grid(row=1, column=1)
 
         # add widgets for confusion matrix
@@ -1767,6 +1825,7 @@ class EvaluateWindow(tk.Toplevel):
         self.cm_options_label.grid(row=0, column=2)
         # get available options
         cm_options_dict = get_args_dict(aeu.get_confusion_matrix)
+        cm_docurl = get_docurl(aeu.get_confusion_matrix)
         # add meta arguments
         meta_args = {'make confusion matrix': True}
         cm_options_dict = {**meta_args, **cm_options_dict}
@@ -1779,7 +1838,8 @@ class EvaluateWindow(tk.Toplevel):
                 wtypes[i] = ttk.Combobox
                 values[i] = [value, not value]
         self.cm_options_frame = OptionsFrame(self.evaluation_options_frame,
-                                            labels=labels, types=wtypes, values=values)
+                                            labels=labels, types=wtypes, values=values,
+                                            docurl=cm_docurl)
         self.cm_options_frame.frame.grid(row=1, column=2)
 
         # add widgets for output json file
@@ -1808,6 +1868,7 @@ class EvaluateWindow(tk.Toplevel):
         self.contour_options_label.grid(row=0, column=4)
         # add widgets for plotting options
         contour_options_dict = get_args_dict(pu.plot_fit_2d)
+        contour_docurl = get_docurl(pu.plot_fit_2d)
         # remove some keys that are not user input
         for key in ['fitfunc','xaxtitle','yaxtitle','onlycontour']:
             if key in list(contour_options_dict.keys()):
@@ -1834,7 +1895,8 @@ class EvaluateWindow(tk.Toplevel):
                 values[i] = [value, not value]
         # make the actual OptionsFrame
         self.contour_options_frame = OptionsFrame(self.evaluation_options_frame,
-                                            labels=labels, types=wtypes, values=values)
+                                            labels=labels, types=wtypes, values=values,
+                                            docurl=contour_docurl)
         self.contour_options_frame.frame.grid(row=1, column=4)
 
         # add a button to start the evaluation
@@ -2091,8 +2153,10 @@ class PlotLumisectionWindow(tk.Toplevel):
                     'refhistslabel': 'Reference histograms',
                     'refhiststransparency': 0.2,
                     'plotscore': False}
+        docurl = get_docurl(self.histstruct.plot_ls)
         self.options_frame = OptionsFrame(self.buttons_frame, 
-                                labels=options.keys(), values=options.values())
+                                labels=options.keys(), values=options.values(),
+                                docurl=docurl)
         self.options_frame.frame.grid(row=0, column=0, sticky='nsew')
         
         # add button to overwrite plotting style
