@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>autoencoder_utils - Documentation for the ML4DQM/DC notebooks</title>
+        <title>autoencoder_utils - Documentation for the ML4DQM/DC code</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -34,7 +34,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC notebooks</a>
+                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC code</a>
                 </div>
 
                 <!-- Expanded navigation -->
@@ -251,21 +251,21 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#autoencoder-utils">autoencoder utils</a></li>
-            <li><a href="#msetop10y95true-y95pred">mseTop10(y_true, y_pred)</a></li>
-            <li><a href="#msetop10rawy95true-y95pred">mseTop10Raw(y_true, y_pred)</a></li>
-            <li><a href="#msetopnrawy95true-y95pred-n10">mseTopNRaw(y_true, y_pred, n=10)</a></li>
-            <li><a href="#chisquaredy95true-y95pred">chiSquared(y_true, y_pred)</a></li>
-            <li><a href="#chisquaredtopnrawy95true-y95pred-n10">chiSquaredTopNRaw(y_true, y_pred, n=10)</a></li>
-            <li><a href="#calculate95rocscores-labels-scoreax">calculate_roc(scores, labels, scoreax)</a></li>
-            <li><a href="#get95rocscores-labels-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic-doshowtrue">get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic', doshow=True)</a></li>
-            <li><a href="#get95roc95from95histshists-labels-predicted95hists-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic">get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')</a></li>
-            <li><a href="#get95confusion95matrixscores-labels-wpmaxauc-plotwptrue">get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True)</a></li>
-            <li><a href="#get95confusion95matrix95from95histshists-labels-predicted95hists-msewpnone">get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp=None)</a></li>
-            <li><a href="#get95wpscores-labels-methodmaxauc-doplotfalse">get_wp(scores, labels, method='maxauc', doplot=False)</a></li>
-            <li><a href="#get95wp95maxaucscores-labels-doplotfalse">get_wp_maxauc(scores, labels, doplot=False)</a></li>
-            <li><a href="#getautoencoderinput95sizearchactoptadamlossmsetop10">getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10)</a></li>
-            <li><a href="#train95simple95autoencoderhists-nepochs-1-modelname-batch95size500-shufflefalse-verbose1-validation95split01">train_simple_autoencoder(hists, nepochs=-1, modelname='',  batch_size=500, shuffle=False,  verbose=1, validation_split=0.1)</a></li>
-            <li><a href="#clip95scores-scores">clip_scores( scores )</a></li>
+            <li><a href="#msetop10">mseTop10</a></li>
+            <li><a href="#msetop10raw">mseTop10Raw</a></li>
+            <li><a href="#msetopnraw">mseTopNRaw</a></li>
+            <li><a href="#chisquared">chiSquared</a></li>
+            <li><a href="#chisquaredtopnraw">chiSquaredTopNRaw</a></li>
+            <li><a href="#calculate95roc">calculate_roc</a></li>
+            <li><a href="#get95roc">get_roc</a></li>
+            <li><a href="#get95roc95from95hists">get_roc_from_hists</a></li>
+            <li><a href="#get95confusion95matrix">get_confusion_matrix</a></li>
+            <li><a href="#get95confusion95matrix95from95hists">get_confusion_matrix_from_hists</a></li>
+            <li><a href="#get95wp">get_wp</a></li>
+            <li><a href="#get95wp95maxauc">get_wp_maxauc</a></li>
+            <li><a href="#getautoencoder">getautoencoder</a></li>
+            <li><a href="#train95simple95autoencoder">train_simple_autoencoder</a></li>
+            <li><a href="#clip95scores">clip_scores</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -277,7 +277,12 @@
 - calculating and plotting ROC curves and confusion matrices
 - definition of very simple ready-to-use keras model architectures</p>
 <hr />
-<h3 id="msetop10y95true-y95pred">mseTop10(y_true, y_pred)</h3>
+<h3 id="msetop10">mseTop10</h3>
+<p>full signature:  </p>
+<pre><code class="text">def mseTop10(y_true, y_pred)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">MSE top 10 loss function for autoencoder training  
 input arguments:  
 - y_true and y_pred: two numpy arrays of equal shape,  
@@ -289,7 +294,12 @@ output:
   if y_true and y_pred are 2D arrays, this function returns 1D array (mseTop10 for each histogram)  
 </code></pre>
 
-<h3 id="msetop10rawy95true-y95pred">mseTop10Raw(y_true, y_pred)</h3>
+<h3 id="msetop10raw">mseTop10Raw</h3>
+<p>full signature:  </p>
+<pre><code class="text">def mseTop10Raw(y_true, y_pred)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">same as mseTop10 but without using tf or K  
 the version including tf or K seemed to cause randomly dying kernels, no clear reason could be found,  
 but it was solved using this loss function instead.  
@@ -297,7 +307,12 @@ verified that it gives exactly the same output as the function above on some ran
 contrary to mseTop10, this function only works for arrays with 2D shapes (so shape (nhists,nbins)), not for (nbins,).  
 </code></pre>
 
-<h3 id="msetopnrawy95true-y95pred-n10">mseTopNRaw(y_true, y_pred, n=10)</h3>
+<h3 id="msetopnraw">mseTopNRaw</h3>
+<p>full signature:  </p>
+<pre><code class="text">def mseTopNRaw(y_true, y_pred, n=10)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">generalization of mseTop10Raw to any number of bins to take into account  
 note: now generalized to also work for 2D histograms, i.e. arrays of shape (nhists,nybins,nxbins)!  
       hence this is the most general method and preferred above mseTop10 and mseTop10Raw, which are only kept for reference  
@@ -308,7 +323,12 @@ output:
 numpy array of shape (nhists)  
 </code></pre>
 
-<h3 id="chisquaredy95true-y95pred">chiSquared(y_true, y_pred)</h3>
+<h3 id="chisquared">chiSquared</h3>
+<p>full signature:  </p>
+<pre><code class="text">def chiSquared(y_true, y_pred)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">chi2 loss function for autoencoder training  
 input arguments:  
 - y_true and y_pred: two numpy arrays of equal shape,  
@@ -319,7 +339,12 @@ output:
   if y_true and y_pred are 2D arrays, this function returns 1D array (chiSquared for each histogram)  
 </code></pre>
 
-<h3 id="chisquaredtopnrawy95true-y95pred-n10">chiSquaredTopNRaw(y_true, y_pred, n=10)</h3>
+<h3 id="chisquaredtopnraw">chiSquaredTopNRaw</h3>
+<p>full signature:  </p>
+<pre><code class="text">def chiSquaredTopNRaw(y_true, y_pred, n=10)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">generalization of chiSquared to any number of bins to take into account  
 note: should work for 2D histograms as well (i.e. arrays of shape (nhistograms,nybins,nxbins)),  
       but not yet tested!  
@@ -330,7 +355,12 @@ output:
 numpy array of shape (nhists)  
 </code></pre>
 
-<h3 id="calculate95rocscores-labels-scoreax">calculate_roc(scores, labels, scoreax)</h3>
+<h3 id="calculate95roc">calculate_roc</h3>
+<p>full signature:  </p>
+<pre><code class="text">def calculate_roc(scores, labels, scoreax)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">calculate a roc curve  
 input arguments:  
 - scores is a 1D numpy array containing output scores of any algorithm  
@@ -345,7 +375,12 @@ output:
 - tuple of two np arrays (signal efficiency and background efficiency)  
 </code></pre>
 
-<h3 id="get95rocscores-labels-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic-doshowtrue">get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic', doshow=True)</h3>
+<h3 id="get95roc">get_roc</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic', doshow=True)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">make a ROC curve  
 input arguments:  
 - scores is a 1D numpy array containing output scores of any algorithm  
@@ -366,7 +401,12 @@ input arguments:
         - 'classic' = signal efficiency afo background efficiency  
 </code></pre>
 
-<h3 id="get95roc95from95histshists-labels-predicted95hists-modelin-npoints100-doprintfalse-doplottrue-plotmodeclassic">get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')</h3>
+<h3 id="get95roc95from95hists">get_roc_from_hists</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic')  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">make a ROC curve without manually calculating the scores  
 the output score is the mseTop10Raw between the histograms and their reconstruction  
 - input arguments:  
@@ -374,7 +414,12 @@ the output score is the mseTop10Raw between the histograms and their reconstruct
 - other arguments: see get_roc  
 </code></pre>
 
-<h3 id="get95confusion95matrixscores-labels-wpmaxauc-plotwptrue">get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True)</h3>
+<h3 id="get95confusion95matrix">get_confusion_matrix</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">plot a confusion matrix  
 input arguments:  
 - scores and labels: defined in the same way as for get_roc  
@@ -385,12 +430,22 @@ input arguments:
 - plotwp: only relevant if wp is a string (see above), in which case plotwp will be used as the 'doplot' argument in get_wp  
 </code></pre>
 
-<h3 id="get95confusion95matrix95from95histshists-labels-predicted95hists-msewpnone">get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp=None)</h3>
+<h3 id="get95confusion95matrix95from95hists">get_confusion_matrix_from_hists</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp=None)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">plot a confusion matrix without manually calculating the scores  
 the output score is the mse between the histograms and their reconstruction  
 </code></pre>
 
-<h3 id="get95wpscores-labels-methodmaxauc-doplotfalse">get_wp(scores, labels, method='maxauc', doplot=False)</h3>
+<h3 id="get95wp">get_wp</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_wp(scores, labels, method='maxauc', doplot=False)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">automatically calculate a suitable working point  
 input arguments:  
 - scores, labels: equally long 1d numpy arrays of predictions and true labels respectively  
@@ -400,12 +455,22 @@ input arguments:
 - doplot: make a plot (if a plotting method exists for the chosen method)  
 </code></pre>
 
-<h3 id="get95wp95maxaucscores-labels-doplotfalse">get_wp_maxauc(scores, labels, doplot=False)</h3>
+<h3 id="get95wp95maxauc">get_wp_maxauc</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_wp_maxauc(scores, labels, doplot=False)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">calculate the working point corresponding to maximum pseudo-AUC  
 (i.e. maximize the rectangular area enclosed by the working point)  
 </code></pre>
 
-<h3 id="getautoencoderinput95sizearchactoptadamlossmsetop10">getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10)</h3>
+<h3 id="getautoencoder">getautoencoder</h3>
+<p>full signature:  </p>
+<pre><code class="text">def getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get a trainable autoencoder model  
 input args:  
 - input_size: size of vector that autoencoder will operate on  
@@ -415,7 +480,12 @@ input args:
 - loss: loss function to use (defualt: mseTop10)  
 </code></pre>
 
-<h3 id="train95simple95autoencoderhists-nepochs-1-modelname-batch95size500-shufflefalse-verbose1-validation95split01">train_simple_autoencoder(hists, nepochs=-1, modelname='',  batch_size=500, shuffle=False,  verbose=1, validation_split=0.1)</h3>
+<h3 id="train95simple95autoencoder">train_simple_autoencoder</h3>
+<p>full signature:  </p>
+<pre><code class="text">def train_simple_autoencoder(hists, nepochs=-1, modelname='',  batch_size=500, shuffle=False,  verbose=1, validation_split=0.1)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">create and train a very simple keras model  
 the model consists of one hidden layer (with half as many units as there are input bins), tanh activation, adam optimizer and mseTop10 loss.  
 input args:   
@@ -424,7 +494,12 @@ input args:
 - modelname is a file name to save the model in (default: model is not saved to a file)  
 </code></pre>
 
-<h3 id="clip95scores-scores">clip_scores( scores )</h3>
+<h3 id="clip95scores">clip_scores</h3>
+<p>full signature:  </p>
+<pre><code class="text">def clip_scores( scores )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">clip +-inf values in scores  
 +inf values in scores will be replaced by the maximum value (exclucing +inf) plus one  
 -inf values in scores will be replaced by the minimim value (exclucing -inf) minus one  

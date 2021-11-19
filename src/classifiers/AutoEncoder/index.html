@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../../img/favicon.ico">
-        <title>AutoEncoder - Documentation for the ML4DQM/DC notebooks</title>
+        <title>AutoEncoder - Documentation for the ML4DQM/DC code</title>
         <link href="../../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../../css/base.css" rel="stylesheet">
@@ -34,7 +34,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="../../..">Documentation for the ML4DQM/DC notebooks</a>
+                    <a class="navbar-brand" href="../../..">Documentation for the ML4DQM/DC code</a>
                 </div>
 
                 <!-- Expanded navigation -->
@@ -251,8 +251,8 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#autoencoder">AutoEncoder</a></li>
-            <li><a href="#class-autoencoderhistogramclassifier">[class] AutoEncoder(HistogramClassifier)</a></li>
-            <li><a href="#class-classifier-autoencoder-modelmodel">[class] classifier = AutoEncoder( model=model )</a></li>
+            <li><a href="#class-autoencoder">[class] AutoEncoder</a></li>
+            <li><a href="#class-classifier-autoencoder">[class] classifier = AutoEncoder</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -264,7 +264,8 @@ For this specific classifier, the output score of a histogram is the mean-square
 In essence, it is just a wrapper for a tensorflow model.  </p>
 <hr />
 <hr />
-<h2 id="class-autoencoderhistogramclassifier">[class] AutoEncoder(HistogramClassifier)</h2>
+<h2 id="class-autoencoder">[class] AutoEncoder</h2>
+<p>comments:  </p>
 <pre><code class="text">histogram classfier based on the MSE of an autoencoder reconstruction  
 the AutoEncoder derives from the generic HistogramClassifier.   
 for this specific classifier, the output score of a histogram is the mean-square-error (MSE)   
@@ -272,7 +273,12 @@ between the original histogram and its autoencoder reconstruction.
 in essence, it is just a wrapper for a tensorflow model.  
 </code></pre>
 
-<h3 id="9595init9595-self-modelnone-modelpathnone">&#10551; __init__( self, model=None, modelpath=None )</h3>
+<h3 id="9595init9595">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__( self, model=None, modelpath=None )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">intializer from a tensorflow model  
 input arguments:  
 - model: a valid tensorflow model;  
@@ -284,7 +290,12 @@ input arguments:
 note: model and modelpath are alternative options, they should not both be used simultaneously.  
 </code></pre>
 
-<h3 id="train-self-histograms-doplottrue-epochs10-batch95size500-shufflefalse-verbose1-validation95split01-kwargs">&#10551; train( self, histograms, doplot=True, epochs=10, batch_size=500, shuffle=False, verbose=1, validation_split=0.1, **kwargs )</h3>
+<h3 id="train">&#10551; train</h3>
+<p>full signature:  </p>
+<pre><code class="text">def train( self, histograms, doplot=True, epochs=10, batch_size=500, shuffle=False, verbose=1, validation_split=0.1, **kwargs )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">train the model on a given set of input histograms  
 input arguments:  
 - histograms: set of training histograms, a numpy array of shape (nhistograms,nbins)  
@@ -293,27 +304,48 @@ input arguments:
 - kwargs: additional arguments passed down to keras fit function  
 </code></pre>
 
-<h3 id="evaluate-self-histograms">&#10551; evaluate( self, histograms )</h3>
+<h3 id="evaluate">&#10551; evaluate</h3>
+<p>full signature:  </p>
+<pre><code class="text">def evaluate( self, histograms )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">classification of a collection of histograms based on their autoencoder reconstruction  
 </code></pre>
 
-<h3 id="reconstruct-self-histograms">&#10551; reconstruct( self, histograms )</h3>
+<h3 id="reconstruct">&#10551; reconstruct</h3>
+<p>full signature:  </p>
+<pre><code class="text">def reconstruct( self, histograms )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">return the autoencoder reconstruction of a set of histograms  
 </code></pre>
 
-<h3 id="save-self-path">&#10551; save( self, path )</h3>
+<h3 id="save">&#10551; save</h3>
+<p>full signature:  </p>
+<pre><code class="text">def save( self, path )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">save the underlying tensorflow model to a tensorflow SavedModel or H5 format.  
 note: depending on the extension specified in path, the SavedModel or H5 format is chosen,  
       see https://www.tensorflow.org/guide/keras/save_and_serialize  
 </code></pre>
 
-<h3 id="load-self-path-kwargs">&#10551; load( self, path, **kwargs )</h3>
+<h3 id="load">&#10551; load</h3>
+<p>full signature:  </p>
+<pre><code class="text">def load( self, path, **kwargs )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get an AutoEncoder instance from a saved tensorflow SavedModel or H5 file  
 </code></pre>
 
 <hr />
 <hr />
-<h2 id="class-classifier-autoencoder-modelmodel">[class] classifier = AutoEncoder( model=model )</h2>
+<h2 id="class-classifier-autoencoder">[class] classifier = AutoEncoder</h2>
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 

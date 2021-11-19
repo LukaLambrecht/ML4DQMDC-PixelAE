@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>generate_data_2d_utils - Documentation for the ML4DQM/DC notebooks</title>
+        <title>generate_data_2d_utils - Documentation for the ML4DQM/DC code</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -34,7 +34,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC notebooks</a>
+                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC code</a>
                 </div>
 
                 <!-- Expanded navigation -->
@@ -251,12 +251,12 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#generate-data-2d-utils">generate data 2d utils</a></li>
-            <li><a href="#goodnoise95ndshape-fstdnone-kmaxscale025-ncomponents3">goodnoise_nd(shape, fstd=None, kmaxscale=0.25, ncomponents=3)</a></li>
-            <li><a href="#whitenoise95ndshape-fstdnone">whitenoise_nd(shape, fstd=None)</a></li>
-            <li><a href="#random95lico95ndhists">random_lico_nd(hists)</a></li>
-            <li><a href="#fourier95noise95ndhists-outfilename-figname-nresamples1-nonnegativetrue-stdfactor15-kmaxscale025-ncomponents3">fourier_noise_nd(hists, outfilename='', figname='', nresamples=1, nonnegative=True,  stdfactor=15., kmaxscale=0.25, ncomponents=3)</a></li>
-            <li><a href="#white95noise95ndhists-figname-nresamples1-nonnegativetrue-stdfactor15">white_noise_nd(hists, figname='', nresamples=1, nonnegative=True, stdfactor=15.)</a></li>
-            <li><a href="#resample95lico95ndhists-nresamples1-nonnegativetrue">resample_lico_nd(hists, nresamples=1, nonnegative=True)</a></li>
+            <li><a href="#goodnoise95nd">goodnoise_nd</a></li>
+            <li><a href="#whitenoise95nd">whitenoise_nd</a></li>
+            <li><a href="#random95lico95nd">random_lico_nd</a></li>
+            <li><a href="#fourier95noise95nd">fourier_noise_nd</a></li>
+            <li><a href="#white95noise95nd">white_noise_nd</a></li>
+            <li><a href="#resample95lico95nd">resample_lico_nd</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -264,7 +264,12 @@
 <h1 id="generate-data-2d-utils">generate data 2d utils</h1>
 <p><strong>Extension of generate_data_utils.py towards 2D histograms</strong> </p>
 <hr />
-<h3 id="goodnoise95ndshape-fstdnone-kmaxscale025-ncomponents3">goodnoise_nd(shape, fstd=None, kmaxscale=0.25, ncomponents=3)</h3>
+<h3 id="goodnoise95nd">goodnoise_nd</h3>
+<p>full signature:  </p>
+<pre><code class="text">def goodnoise_nd(shape, fstd=None, kmaxscale=0.25, ncomponents=3)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">generate one sample of 'good' noise consisting of fourier components  
 generalization of goodnoise (see generate_data_utils) to arbitrary number of dimensions  
 input args:  
@@ -281,7 +286,12 @@ output:
 - numpy array of shape detailed by shape argument containing the noise  
 </code></pre>
 
-<h3 id="whitenoise95ndshape-fstdnone">whitenoise_nd(shape, fstd=None)</h3>
+<h3 id="whitenoise95nd">whitenoise_nd</h3>
+<p>full signature:  </p>
+<pre><code class="text">def whitenoise_nd(shape, fstd=None)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">generate one sample of white noise (standard normally distributed, uncorrelated between bins)  
 generalization of whitenoise (see generate_data_utils) to arbitrary number of dimensions  
 input args:  
@@ -294,7 +304,12 @@ output:
 - numpy array of shape detailed by shape argument containing the noise  
 </code></pre>
 
-<h3 id="random95lico95ndhists">random_lico_nd(hists)</h3>
+<h3 id="random95lico95nd">random_lico_nd</h3>
+<p>full signature:  </p>
+<pre><code class="text">def random_lico_nd(hists)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">generate one linear combination of histograms with random coefficients in (0,1) summing to 1.  
 generalization of random_lico (see generate_data_utils) to arbitrary number of dimensions.  
 input args:   
@@ -303,7 +318,12 @@ output:
 - numpy array of shape (&lt;same dimensions as input&gt;), containing the new histogram  
 </code></pre>
 
-<h3 id="fourier95noise95ndhists-outfilename-figname-nresamples1-nonnegativetrue-stdfactor15-kmaxscale025-ncomponents3">fourier_noise_nd(hists, outfilename='', figname='', nresamples=1, nonnegative=True,  stdfactor=15., kmaxscale=0.25, ncomponents=3)</h3>
+<h3 id="fourier95noise95nd">fourier_noise_nd</h3>
+<p>full signature:  </p>
+<pre><code class="text">def fourier_noise_nd(hists, outfilename='', figname='', nresamples=1, nonnegative=True,  stdfactor=15., kmaxscale=0.25, ncomponents=3)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">apply fourier noise on random histograms with simple flat amplitude scaling.  
 generalization of fourier_noise (see generate_data_utils) to arbitrary number of dimensions.  
 input args:   
@@ -316,7 +336,12 @@ input args:
 - kmaxscale and ncomponents: see goodnoise_nd  
 </code></pre>
 
-<h3 id="white95noise95ndhists-figname-nresamples1-nonnegativetrue-stdfactor15">white_noise_nd(hists, figname='', nresamples=1, nonnegative=True, stdfactor=15.)</h3>
+<h3 id="white95noise95nd">white_noise_nd</h3>
+<p>full signature:  </p>
+<pre><code class="text">def white_noise_nd(hists, figname='', nresamples=1, nonnegative=True, stdfactor=15.)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">apply white noise to the histograms in hists.  
 generalization of white_noise (see generate_data_utils) to arbitrary number of dimensions.  
 input args:  
@@ -327,7 +352,12 @@ input args:
 - stdfactor: scaling factor of white noise amplitude (higher factor = smaller noise)  
 </code></pre>
 
-<h3 id="resample95lico95ndhists-nresamples1-nonnegativetrue">resample_lico_nd(hists, nresamples=1, nonnegative=True)</h3>
+<h3 id="resample95lico95nd">resample_lico_nd</h3>
+<p>full signature:  </p>
+<pre><code class="text">def resample_lico_nd(hists, nresamples=1, nonnegative=True)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">take random linear combinations of input histograms  
 generalization of fourier_noise (see generate_data_utils) to arbitrary number of dimensions.  
 input args:   

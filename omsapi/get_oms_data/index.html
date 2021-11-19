@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>get_oms_data - Documentation for the ML4DQM/DC notebooks</title>
+        <title>get_oms_data - Documentation for the ML4DQM/DC code</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -34,7 +34,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC notebooks</a>
+                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC code</a>
                 </div>
 
                 <!-- Expanded navigation -->
@@ -251,9 +251,9 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#get-oms-data">get oms data</a></li>
-            <li><a href="#get95oms95api">get_oms_api()</a></li>
-            <li><a href="#get95oms95data-omsapi-api95endpoint-runnb-extrafilters-extraargs-sortnone-attributes-limit95entries1000">get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[], limit_entries=1000)</a></li>
-            <li><a href="#get95oms95response95attribute-omsresponse-attribute">get_oms_response_attribute( omsresponse, attribute )</a></li>
+            <li><a href="#get95oms95api">get_oms_api</a></li>
+            <li><a href="#get95oms95data">get_oms_data</a></li>
+            <li><a href="#get95oms95response95attribute">get_oms_response_attribute</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -274,13 +274,23 @@ In particular, you will need an application ID and client secret to authenticate
   The function "get_oms_response_attribute" is a small helper function to retrieve a specific attribute from this dictionary.</p>
 <p>See the notebook example.ipynb in this directory for some examples!</p>
 <hr />
-<h3 id="get95oms95api">get_oms_api()</h3>
+<h3 id="get95oms95api">get_oms_api</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_oms_api()  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get an OMSAPI instance  
 takes no input arguments, as the configuration parameters are unlikely to change very often  
 if needed, these parameters can be changed in the file urls.py  
 </code></pre>
 
-<h3 id="get95oms95data-omsapi-api95endpoint-runnb-extrafilters-extraargs-sortnone-attributes-limit95entries1000">get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[], limit_entries=1000)</h3>
+<h3 id="get95oms95data">get_oms_data</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[], limit_entries=1000)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">query some data from OMS  
 input arguments:  
 - omsapi: an OMSAPI instance, e.g. created by get_oms_api()  
@@ -299,7 +309,12 @@ input arguments:
 - limit_entries: entry limit for output json object  
 </code></pre>
 
-<h3 id="get95oms95response95attribute-omsresponse-attribute">get_oms_response_attribute( omsresponse, attribute )</h3>
+<h3 id="get95oms95response95attribute">get_oms_response_attribute</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_oms_response_attribute( omsresponse, attribute )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">small helper function to retrieve a list of values for a single attribute  
 input arguments:  
 - omsresponse: the json-like object returned by get_oms_data  

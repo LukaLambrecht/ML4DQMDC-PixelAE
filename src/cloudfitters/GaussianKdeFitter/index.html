@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../../img/favicon.ico">
-        <title>GaussianKdeFitter - Documentation for the ML4DQM/DC notebooks</title>
+        <title>GaussianKdeFitter - Documentation for the ML4DQM/DC code</title>
         <link href="../../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../../css/base.css" rel="stylesheet">
@@ -34,7 +34,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="../../..">Documentation for the ML4DQM/DC notebooks</a>
+                    <a class="navbar-brand" href="../../..">Documentation for the ML4DQM/DC code</a>
                 </div>
 
                 <!-- Expanded navigation -->
@@ -251,7 +251,7 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#gaussiankdefitter">GaussianKdeFitter</a></li>
-            <li><a href="#class-gaussiankdefittercloudfitter">[class] GaussianKdeFitter(CloudFitter)</a></li>
+            <li><a href="#class-gaussiankdefitter">[class] GaussianKdeFitter</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -262,7 +262,8 @@
 A gaussian kernel density can be thought of as a sum of little (potentially multidimensional) gaussians, each one centered at one of the points in the cloud. Hence, the resulting distribution is a sort of smoothed version of the discrete point cloud.</p>
 <hr />
 <hr />
-<h2 id="class-gaussiankdefittercloudfitter">[class] GaussianKdeFitter(CloudFitter)</h2>
+<h2 id="class-gaussiankdefitter">[class] GaussianKdeFitter</h2>
+<p>comments:  </p>
 <pre><code class="text">class for fitting a gaussian kernel density to a point cloud  
 basically a wrapper for scipy.stats.gaussian_kde.  
 parameters  
@@ -271,7 +272,12 @@ parameters
 (use np.cov for now, maybe later replace by internal kernel.covariance)  
 </code></pre>
 
-<h3 id="9595init9595self-points-bw95methodscott-bw95scott95factornone">&#10551; __init__(self, points, bw_method='scott', bw_scott_factor=None)</h3>
+<h3 id="9595init9595">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self, points, bw_method='scott', bw_scott_factor=None)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">constructor  
 input arguments:  
 - points: a np array of shape (npoints,ndims)  
@@ -280,7 +286,12 @@ input arguments:
 - bw_scott_factor: additional multiplication factor applied to bandwidth in case it is set to 'scott'  
 </code></pre>
 
-<h3 id="pdfselfpoints">&#10551; pdf(self,points)</h3>
+<h3 id="pdf">&#10551; pdf</h3>
+<p>full signature:  </p>
+<pre><code class="text">def pdf(self,points)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get pdf at points  
 </code></pre>
 

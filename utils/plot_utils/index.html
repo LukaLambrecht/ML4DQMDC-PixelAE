@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>plot_utils - Documentation for the ML4DQM/DC notebooks</title>
+        <title>plot_utils - Documentation for the ML4DQM/DC code</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -34,7 +34,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC notebooks</a>
+                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC code</a>
                 </div>
 
                 <!-- Expanded navigation -->
@@ -251,26 +251,26 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#plot-utils">plot utils</a></li>
-            <li><a href="#make95legend95opaque-leg">make_legend_opaque( leg )</a></li>
-            <li><a href="#add95text-ax-text-pos-fontsize10-background95facecolornone-background95alphanone-background95edgecolornone">add_text( ax, text, pos,  fontsize=10, background_facecolor=None,  background_alpha=None, background_edgecolor=None )</a></li>
-            <li><a href="#add95cms95label-ax-pos0109-extratextnone-kwargs">add_cms_label( ax, pos=(0.1,0.9), extratext=None, **kwargs )</a></li>
-            <li><a href="#make95text95latex95safe-text">make_text_latex_safe( text )</a></li>
-            <li><a href="#plot95histshistlist-fignone-axnone-colorlist-labellist-transparency1-xlims-05-1-titlenone-xaxtitlenone-yaxtitlenone-bkgcolornone-bkgcmapspring-bkgrangenone-bkgtitlenone">plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None,  bkgcolor=None, bkgcmap='spring', bkgrange=None, bkgtitle=None)</a></li>
-            <li><a href="#plot95hists95multihistlist-fignone-axnone-colorlist-labellist-transparency1-xlims-05-1-titlenone-xaxtitlenone-yaxtitlenone">plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)</a></li>
-            <li><a href="#plot95hist952dhist-fignone-axnone-titlenone-xaxtitlenone-yaxtitlenone-caxrangenone">plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None, caxrange=None)</a></li>
-            <li><a href="#plot95hists952dhists-ncols4-titlenone-subtitlesnone-xaxtitlenone-yaxtitlenone-caxrangenone">plot_hists_2d(hists, ncols=4, title=None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None)</a></li>
-            <li><a href="#plot95hists952d95gifhists-titlesnone-xaxtitlenone-yaxtitlenone-duration03-fignametemp95gifgif">plot_hists_2d_gif(hists, titles=None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp_gif.gif')</a></li>
-            <li><a href="#plot95hists95from95dfdf-histtype-nhists">plot_hists_from_df(df, histtype, nhists)</a></li>
-            <li><a href="#plot95setssetlist-fignone-axnone-colorlist-labellist-transparencylist-titlenone-titlesizenone-xaxtitlenone-xaxtitlesizenone-xlims-05-1-yaxtitlenone-yaxtitlesizenone-ymaxfactornone-legendsizenone-opaque95legendfalse">plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], title=None, titlesize=None,  xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1),  yaxtitle=None, yaxtitlesize=None, ymaxfactor=None,  legendsize=None, opaque_legend=False)</a></li>
-            <li><a href="#plot95anomaloushistlist-ls-highlight-1-hrange-1">plot_anomalous(histlist, ls, highlight=-1, hrange=-1)</a></li>
-            <li><a href="#plot95momentsmoments-ls-dims01-fignone-axnone-markersize10">plot_moments(moments, ls, dims=(0,1), fig=None, ax=None, markersize=10)</a></li>
-            <li><a href="#plot95distancedists-lsnone-rmlargest0-doplottrue-titlenone-xaxtitlelumisection-number-yaxtitledistance-metric">plot_distance(dists, ls=None, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='distance metric')</a></li>
-            <li><a href="#plot95lossdata-xlimsnone-titlenone-xaxtitleepoch-yaxtitleloss-doshowtrue">plot_loss(data, xlims=None, title=None, xaxtitle='epoch', yaxtitle='loss', doshow=True)</a></li>
-            <li><a href="#plot95msemse-rmlargest0-doplottrue-titlenone-xaxtitlelumisection-number-yaxtitlemse">plot_mse(mse, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='mse')</a></li>
-            <li><a href="#plot95score95dist-scores-labels-fignone-axnone-nbins20-normalizefalse-siglabelsignal-sigcolorg-bcklabelbackground-bckcolorr-titlenone-xaxtitlenone-yaxtitlenone-doshowtrue">plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='signal', sigcolor='g', bcklabel='background', bckcolor='r', title=None, xaxtitle=None, yaxtitle=None, doshow=True)</a></li>
-            <li><a href="#plot95metric-wprange-metric-labelnone-colornone-sig95effnone-sig95labelnone-sig95colornone-bck95effnone-bck95labelnone-bck95colornone-titlenone-xaxtitleworking-point-yaxlogfalse-ymaxfactor13-yaxtitlemetric">plot_metric( wprange, metric, label=None, color=None, sig_eff=None, sig_label=None, sig_color=None, bck_eff=None, bck_label=None, bck_color=None, title=None, xaxtitle='working point', yaxlog=False, ymaxfactor=1.3, yaxtitle='metric' )</a></li>
-            <li><a href="#plot95fit952d-points-fitfuncnone-logprobfalse-clipprobfalse-onlycontourfalse-xlims5-ylims5-onlypositivefalse-xaxtitlenone-xaxtitlesizenone-yaxtitlenone-yaxtitlesizenone-titlenone-titlesizenone-caxtitlenone-caxtitlesizenone-transparency1">plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,  onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,  title=None, titlesize=None, caxtitle=None, caxtitlesize=None, transparency=1 )</a></li>
-            <li><a href="#plot95fit952d95clusters-points-clusters-labels-colors-kwargs">plot_fit_2d_clusters( points, clusters, labels, colors, **kwargs )</a></li>
+            <li><a href="#make95legend95opaque">make_legend_opaque</a></li>
+            <li><a href="#add95text">add_text</a></li>
+            <li><a href="#add95cms95label">add_cms_label</a></li>
+            <li><a href="#make95text95latex95safe">make_text_latex_safe</a></li>
+            <li><a href="#plot95hists">plot_hists</a></li>
+            <li><a href="#plot95hists95multi">plot_hists_multi</a></li>
+            <li><a href="#plot95hist952d">plot_hist_2d</a></li>
+            <li><a href="#plot95hists952d">plot_hists_2d</a></li>
+            <li><a href="#plot95hists952d95gif">plot_hists_2d_gif</a></li>
+            <li><a href="#plot95hists95from95df">plot_hists_from_df</a></li>
+            <li><a href="#plot95sets">plot_sets</a></li>
+            <li><a href="#plot95anomalous">plot_anomalous</a></li>
+            <li><a href="#plot95moments">plot_moments</a></li>
+            <li><a href="#plot95distance">plot_distance</a></li>
+            <li><a href="#plot95loss">plot_loss</a></li>
+            <li><a href="#plot95mse">plot_mse</a></li>
+            <li><a href="#plot95score95dist">plot_score_dist</a></li>
+            <li><a href="#plot95metric">plot_metric</a></li>
+            <li><a href="#plot95fit952d">plot_fit_2d</a></li>
+            <li><a href="#plot95fit952d95clusters">plot_fit_2d_clusters</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -278,11 +278,21 @@
 <h1 id="plot-utils">plot utils</h1>
 <p><strong>A collection of useful basic functions for plotting.</strong>  </p>
 <hr />
-<h3 id="make95legend95opaque-leg">make_legend_opaque( leg )</h3>
+<h3 id="make95legend95opaque">make_legend_opaque</h3>
+<p>full signature:  </p>
+<pre><code class="text">def make_legend_opaque( leg )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">set the transparency of all entries in a legend to zero  
 </code></pre>
 
-<h3 id="add95text-ax-text-pos-fontsize10-background95facecolornone-background95alphanone-background95edgecolornone">add_text( ax, text, pos,  fontsize=10, background_facecolor=None,  background_alpha=None, background_edgecolor=None )</h3>
+<h3 id="add95text">add_text</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_text( ax, text, pos,  fontsize=10, background_facecolor=None,  background_alpha=None, background_edgecolor=None )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">add text to an axis at a specified position (in relative figure coordinates)  
 input arguments:  
 - ax: matplotlib axis object  
@@ -290,18 +300,33 @@ input arguments:
 - pos: tuple with relative x- and y-axis coordinates of bottom left corner  
 </code></pre>
 
-<h3 id="add95cms95label-ax-pos0109-extratextnone-kwargs">add_cms_label( ax, pos=(0.1,0.9), extratext=None, **kwargs )</h3>
+<h3 id="add95cms95label">add_cms_label</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_cms_label( ax, pos=(0.1,0.9), extratext=None, **kwargs )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">add the CMS label and extra text (e.g. 'Preliminary') to a plot  
 special case of add_text, for convenience  
 </code></pre>
 
-<h3 id="make95text95latex95safe-text">make_text_latex_safe( text )</h3>
+<h3 id="make95text95latex95safe">make_text_latex_safe</h3>
+<p>full signature:  </p>
+<pre><code class="text">def make_text_latex_safe( text )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">make a string safe to process with matplotlib's latex parser in case no tex parsing is wanted  
 (e.g. escape underscores)  
 to be extended when the need arises!  
 </code></pre>
 
-<h3 id="plot95histshistlist-fignone-axnone-colorlist-labellist-transparency1-xlims-05-1-titlenone-xaxtitlenone-yaxtitlenone-bkgcolornone-bkgcmapspring-bkgrangenone-bkgtitlenone">plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None,  bkgcolor=None, bkgcmap='spring', bkgrange=None, bkgtitle=None)</h3>
+<h3 id="plot95hists">plot_hists</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None,  bkgcolor=None, bkgcmap='spring', bkgrange=None, bkgtitle=None)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">plot some histograms (in histlist) in one figure using specified colors and/or labels  
 - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))  
 - colorlist is a list or array containing colors (in string format), of length nhistograms  
@@ -316,7 +341,12 @@ to be extended when the need arises!
 output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it  
 </code></pre>
 
-<h3 id="plot95hists95multihistlist-fignone-axnone-colorlist-labellist-transparency1-xlims-05-1-titlenone-xaxtitlenone-yaxtitlenone">plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)</h3>
+<h3 id="plot95hists95multi">plot_hists_multi</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">plot many histograms (in histlist) in one figure using specified colors and/or labels  
 - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))  
 - colorlist is a list or array containing numbers to be mapped to colors  
@@ -324,7 +354,12 @@ output: tuple of figure and axis objects, that can be used to further tune the l
 output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it  
 </code></pre>
 
-<h3 id="plot95hist952dhist-fignone-axnone-titlenone-xaxtitlenone-yaxtitlenone-caxrangenone">plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None, caxrange=None)</h3>
+<h3 id="plot95hist952d">plot_hist_2d</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None, caxrange=None)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">plot a 2D histogram  
 - hist is a 2D numpy array of shape (nxbins, nybins)  
 notes:  
@@ -333,24 +368,44 @@ notes:
 - if the histogram contains negative values, the color axis will be symmetrized around zero  
 </code></pre>
 
-<h3 id="plot95hists952dhists-ncols4-titlenone-subtitlesnone-xaxtitlenone-yaxtitlenone-caxrangenone">plot_hists_2d(hists, ncols=4, title=None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None)</h3>
+<h3 id="plot95hists952d">plot_hists_2d</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_hists_2d(hists, ncols=4, title=None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">plot multiple 2D histograms next to each other  
 - hists: list of 2D numpy arrays of shape (nxbins,nybins), or an equivalent 3D numpy array  
 - ncols: number of columns to use  
 </code></pre>
 
-<h3 id="plot95hists952d95gifhists-titlesnone-xaxtitlenone-yaxtitlenone-duration03-fignametemp95gifgif">plot_hists_2d_gif(hists, titles=None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp_gif.gif')</h3>
+<h3 id="plot95hists952d95gif">plot_hists_2d_gif</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_hists_2d_gif(hists, titles=None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp_gif.gif')  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="plot95hists95from95dfdf-histtype-nhists">plot_hists_from_df(df, histtype, nhists)</h3>
+<h3 id="plot95hists95from95df">plot_hists_from_df</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_hists_from_df(df, histtype, nhists)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">plot a number of histograms in a dataframe  
 - df is the dataframe from which to plot  
 - histtype is the name of the histogram type (e.g. 'chargeInner_PXLayer_1')  
 - nhists is the number of histograms to plot  
 </code></pre>
 
-<h3 id="plot95setssetlist-fignone-axnone-colorlist-labellist-transparencylist-titlenone-titlesizenone-xaxtitlenone-xaxtitlesizenone-xlims-05-1-yaxtitlenone-yaxtitlesizenone-ymaxfactornone-legendsizenone-opaque95legendfalse">plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], title=None, titlesize=None,  xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1),  yaxtitle=None, yaxtitlesize=None, ymaxfactor=None,  legendsize=None, opaque_legend=False)</h3>
+<h3 id="plot95sets">plot_sets</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], title=None, titlesize=None,  xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1),  yaxtitle=None, yaxtitlesize=None, ymaxfactor=None,  legendsize=None, opaque_legend=False)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">plot multiple sets of histograms to compare the shapes  
 - setlist is a list of 2D numpy arrays containing histograms  
 - fig and ax: a pyplot figure and axis object (if one of both is none a new figure is created)  
@@ -358,7 +413,12 @@ notes:
 other parameters are lists of which each element applies to one list of histograms  
 </code></pre>
 
-<h3 id="plot95anomaloushistlist-ls-highlight-1-hrange-1">plot_anomalous(histlist, ls, highlight=-1, hrange=-1)</h3>
+<h3 id="plot95anomalous">plot_anomalous</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_anomalous(histlist, ls, highlight=-1, hrange=-1)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">plot a range of histograms and highlight one of them  
 input arguments:  
 - histlist and ls: a list of histograms and corresponding lumisection numbers  
@@ -366,25 +426,45 @@ input arguments:
 - hrange: the number of histograms before and after lsnumber to plot (default: whole run)  
 </code></pre>
 
-<h3 id="plot95momentsmoments-ls-dims01-fignone-axnone-markersize10">plot_moments(moments, ls, dims=(0,1), fig=None, ax=None, markersize=10)</h3>
+<h3 id="plot95moments">plot_moments</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_moments(moments, ls, dims=(0,1), fig=None, ax=None, markersize=10)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">plot the moments of a set of histograms  
 input arguments:  
 - moments: a numpy array of shape (nhists,nmoments)  
 - dims: a tuple of two or three values between 0 and nmoments-1  
 </code></pre>
 
-<h3 id="plot95distancedists-lsnone-rmlargest0-doplottrue-titlenone-xaxtitlelumisection-number-yaxtitledistance-metric">plot_distance(dists, ls=None, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='distance metric')</h3>
+<h3 id="plot95distance">plot_distance</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_distance(dists, ls=None, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='distance metric')  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="plot95lossdata-xlimsnone-titlenone-xaxtitleepoch-yaxtitleloss-doshowtrue">plot_loss(data, xlims=None, title=None, xaxtitle='epoch', yaxtitle='loss', doshow=True)</h3>
+<h3 id="plot95loss">plot_loss</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_loss(data, xlims=None, title=None, xaxtitle='epoch', yaxtitle='loss', doshow=True)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">plot the training and validation loss  
 data is the object returned by the .fit method when called upon a keras model  
 e.g. history = &lt;your autoencoder&gt;.fit(&lt;training params&gt;)  
      plot_loss(history,'a title')  
 </code></pre>
 
-<h3 id="plot95msemse-rmlargest0-doplottrue-titlenone-xaxtitlelumisection-number-yaxtitlemse">plot_mse(mse, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='mse')</h3>
+<h3 id="plot95mse">plot_mse</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_mse(mse, rmlargest=0., doplot=True, title=None, xaxtitle='lumisection number', yaxtitle='mse')  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">plot the mse's and return the mean and std  
 input args:  
 - mse is a 1D numpy array of mse scores  
@@ -392,11 +472,21 @@ input args:
 - rmlargest: fraction of largest mse's to remove (to avoid being too sensitive to outliers)  
 </code></pre>
 
-<h3 id="plot95score95dist-scores-labels-fignone-axnone-nbins20-normalizefalse-siglabelsignal-sigcolorg-bcklabelbackground-bckcolorr-titlenone-xaxtitlenone-yaxtitlenone-doshowtrue">plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='signal', sigcolor='g', bcklabel='background', bckcolor='r', title=None, xaxtitle=None, yaxtitle=None, doshow=True)</h3>
+<h3 id="plot95score95dist">plot_score_dist</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='signal', sigcolor='g', bcklabel='background', bckcolor='r', title=None, xaxtitle=None, yaxtitle=None, doshow=True)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">make a plot showing the distributions of the output scores for signal and background  
 </code></pre>
 
-<h3 id="plot95metric-wprange-metric-labelnone-colornone-sig95effnone-sig95labelnone-sig95colornone-bck95effnone-bck95labelnone-bck95colornone-titlenone-xaxtitleworking-point-yaxlogfalse-ymaxfactor13-yaxtitlemetric">plot_metric( wprange, metric, label=None, color=None, sig_eff=None, sig_label=None, sig_color=None, bck_eff=None, bck_label=None, bck_color=None, title=None, xaxtitle='working point', yaxlog=False, ymaxfactor=1.3, yaxtitle='metric' )</h3>
+<h3 id="plot95metric">plot_metric</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_metric( wprange, metric, label=None, color=None, sig_eff=None, sig_label=None, sig_color=None, bck_eff=None, bck_label=None, bck_color=None, title=None, xaxtitle='working point', yaxlog=False, ymaxfactor=1.3, yaxtitle='metric' )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">plot a metric based on signal and background efficiencies.  
 along with the metric, the actual signal and background efficiencies can be plotted as well.  
 input arguments:  
@@ -412,7 +502,12 @@ input arguments:
 - ymaxfactor: factor to add extra space on the top of the plot (for the legend)  
 </code></pre>
 
-<h3 id="plot95fit952d-points-fitfuncnone-logprobfalse-clipprobfalse-onlycontourfalse-xlims5-ylims5-onlypositivefalse-xaxtitlenone-xaxtitlesizenone-yaxtitlenone-yaxtitlesizenone-titlenone-titlesizenone-caxtitlenone-caxtitlesizenone-transparency1">plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,  onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,  title=None, titlesize=None, caxtitle=None, caxtitlesize=None, transparency=1 )</h3>
+<h3 id="plot95fit952d">plot_fit_2d</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,  onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,  title=None, titlesize=None, caxtitle=None, caxtitlesize=None, transparency=1 )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">make a scatter plot of a 2D point cloud with fitted contour  
 input arguments:  
 - points: a numpy array of shape (npoints,ndims)  
@@ -429,7 +524,12 @@ input arguments:
 - xaxtitle and yaxtitle: titles for axes.  
 </code></pre>
 
-<h3 id="plot95fit952d95clusters-points-clusters-labels-colors-kwargs">plot_fit_2d_clusters( points, clusters, labels, colors, **kwargs )</h3>
+<h3 id="plot95fit952d95clusters">plot_fit_2d_clusters</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_fit_2d_clusters( points, clusters, labels, colors, **kwargs )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">make a scatter plot of a fitted contour with point clouds superimposed  
 input arguments:   
 - points: numpy arrays of shape (npoints,ndims), usually the points to which the fit was done  

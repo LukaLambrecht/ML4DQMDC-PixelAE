@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../../img/favicon.ico">
-        <title>MaxPullClassifier - Documentation for the ML4DQM/DC notebooks</title>
+        <title>MaxPullClassifier - Documentation for the ML4DQM/DC code</title>
         <link href="../../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../../css/base.css" rel="stylesheet">
@@ -34,7 +34,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="../../..">Documentation for the ML4DQM/DC notebooks</a>
+                    <a class="navbar-brand" href="../../..">Documentation for the ML4DQM/DC code</a>
                 </div>
 
                 <!-- Expanded navigation -->
@@ -251,9 +251,9 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#maxpullclassifier">MaxPullClassifier</a></li>
-            <li><a href="#pull-testhist-refhist">pull( testhist, refhist )</a></li>
-            <li><a href="#maxabspull-testhist-refhist-n1">maxabspull( testhist, refhist, n=1 )</a></li>
-            <li><a href="#class-maxpullclassifierhistogramclassifier">[class] MaxPullClassifier(HistogramClassifier)</a></li>
+            <li><a href="#pull">pull</a></li>
+            <li><a href="#maxabspull">maxabspull</a></li>
+            <li><a href="#class-maxpullclassifier">[class] MaxPullClassifier</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -263,7 +263,12 @@
 <p>Specifically intended for 2D histograms, but should in principle work for 1D as well.<br />
 Ssee static function 'pull' for definition of bin-per-bin pull and other notes.</p>
 <hr />
-<h3 id="pull-testhist-refhist">pull( testhist, refhist )</h3>
+<h3 id="pull">pull</h3>
+<p>full signature:  </p>
+<pre><code class="text">def pull( testhist, refhist )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">calculate bin-per-bin pull between two histograms  
 bin-per-bin pull is defined here preliminarily as (testhist(bin)-refhist(bin))/sqrt(refhist(bin))  
 notes:   
@@ -275,7 +280,12 @@ output:
 numpy array of same shape as testhist and refhist  
 </code></pre>
 
-<h3 id="maxabspull-testhist-refhist-n1">maxabspull( testhist, refhist, n=1 )</h3>
+<h3 id="maxabspull">maxabspull</h3>
+<p>full signature:  </p>
+<pre><code class="text">def maxabspull( testhist, refhist, n=1 )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">calculate maximum of bin-per-bin pulls (in absolute value) between two histograms  
 see definition of bin-per-bin pull in function pull (above)  
 input arguments:  
@@ -286,34 +296,60 @@ a float
 </code></pre>
 
 <hr />
-<h2 id="class-maxpullclassifierhistogramclassifier">[class] MaxPullClassifier(HistogramClassifier)</h2>
+<h2 id="class-maxpullclassifier">[class] MaxPullClassifier</h2>
+<p>comments:  </p>
 <pre><code class="text">histogram classification based on maximum pull between test histogram and reference histogram.  
 specifically intended for 2D histograms, but should in principle work for 1D as well.  
 see static function pull (above) for definition of bin-per-bin pull and other notes.  
 </code></pre>
 
-<h3 id="9595init9595-self-nmaxpulls1">&#10551; __init__( self, nmaxpulls=1 )</h3>
+<h3 id="9595init9595">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__( self, nmaxpulls=1 )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">initializer  
 input arguments:  
 - nmaxpulls: number of largest pull values to average over   
   (default: 1, just take single maximum)  
 </code></pre>
 
-<h3 id="set95nmaxpulls-self-nmaxpulls">&#10551; set_nmaxpulls( self, nmaxpulls )</h3>
+<h3 id="set95nmaxpulls">&#10551; set_nmaxpulls</h3>
+<p>full signature:  </p>
+<pre><code class="text">def set_nmaxpulls( self, nmaxpulls )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">set the nmaxpulls parameter (see also initializer)  
 </code></pre>
 
-<h3 id="train-self-refhist">&#10551; train( self, refhist )</h3>
+<h3 id="train">&#10551; train</h3>
+<p>full signature:  </p>
+<pre><code class="text">def train( self, refhist )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">'train' the classifier, i.e. set the reference histogram.  
 input arguments:  
 - refhist: a numpy array of shape (1,nbins) or (1,nybins,nxbins)  
 </code></pre>
 
-<h3 id="evaluate-self-histograms">&#10551; evaluate( self, histograms )</h3>
+<h3 id="evaluate">&#10551; evaluate</h3>
+<p>full signature:  </p>
+<pre><code class="text">def evaluate( self, histograms )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">classify the histograms based on their max bin-per-bin pull (in absolute value) with respect to a reference histogram  
 </code></pre>
 
-<h3 id="getpull-self-histogram">&#10551; getpull( self, histogram )</h3>
+<h3 id="getpull">&#10551; getpull</h3>
+<p>full signature:  </p>
+<pre><code class="text">def getpull( self, histogram )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get the pull histogram for a given test histogram  
 input arguments:  
 histogram: a single histogram, i.e. numpy array of shape (nbins) for 1D or (nybins,nxbins) for 2D.  

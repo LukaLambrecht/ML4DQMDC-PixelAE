@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>json_utils - Documentation for the ML4DQM/DC notebooks</title>
+        <title>json_utils - Documentation for the ML4DQM/DC code</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -34,7 +34,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC notebooks</a>
+                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC code</a>
                 </div>
 
                 <!-- Expanded navigation -->
@@ -251,18 +251,18 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#json-utils">json utils</a></li>
-            <li><a href="#loadjson-jsonfile">loadjson( jsonfile )</a></li>
-            <li><a href="#writejson-jsondict-outputfile-overwritefalse">writejson( jsondict, outputfile, overwrite=False )</a></li>
-            <li><a href="#injson95single-run-lumi-jsondict">injson_single( run, lumi, jsondict )</a></li>
-            <li><a href="#injson-run-lumi-jsonfilenone-jsondictnone">injson( run, lumi, jsonfile=None, jsondict=None )</a></li>
-            <li><a href="#getjsondir">getjsondir()</a></li>
-            <li><a href="#isgoldenrun-lumi">isgolden(run, lumi)</a></li>
-            <li><a href="#isdcsonrun-lumi">isdcson(run, lumi)</a></li>
-            <li><a href="#plainlist95to95rangelist-plainlist">plainlist_to_rangelist( plainlist )</a></li>
-            <li><a href="#rangelist95to95plainlist-rangelist">rangelist_to_plainlist( rangelist )</a></li>
-            <li><a href="#tuplelist95to95jsondict-tuplelist">tuplelist_to_jsondict( tuplelist )</a></li>
-            <li><a href="#jsondict95to95tuplelist-jsondict">jsondict_to_tuplelist( jsondict )</a></li>
-            <li><a href="#get95lcs-jsonlist">get_lcs( jsonlist )</a></li>
+            <li><a href="#loadjson">loadjson</a></li>
+            <li><a href="#writejson">writejson</a></li>
+            <li><a href="#injson95single">injson_single</a></li>
+            <li><a href="#injson">injson</a></li>
+            <li><a href="#getjsondir">getjsondir</a></li>
+            <li><a href="#isgolden">isgolden</a></li>
+            <li><a href="#isdcson">isdcson</a></li>
+            <li><a href="#plainlist95to95rangelist">plainlist_to_rangelist</a></li>
+            <li><a href="#rangelist95to95plainlist">rangelist_to_plainlist</a></li>
+            <li><a href="#tuplelist95to95jsondict">tuplelist_to_jsondict</a></li>
+            <li><a href="#jsondict95to95tuplelist">jsondict_to_tuplelist</a></li>
+            <li><a href="#get95lcs">get_lcs</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -282,7 +282,12 @@ Functionality includes:
 { "294927": [ [ 55,85 ], [ 95,105] ] } </p>
 <p>There is one exception to this rule: instead of [ start, stop ], the lumisection list can also be [ -1 ], which is short for all lumisections within that run.</p>
 <hr />
-<h3 id="loadjson-jsonfile">loadjson( jsonfile )</h3>
+<h3 id="loadjson">loadjson</h3>
+<p>full signature:  </p>
+<pre><code class="text">def loadjson( jsonfile )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">load the content of a json file into a python object  
 input arguments:  
 - jsonfile: the name (or full path if needed) to the json file to be read  
@@ -294,7 +299,12 @@ note: the json file is supposed to contain an object like this example:
       objects that don't have this structure will probably lead to errors further in the code  
 </code></pre>
 
-<h3 id="writejson-jsondict-outputfile-overwritefalse">writejson( jsondict, outputfile, overwrite=False )</h3>
+<h3 id="writejson">writejson</h3>
+<p>full signature:  </p>
+<pre><code class="text">def writejson( jsondict, outputfile, overwrite=False )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">inverse function of loadjson  
 input arguments  
 - jsondict: dict object to be written to a json file  
@@ -302,7 +312,12 @@ input arguments
 - overwrite: boolean whether to overwrite outputfile if it exists (default: throw exception)  
 </code></pre>
 
-<h3 id="injson95single-run-lumi-jsondict">injson_single( run, lumi, jsondict )</h3>
+<h3 id="injson95single">injson_single</h3>
+<p>full signature:  </p>
+<pre><code class="text">def injson_single( run, lumi, jsondict )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">helper function for injson, only for internal use  
 input arguments:  
 - run and lumi are integers  
@@ -311,7 +326,12 @@ output:
 - boolean whether the run/lumi combination is in the json dict  
 </code></pre>
 
-<h3 id="injson-run-lumi-jsonfilenone-jsondictnone">injson( run, lumi, jsonfile=None, jsondict=None )</h3>
+<h3 id="injson">injson</h3>
+<p>full signature:  </p>
+<pre><code class="text">def injson( run, lumi, jsonfile=None, jsondict=None )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">find if a run and lumi combination is in a given json file  
 input arguments:  
 - run and lumi: integers or (equally long) arrays of integers  
@@ -322,23 +342,43 @@ output:
 boolean or array of booleans (depending on run and lumi)  
 </code></pre>
 
-<h3 id="getjsondir">getjsondir()</h3>
+<h3 id="getjsondir">getjsondir</h3>
+<p>full signature:  </p>
+<pre><code class="text">def getjsondir()  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">internal helper function returning the path to where json files are stored  
 </code></pre>
 
-<h3 id="isgoldenrun-lumi">isgolden(run, lumi)</h3>
+<h3 id="isgolden">isgolden</h3>
+<p>full signature:  </p>
+<pre><code class="text">def isgolden(run, lumi)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">find if a run and lumi combination is in the golden json file  
 input arguments:  
 - run and lumi: either integers or (equally long) arrays of integers  
 </code></pre>
 
-<h3 id="isdcsonrun-lumi">isdcson(run, lumi)</h3>
+<h3 id="isdcson">isdcson</h3>
+<p>full signature:  </p>
+<pre><code class="text">def isdcson(run, lumi)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">find if a run and lumi combination is in DCS-only json file  
 input arguments:  
 - run and lumi: either integers or (equally long) arrays of integers  
 </code></pre>
 
-<h3 id="plainlist95to95rangelist-plainlist">plainlist_to_rangelist( plainlist )</h3>
+<h3 id="plainlist95to95rangelist">plainlist_to_rangelist</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plainlist_to_rangelist( plainlist )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">helper function for tuplelist_to_jsondict, only for internal use  
 input arguments:  
 - plainlist: a list of integers in increasing order, must have length &gt;= 2  
@@ -347,19 +387,39 @@ output:
 example: [1,2,3,5,6] -&gt; [ [1,3], [5,6] ]  
 </code></pre>
 
-<h3 id="rangelist95to95plainlist-rangelist">rangelist_to_plainlist( rangelist )</h3>
+<h3 id="rangelist95to95plainlist">rangelist_to_plainlist</h3>
+<p>full signature:  </p>
+<pre><code class="text">def rangelist_to_plainlist( rangelist )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">inverse function of plainlist_to_rangelist, for internal use only  
 </code></pre>
 
-<h3 id="tuplelist95to95jsondict-tuplelist">tuplelist_to_jsondict( tuplelist )</h3>
+<h3 id="tuplelist95to95jsondict">tuplelist_to_jsondict</h3>
+<p>full signature:  </p>
+<pre><code class="text">def tuplelist_to_jsondict( tuplelist )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">convert a list of tuples of format (run number, [lumisection numbers]) to json dict  
 </code></pre>
 
-<h3 id="jsondict95to95tuplelist-jsondict">jsondict_to_tuplelist( jsondict )</h3>
+<h3 id="jsondict95to95tuplelist">jsondict_to_tuplelist</h3>
+<p>full signature:  </p>
+<pre><code class="text">def jsondict_to_tuplelist( jsondict )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">inverse function of tuplelist_to_jsondict  
 </code></pre>
 
-<h3 id="get95lcs-jsonlist">get_lcs( jsonlist )</h3>
+<h3 id="get95lcs">get_lcs</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_lcs( jsonlist )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">return a jsondict object that is the largest common subset (LCS) between the jsondict objects in jsonlist  
 input arguments:  
 - jsonlist: a list of dicts in the conventional json format,   

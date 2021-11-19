@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>omstools - Documentation for the ML4DQM/DC notebooks</title>
+        <title>omstools - Documentation for the ML4DQM/DC code</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -34,7 +34,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC notebooks</a>
+                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC code</a>
                 </div>
 
                 <!-- Expanded navigation -->
@@ -251,27 +251,27 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#omstools">omstools</a></li>
-            <li><a href="#check95oms95connectivity">check_oms_connectivity()</a></li>
-            <li><a href="#get95oms95cookies-authmode-kwargs">get_oms_cookies( authmode, **kwargs )</a></li>
-            <li><a href="#95get95oms95resource95within95cern95gpnrelative95url">_get_oms_resource_within_cern_gpn(relative_url)</a></li>
-            <li><a href="#95get95oms95resource95authenticatedrelative95url-cookies">_get_oms_resource_authenticated(relative_url, cookies)</a></li>
-            <li><a href="#get95oms95resourcetable-parameters-kwargs">get_oms_resource(table, parameters, **kwargs)</a></li>
-            <li><a href="#95get95single95resourcetable-parameters-kwargs">_get_single_resource(table, parameters, **kwargs)</a></li>
-            <li><a href="#get95runrun95number-kwargs">get_run(run_number, **kwargs)</a></li>
-            <li><a href="#get95fillfill95number-kwargs">get_fill(fill_number, **kwargs)</a></li>
-            <li><a href="#95get95resources95pagetable-parameters-page-page95size-kwargs">_get_resources_page(table, parameters, page, page_size, **kwargs)</a></li>
-            <li><a href="#get95resourcestable-parameters-page95sizepage95size-silentfalse-kwargs">get_resources(table, parameters, page_size=PAGE_SIZE, silent=False, **kwargs)</a></li>
-            <li><a href="#get95runsbegin-end-kwargs">get_runs(begin, end, **kwargs)</a></li>
-            <li><a href="#get95fillsbegin-end-kwargs">get_fills(begin, end, **kwargs)</a></li>
-            <li><a href="#get95lumisection95countrun95number-kwargs">get_lumisection_count(run_number, **kwargs)</a></li>
-            <li><a href="#get95lumisections-run95numbernone-fill95numbernone-start95timenone-end95timenone-kwargs">get_lumisections( run_number=None, fill_number=None, start_time=None, end_time=None, **kwargs)</a></li>
-            <li><a href="#get95hltpathinfosrun95number-kwargs">get_hltpathinfos(run_number, **kwargs)</a></li>
-            <li><a href="#get95hltpathratesrun95number-path95name-kwargs">get_hltpathrates(run_number, path_name, **kwargs)</a></li>
-            <li><a href="#get95all95hltpathratesrun95number-silentfalse-kwargs">get_all_hltpathrates(run_number, silent=False, **kwargs)</a></li>
-            <li><a href="#calc95page95countresource95count-page95size">calc_page_count(resource_count, page_size)</a></li>
-            <li><a href="#flatten95resourceresponse">flatten_resource(response)</a></li>
-            <li><a href="#progress95barcurrent-total-text-filler">progress_bar(current, total, text="", filler="#")</a></li>
-            <li><a href="#print95progresscurrent-total-text-args-kwargs">print_progress(current, total, text="", args, *kwargs)</a></li>
+            <li><a href="#check95oms95connectivity">check_oms_connectivity</a></li>
+            <li><a href="#get95oms95cookies">get_oms_cookies</a></li>
+            <li><a href="#95get95oms95resource95within95cern95gpn">_get_oms_resource_within_cern_gpn</a></li>
+            <li><a href="#95get95oms95resource95authenticated">_get_oms_resource_authenticated</a></li>
+            <li><a href="#get95oms95resource">get_oms_resource</a></li>
+            <li><a href="#95get95single95resource">_get_single_resource</a></li>
+            <li><a href="#get95run">get_run</a></li>
+            <li><a href="#get95fill">get_fill</a></li>
+            <li><a href="#95get95resources95page">_get_resources_page</a></li>
+            <li><a href="#get95resources">get_resources</a></li>
+            <li><a href="#get95runs">get_runs</a></li>
+            <li><a href="#get95fills">get_fills</a></li>
+            <li><a href="#get95lumisection95count">get_lumisection_count</a></li>
+            <li><a href="#get95lumisections">get_lumisections</a></li>
+            <li><a href="#get95hltpathinfos">get_hltpathinfos</a></li>
+            <li><a href="#get95hltpathrates">get_hltpathrates</a></li>
+            <li><a href="#get95all95hltpathrates">get_all_hltpathrates</a></li>
+            <li><a href="#calc95page95count">calc_page_count</a></li>
+            <li><a href="#flatten95resource">flatten_resource</a></li>
+            <li><a href="#progress95bar">progress_bar</a></li>
+            <li><a href="#print95progress">print_progress</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -283,87 +283,192 @@ See the readme file in this directory for more information.  </p>
 <p>For normal users these functions should not be called directly, everything is handled by a single call to get_oms_data.py / get_oms_data.<br />
 See get_oms_data.py in this directory for more information.</p>
 <hr />
-<h3 id="check95oms95connectivity">check_oms_connectivity()</h3>
+<h3 id="check95oms95connectivity">check_oms_connectivity</h3>
+<p>full signature:  </p>
+<pre><code class="text">def check_oms_connectivity()  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="get95oms95cookies-authmode-kwargs">get_oms_cookies( authmode, **kwargs )</h3>
+<h3 id="get95oms95cookies">get_oms_cookies</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_oms_cookies( authmode, **kwargs )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="95get95oms95resource95within95cern95gpnrelative95url">_get_oms_resource_within_cern_gpn(relative_url)</h3>
+<h3 id="95get95oms95resource95within95cern95gpn">_get_oms_resource_within_cern_gpn</h3>
+<p>full signature:  </p>
+<pre><code class="text">def _get_oms_resource_within_cern_gpn(relative_url)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="95get95oms95resource95authenticatedrelative95url-cookies">_get_oms_resource_authenticated(relative_url, cookies)</h3>
+<h3 id="95get95oms95resource95authenticated">_get_oms_resource_authenticated</h3>
+<p>full signature:  </p>
+<pre><code class="text">def _get_oms_resource_authenticated(relative_url, cookies)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="get95oms95resourcetable-parameters-kwargs">get_oms_resource(table, parameters, **kwargs)</h3>
+<h3 id="get95oms95resource">get_oms_resource</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_oms_resource(table, parameters, **kwargs)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="95get95single95resourcetable-parameters-kwargs">_get_single_resource(table, parameters, **kwargs)</h3>
+<h3 id="95get95single95resource">_get_single_resource</h3>
+<p>full signature:  </p>
+<pre><code class="text">def _get_single_resource(table, parameters, **kwargs)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="get95runrun95number-kwargs">get_run(run_number, **kwargs)</h3>
+<h3 id="get95run">get_run</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_run(run_number, **kwargs)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="get95fillfill95number-kwargs">get_fill(fill_number, **kwargs)</h3>
+<h3 id="get95fill">get_fill</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_fill(fill_number, **kwargs)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="95get95resources95pagetable-parameters-page-page95size-kwargs">_get_resources_page(table, parameters, page, page_size, **kwargs)</h3>
+<h3 id="95get95resources95page">_get_resources_page</h3>
+<p>full signature:  </p>
+<pre><code class="text">def _get_resources_page(table, parameters, page, page_size, **kwargs)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="get95resourcestable-parameters-page95sizepage95size-silentfalse-kwargs">get_resources(table, parameters, page_size=PAGE_SIZE, silent=False, **kwargs)</h3>
+<h3 id="get95resources">get_resources</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_resources(table, parameters, page_size=PAGE_SIZE, silent=False, **kwargs)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="get95runsbegin-end-kwargs">get_runs(begin, end, **kwargs)</h3>
+<h3 id="get95runs">get_runs</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_runs(begin, end, **kwargs)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="get95fillsbegin-end-kwargs">get_fills(begin, end, **kwargs)</h3>
+<h3 id="get95fills">get_fills</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_fills(begin, end, **kwargs)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="get95lumisection95countrun95number-kwargs">get_lumisection_count(run_number, **kwargs)</h3>
+<h3 id="get95lumisection95count">get_lumisection_count</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_lumisection_count(run_number, **kwargs)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="get95lumisections-run95numbernone-fill95numbernone-start95timenone-end95timenone-kwargs">get_lumisections( run_number=None, fill_number=None, start_time=None, end_time=None, **kwargs)</h3>
+<h3 id="get95lumisections">get_lumisections</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_lumisections( run_number=None, fill_number=None, start_time=None, end_time=None, **kwargs)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="get95hltpathinfosrun95number-kwargs">get_hltpathinfos(run_number, **kwargs)</h3>
+<h3 id="get95hltpathinfos">get_hltpathinfos</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_hltpathinfos(run_number, **kwargs)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="get95hltpathratesrun95number-path95name-kwargs">get_hltpathrates(run_number, path_name, **kwargs)</h3>
+<h3 id="get95hltpathrates">get_hltpathrates</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_hltpathrates(run_number, path_name, **kwargs)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="get95all95hltpathratesrun95number-silentfalse-kwargs">get_all_hltpathrates(run_number, silent=False, **kwargs)</h3>
+<h3 id="get95all95hltpathrates">get_all_hltpathrates</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_all_hltpathrates(run_number, silent=False, **kwargs)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="calc95page95countresource95count-page95size">calc_page_count(resource_count, page_size)</h3>
+<h3 id="calc95page95count">calc_page_count</h3>
+<p>full signature:  </p>
+<pre><code class="text">def calc_page_count(resource_count, page_size)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="flatten95resourceresponse">flatten_resource(response)</h3>
+<h3 id="flatten95resource">flatten_resource</h3>
+<p>full signature:  </p>
+<pre><code class="text">def flatten_resource(response)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="progress95barcurrent-total-text-filler">progress_bar(current, total, text="", filler="#")</h3>
+<h3 id="progress95bar">progress_bar</h3>
+<p>full signature:  </p>
+<pre><code class="text">def progress_bar(current, total, text=&quot;&quot;, filler=&quot;#&quot;)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="print95progresscurrent-total-text-args-kwargs">print_progress(current, total, text="", <em>args, </em>*kwargs)</h3>
+<h3 id="print95progress">print_progress</h3>
+<p>full signature:  </p>
+<pre><code class="text">def print_progress(current, total, text=&quot;&quot;, *args, **kwargs)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre></div>
         </div>

@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>HistStruct - Documentation for the ML4DQM/DC notebooks</title>
+        <title>HistStruct - Documentation for the ML4DQM/DC code</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -34,7 +34,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC notebooks</a>
+                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC code</a>
                 </div>
 
                 <!-- Expanded navigation -->
@@ -251,9 +251,9 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#histstruct">HistStruct</a></li>
-            <li><a href="#class-histstructobject">[class] HistStruct(object)</a></li>
-            <li><a href="#class-classifiers-dictselfclassifiers">[class] classifiers = dict(self.classifiers)</a></li>
-            <li><a href="#class-classifiersave-ospathjoincpathhistname">[class] classifier.save( os.path.join(cpath,histname) )</a></li>
+            <li><a href="#class-histstruct">[class] HistStruct</a></li>
+            <li><a href="#class-classifiers-dict">[class] classifiers = dict</a></li>
+            <li><a href="#class-classifiersave">[class] classifier.save</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -271,7 +271,8 @@ However, especially when using multiple histogram types, the HistStruct is very 
 <p>See the tutorial autoencoder_combine.ipynb for an important example!</p>
 <hr />
 <hr />
-<h2 id="class-histstructobject">[class] HistStruct(object)</h2>
+<h2 id="class-histstruct">[class] HistStruct</h2>
+<p>comments:  </p>
 <pre><code class="text">main data structure used within this framework  
 a HistStruct object basically consists of a mutually consistent collection of numpy arrays,  
 where each numpy array corresponds to one histogram type, with dimensions (number of histograms, number of bins).  
@@ -281,7 +282,12 @@ the HistStruct has functions to easily perform the following common tasks (among
 - evaluate classifiers (machine learning types or other)  
 </code></pre>
 
-<h3 id="9595init9595-self">&#10551; __init__( self )</h3>
+<h3 id="9595init9595">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__( self )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">empty initializer, setting all containers to empty defaults  
 a HistStruct object has the following properties:  
 histnames: list of histogram names  
@@ -299,11 +305,21 @@ extscores: dict of dicts similar to scores for additional (e.g. artificially gen
 extglobalscores: dict of lists similar to scores for additional (e.g. artificially generated) histograms  
 </code></pre>
 
-<h3 id="9595str9595-self">&#10551; __str__( self )</h3>
+<h3 id="9595str9595">&#10551; __str__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __str__( self )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get a printable representation of a HistStruct  
 </code></pre>
 
-<h3 id="save-self-path-save95classifierstrue">&#10551; save( self, path, save_classifiers=True )</h3>
+<h3 id="save">&#10551; save</h3>
+<p>full signature:  </p>
+<pre><code class="text">def save( self, path, save_classifiers=True )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">save a HistStruct object to a pkl file  
 input arguments:  
 - path where to store the file (appendix .zip is automatically appended)  
@@ -312,17 +328,24 @@ input arguments:
 
 <hr />
 <hr />
-<h2 id="class-classifiers-dictselfclassifiers">[class] classifiers = dict(self.classifiers)</h2>
+<h2 id="class-classifiers-dict">[class] classifiers = dict</h2>
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
 <hr />
 <hr />
-<h2 id="class-classifiersave-ospathjoincpathhistname">[class] classifier.save( os.path.join(cpath,histname) )</h2>
+<h2 id="class-classifiersave">[class] classifier.save</h2>
+<p>comments:  </p>
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="load-self-path-load95classifierstrue-verbosefalse">&#10551; load( self, path, load_classifiers=True, verbose=False )</h3>
+<h3 id="load">&#10551; load</h3>
+<p>full signature:  </p>
+<pre><code class="text">def load( self, path, load_classifiers=True, verbose=False )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">load a HistStruct object from a pkl file  
 input arguments:  
 - path to a zip file containing a HistStruct object  
@@ -330,7 +353,12 @@ input arguments:
 - verbose: boolean whether to print some information  
 </code></pre>
 
-<h3 id="add95dataframe-self-df-cropslicesnone-donormalizetrue-rebinningfactornone">&#10551; add_dataframe( self, df, cropslices=None, donormalize=True, rebinningfactor=None )</h3>
+<h3 id="add95dataframe">&#10551; add_dataframe</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_dataframe( self, df, cropslices=None, donormalize=True, rebinningfactor=None )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">add a dataframe to a HistStruct  
 input arguments:  
 - df: a pandas dataframe as read from the input csv files  
@@ -347,7 +375,12 @@ notes:
   with add_histograms, allowing for more control over complicated preprocessing.  
 </code></pre>
 
-<h3 id="add95histograms-self-histname-histograms-runnbs-lsnbs-nentriesnone">&#10551; add_histograms( self, histname, histograms, runnbs, lsnbs, nentries=None )</h3>
+<h3 id="add95histograms">&#10551; add_histograms</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_histograms( self, histname, histograms, runnbs, lsnbs, nentries=None )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">add a set of histograms to a HistStruct  
 input arguments:  
 - histname: name of the histogram type to be added  
@@ -367,13 +400,23 @@ notes:
 - see also add_dataframe for an alternative way of adding histograms  
 </code></pre>
 
-<h3 id="add95globalscores-self-globalscores">&#10551; add_globalscores( self, globalscores )</h3>
+<h3 id="add95globalscores">&#10551; add_globalscores</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_globalscores( self, globalscores )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">add an array of global scores (one per lumisection)  
 input arguments:  
 - globalscores: 1D numpy array of scores (must have same length as lumisection and run numbers)  
 </code></pre>
 
-<h3 id="add95extglobalscores-self-extname-globalscores">&#10551; add_extglobalscores( self, extname, globalscores )</h3>
+<h3 id="add95extglobalscores">&#10551; add_extglobalscores</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_extglobalscores( self, extname, globalscores )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">add an array of global scores (one per lumisection) for a specified extra set of histograms in the HistStruct  
 input arguments:  
 - extname: name of extra histogram set  
@@ -383,14 +426,24 @@ note: this function checks if all histogram types in this set contain the same n
       else adding globalscores is meaningless  
 </code></pre>
 
-<h3 id="get95globalscores95jsonformat-self-working95pointnone">&#10551; get_globalscores_jsonformat( self, working_point=None )</h3>
+<h3 id="get95globalscores95jsonformat">&#10551; get_globalscores_jsonformat</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_globalscores_jsonformat( self, working_point=None )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">make a json format listing all lumisections in this histstruct  
 the output list has entries for global score, pass/fail given working point, and masks  
 input arguments:  
 - working_point: if present, an entry will be made for each lumisection whether it passes this working point  
 </code></pre>
 
-<h3 id="add95exthistograms-self-extname-histname-histograms-overwritefalse">&#10551; add_exthistograms( self, extname, histname, histograms, overwrite=False )</h3>
+<h3 id="add95exthistograms">&#10551; add_exthistograms</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_exthistograms( self, extname, histname, histograms, overwrite=False )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">add a set of extra histograms to a HistStruct  
 these histograms are not assumed to correspond to physical run/lumisections numbers (e.g. resampled ones),  
 and no consistency checks are done  
@@ -401,18 +454,33 @@ input arguments:
 - overwrite: boolean whether to overwrite a set of histograms of the same name if present (default: raise exception)  
 </code></pre>
 
-<h3 id="add95mask-self-name-mask">&#10551; add_mask( self, name, mask )</h3>
+<h3 id="add95mask">&#10551; add_mask</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_mask( self, name, mask )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">add a mask to a HistStruct  
 input arguments:  
 - name: a name for the mask  
 - mask: a 1D np array of booleans  with same length as number of lumisections in HistStruct  
 </code></pre>
 
-<h3 id="remove95mask-self-name">&#10551; remove_mask( self, name )</h3>
+<h3 id="remove95mask">&#10551; remove_mask</h3>
+<p>full signature:  </p>
+<pre><code class="text">def remove_mask( self, name )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">inverse operation of add_mask  
 </code></pre>
 
-<h3 id="add95json95mask-self-name-jsondict">&#10551; add_json_mask( self, name, jsondict )</h3>
+<h3 id="add95json95mask">&#10551; add_json_mask</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_json_mask( self, name, jsondict )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">add a mask corresponding to a json dict  
 input arguments:  
 - name: a name for the mask  
@@ -420,19 +488,34 @@ input arguments:
 all lumisections present in the jsondict will be masked True, the others False.  
 </code></pre>
 
-<h3 id="add95goldenjson95mask-self-name">&#10551; add_goldenjson_mask( self, name )</h3>
+<h3 id="add95goldenjson95mask">&#10551; add_goldenjson_mask</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_goldenjson_mask( self, name )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">add a mask corresponding to the golden json file  
 input arguments:  
 - name: a name for the mask  
 </code></pre>
 
-<h3 id="add95dcsonjson95mask-self-name">&#10551; add_dcsonjson_mask( self, name )</h3>
+<h3 id="add95dcsonjson95mask">&#10551; add_dcsonjson_mask</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_dcsonjson_mask( self, name )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">add a mask corresponding to the DCS-bit on json file  
 input arguments:  
 - name: a name for the mask  
 </code></pre>
 
-<h3 id="add95stat95mask-self-name-histnamesnone-min95entries95to95bins95ratio-1-max95entries95to95bins95ratio-1">&#10551; add_stat_mask( self, name, histnames=None, min_entries_to_bins_ratio=-1, max_entries_to_bins_ratio=-1 )</h3>
+<h3 id="add95stat95mask">&#10551; add_stat_mask</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_stat_mask( self, name, histnames=None, min_entries_to_bins_ratio=-1, max_entries_to_bins_ratio=-1 )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">add a mask corresponding to lumisections where all histograms have statistics within given bounds  
 input arguments:  
 - histnames: list of histogram names to take into account for making the mask (default: all in the HistStruct)  
@@ -440,41 +523,76 @@ input arguments:
 - max_entries_to_bins_ratio: same but upper boundary instead of lower boundary (default: no upper boundary)  
 </code></pre>
 
-<h3 id="add95highstat95mask-self-name-histnamesnone-entries95to95bins95ratio100">&#10551; add_highstat_mask( self, name, histnames=None, entries_to_bins_ratio=100 )</h3>
+<h3 id="add95highstat95mask">&#10551; add_highstat_mask</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_highstat_mask( self, name, histnames=None, entries_to_bins_ratio=100 )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">shorthand call to add_stat_mask with only lower boundary and no upper boundary for statistics  
 input arguments:  
 - entries_to_bins_ratio: number of entries divided by number of bins, lower boundary for statistics  
 others: see add_stat_mask  
 </code></pre>
 
-<h3 id="get95combined95mask-self-names">&#10551; get_combined_mask( self, names )</h3>
+<h3 id="get95combined95mask">&#10551; get_combined_mask</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_combined_mask( self, names )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get a combined mask given multiple mask names  
 mostly for internal use; externally you can use get_histograms( histname, &lt;list of mask names&gt;) directly  
 </code></pre>
 
-<h3 id="get95masknames-self">&#10551; get_masknames( self )</h3>
+<h3 id="get95masknames">&#10551; get_masknames</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_masknames( self )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">return a simple list of all mask names in the current HistStruct  
 </code></pre>
 
-<h3 id="get95runnbs-self-masknamesnone">&#10551; get_runnbs( self, masknames=None )</h3>
+<h3 id="get95runnbs">&#10551; get_runnbs</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_runnbs( self, masknames=None )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get the array of run numbers, optionally after masking  
 input arguments:  
 - masknames: list of names of masks (default: no masking, return full array)  
 </code></pre>
 
-<h3 id="get95lsnbs-self-masknamesnone">&#10551; get_lsnbs( self, masknames=None )</h3>
+<h3 id="get95lsnbs">&#10551; get_lsnbs</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_lsnbs( self, masknames=None )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get the array of lumisection numbers, optionally after masking  
 input arguments:  
 - masknames: list of names of masks (default: no masking, return full array)  
 </code></pre>
 
-<h3 id="get95index-self-runnb-lsnb">&#10551; get_index( self, runnb, lsnb )</h3>
+<h3 id="get95index">&#10551; get_index</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_index( self, runnb, lsnb )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get the index in the current HistStruct of a given run and lumisection number  
 input arguments:  
 - runnb and lsnb: run and lumisection number respectively  
 </code></pre>
 
-<h3 id="get95scores-self-histnamenone-masknamesnone">&#10551; get_scores( self, histname=None, masknames=None )</h3>
+<h3 id="get95scores">&#10551; get_scores</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_scores( self, histname=None, masknames=None )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get the array of scores for a given histogram type, optionally after masking  
 input arguments:  
 - histname: name of the histogram type for which to retrieve the score.   
@@ -486,12 +604,22 @@ notes:
   else an exception will be thrown.  
 </code></pre>
 
-<h3 id="get95scores95array-self-masknamesnone">&#10551; get_scores_array( self, masknames=None )</h3>
+<h3 id="get95scores95array">&#10551; get_scores_array</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_scores_array( self, masknames=None )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">similar to get_scores, but with different return type:  
 np array of shape (nhistograms, nhistogramtypes)  
 </code></pre>
 
-<h3 id="get95extscores-self-extname-histnamenone">&#10551; get_extscores( self, extname, histname=None )</h3>
+<h3 id="get95extscores">&#10551; get_extscores</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_extscores( self, extname, histname=None )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get the array of scores for a given histogram type in a given extra set.  
 input arguments:  
 - extname: name of the extra set (see also add_exthistograms)  
@@ -503,12 +631,22 @@ notes:
   else an exception will be thrown.  
 </code></pre>
 
-<h3 id="get95extscores95array-self-extname">&#10551; get_extscores_array( self, extname )</h3>
+<h3 id="get95extscores95array">&#10551; get_extscores_array</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_extscores_array( self, extname )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">similar to get_extscores, but with different return type:  
 np array of shape (nhistograms, nhistogramtypes)  
 </code></pre>
 
-<h3 id="get95scores95ls-self-runnb-lsnb-histnamesnone-suppresswarningsfalse">&#10551; get_scores_ls( self, runnb, lsnb, histnames=None, suppresswarnings=False )</h3>
+<h3 id="get95scores95ls">&#10551; get_scores_ls</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_scores_ls( self, runnb, lsnb, histnames=None, suppresswarnings=False )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get the scores for a given run/lumisection number and for given histogram names  
 input arguments:  
 - runnb: run number  
@@ -522,7 +660,12 @@ notes:
   else the returned scores will be None.  
 </code></pre>
 
-<h3 id="get95globalscores-self-masknamesnone">&#10551; get_globalscores( self, masknames=None )</h3>
+<h3 id="get95globalscores">&#10551; get_globalscores</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_globalscores( self, masknames=None )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get the array of global scores, optionally after masking  
 input arguments:  
 - masknames: list of names of masks (default: no masking, return full array)  
@@ -532,7 +675,12 @@ notes:
   else an exception will be thrown.  
 </code></pre>
 
-<h3 id="get95globalscore95ls-self-runnb-lsnb">&#10551; get_globalscore_ls( self, runnb, lsnb )</h3>
+<h3 id="get95globalscore95ls">&#10551; get_globalscore_ls</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_globalscore_ls( self, runnb, lsnb )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get the global score for a given run/lumisection number  
 input arguments:  
 - runnb: run number  
@@ -546,7 +694,12 @@ notes:
   else the returned scores will be None.  
 </code></pre>
 
-<h3 id="get95extglobalscores-self-extname">&#10551; get_extglobalscores( self, extname )</h3>
+<h3 id="get95extglobalscores">&#10551; get_extglobalscores</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_extglobalscores( self, extname )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get the array of global scores for one of the extra histogram sets  
 input arguments:  
 - extname: name of the extra histogram set  
@@ -556,7 +709,12 @@ notes:
   else an exception will be thrown.  
 </code></pre>
 
-<h3 id="get95histograms-self-histnamenone-masknamesnone">&#10551; get_histograms( self, histname=None, masknames=None )</h3>
+<h3 id="get95histograms">&#10551; get_histograms</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_histograms( self, histname=None, masknames=None )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get the array of histograms for a given type, optionally after masking  
 input arguments:  
 - histname: name of the histogram type to retrieve   
@@ -564,7 +722,12 @@ input arguments:
 - masknames: list of names of masks (default: no masking, return full array)  
 </code></pre>
 
-<h3 id="get95exthistograms-self-extname-histnamenone">&#10551; get_exthistograms( self, extname, histname=None )</h3>
+<h3 id="get95exthistograms">&#10551; get_exthistograms</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_exthistograms( self, extname, histname=None )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get the array of extra histograms for a given set name and type name  
 input arguments:  
 - extname: name of the set of extra histograms (see also add_exthistograms)  
@@ -572,7 +735,12 @@ input arguments:
   if None, return a dict matching histnames to arrays of histograms  
 </code></pre>
 
-<h3 id="add95classifier-self-histname-classifier-evaluatefalse">&#10551; add_classifier( self, histname, classifier, evaluate=False )</h3>
+<h3 id="add95classifier">&#10551; add_classifier</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_classifier( self, histname, classifier, evaluate=False )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">add a histogram classifier for a given histogram name to the HistStruct  
 input arguments:  
 - histname: a valid histogram name present in the HistStruct to which this classifier applies  
@@ -581,7 +749,12 @@ input arguments:
   if set to True, the result is both returned and stored in the 'scores' attribute.  
 </code></pre>
 
-<h3 id="evaluate95classifier-self-histname-extnamenone">&#10551; evaluate_classifier( self, histname, extname=None )</h3>
+<h3 id="evaluate95classifier">&#10551; evaluate_classifier</h3>
+<p>full signature:  </p>
+<pre><code class="text">def evaluate_classifier( self, histname, extname=None )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">evaluate a histogram classifier for a given histogram name in the HistStruct  
 input arguments:  
 - histname: a valid histogram name present in the HistStruct for which to evaluate the classifier  
@@ -591,7 +764,12 @@ notes:
 - the result is both returned and stored in the 'scores' attribute  
 </code></pre>
 
-<h3 id="plot95histograms-self-histnamesnone-masknamesnone-colorlist-labellist-transparencylist-titledictnone-xaxtitledictnone-physicalxaxfalse-yaxtitledictnone-kwargs">&#10551; plot_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[],  titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs )</h3>
+<h3 id="plot95histograms">&#10551; plot_histograms</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[],  titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">plot the histograms in a HistStruct, optionally after msking  
 note: so far only for 1D hsitograms.  
       case of 2D histograms requires different plotting method since they cannot be clearly overlaid.  
@@ -611,7 +789,12 @@ input arguments:
 - kwargs: keyword arguments passed down to plot_utils.plot_sets   
 </code></pre>
 
-<h3 id="plot95ls-self-runnb-lsnb-histnamesnone-histlabelnone-recohistnone-recohistlabelreconstruction-refhistsnone-refhistslabelreference-histograms-refhiststransparencynone-titledictnone-xaxtitledictnone-physicalxaxfalse-yaxtitledictnone-kwargs">&#10551; plot_ls( self, runnb, lsnb, histnames=None, histlabel=None,  recohist=None, recohistlabel='Reconstruction',  refhists=None, refhistslabel='Reference histograms', refhiststransparency=None, titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs)</h3>
+<h3 id="plot95ls">&#10551; plot_ls</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_ls( self, runnb, lsnb, histnames=None, histlabel=None,  recohist=None, recohistlabel='Reconstruction',  refhists=None, refhistslabel='Reference histograms', refhiststransparency=None, titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction  
 note: so far only for 1D histograms.  
       case of 2D histograms requires different plotting method since they cannot be clearly overlaid.  
@@ -638,7 +821,12 @@ input arguments:
 - kwargs: keyword arguments passed down to plot_utils.plot_sets   
 </code></pre>
 
-<h3 id="plot95run-self-runnb-masknamesnone-recohistnone-recohistlabelreco-refhistsnone-refhistslabelreference-doprintfalse">&#10551; plot_run( self, runnb, masknames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False)</h3>
+<h3 id="plot95run">&#10551; plot_run</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_run( self, runnb, masknames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">call plot_ls for all lumisections in a given run  
 </code></pre>
 

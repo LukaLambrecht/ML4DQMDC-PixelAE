@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../../img/favicon.ico">
-        <title>ExponentialFitter - Documentation for the ML4DQM/DC notebooks</title>
+        <title>ExponentialFitter - Documentation for the ML4DQM/DC code</title>
         <link href="../../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../../css/base.css" rel="stylesheet">
@@ -34,7 +34,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="../../..">Documentation for the ML4DQM/DC notebooks</a>
+                    <a class="navbar-brand" href="../../..">Documentation for the ML4DQM/DC code</a>
                 </div>
 
                 <!-- Expanded navigation -->
@@ -251,7 +251,7 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#exponentialfitter">ExponentialFitter</a></li>
-            <li><a href="#class-exponentialfittercloudfitter">[class] ExponentialFitter(CloudFitter)</a></li>
+            <li><a href="#class-exponentialfitter">[class] ExponentialFitter</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -261,19 +261,30 @@
 <p>An exponential distribution in N dimensions is fully determined by an N-dimensional vector, representing the N-dimensional decay parameter (or lambda parameter) of the distribution. </p>
 <hr />
 <hr />
-<h2 id="class-exponentialfittercloudfitter">[class] ExponentialFitter(CloudFitter)</h2>
+<h2 id="class-exponentialfitter">[class] ExponentialFitter</h2>
+<p>comments:  </p>
 <pre><code class="text">class for fitting an exponential distribution to a point cloud  
 parameters  
 - l: multidimensional lambda parameter of exponential  
 </code></pre>
 
-<h3 id="9595init9595self-points">&#10551; __init__(self, points)</h3>
+<h3 id="9595init9595">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self, points)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">constructor  
 input arguments:  
 - points: a np array of shape (npoints,ndims)  
 </code></pre>
 
-<h3 id="pdfself-points">&#10551; pdf(self, points)</h3>
+<h3 id="pdf">&#10551; pdf</h3>
+<p>full signature:  </p>
+<pre><code class="text">def pdf(self, points)  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">get pdf at points  
 </code></pre>
 

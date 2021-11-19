@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../../img/favicon.ico">
-        <title>NMFClassifier - Documentation for the ML4DQM/DC notebooks</title>
+        <title>NMFClassifier - Documentation for the ML4DQM/DC code</title>
         <link href="../../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../../css/base.css" rel="stylesheet">
@@ -34,7 +34,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="../../..">Documentation for the ML4DQM/DC notebooks</a>
+                    <a class="navbar-brand" href="../../..">Documentation for the ML4DQM/DC code</a>
                 </div>
 
                 <!-- Expanded navigation -->
@@ -251,7 +251,7 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#nmfclassifier">NMFClassifier</a></li>
-            <li><a href="#class-nmfclassifierhistogramclassifier">[class] NMFClassifier(HistogramClassifier)</a></li>
+            <li><a href="#class-nmfclassifier">[class] NMFClassifier</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -262,13 +262,19 @@
 It is basically a wrapper for a sklearn.decomposition.NMF instance.</p>
 <hr />
 <hr />
-<h2 id="class-nmfclassifierhistogramclassifier">[class] NMFClassifier(HistogramClassifier)</h2>
+<h2 id="class-nmfclassifier">[class] NMFClassifier</h2>
+<p>comments:  </p>
 <pre><code class="text">histogram classification based on nonnegative matrix factorization  
 specifically intended for 2D histograms, but should in principle work for 1D as well.  
 it is basically a wrapper for a sklearn.decomposition.NMF instance.  
 </code></pre>
 
-<h3 id="9595init9595-self-ncomponents5-loss95typemse-nmax10">&#10551; __init__( self, ncomponents=5, loss_type='mse', nmax=10 )</h3>
+<h3 id="9595init9595">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__( self, ncomponents=5, loss_type='mse', nmax=10 )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">initializer  
 input arguments:  
 - ncomponents: number of NMF components (aka clusters aka basis vectors) to use in the decomposition  
@@ -277,39 +283,69 @@ input arguments:
 TODO: add keyword arguments to pass down to sklearn.decomposition.NMF  
 </code></pre>
 
-<h3 id="train-self-histograms">&#10551; train( self, histograms )</h3>
+<h3 id="train">&#10551; train</h3>
+<p>full signature:  </p>
+<pre><code class="text">def train( self, histograms )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">train the NMF model on a given set of input histograms  
 input arguments:  
 - histograms: a numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins) that will be used to fit a NMF model  
 </code></pre>
 
-<h3 id="set95nmax-self-nmax">&#10551; set_nmax( self, nmax )</h3>
+<h3 id="set95nmax">&#10551; set_nmax</h3>
+<p>full signature:  </p>
+<pre><code class="text">def set_nmax( self, nmax )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">set number of largest elements to keep in mean square error calculation  
 useful to quickly re-evaluate the model with different nmax without retraining  
 input arguments:  
 - nmax: number of largest elements to keep in mean square error calculation  
 </code></pre>
 
-<h3 id="set95loss95type-self-loss95type">&#10551; set_loss_type( self, loss_type )</h3>
+<h3 id="set95loss95type">&#10551; set_loss_type</h3>
+<p>full signature:  </p>
+<pre><code class="text">def set_loss_type( self, loss_type )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">set loss type  
 useful to quickly re-evaluate the model with different loss without retraining  
 input arguments:  
 - loss_type: choose from 'mse' (mean-squared-error) or 'chi2' (chi squared error)  
 </code></pre>
 
-<h3 id="evaluate-self-histograms">&#10551; evaluate( self, histograms )</h3>
+<h3 id="evaluate">&#10551; evaluate</h3>
+<p>full signature:  </p>
+<pre><code class="text">def evaluate( self, histograms )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">classify the given histograms based on the MSE with respect to their reconstructed version  
 input arguments:  
 - histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins)  
 </code></pre>
 
-<h3 id="get95components-self">&#10551; get_components( self )</h3>
+<h3 id="get95components">&#10551; get_components</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_components( self )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">return the NMF components (aka cluster centers aka basis vectors)  
 output:  
 a numpy array of shape (ncomponents,nbins) or (ncomponents,nybins,nxbins)  
 </code></pre>
 
-<h3 id="reconstruct-self-histograms">&#10551; reconstruct( self, histograms )</h3>
+<h3 id="reconstruct">&#10551; reconstruct</h3>
+<p>full signature:  </p>
+<pre><code class="text">def reconstruct( self, histograms )  
+</code></pre>
+
+<p>comments:  </p>
 <pre><code class="text">return the NMF reconstruction for a given set of histograms  
 input arguments:  
 - histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins)  
