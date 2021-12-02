@@ -355,7 +355,7 @@ input arguments:
 
 <h3 id="add95dataframe">&#10551; add_dataframe</h3>
 <p>full signature:  </p>
-<pre><code class="text">def add_dataframe( self, df, cropslices=None, donormalize=True, rebinningfactor=None )  
+<pre><code class="text">def add_dataframe( self, df, cropslices=None, rebinningfactor=None, donormalize=True )  
 </code></pre>
 
 <p>comments:  </p>
@@ -398,6 +398,19 @@ notes:
 - no preprocessing is performed, this is assumed to have been done manually (if needed) before adding the histograms  
 - runnbs and lsnbs must correspond to what is already in the current HistStruct, except if this is the first set of histogram to be added  
 - see also add_dataframe for an alternative way of adding histograms  
+</code></pre>
+
+<h3 id="preprocess">&#10551; preprocess</h3>
+<p>full signature:  </p>
+<pre><code class="text">def preprocess( self, cropslices=None, rebinningfactor=None, donormalize=False )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">do preprocessing  
+the input arguments are equivalent to those given in add_dataframe,  
+but this function allows to do preprocessing after the dataframes have already been loaded  
+note: does not work on extended histograms sets!  
+      one needs to apply preprocessing before generating extra histograms.  
 </code></pre>
 
 <h3 id="add95globalscores">&#10551; add_globalscores</h3>
