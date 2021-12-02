@@ -1,6 +1,7 @@
 # to do:
 # - see to do's in the code
 # - see Gabriele's feedback on 15/11/2021
+# - see other feedback on 19/11/2021
 # - small bug: when a frame is made inactive and then active again,
 #   non-editable Comboboxes become editable, probably because the state is set to 'normal'
 # - continue making styling more uniform (e.g. everything in a Frame)
@@ -1065,10 +1066,12 @@ class PlotSetsWindow(tk.Toplevel):
         ### make the plot with current settings
         if not self.check_all_selected():
             raise Exception('ERROR: some sets were declared but not initialized.')
-        optionsdict = {'masknames':[], 'labellist':[], 'colorlist':[]}
-        for optionsframe, setselector in zip(self.set_optionsframe_list,self.set_selector_list):
-            masks = setselector.masks
-            optionsdict['masknames'].append( masks )
+        optionsdict = {'histograms':[], 'labellist':[], 'colorlist':[]}
+        # get histograms to plot
+        for setselector in self.set_selector_list:
+            optionsdict['histograms'].append( setselector.get_histograms() )
+        # set style options
+        for optionsframe in self.set_optionsframe_list:
             setoptions = optionsframe.get_dict()
             optionsdict['labellist'].append( setoptions['label'] )
             optionsdict['colorlist'].append( setoptions['color'] )
@@ -1081,8 +1084,6 @@ class PlotSetsWindow(tk.Toplevel):
             optionsdict['yaxtitlesize'] = self.plotstyleparser.get_yaxtitlesize()
             optionsdict['ymaxfactor'] = self.plotstyleparser.get_ymaxfactor()
             optionsdict['legendsize'] = self.plotstyleparser.get_legendsize()
-        print('found following plotting options:')
-        print(optionsdict)
         print('making plot...')
         fig,axs = self.histstruct.plot_histograms( **optionsdict )
         # add extra text to the axes
@@ -1146,45 +1147,66 @@ class SelectorWindow(tk.Toplevel):
         self.sets = None
         self.scores = None
         self.globalscores = None
+        self.randoms = -1
+        self.first = -1
+        self.partitions = -1
 
         # add widgets for choosing masks
-        self.histstruct_masks_label = tk.Label(self, text='Choose masks')
-        if not only_set_selection: self.histstruct_masks_label.grid(row=0,column=0)
+        self.histstruct_masks_frame = tk.Frame(self)
+        self.histstruct_masks_label = tk.Label(self.histstruct_masks_frame, text='Choose masks')
+        self.histstruct_masks_label.grid(row=0, column=0, sticky='nsew')
         mask_selectmode = 'multiple' if allow_multi_mask else 'single'
-        self.histstruct_masks_listbox = tk.Listbox(self, selectmode=mask_selectmode,
-                                                            exportselection=False)
+        self.histstruct_masks_listbox = tk.Listbox(self.histstruct_masks_frame, 
+                                                    selectmode=mask_selectmode,
+                                                    exportselection=False)
         for maskname in self.histstruct.get_masknames():
             self.histstruct_masks_listbox.insert(tk.END, maskname)
         if len(self.histstruct.get_masknames())==0:
             self.histstruct_masks_listbox.insert(tk.END, '[no masks available]')
-        if not only_set_selection: self.histstruct_masks_listbox.grid(row=1,column=0)
+        self.histstruct_masks_listbox.grid(row=1, column=0, sticky='nsew')
+        if not only_set_selection: self.histstruct_masks_frame.grid(row=0, column=0, sticky='nsew')
         
         # add widgets for choosing a (resampled) set directly
-        self.histstruct_sets_label = tk.Label(self, text='Choose sets')
-        if not only_mask_selection: self.histstruct_sets_label.grid(row=2,column=0)
+        self.histstruct_sets_frame = tk.Frame(self)
+        self.histstruct_sets_label = tk.Label(self.histstruct_sets_frame, text='Choose sets')
+        self.histstruct_sets_label.grid(row=0, column=0, sticky='nsew')
         set_selectmode = 'multiple' if allow_multi_set else 'single'
-        self.histstruct_sets_listbox = tk.Listbox(self, selectmode=set_selectmode,
-                                                        exportselection=False)
+        self.histstruct_sets_listbox = tk.Listbox(self.histstruct_sets_frame, 
+                                                    selectmode=set_selectmode,
+                                                    exportselection=False)
         for extname in self.histstruct.exthistograms.keys():
             self.histstruct_sets_listbox.insert(tk.END, extname)
         if len(self.histstruct.exthistograms.keys())==0:
             self.histstruct_sets_listbox.insert(tk.END, '[no sets available]')
-        if not only_mask_selection: self.histstruct_sets_listbox.grid(row=3,column=0)
+        self.histstruct_sets_listbox.grid(row=1, column=0, sticky='nsew')
+        if not only_mask_selection: self.histstruct_sets_frame.grid(row=1, column=1, sticky='nsew')
+
+        # add widgets for randoms, first, or averages
+        self.other_options_frame = tk.Frame(self)
+        self.other_options_label = tk.Label(self.other_options_frame, text='Other options')
+        self.other_options_label.grid(row=0, column=0)
+        options = {'randoms':-1, 'first':-1, 'partitions':-1}
+        self.optionsframe = OptionsFrame(self.other_options_frame, labels=list(options.keys()),
+                                            values=list(options.values()))
+        self.optionsframe.frame.grid(row=1, column=0)
+        self.other_options_frame.grid(row=2, column=0, sticky='nsew')
 
         # add widget for selection
         self.select_button = tk.Button(self, text='Select', command=self.select_histograms)
-        self.select_button.grid(row=4, column=0)
+        self.select_button.grid(row=3, column=0)
 
     def get_masks(self):
         ### get currently selected masks
-        # warning: do not use after selection window has been closed.
+        # warning: do not use after selection window has been closed,
+        #          use self.masks for that!
         masks = ([self.histstruct_masks_listbox.get(idx)
                     for idx in self.histstruct_masks_listbox.curselection() ])
         return masks
 
     def get_sets(self):
         ### get currently selected sets
-        # warning: do not use after selection window has been closed.
+        # warning: do not use after selection window has been closed,
+        #          use self.sets for that!
         sets = ([self.histstruct_sets_listbox.get(idx)
                     for idx in self.histstruct_sets_listbox.curselection() ])
         return sets
@@ -1209,6 +1231,8 @@ class SelectorWindow(tk.Toplevel):
 
     def select_histograms(self):
         ### set the histograms based on the current user settings
+
+        # get masks and/or sets
         masks = self.get_masks()
         do_masks = bool(len(masks)>0)
         sets = self.get_sets()
@@ -1217,22 +1241,40 @@ class SelectorWindow(tk.Toplevel):
             raise Exception('ERROR: you must select either at least one mask or a training set.')
         if( do_masks and do_sets ):
             raise Exception('ERROR: you cannot select both masks and sets.')
-        if do_masks:
-            self.histograms = self.histstruct.get_histograms(masknames=masks)
-            self.masks = masks
-            if len(self.histstruct.scores.keys())>0:
-                self.scores = self.histstruct.get_scores(masknames=masks)
-            if len(self.histstruct.globalscores)>0:
-                self.globalscores = self.histstruct.get_globalscores(masknames=masks)
-        else:
-            extname = sets[0]
-            self.histograms = self.histstruct.get_exthistograms(extname)
-            self.sets = sets
-            if( extname in self.histstruct.extscores.keys()
-                and len(self.histstruct.extscores[extname].keys())>0 ):
-                self.scores = self.histstruct.get_extscores(extname)
-            if extname in self.histstruct.extglobalscores.keys():
-                self.globalscores = self.histstruct.get_extglobalscores(extname)
+        
+        # get other options
+        options = self.optionsframe.get_dict()
+        nspecified = len([val for val in list(options.values()) if val>0])
+        if nspecified>1:
+            raise Exception('ERROR: you can only specifiy maximum one option'
+                            +' of the list {}'.format(list(options.keys)))
+        randoms = options['randoms']
+        first = options['first']
+        partitions = options['partitions']
+        
+        # get all numbers
+        extname = None
+        if do_sets: extname = sets[0]
+        res = self.histstruct.get_histogramsandscores( extname=extname, masknames=masks, 
+                                nrandoms=randoms, nfirst=first)
+        self.histograms = res['histograms']
+        self.scores = res['scores']
+        self.globalscores = res['globalscores']
+        self.masks = masks
+        self.sets = sets
+        self.randoms = randoms
+        self.first = first
+        self.partitions = partitions
+        
+        # process other options
+        if partitions>0:
+            # in case of partitions, set scores to None since they become senseless
+            self.scores = None
+            self.globalscores = None
+            # average the histograms
+            for histname in self.histograms.keys():
+                self.histograms[histname] = hu.averagehists( self.histograms[histname], partitions )
+        
         # close the window
         self.destroy()
         self.update()

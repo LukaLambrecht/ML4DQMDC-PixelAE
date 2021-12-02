@@ -679,6 +679,61 @@ class HistStruct(object):
             res[hname] = self.exthistograms[extname][hname]
         if histname is None: return res
         return res[histname]
+
+    def get_histogramsandscores( self, extname=None, masknames=None, nrandoms=-1, nfirst=-1 ):
+        ### combination of get_histograms, get_scores and get_globalscores with additional options
+        # - extname: use an extended histogram set
+        # - nrandoms: if > 0, number of random instances to draw
+        # - nfirst: if > 0, number of first instances to keep
+        # return type:
+        # dict with keys 'histograms', 'scores' and 'globalscores'
+        # note that the values of scores and globalscores may be None if not initialized
+
+        histograms = None
+        scores = None
+        globalscores = None
+
+        # case of non-extended
+        if extname is None:
+            histograms = self.get_histograms(masknames=masknames)
+            if len(self.scores.keys())>0:
+                scores = self.get_scores(masknames=masknames)
+            if len(self.globalscores)>0: 
+                globalscores = self.histstruct.get_globalscores(masknames=masknames)
+        # case of extended
+        else:
+            histograms = self.get_exthisograms(extname)
+            if( extname in self.extscores.keys()
+                and len(self.extscores[extname].keys())>0 ):
+                scores = self.get_extscores(extname)
+            if extname in self.extglobalscores.keys():
+                globalscores = self.histstruct.get_extglobalscores(extname)
+        # rest of the processing is similar
+        nhists = len(histograms[self.histnames[0]])
+        if(nrandoms>0 and nfirst>0):
+            raise Exception('ERROR in HistStruct.get_histogramsandscores: you cannot specify both "nrandoms" and "nfirst".')
+        if(nrandoms>nhists):
+            msg = 'WARNING: requested {} randoms'.format(nrandoms)
+            msg += ' but only {} histograms are available;'.format(nhists)
+            msg += ' will use all available histograms.'
+            print(msg)
+            nrandoms = -1
+        if(nfirst>nhists):
+            msg = 'WARNING: requested {} first'.format(nfirst)
+            msg += ' but only {} histograms are available;'.format(nhists)
+            msg += ' will use all available histograms.'
+            print(msg)
+            nfirst = -1
+        ids = np.arange(nhists)
+        if nrandoms>0: ids = np.random.choice(ids, size=nrandoms, replace=False)
+        if nfirst>0: ids = ids[:nfirst]
+        if( nrandoms>0 or nfirst>0 ):
+            for histname in self.histnames:
+                histograms[histname] = histograms[histname][ids]
+                if scores is not None: 
+                    scores[histname] = scores[histname][ids]
+            if globalscores is not None: globalscores = globalscores[ids]
+        return {'histograms': histograms, 'scores': scores, 'globalscores': globalscores}
     
     def add_classifier( self, histname, classifier, evaluate=False ):
         ### add a histogram classifier for a given histogram name to the HistStruct
@@ -726,7 +781,7 @@ class HistStruct(object):
             self.extscores[extname][histname] = scores
         return scores
     
-    def plot_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[], 
+    def plot_histograms( self, histnames=None, masknames=None, histograms=None, colorlist=[], labellist=[], transparencylist=[], 
                          titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs ):
         ### plot the histograms in a HistStruct, optionally after msking
         # note: so far only for 1D hsitograms.
@@ -737,6 +792,10 @@ class HistStruct(object):
         # - masknames: list of list of mask names
         #   note: each element in masknames represents a set of masks to apply; 
         #         the histograms passing different sets of masks are plotted in different colors
+        # - histograms: list of dicts of histnames to 2D arrays of histograms,
+        #               can be used to plot a given collection of histograms directly,
+        #               and bypass the histnames and masknames arguments
+        #               (note: for use in the gui, not recommended outside of it)
         # - colorlist: list of matplotlib colors, must have same length as masknames
         # - labellist: list of labels for the legend, must have same legnth as masknames
         # - transparencylist: list of transparency values, must have same length as masknames
@@ -748,6 +807,7 @@ class HistStruct(object):
         
         # check validity of requested histnames
         if histnames is None: histnames = self.histnames
+        if histograms is not None: histnames = list(histograms[0].keys())
         for histname in histnames:
             if not histname in self.histnames:
                 raise Exception('ERROR in HistStruct.plot_ls: requested to plot histogram type {}'.format(histname)
@@ -760,12 +820,14 @@ class HistStruct(object):
         for j,name in enumerate(histnames):
             # get the histograms to plot
             histlist = []
-            for maskset in masknames:
-                histlist.append( self.get_histograms(histname=name, masknames=maskset) )
+            if histograms is not None:
+                for k in range(len(histograms)):
+                    histlist.append( histograms[k][name] )
+            else:
+                for maskset in masknames:
+                    histlist.append( self.get_histograms(histname=name, masknames=maskset) )
             # get the title and axes
-            print('before: {}'.format(name))
             title = pu.make_text_latex_safe(name)
-            print('after: {}'.format(title))
             if( titledict is not None and name in titledict ): title = titledict[name]
             xaxtitle = None
             if( xaxtitledict is not None and name in xaxtitledict ): xaxtitle = xaxtitledict[name]
