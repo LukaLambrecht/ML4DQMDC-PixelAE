@@ -735,6 +735,21 @@ input arguments:
   if None, return a dict matching histnames to arrays of histograms  
 </code></pre>
 
+<h3 id="get95histogramsandscores">&#10551; get_histogramsandscores</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_histogramsandscores( self, extname=None, masknames=None, nrandoms=-1, nfirst=-1 )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">combination of get_histograms, get_scores and get_globalscores with additional options  
+- extname: use an extended histogram set  
+- nrandoms: if &gt; 0, number of random instances to draw  
+- nfirst: if &gt; 0, number of first instances to keep  
+return type:  
+dict with keys 'histograms', 'scores' and 'globalscores'  
+note that the values of scores and globalscores may be None if not initialized  
+</code></pre>
+
 <h3 id="add95classifier">&#10551; add_classifier</h3>
 <p>full signature:  </p>
 <pre><code class="text">def add_classifier( self, histname, classifier, evaluate=False )  
@@ -766,7 +781,7 @@ notes:
 
 <h3 id="plot95histograms">&#10551; plot_histograms</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[],  titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs )  
+<pre><code class="text">def plot_histograms( self, histnames=None, masknames=None, histograms=None, colorlist=[], labellist=[], transparencylist=[],  titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs )  
 </code></pre>
 
 <p>comments:  </p>
@@ -779,6 +794,10 @@ input arguments:
 - masknames: list of list of mask names  
   note: each element in masknames represents a set of masks to apply;   
         the histograms passing different sets of masks are plotted in different colors  
+- histograms: list of dicts of histnames to 2D arrays of histograms,  
+              can be used to plot a given collection of histograms directly,  
+              and bypass the histnames and masknames arguments  
+              (note: for use in the gui, not recommended outside of it)  
 - colorlist: list of matplotlib colors, must have same length as masknames  
 - labellist: list of labels for the legend, must have same legnth as masknames  
 - transparencylist: list of transparency values, must have same length as masknames  

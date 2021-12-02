@@ -252,6 +252,7 @@
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#hist-utils">hist utils</a></li>
             <li><a href="#crophists">crophists</a></li>
+            <li><a href="#crophistsgui">crophistsgui</a></li>
             <li><a href="#rebinhists">rebinhists</a></li>
             <li><a href="#normalizehists">normalizehists</a></li>
             <li><a href="#averagehists">averagehists</a></li>
@@ -294,6 +295,19 @@ example usage:
 - see tutorials/plot_histograms_2d.ipynb  
 returns:  
 - a numpy array containing the same histograms as input but cropped according to the slices argument  
+</code></pre>
+
+<h3 id="crophistsgui">crophistsgui</h3>
+<p>full signature:  </p>
+<pre><code class="text">def crophistsgui(hists, slicestr=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">same as crophists, but different input argument format  
+- input arguments:  
+- slicestr: string representation of slices  
+            e.g. '0:6:2' for slice(0,6,2)  
+            e.g. '0:6:2,1:5:2' for [slice(0,6,2),slice(1,5,2)]  
 </code></pre>
 
 <h3 id="rebinhists">rebinhists</h3>
