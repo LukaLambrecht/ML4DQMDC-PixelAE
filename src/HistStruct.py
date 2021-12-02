@@ -205,7 +205,7 @@ class HistStruct(object):
             print(obj)
         return obj
         
-    def add_dataframe( self, df, cropslices=None, donormalize=True, rebinningfactor=None ):
+    def add_dataframe( self, df, cropslices=None, rebinningfactor=None, donormalize=True ):
         ### add a dataframe to a HistStruct
         # input arguments:
         # - df: a pandas dataframe as read from the input csv files
@@ -235,8 +235,9 @@ class HistStruct(object):
             xmax = thisdf.at[0, 'Xmax']
             # prepare the data
             (hists_all,runnbs_all,lsnbs_all) = hu.preparedatafromdf(thisdf,returnrunls=True,
-                                                                    donormalize=donormalize,
-                                                                    rebinningfactor=rebinningfactor)
+                                                                    cropslices=cropslices,
+                                                                    rebinningfactor=rebinningfactor,
+                                                                    donormalize=donormalize)
             runnbs_all = runnbs_all.astype(int)
             lsnbs_all = lsnbs_all.astype(int)
             # check consistency in run and lumisection numbers
@@ -290,6 +291,19 @@ class HistStruct(object):
         self.nentries[histname] = nentries
         self.runnbs = runnbs
         self.lsnbs = lsnbs
+
+    def preprocess( self, cropslices=None, rebinningfactor=None, donormalize=False ):
+        ### do preprocessing
+        # the input arguments are equivalent to those given in add_dataframe,
+        # but this function allows to do preprocessing after the dataframes have already been loaded
+        # note: does not work on extended histograms sets!
+        #       one needs to apply preprocessing before generating extra histograms.
+        for histname in self.histnames:
+            hists = self.histograms[histname]
+            if cropslices is not None:  hists = hu.crophists(hists, cropslices)
+            if rebinningfactor is not None: hists = hu.rebinhists(hists, rebinningfactor)
+            if donormalize: hists = hu.normalizehists(hists)
+            self.histograms[histname] = hists
         
     def add_globalscores( self, globalscores ):
         ### add an array of global scores (one per lumisection)

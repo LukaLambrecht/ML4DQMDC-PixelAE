@@ -29,7 +29,7 @@ importlib.reload(plot_utils)
 
 
 
-### cropping of hisograms
+### cropping of histograms
 
 def crophists(hists, slices=None):
     ### perform cropping on a set of histograms
@@ -53,7 +53,23 @@ def crophists(hists, slices=None):
         return hists[:,slices[0],slices[1]]
     else:
         raise Exception('ERROR in hist_utils.py / crophists: histograms have invalid input shape: {}'.format(hists.shape))
+
+def get_cropslices_from_str(slicestr):
+    ### get a collection of slices from a string (e.g. argument in gui)
+    # note: the resulting slices are typically passed to crophists (see above)
+    # - input arguments:
+    # - slicestr: string representation of slices
+    #             e.g. '0:6:2' for slice(0,6,2)
+    #             e.g. '0:6:2,1:5:2' for [slice(0,6,2),slice(1,5,2)]
+    slices = []
+    for sstr in slicestr.split(','):
+        parts = sstr.split(':')
+        parts = [int(p) for p in parts]
+        slices.append( slice(parts[0],parts[1],parts[2]) )
+    if len(slices)==1: slices = slices[0]
+    return slices
         
+
 ### rebinning of histograms
 
 def rebinhists(hists, factor=None):

@@ -104,7 +104,7 @@ input arguments:
 ### &#10551; add\_dataframe  
 full signature:  
 ```text  
-def add_dataframe( self, df, cropslices=None, donormalize=True, rebinningfactor=None )  
+def add_dataframe( self, df, cropslices=None, rebinningfactor=None, donormalize=True )  
 ```  
 comments:  
 ```text  
@@ -147,6 +147,19 @@ notes:
 - no preprocessing is performed, this is assumed to have been done manually (if needed) before adding the histograms  
 - runnbs and lsnbs must correspond to what is already in the current HistStruct, except if this is the first set of histogram to be added  
 - see also add_dataframe for an alternative way of adding histograms  
+```  
+### &#10551; preprocess  
+full signature:  
+```text  
+def preprocess( self, cropslices=None, rebinningfactor=None, donormalize=False )  
+```  
+comments:  
+```text  
+do preprocessing  
+the input arguments are equivalent to those given in add_dataframe,  
+but this function allows to do preprocessing after the dataframes have already been loaded  
+note: does not work on extended histograms sets!  
+      one needs to apply preprocessing before generating extra histograms.  
 ```  
 ### &#10551; add\_globalscores  
 full signature:  
@@ -483,6 +496,21 @@ input arguments:
 - histname: name of the histogram type to retrieve   
   if None, return a dict matching histnames to arrays of histograms  
 ```  
+### &#10551; get\_histogramsandscores  
+full signature:  
+```text  
+def get_histogramsandscores( self, extname=None, masknames=None, nrandoms=-1, nfirst=-1 )  
+```  
+comments:  
+```text  
+combination of get_histograms, get_scores and get_globalscores with additional options  
+- extname: use an extended histogram set  
+- nrandoms: if > 0, number of random instances to draw  
+- nfirst: if > 0, number of first instances to keep  
+return type:  
+dict with keys 'histograms', 'scores' and 'globalscores'  
+note that the values of scores and globalscores may be None if not initialized  
+```  
 ### &#10551; add\_classifier  
 full signature:  
 ```text  
@@ -515,7 +543,7 @@ notes:
 ### &#10551; plot\_histograms  
 full signature:  
 ```text  
-def plot_histograms( self, histnames=None, masknames=None, colorlist=[], labellist=[], transparencylist=[],  titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs )  
+def plot_histograms( self, histnames=None, masknames=None, histograms=None, colorlist=[], labellist=[], transparencylist=[],  titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs )  
 ```  
 comments:  
 ```text  
@@ -528,6 +556,10 @@ input arguments:
 - masknames: list of list of mask names  
   note: each element in masknames represents a set of masks to apply;   
         the histograms passing different sets of masks are plotted in different colors  
+- histograms: list of dicts of histnames to 2D arrays of histograms,  
+              can be used to plot a given collection of histograms directly,  
+              and bypass the histnames and masknames arguments  
+              (note: for use in the gui, not recommended outside of it)  
 - colorlist: list of matplotlib colors, must have same length as masknames  
 - labellist: list of labels for the legend, must have same legnth as masknames  
 - transparencylist: list of transparency values, must have same length as masknames  

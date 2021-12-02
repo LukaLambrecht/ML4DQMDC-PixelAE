@@ -33,6 +33,21 @@ returns:
 ```  
   
   
+### crophistsgui  
+full signature:  
+```text  
+def crophistsgui(hists, slicestr=None)  
+```  
+comments:  
+```text  
+same as crophists, but different input argument format  
+- input arguments:  
+- slicestr: string representation of slices  
+            e.g. '0:6:2' for slice(0,6,2)  
+            e.g. '0:6:2,1:5:2' for [slice(0,6,2),slice(1,5,2)]  
+```  
+  
+  
 ### rebinhists  
 full signature:  
 ```text  

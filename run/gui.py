@@ -315,11 +315,27 @@ class GenericFileSaver:
         self.frame.grid(row=row, column=column, sticky='nsew')
 
 
+class UrlWidget:
+    ### contains a tk.Label with a clickable link
+
+    def __init__(self, master, url, text=None):
+        if text is None: text = url
+        self.url = url
+        self.label = tk.Label(master, text=text, fg='blue', cursor='hand2')
+        self.label.bind('<Button-1>', self.openurl)
+
+    def grid(self, **kwargs):
+        self.label.grid(**kwargs)
+
+    def openurl(self, event):
+        webbrowser.open_new(self.url)
+
+
 class OptionsFrame:
     ### contains a tk.Frame holding a list of customization options
 
     def __init__(self, master, labels=None, types=None, values=None,
-                        docurl=None):
+                        docurls=None, docurl=None):
         # input arguments:
         # - labels: list of strings with the names/labels of the options
         # - types: list of tk types, defaults to tk.Text for each option
@@ -329,18 +345,19 @@ class OptionsFrame:
         #            where values would be the options to choose from)
         # note: individual elements of types and values can also be None,
         #       in which case these elements will be set to default
-        # - docurl: url to documentation for these options (not required)
+        # - docurls: list of urls to documentation per option
+        # - docurl: url to documentation for the option collection
         self.frame = tk.Frame(master,width=200)
         self.labels = []
         self.wtypes = []
         self.widgets = []
-        self.docurl = []
+        self.docwidgets = []
         self.docwidget = None
-        self.set_options( labels=labels, types=types, values=values, docurl=docurl )
+        self.set_options( labels=labels, types=types, values=values, docurls=docurls, docurl=docurl )
 
-    def set_options(self, labels=None, types=None, values=None, docurl=None):
+    def set_options(self, labels=None, types=None, values=None, docurls=None, docurl=None):
         ### set the options of an option frame
-        # serves both as initializer and as resetter (? to be tested!)
+        # serves both as initializer and as resetter
 
         # check arguments
         if labels is None: 
@@ -348,24 +365,29 @@ class OptionsFrame:
                             +' argument "labels" must be specified.')
         if types is None: types = [tk.Text]*len(labels)
         if values is None: values = [None]*len(labels)
-        if( len(types)!=len(labels) or len(values)!=len(labels) ):
+        if docurls is None: docurls = [None]*len(labels)
+        if( len(types)!=len(labels) 
+                or len(values)!=len(labels)
+                or len(docurls)!=len(labels) ):
             raise Exception('ERROR in OptionsFrame initialization:'
                             +' argument lists have unequal lengths.')
-            # (to do: extend error checking)
 
         # clear current OptionsFrame
         self.labels.clear()
         self.wtypes.clear()
         self.widgets.clear()
+        self.docwidgets.clear()
         self.docwidget = None
         for widget in self.frame.winfo_children(): widget.destroy()
 
         # set widgets
         nrows = len(labels)
-        for i, (label, wtype, value) in enumerate(zip(labels, types, values)):
+        for i, (label, wtype, value, url) in enumerate(zip(labels, types, values, docurls)):
+            # make label
             tklabel = tk.Label(self.frame, text=label)
             tklabel.grid(row=i, column=0)
             self.labels.append(tklabel)
+            # make widget
             if wtype is None: wtype = tk.Text
             widget = None
             # case 1: simple generic text box
@@ -390,13 +412,16 @@ class OptionsFrame:
             widget.grid(row=i, column=1)
             self.widgets.append(widget)
             self.wtypes.append(wtype)
+            # make doc widget
+            if url is not None:
+                urlwidget = UrlWidget(self.frame, url, text='More info')
+                urlwidget.grid(row=i, column=2)
+                self.docwidgets.append(urlwidget)
 
         # set link to documentation
         if docurl is not None:
-            self.docwidget = tk.Label(self.frame, text='More info', fg='blue', cursor='hand2')
-            self.docwidget.bind('<Button-1>', self.opendoclink)
+            self.docwidget = UrlWidget(self.frame, docurl, text='More info')
             self.docwidget.grid(row=nrows, column=0, columnspan=2, sticky='nsew')
-            self.docurl = docurl
 
     def get_dict(self):
         ### get the options of the current OptionsFrame as a dictionary
@@ -436,8 +461,6 @@ class OptionsFrame:
             res[key] = value
         return res
 
-    def opendoclink(self, event):
-        webbrowser.open_new(self.docurl)
 
 class ScrolledFrame:
     ### contains a tk.Frame holding a widget with vertical and horizontal scrollbars
@@ -1058,6 +1081,51 @@ class PlotSetsWindow(tk.Toplevel):
         self.destroy()
         self.update()
 
+
+class PreProcessingWindow(tk.Toplevel):
+    ### popup window for doing preprocessing of histograms in a HistStruct
+
+    def __init__(self, master, histstruct):
+        super().__init__(master=master)
+        self.title('Preprocessing window')
+        self.histstruct = histstruct
+
+        # add a frame for preprocessing options
+        options = []
+        options.append( {'name':'cropping', 'val':None, 'type':tk.Text, 
+                         'docurl':get_docurl(hu.get_cropslices_from_str)} )
+        options.append( {'name':'rebinningfactor', 'val':1, 'type':tk.Text,
+                        'docurl':get_docurl(hu.rebinhists)} )
+        options.append( {'name':'donormalize', 'val':[False,True], 'type':ttk.Combobox,
+                        'docurl':get_docurl(hu.normalizehists)} )
+        labels = [el['name'] for el in options]
+        types = [el['type'] for el in options]
+        values = [el['val'] for el in options]
+        docurls = [el['docurl'] for el in options]
+        self.optionsframe = OptionsFrame(self, labels=labels, types=types, values=values, 
+                                            docurls=docurls, docurl=get_docurl(histstruct.preprocess))
+        self.optionsframe.frame.grid(row=0, column=0, sticky='nsew')
+
+        # add a button to apply the preprocessing
+        self.apply_button = tk.Button(self, text='Apply', command=self.apply)
+        self.apply_button.grid(row=1, column=0, sticky='nsew')
+
+    def apply(self):
+        # get options
+        options = self.optionsframe.get_dict()
+        # do special treatment if needed
+        slices = hu.get_cropslices_from_str(options.pop('cropping'))
+        options['cropslices'] = slices
+        # disable frame for the remainder of the processing time
+        disable_frame( self )
+        # do the preprocessing
+        self.histstruct.preprocess(**options)
+        # close the window
+        self.destroy()
+        self.update()
+        print('done')
+
+
 class DisplayHistStructWindow(tk.Toplevel):
     ### popup window class for displaying full info on a HistStruct
 
@@ -1122,7 +1190,7 @@ class SelectorWindow(tk.Toplevel):
         if len(self.histstruct.exthistograms.keys())==0:
             self.histstruct_sets_listbox.insert(tk.END, '[no sets available]')
         self.histstruct_sets_listbox.grid(row=1, column=0, sticky='nsew')
-        if not only_mask_selection: self.histstruct_sets_frame.grid(row=1, column=1, sticky='nsew')
+        if not only_mask_selection: self.histstruct_sets_frame.grid(row=1, column=0, sticky='nsew')
 
         # add widgets for randoms, first, or averages
         self.other_options_frame = tk.Frame(self)
@@ -2382,6 +2450,19 @@ class ML4DQMGUI:
         self.button_frames.append(self.iobutton_frame)
         self.all_frames.append(self.iobutton_frame)
 
+        # add widgets for preprocessing
+        self.preprocessing_frame = tk.Frame(self.action_button_frame)
+        self.preprocessing_label = tk.Label(self.preprocessing_frame, text='Preprocessing')
+        self.preprocessing_label.grid(row=0, column=0, sticky='ew')
+        self.preprocessing_button = tk.Button(self.preprocessing_frame, text='Preprocessing',
+                                            command=self.open_preprocessing_window)
+        self.preprocessing_button.grid(row=1, column=0, sticky='ew')
+        # add the frame to the window
+        self.preprocessing_frame.grid(row=2, column=0, sticky='nsew')
+        self.button_frames.append(self.preprocessing_frame)
+        self.all_frames.append(self.preprocessing_frame)
+
+
         # add widgets for plotting
         self.plotbutton_frame = tk.Frame(self.action_button_frame)
         self.plotbutton_label = tk.Label(self.plotbutton_frame, text='Plotting')
@@ -2394,7 +2475,7 @@ class ML4DQMGUI:
                                           command=self.open_plot_sets_window)
         self.plot_sets_button.grid(row=2, column=0, sticky='ew')
         # add the frame to the window
-        self.plotbutton_frame.grid(row=2, column=0, sticky='nsew')
+        self.plotbutton_frame.grid(row=3, column=0, sticky='nsew')
         self.button_frames.append(self.plotbutton_frame)
         self.all_frames.append(self.plotbutton_frame)
 
@@ -2406,7 +2487,7 @@ class ML4DQMGUI:
                                     command=self.open_resample_window)
         self.resample_button.grid(row=1, column=0, sticky='ew')
         # add the frame to the window
-        self.resampling_frame.grid(row=3, column=0, sticky='nsew')
+        self.resampling_frame.grid(row=4, column=0, sticky='nsew')
         self.button_frames.append(self.resampling_frame)
         self.all_frames.append(self.resampling_frame)
 
@@ -2435,7 +2516,7 @@ class ML4DQMGUI:
                                                 command=self.open_plot_lumisection_window)
         self.plot_lumisection_button.grid(row=6, column=0, sticky='ew')
         # add the frame to the window
-        self.model_frame.grid(row=4, column=0, sticky='nsew')
+        self.model_frame.grid(row=5, column=0, sticky='nsew')
         self.button_frames.append(self.model_frame)
         self.all_frames.append(self.model_frame)
 
@@ -2568,6 +2649,13 @@ class ML4DQMGUI:
             print('ERROR: need to load a HistStruct first')
             return
         _ = AddClassifiersWindow(self.master, self.histstruct)
+        return
+
+    def open_preprocessing_window(self):
+        if not self.histstruct:
+            print('ERROR: need to load a HistStruct first')
+            return
+        _ = PreProcessingWindow(self.master, self.histstruct)
         return
 
     def open_plot_sets_window(self):
