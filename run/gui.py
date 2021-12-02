@@ -922,63 +922,6 @@ class AddClassifiersWindow(tk.Toplevel):
         print('done')
 
 
-# old version (do not use anymore but keep for reference):
-'''class AddClassifiersWindow(tk.Toplevel):
-    ### popup window class for adding classifiers to a histstruct
-    # note: preliminary version, where the user just inputs python code in a text widget.
-    #       probably not 'safe', to check later.
-    
-    def __init__(self, master, histstruct):
-        super().__init__(master=master)
-        self.title('Add classifiers')
-        self.histstruct = histstruct
-        
-        # create a frame for the code
-        self.code_frame = tk.Frame(self)
-        set_frame_default_style( self.code_frame )
-        self.code_frame.grid(row=0, column=0, sticky='nsew')
-        label_text = 'Write code for adding classifiers to the HistStruct'
-        tk.Label(self.code_frame, text=label_text).grid(row=0, column=0)
-        info_text = 'Tips:\n'
-        info_text += '\t- The current HistStruct object is available as "histstruct".\n'
-        info_text += '\t- See the documentation for src/HistStruct on how to add classifiers.\n'
-        info_text += '\t- See the documentation for src/classifiers on the available classifers.\n'
-        tk.Label(self.code_frame, text=info_text, justify=tk.LEFT).grid(row=1, column=0)
-        tk.Label(self.code_frame, text='Example:').grid(row=2, column=0)
-        example_text = 'for histname in histstruct.histnames\n:'
-        example_text += '\tinput_size = histstruct.get_histograms( histname=histname ).shape[1]\n'
-        example_text += '\tarch = [int(input_size/2.)]\n'
-        example_text += '\tmodel = aeu.getautoencoder(input_size, arch)\n'
-        example_text += '\tclassifier = AutoEncoder.AutoEncoder( model=model )\n'
-        example_text += '\thiststruct.add_classifier(histname, classifier)\n'
-        tk.Label(self.code_frame, text=example_text, justify=tk.LEFT).grid(row=3, column=0)
-
-        # add a text widget for the code
-        self.code_text = ScrolledTextFrame(self.code_frame, txtheight=15, txtwidth=50)
-        self.code_text.frame.grid(row=4, column=0)
-
-        # add a button to evaluate the code
-        self.run_code_button = tk.Button(self, text='Run code', command=self.run_code)
-        self.run_code_button.grid(row=2, column=0)
-
-    def get_code_text(self):
-        codestr = self.code_text.widget.get(1.0, tk.END)
-        return codestr
-
-    def run_code(self):
-        codestr = self.get_code_text()
-        codestr = codestr.replace('histstruct','self.histstruct')
-        if( '__' in codestr
-            or 'system' in codestr):
-            print('WARNING: code not executed as it contains suspicious content.')
-            return
-        exec(codestr)
-        # close the window
-        self.destroy()
-        self.update()
-        print('done')'''
-
-
 class PlotSetsWindow(tk.Toplevel):
     ### popup window class for plotting the histograms in a histstruct
 
