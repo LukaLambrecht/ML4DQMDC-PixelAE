@@ -713,7 +713,7 @@ class HistStruct(object):
             if len(self.scores.keys())>0:
                 scores = self.get_scores(masknames=masknames)
             if len(self.globalscores)>0: 
-                globalscores = self.histstruct.get_globalscores(masknames=masknames)
+                globalscores = self.get_globalscores(masknames=masknames)
         # case of extended
         else:
             histograms = self.get_exthistograms(extname)
