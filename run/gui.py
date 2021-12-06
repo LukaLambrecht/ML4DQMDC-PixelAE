@@ -3,7 +3,9 @@
 # - see Gabriele's feedback on 15/11/2021
 # - see other feedback on 19/11/2021
 # - small bug: when a frame is made inactive and then active again,
-#   non-editable Comboboxes become editable, probably because the state is set to 'normal'
+#   non-editable Comboboxes become editable, probably because the state is set to 'normal'.
+# - small bug: when the 'new histstruct' button is pressed, the histstruct is set to a new empty one,
+#   even if the new histstruct window is closed without actually creating the histstruct.
 # - continue making styling more uniform (e.g. everything in a Frame)
 
 # external modules
@@ -66,12 +68,17 @@ print('done')
 
 ### styling
 
-def set_frame_default_style( frame ):
+def set_frame_default_style( frame, expandcolumn=-1, expandrow=-1 ):
     ### apply some default stylings to a tk.Frame
+    # input arguments:
+    # - expandcolumn: index of column in this frame that will be expanded to match parent
+    # - expandrow: index of row in this frame that will be expanded to match parent
     frame['padx'] = 10
     frame['pady'] = 10
     frame['borderwidth'] = 2
     frame['relief'] = 'groove'
+    if expandrow>=0: frame.grid_rowconfigure(expandrow, weight=1)
+    if expandcolumn>=0: frame.grid_columnconfigure(expandcolumn, weight=1)
 
 def change_frame_state( frame, state ):
     ### disable or enable all widgets in a frame
@@ -471,11 +478,16 @@ class ScrolledFrame:
     #       to simplify this, make subclasses (e.g. ScrolledTextFrame below)
 
     def __init__(self, master, height=50, width=50, 
-                    adaptable_size=False, showscrollbars=False):
-        # note: if adaptable_size is True, the Frame will take its size from the child widget
+                    childsize=False, expandable=False, showscrollbars=False):
+        # input arguments:
+        # - childsize: if True, the Frame will take its size from the child widget
+        # - expandable: if True, the frame will be expanded to match the parent
         self.frame = tk.Frame(master, height=height, width=width)
+        if not childsize: self.frame.grid_propagate(0)
+        if expandable:
+            self.frame.grid_rowconfigure(0, weight=1)
+            self.frame.grid_columnconfigure(0, weight=1)
         self.showscrollbars = showscrollbars
-        if not adaptable_size: self.frame.grid_propagate(0)
 
     def set_widget(self, widget):
         self.widget = widget
@@ -494,8 +506,9 @@ class ScrolledTextFrame(ScrolledFrame):
     #       does not need to be created manually;
     #       it is created internally and accessible via the .widget attribute.
 
-    def __init__(self, master, txtheight=50, txtwidth=50, showscrollbars=False):
-        super().__init__(master, adaptable_size=True, showscrollbars=showscrollbars)
+    def __init__(self, master, txtheight=50, txtwidth=50, expandable=False, showscrollbars=False):
+        super().__init__(master, childsize=True, expandable=expandable, 
+                            showscrollbars=showscrollbars)
         text = tk.Text(self.frame, wrap=tk.NONE, height=txtheight, width=txtwidth)
         self.set_widget(text)
 
@@ -2526,10 +2539,11 @@ class ML4DQMGUI:
         self.all_frames.append(self.stdout_frame)
         self.stdout_label = tk.Label(self.stdout_frame, text='Stdout')
         self.stdout_label.grid(row=0, column=0)
-        self.messages_text = ScrolledTextFrame(self.stdout_frame, txtwidth=50, txtheight=25)
+        self.messages_text = ScrolledTextFrame(self.stdout_frame, txtwidth=50, txtheight=25, 
+                                                expandable=True)
         initstring = 'Welcome to the ML4DQM GUI!\n'
         self.messages_text.widget.insert(tk.INSERT, initstring)
-        self.messages_text.frame.grid(row=1, column=0)
+        self.messages_text.frame.grid(row=1, column=0, sticky='nsew')
 
         # redirect stdout (and stderr) to text widget
         stdout = sys.stdout
@@ -2554,26 +2568,26 @@ class ML4DQMGUI:
         self.histstruct_masknames_label = tk.Label(self.histstruct_info_frame, text='Masks')
         self.histstruct_masknames_label.grid(row=3, column=0)
         self.histstruct_masknames_text = ScrolledTextFrame(self.histstruct_info_frame, 
-                                            txtwidth=25, txtheight=15)
-        self.histstruct_masknames_text.frame.grid(row=4, column=0)
+                                            txtwidth=25, txtheight=15, expandable=True)
+        self.histstruct_masknames_text.frame.grid(row=4, column=0, sticky='nsew')
         initstring = '[no histstruct loaded]'
         self.histstruct_masknames_text.widget.insert(tk.INSERT, initstring)
         self.histstruct_extnames_label = tk.Label(self.histstruct_info_frame, 
                                             text='Extended sets')
         self.histstruct_extnames_label.grid(row=3, column=1)
         self.histstruct_extnames_text = ScrolledTextFrame(self.histstruct_info_frame, 
-                                            txtwidth=25, txtheight=15)
-        self.histstruct_extnames_text.frame.grid(row=4, column=1)
+                                            txtwidth=25, txtheight=15, expandable=True)
+        self.histstruct_extnames_text.frame.grid(row=4, column=1, sticky='nsew')
         initstring = '[no histstruct loaded]'
         self.histstruct_extnames_text.widget.insert(tk.INSERT, initstring)
 
-        # apply default stylings to all frames
-        for frame in self.all_frames:
-            set_frame_default_style( frame )
-
         # apply default stylings to button frames
         for frame in self.button_frames:
-            pass
+            set_frame_default_style( frame, expandcolumn=0 )
+
+        # apply default stylings to other frames
+        set_frame_default_style( self.stdout_frame, expandrow=1 )
+        set_frame_default_style( self.histstruct_info_frame, expandrow=4 )
 
     def clear_histstruct_info(self):
         ### clear all widgets displaying histstruct info
@@ -2582,6 +2596,7 @@ class ML4DQMGUI:
         self.histstruct_extnames_text.widget.delete(1.0, tk.END)
 
     def update_histstruct_info(self):
+        ### update all widgets displaying histstruct info
         self.clear_histstruct_info()
         filename = self.histstruct_filename if self.histstruct_filename is not None else '[None]'
         self.histstruct_filename_text.widget.insert(tk.INSERT, filename)
@@ -2595,6 +2610,7 @@ class ML4DQMGUI:
         else: self.histstruct_extnames_text.widget.insert(tk.INSERT, '[no sets available]')
 
     def load_histstruct(self):
+        ### load a histstruct from a stored zip file
         initialdir = os.path.abspath(os.path.dirname(__file__))
         filename = fldlg.askopenfilename(initialdir=initialdir,
                     title='Load a HistStruct',
@@ -2613,6 +2629,10 @@ class ML4DQMGUI:
         self.update_histstruct_info()
 
     def save_histstruct(self):
+        ### save a histstruct to a zip file
+        if not self.histstruct:
+            print('ERROR: need to load a HistStruct first')
+            return
         initialdir = os.path.abspath(os.path.dirname(__file__))
         filename = fldlg.asksaveasfilename(initialdir=initialdir,
                     title='Save a HistStruct',
@@ -2625,6 +2645,7 @@ class ML4DQMGUI:
         self.histstruct.save( filename )
 
     def load_plotstyle(self):
+        ### load a plot style from a json file
         initialdir = os.path.abspath(os.path.dirname(__file__))
         filename = fldlg.askopenfilename(initialdir=initialdir,
                     title='Load a plot style',
