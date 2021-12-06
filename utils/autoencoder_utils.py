@@ -250,7 +250,7 @@ def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True):
 
     nsig = np.sum(labels)
     nback = np.sum(1-labels)
-    
+
     # get confusion matrix entries
     tp = np.sum(np.where((labels==1) & (scores>wp),1,0))/nsig
     fp = np.sum(np.where((labels==0) & (scores>wp),1,0))/nback
@@ -263,9 +263,15 @@ def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True):
     # specific labels:
     df_cm = pd.DataFrame(cmat, index = ['bad','good'],
                   columns = ['predicted anomalous','predicted good'])
-    #plt.figure(figsize = (10,7))
     plt.figure()
     sn.heatmap(df_cm, annot=True, cmap=plt.cm.Blues)
+
+    # printouts for testing
+    #print('working point: {}'.format(wp))
+    #print('nsig: {}'.format(nsig))
+    #print('nback: {}'.format(nback))
+    #print('true positive / nsig: {}'.format(tp))
+    #print('false positive / nback: {}'.format(fp))
 
     # return the working point (for later use if it was automatically calculated)
     return wp
@@ -303,19 +309,20 @@ def get_wp_maxauc(scores, labels, doplot=False):
     background_scores = scores[labels==0]
     nsig = len(signal_scores)
     nbck = len(background_scores)
-    scores.sort()
+    sorted_scores = sorted(scores)
     effs = np.zeros(len(scores))
     effb = np.zeros(len(scores))
     aucs = np.zeros(len(scores))
-    for i,score in enumerate(scores):
+    for i,score in enumerate(sorted_scores):
         effs[i] = np.sum(signal_scores>score)/nsig
         effb[i] = np.sum(background_scores>score)/nbck
         aucs[i] = effs[i]*(1-effb[i])
     maxidx = np.argmax(aucs)
-    maxscore = scores[maxidx]
+    maxscore = sorted_scores[maxidx]
     maxauc = aucs[maxidx]
+
     if doplot:
-        fig,ax,ax2 = plot_utils.plot_metric(scores, aucs, label='pseudo-AUC',
+        fig,ax,ax2 = plot_utils.plot_metric(sorted_scores, aucs, label='pseudo-AUC',
                     sig_eff=effs, sig_label='signal efficiency',
                     bck_eff=effb, bck_label='background efficiency',
                     xaxtitle='working point',
@@ -326,7 +333,7 @@ def get_wp_maxauc(scores, labels, doplot=False):
         wptext = '{:.3f}'.format(maxscore)
         if maxauc>0.99:
             auctext = '1 - '+'{:.3e}'.format(1-maxauc)
-        text = ax.text(0.97,0.8,'WP: {}, AUC: {}'.format(wptext,auctext), 
+        text = ax.text(0.97,0.8,'WP: {}, pseudo-AUC: {}'.format(wptext,auctext), 
                         horizontalalignment='right', transform=ax.transAxes)
         text.set_bbox(dict(facecolor='white', edgecolor='black', alpha=0.75))
         plt.show(block=False)

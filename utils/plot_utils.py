@@ -469,9 +469,9 @@ def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,
                 xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, 
                 title=None, titlesize=None, caxtitle=None, caxtitlesize=None,
                 transparency=1 ):
-    ### make a scatter plot of a 2D point cloud with fitted contour
+    ### make a 2D scatter plot of a point cloud with fitted contour
     # input arguments:
-    # - points: a numpy array of shape (npoints,ndims)
+    # - points: a numpy array of shape (npoints,ndims), where ndims is supposed to be 2
     # - fitfunc: an object of type CloudFitter (see src/cloudfitters) 
     #   or any other object that implements a pdf(points) method
     # - logprob: boolean whether to plot log probability or normal probability
@@ -530,12 +530,14 @@ def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,
     
     return (fig,ax)
 
-def plot_fit_2d_clusters( points, clusters, labels, colors, **kwargs ):
-    ### make a scatter plot of a fitted contour with point clouds superimposed
+def plot_fit_2d_clusters( points, clusters, labels=None, colors=None, **kwargs ):
+    ### make a 2D scatter plot of a fitted contour with point clouds superimposed
     # input arguments: 
-    # - points: numpy arrays of shape (npoints,ndims), usually the points to which the fit was done
+    # - points: numpy arrays of shape (npoints,ndims), where ndims is supposed to be 2,
+    #           usually the points to which the fit was done
     #           note: only used to determine plotting range, these points are not plotted!
-    # - clusters: list of numpy arrays of shape (npoints,ndims), clouds of points to plot
+    # - clusters: list of numpy arrays of shape (npoints,ndims), where ndims is supposed to be 2,
+    #             clouds of points to plot
     # - labels: list with legend entries (must be same length as clusters)
     # - colors: list with colors (must be same length as clusters)
     # - kwargs: passed down to plot_fit_2d 
@@ -543,20 +545,111 @@ def plot_fit_2d_clusters( points, clusters, labels, colors, **kwargs ):
     
     # first make contour plot
     fig,ax = plot_fit_2d(points, onlycontour=True, **kwargs )
+
+    # other initializations
+    dolegend = True
+    if labels is None:
+        dolegend = False
+        labels = ['']*len(clusters)
+    if colors is None:
+        colors = ['b']*len(clusters)
+
+    # make scatter plots
     for j in range(len(clusters)):
         cluster = clusters[j]
         label = labels[j]
         color = colors[j]
         ax.plot( cluster[:,0], cluster[:,1], '.', color=color, markersize=4,label=label )
-    ax.legend()
-    return fig,ax
+    if dolegend: ax.legend()
+    return (fig,ax)
 
+def plot_fit_1d( points, fitfunc=None, logprob=False, clipprob=False,
+                onlycontour=False, xlims=5, onlypositive=False,
+                xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
+                title=None, titlesize=None ):
+    ### make a 1D scatter plot of a point cloud with fitted contour
+    # input arguments:
+    # - points: a numpy array of shape (npoints,ndims), where ndims is supposed to be 1
+    # - fitfunc: an object of type CloudFitter (see src/cloudfitters) 
+    #   or any other object that implements a pdf(points) method
+    # - logprob: boolean whether to plot log probability or normal probability
+    # - clipprob: boolean whether to replace +- inf values by (non-inf) max and min
+    # - onlycontour: a boolean whether to draw only the fit or include the data points
+    # - xlims: tuple of the form (low,high)
+    #   note: can be an integer, in which case the range will be determined automatically
+    #         from the formula low = mean-xlims*std, high = mean+xlims*std,
+    #         where mean and std are determined from the points array.
+    # - onlypositive: set lower bound of plotting range at 0 (overrides xlims)
+    # - xaxtitle and yaxtitle: titles for axes.
 
+    # set plotting ranges and step sizes
+    if( isinstance(xlims,int) ):
+        xmean = np.mean(points[:,0])
+        xstd = np.std(points[:,0])
+        xlims = (xmean-xlims*xstd,xmean+xlims*xstd)
+    if onlypositive:
+        xlims = (0,xlims[1])
+    xstep = (xlims[1]-xlims[0])/100.
 
+    (fig,ax) = plt.subplots()
 
+    if fitfunc is not None:
 
+        # make a grid of points and evaluate the fitfunc
+        x = np.arange(xlims[0], xlims[1], xstep)
+        gridpoints = np.expand_dims(x, 1)
+        evalpoints = fitfunc.pdf(gridpoints)
+        if logprob: evalpoints = np.log(evalpoints)
+        if clipprob: evalpoints = aeu.clip_scores(evalpoints)
+        z = evalpoints
 
+        # make a plot of probability contours
+        contourplot = ax.plot(x, z)
 
+    if not onlycontour:
 
+        # make a plot of the data points
+        ax.plot(points[:,0],[0]*len(points),'.b',markersize=2)
 
+    ax.set_xlim(xlims)
+    if title is not None: ax.set_title(title, fontsize=titlesize)
+    if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
+    if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
+    ax.ticklabel_format(axis='both', style='sci', scilimits=(0,0))
 
+    return (fig,ax)
+
+def plot_fit_1d_clusters( points, clusters, labels=None, colors=None, **kwargs ):
+    ### make a 1D scatter plot of a fitted contour with point clouds superimposed
+    # input arguments: 
+    # - points: numpy arrays of shape (npoints,ndims), where ndims is supposed to be 1,
+    #           usually the points to which the fit was done
+    #           note: only used to determine plotting range, these points are not plotted!
+    # - clusters: list of numpy arrays of shape (npoints,ndims), where ndims is supposed to be 1,
+    #             clouds of points to plot
+    # - labels: list with legend entries (must be same length as clusters)
+    # - colors: list with colors (must be same length as clusters)
+    # - kwargs: passed down to plot_fit_1d
+    #           note: onlycontour is set automatically and should not be in kwargs
+
+    # first make contour plot
+    fig,ax = plot_fit_1d(points, onlycontour=True, **kwargs )
+    
+    # other initializations
+    dolegend = True
+    if labels is None:
+        dolegend = False
+        labels = ['']*len(clusters)
+    if colors is None:
+        colors = ['b']*len(clusters)
+    ymax = ax.get_ylim()[1]
+
+    # make scatter plots
+    for j in range(len(clusters)):
+        cluster = clusters[j]
+        label = labels[j]
+        color = colors[j]
+        yvalue = j*ymax/20
+        ax.plot( cluster[:,0], [yvalue]*len(cluster), '.', color=color, markersize=4, label=label )
+    if dolegend: ax.legend()
+    return (fig,ax)

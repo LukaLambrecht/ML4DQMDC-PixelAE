@@ -62,6 +62,7 @@ print('  import TemplateBasedClassifier'); import TemplateBasedClassifier
 print('  import SeminormalFitter'); import SeminormalFitter
 print('  import GaussianKdeFitter'); import GaussianKdeFitter
 print('  import HyperRectangleFitter'); import HyperRectangleFitter
+print('  import IdentityFitter'); import IdentityFitter
 
 print('done')
 
@@ -129,12 +130,13 @@ def get_fitter_class( key=None ):
     # input arguments:
     # - key: string representing name or key of fitter class
     
-    allowed = ['GaussianKdeFitter', 'SeminormalFitter']
+    allowed = ['GaussianKdeFitter', 'SeminormalFitter', 'IdentityFitter']
     if key is None: return allowed
 
     key = key.strip(' \t\n')
     if key=='GaussianKdeFitter': c = GaussianKdeFitter.GaussianKdeFitter
     elif key=='SeminormalFitter': c = SeminormalFitter.SeminormalFitter
+    elif key=='IdentityFitter': c = IdentityFitter.IdentityFitter
     else:
         raise Exception('ERROR: fitter class {} not recognized'.format(key))
     return (c,get_args_dict(c))
@@ -211,7 +213,6 @@ def get_docurl( obj ):
         paragraph = '/#'+objname
         paragraph = paragraph.replace('_','95') # not sure how universally valid this is
         docurl = docweb+reldoc+paragraph
-        print(docurl)
         return docurl
     except:
         print('WARNING: could not retrieve doc url for object "{}"'.format(obj))
@@ -1431,6 +1432,14 @@ class FitWindow(tk.Toplevel):
         self.histstruct = histstruct
         self.plotstyleparser = plotstyleparser
         self.fitting_set_selector = None
+        self.plotfunction = None
+        self.plotdim = None
+        if len(self.histstruct.histnames)==1:
+            self.plotfunction = pu.plot_fit_1d
+            self.plotdim = 1
+        else:
+            self.plotfunction = pu.plot_fit_2d
+            self.plotdim = 2
 
         # create frame for options
         self.fit_options_frame = tk.Frame(self)
@@ -1471,8 +1480,8 @@ class FitWindow(tk.Toplevel):
         self.plot_options_label.grid(row=0, column=0)
     
         # add widgets for plotting options
-        plot_options_dict = get_args_dict(pu.plot_fit_2d)
-        plot_docurl = get_docurl(pu.plot_fit_2d)
+        plot_options_dict = get_args_dict(self.plotfunction)
+        plot_docurl = get_docurl(self.plotfunction)
         # remove some keys that are not user input
         for key in ['fitfunc','xaxtitle','yaxtitle']:
             if key in list(plot_options_dict.keys()):
@@ -1563,27 +1572,37 @@ class FitWindow(tk.Toplevel):
         dimslist = []
         fitfunclist = []
         nhisttypes = len(self.histstruct.histnames)
-        for i in range(0,nhisttypes-1):
-            for j in range(i+1,nhisttypes):
-                dimslist.append((i,j))
+        if self.plotdim == 1:
+            dimslist = list(range(nhisttypes))
+            # (note: for now self.plotdim is only 1 in case nhisttypes is 1, 
+            #  but might be added as a user input argument later, so keep as general as possible)
+        elif self.plotdim == 2:
+            for i in range(0,nhisttypes-1):
+                for j in range(i+1,nhisttypes):
+                    dimslist.append((i,j))
         plt.close('all')
         # loop over all combinations of dimensions
         for dims in dimslist:
             # make the partial fit and store it
             thismse = fitting_scores[:,dims]
+            if len(thismse.shape)==1: thismse = np.expand_dims(thismse, 1)
             fitfunc = fitter( thismse, **fitter_options )
             fitfunclist.append(fitfunc)
             # make the plot if requested
             if do_plot:
-                xaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims[0]])
-                yaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims[1]])
-                (fig,ax) = pu.plot_fit_2d(thismse, fitfunc=fitfunc,
+                if self.plotdim == 1:
+                    xaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims])
+                    yaxtitle = 'Probability density'
+                elif self.plotdim == 2:
+                    xaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims[0]])
+                    yaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims[1]])
+                (fig,ax) = self.plotfunction(thismse, fitfunc=fitfunc,
                                     xaxtitle=xaxtitle,
                                     yaxtitle=yaxtitle,
                                     **plot_options_dict)
                 # add extra text to the axes
                 # (might need updates to make it more flexible)
-                pu.add_text( ax, 'Density fit of lumisection MSE', 
+                pu.add_text( ax, 'Density fit of lumisection scores', 
                             (0.05,0.8), fontsize=12, background_alpha=0.75 )
                 if self.plotstyleparser is not None:
                     pu.add_cms_label( ax, pos=(0.05,0.9),
@@ -1784,9 +1803,7 @@ class EvaluateWindow(tk.Toplevel):
         self.title('Evaluation window')
         self.histstruct = histstruct
         self.plotstyleparser = plotstyleparser
-        self.select_test_set_button_list = []
-        self.test_set_type_box_list = []
-        self.test_set_selector_list = []
+        self.test_set_widgets = []
 
         # create a frame for the addition of test sets
         self.test_set_frame = tk.Frame(self)
@@ -1799,8 +1816,12 @@ class EvaluateWindow(tk.Toplevel):
         self.test_set_container_frame = tk.Frame(self)
         self.test_set_container_frame.grid(row=0, column=1, sticky='nsew')
         set_frame_default_style( self.test_set_container_frame )
-        self.test_set_container_label = tk.Label(self.test_set_container_frame, text='Test sets')
+        self.test_set_container_label = tk.Label(self.test_set_container_frame, text='Test set:')
         self.test_set_container_label.grid(row=0, column=0)
+        self.test_sets_type_label = tk.Label(self.test_set_container_frame, text='Type:')
+        self.test_sets_type_label.grid(row=1, column=0)
+        self.test_sets_label_label = tk.Label(self.test_set_container_frame, text='Label:')
+        self.test_sets_label_label.grid(row=2, column=0)
 
         # add a button to add more test sets
         self.add_button = tk.Button(self.test_set_frame, text='Add test set', 
@@ -1933,8 +1954,16 @@ class EvaluateWindow(tk.Toplevel):
                                               text='Options for fit plots')
         self.contour_options_label.grid(row=0, column=4)
         # add widgets for plotting options
-        contour_options_dict = get_args_dict(pu.plot_fit_2d)
-        contour_docurl = get_docurl(pu.plot_fit_2d)
+        self.contourfunction = None
+        self.contourdim = None
+        if len(self.histstruct.histnames)==1:
+            self.contourfunction = pu.plot_fit_1d
+            self.contourdim = 1
+        else:
+            self.contourfunction = pu.plot_fit_2d
+            self.contourdim = 2
+        contour_options_dict = get_args_dict(self.contourfunction)
+        contour_docurl = get_docurl(self.contourfunction)
         # remove some keys that are not user input
         for key in ['fitfunc','xaxtitle','yaxtitle','onlycontour']:
             if key in list(contour_options_dict.keys()):
@@ -1975,49 +2004,64 @@ class EvaluateWindow(tk.Toplevel):
 
     def add_set(self, parent=None, default_type='Good'):
         ### add one test set
+        # initializations
         if parent is None: parent = self
         row = 0
-        column = len(self.select_test_set_button_list)+1
-        idx = len(self.select_test_set_button_list)
+        column = len(self.test_set_widgets)+1
+        idx = len(self.test_set_widgets)
+        # add button for set selection
         select_button = tk.Button(parent, text='Select test set', 
                                     command=functools.partial(self.open_select_window,idx),
                                     bg='orange')
         select_button.grid(row=row, column=column)
-        self.select_test_set_button_list.append( select_button )
+        # add combobox for type
         type_box = ttk.Combobox(parent, values=['Good','Bad'])
         if default_type=='Bad': type_box.current(1)
         else: type_box.current(0)
         type_box['state'] = 'readonly'
         type_box.grid(row=row+1,column=column)
-        self.test_set_type_box_list.append( type_box )
-        self.test_set_selector_list.append( None )
+        # add text box for label
+        label_text = tk.Text(parent, height=1, width=15)
+        label_text.grid(row=row+2, column=column)
+        # store the widgets
+        self.test_set_widgets.append( {'button': select_button, 
+                                        'selector': None,
+                                        'type_box': type_box, 
+                                        'label_text': label_text} )
 
     def open_select_window(self, idx):
-        self.test_set_selector_list[idx] = SelectorWindow(self.master, self.histstruct)
-        self.select_test_set_button_list[idx]['bg'] = 'green'
+        self.test_set_widgets[idx]['selector'] = SelectorWindow(self.master, self.histstruct)
+        self.test_set_widgets[idx]['button']['bg'] = 'green'
         return
 
     def check_all_selected(self):
-        if None in self.test_set_selector_list: return False
+        if None in [el['selector'] for el in self.test_set_widgets]: return False
         else: return True
 
     def get_scores(self, test_set_type):
         scores = []
-        for i in range(len(self.test_set_selector_list)):
-            if self.test_set_type_box_list[i].get()!=test_set_type: continue
-            scores.append(self.test_set_selector_list[i].get_scores())
+        for el in self.test_set_widgets:
+            if el['type_box'].get()!=test_set_type: continue
+            scores.append(el['selector'].get_scores())
         if len(scores)==0:
             print('WARNING: there are no test sets with label {}'.format(test_set_type))
         return scores
 
     def get_globalscores(self, test_set_type):
         globalscores = []
-        for i in range(len(self.test_set_selector_list)):
-            if self.test_set_type_box_list[i].get()!=test_set_type: continue
-            globalscores.append(self.test_set_selector_list[i].get_globalscores())
+        for el in self.test_set_widgets:
+            if el['type_box'].get()!=test_set_type: continue
+            globalscores.append(el['selector'].get_globalscores())
         if len(globalscores)==0:
             print('WARNING: there are no test sets with label {}'.format(test_set_type))
         return globalscores
+
+    def get_labels(self, test_set_type):
+        labels = []
+        for el in self.test_set_widgets:
+            if el['type_box'].get()!=test_set_type: continue
+            labels.append(el['label_text'].get("1.0", tk.END).strip('\n\t '))
+        return labels
 
     def evaluate(self):
         if not self.check_all_selected():
@@ -2027,6 +2071,8 @@ class EvaluateWindow(tk.Toplevel):
         # load scores for good and bad test set
         scores_good_parts = self.get_scores('Good')
         scores_bad_parts = self.get_scores('Bad')
+        labels_good_parts = self.get_labels('Good')
+        labels_bad_parts = self.get_labels('Bad')
         globalscores_good_parts = self.get_globalscores('Good')
         globalscores_good = np.concatenate(tuple(globalscores_good_parts))
         globalscores_bad_parts = self.get_globalscores('Bad')
@@ -2056,7 +2102,7 @@ class EvaluateWindow(tk.Toplevel):
 
         # confusion matrix
         if do_cm: 
-            working_point = aeu.get_confusion_matrix(scores,labels, **cm_options)
+            working_point = aeu.get_confusion_matrix(scores, labels, **cm_options)
 
         # write output json
         # to do: make more flexible with user options
@@ -2093,23 +2139,47 @@ class EvaluateWindow(tk.Toplevel):
                 goodcolorist = ['blue']*len(scores_good_parts)
 
             for dims,partialfitfunc in zip(self.histstruct.dimslist,self.histstruct.fitfunclist):
-                xaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims[0]])
-                yaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims[1]])
-                fig,ax = pu.plot_fit_2d(self.histstruct.fitting_scores, fitfunc=partialfitfunc, 
-                    xaxtitle=xaxtitle, yaxtitle=yaxtitle,
-                    onlycontour=True,
-                    **contour_options)
+                # settings for 1D plots 
+                if self.contourdim == 1:
+                    xaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims])
+                    yaxtitle = 'Probability density'
+                    plotfunction = pu.plot_fit_1d_clusters
+                # settings for 2D plots
+                else:
+                    xaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims[0]])
+                    yaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims[1]])
+                    plotfunction = pu.plot_fit_2d_clusters
+                # define the clusters
+                clusters = []
+                labels = []
+                colors = []
+                for scores in scores_good_parts + scores_bad_parts:
+                    if self.contourdim==1:
+                        cluster = np.expand_dims( scores[self.histstruct.histnames[dims]], 1 )
+                    else:
+                        scores1 = np.expand_dims( scores[self.histstruct.histnames[dims[0]]], 1 )
+                        scores2 = np.expand_dims( scores[self.histstruct.histnames[dims[1]]], 1 )
+                        cluster = np.hstack( (scores1,scores2) )
+                    clusters.append( cluster )
+                # define the colors and labels
+                for j in range(len(scores_good_parts)):
+                    colors.append(goodcolorlist[j])
+                    labels.append(labels_good_parts[j])
                 for j in range(len(scores_bad_parts)):
-                    ax.plot(    scores_bad_parts[j][self.histstruct.histnames[dims[0]]],
-                                scores_bad_parts[j][self.histstruct.histnames[dims[1]]],
-                                '.',color=badcolorlist[j],markersize=4)
-                for j in range(len(scores_good_parts)): 
-                    ax.plot(    scores_good_parts[j][self.histstruct.histnames[dims[0]]],
-                                scores_good_parts[j][self.histstruct.histnames[dims[1]]],
-                                '.',color=goodcolorlist[j],markersize=4)
+                    colors.append(badcolorlist[j])
+                    labels.append(labels_bad_parts[j])
+                dolegend = False
+                for l in labels:
+                    if len(l)>0: dolegend = True
+                if not dolegend: labels = None
+                # make the plot
+                fig,ax = plotfunction( self.histstruct.fitting_scores, 
+                            clusters, labels=labels, colors=colors,
+                            fitfunc=partialfitfunc, xaxtitle=xaxtitle, yaxtitle=yaxtitle,
+                            **contour_options )
                 # add extra text to the axes
                 # (might need updates to make it more flexible)
-                pu.add_text( ax, 'Density fit of lumisection MSE',
+                pu.add_text( ax, 'Density fit of lumisection scores',
                             (0.05,0.8), fontsize=12, background_alpha=0.75 )
                 if self.plotstyleparser is not None:
                     pu.add_cms_label( ax, pos=(0.05,0.9),
