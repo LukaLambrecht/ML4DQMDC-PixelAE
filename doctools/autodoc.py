@@ -12,6 +12,9 @@ topdir = os.path.abspath('..')
 docdir = 'docs'
 # define which code directories to take into account, relative to project top level
 codedirs = sorted(['utils','src','src/cloudfitters','src/classifiers','omsinterface','omsapi'])
+# define which other directories to take into account 
+# (copy markdown files but do not convert python files)
+otherdirs = sorted(['run'])
 # define title for site
 sitetitle = 'Documentation for the ML4DQM/DC code'
 
@@ -30,8 +33,9 @@ if os.path.exists(os.path.join(topdir,'README.md')):
                 os.path.join(topdir,docdir,'index.md')))
     ymltext += '    - Home: \'index.md\'\n'
 
-# loop over code directories
-for codedir in codedirs:
+# loop over code and other directories
+alldirs = sorted(codedirs+otherdirs)
+for codedir in alldirs:
     # check validity of code dir and clean/make doc dir
     thiscodedir = os.path.join(topdir,codedir)
     if not os.path.exists(thiscodedir):
@@ -61,10 +65,11 @@ for codedir in codedirs:
         ymltext += (level+1)*4*' '+'- '+mdfile.replace('.md','')+': \'{}\'\n'.format(
                 os.path.join(codedir,mdfile))
     # loop over python files and make the doc files
-    for pyfile in pyfiles:
-        mdfiletools.py_to_md( pyfile, thiscodedir, pyfile.replace('.py','.md'), thisdocdir)
-        # update yml
-        ymltext += (level+1)*4*' '+'- '+pyfile.replace('.py','')+': \'{}\'\n'.format(
+    if codedir in codedirs:
+        for pyfile in pyfiles:
+            mdfiletools.py_to_md( pyfile, thiscodedir, pyfile.replace('.py','.md'), thisdocdir)
+            # update yml
+            ymltext += (level+1)*4*' '+'- '+pyfile.replace('.py','')+': \'{}\'\n'.format(
                 os.path.join(codedir,pyfile.replace('.py','.md')))
 
 # write the yml file

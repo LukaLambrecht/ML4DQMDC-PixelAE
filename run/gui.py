@@ -2581,6 +2581,14 @@ class ML4DQMGUI:
         initstring = '[no histstruct loaded]'
         self.histstruct_extnames_text.widget.insert(tk.INSERT, initstring)
 
+        # add widgets to point to documentation
+        self.doc_frame = tk.Frame(master)
+        self.doc_frame.grid(row=1, column=0, columnspan=3, sticky='nsew')
+        self.all_frames.append(self.doc_frame)
+        docurl = 'https://lukalambrecht.github.io/ML4DQM-DC/run/'
+        self.docurlwidget = UrlWidget(self.doc_frame, docurl, text='Go to documentation')
+        self.docurlwidget.grid(row=0, column=0, sticky='nsew')
+
         # apply default stylings to button frames
         for frame in self.button_frames:
             set_frame_default_style( frame, expandcolumn=0 )

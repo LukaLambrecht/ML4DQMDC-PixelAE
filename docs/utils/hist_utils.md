@@ -33,14 +33,15 @@ returns:
 ```  
   
   
-### crophistsgui  
+### get\_cropslices\_from\_str  
 full signature:  
 ```text  
-def crophistsgui(hists, slicestr=None)  
+def get_cropslices_from_str(slicestr)  
 ```  
 comments:  
 ```text  
-same as crophists, but different input argument format  
+get a collection of slices from a string (e.g. argument in gui)  
+note: the resulting slices are typically passed to crophists (see above)  
 - input arguments:  
 - slicestr: string representation of slices  
             e.g. '0:6:2' for slice(0,6,2)  

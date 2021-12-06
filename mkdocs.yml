@@ -13,6 +13,8 @@ nav:
         - get_oms_data: 'omsinterface/get_oms_data.md'
         - omstools: 'omsinterface/omstools.md'
         - urls: 'omsinterface/urls.md'
+    - run:
+        - README: 'run/README.md'
     - src:
         - DataLoader: 'src/DataLoader.md'
         - HistStruct: 'src/HistStruct.md'
