@@ -44,24 +44,24 @@
                             <li >
                                 <a href="..">Home</a>
                             </li>
-                            <li class="dropdown active">
+                            <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">omsapi <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
-<li class="active">
-    <a href="./">README</a>
+<li >
+    <a href="../omsapi/">README</a>
 </li>
                                     
 <li >
-    <a href="get_oms_data/">get_oms_data</a>
+    <a href="../omsapi/get_oms_data/">get_oms_data</a>
 </li>
                                     
 <li >
-    <a href="omsapi/">omsapi</a>
+    <a href="../omsapi/omsapi/">omsapi</a>
 </li>
                                     
 <li >
-    <a href="urls/">urls</a>
+    <a href="../omsapi/urls/">urls</a>
 </li>
                                 </ul>
                             </li>
@@ -94,12 +94,12 @@
 </li>
                                 </ul>
                             </li>
-                            <li class="dropdown">
+                            <li class="dropdown active">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">run <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
-<li >
-    <a href="../run/">README</a>
+<li class="active">
+    <a href="./">README</a>
 </li>
                                 </ul>
                             </li>
@@ -242,12 +242,12 @@
                             </a>
                         </li>
                             <li >
-                                <a rel="next" href="..">
+                                <a rel="next" href="../omsinterface/urls/">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li >
-                                <a rel="prev" href="get_oms_data/">
+                                <a rel="prev" href="../src/DataLoader/">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -259,28 +259,44 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#how-to-start-the-program">How to start the program</a></li>
+        <li class="main "><a href="#where-to-start">Where to start?</a></li>
+        <li class="main "><a href="#input-files">Input files</a></li>
+        <li class="main "><a href="#the-histstruct-object">The HistStruct object</a></li>
+        <li class="main "><a href="#typical-workflow">Typical workflow</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<p><strong>OMS API: retrieve information from the OMS database</strong></p>
-<p>Collection of tools for obtaining OMS information in json-like format.<br />
-Note: this functionality supersedes the older version in the omsinterface folder!  </p>
-<p>References:<br />
-The code is based on the oms api repository here: <a href="https://gitlab.cern.ch/cmsoms/oms-api-client">https://gitlab.cern.ch/cmsoms/oms-api-client</a>. The file omsapi.py in this folder is a direct copy of the omsapi/__init__.py file in that repository, as recommended by the developers to get it running on SWAN. See also these <a href="https://indico.cern.ch/event/997758/contributions/4191705/attachments/2173881/3670409/OMS%20CERN%20OpenID%20migration%20-%20update.pdf">slides</a> for further info on the setup of the app and this <a href="https://cmsoms.cern.ch/agg/api/v1/version/endpoints">site</a> for the available endpoints.</p>
-<p>How to use:  </p>
-<ul>
-<li>You will need to authenticate through an application registered with the OMS developer team. Either contact me on llambrec@cern.ch so I can send you my application ID and client secret, or create your own as explained below.  </li>
-<li>Open example.ipynb for some examples. You need to import get_oms_api.py, then create an OMSAPI instance via get_oms_api() (only once, can be re-used for multiple queries) and then query the information via get_oms_data( \&lt;arguments> ). See example.ipynb or get_oms_data.py for details.</li>
-</ul>
-<p>How to create a personal application for authentication:  </p>
-<ul>
-<li>You will need to register a personal application ID and client secret with the OMS developer team. See the slides linked above on how to do that (only slide 4-6 are relevant, the rest has been taken care of). You will receive an application ID and client secret (both are just string-like variables).   </li>
-<li>Create a new python file in this folder called clientid.py and define two variables in there:<br />
-API_CLIENT_ID = '\&lt;your application ID>'<br />
-API_CLIENT_SECRET = '\&lt;your client secret>'  </li>
-<li>That should be all!  </li>
-</ul></div>
+<p><strong>Run the ML4DQM functionality using the GUI</strong></p>
+<h3 id="how-to-start-the-program">How to start the program</h3>
+<p>The GUI cannot be run in SWAN, it needs to be run locally on your computer.<br />
+Download the repository, navigate to this folder and run via 'python3 gui.py'.<br />
+Dependencies:<br />
+- The GUI will not work with python 2, it is required to use python 3.<br />
+- Apart from tools within this repository, there are quite a few other python dependencies.<br />
+- To do: make executable with all dependencies included and update this part of documentation.  </p>
+<h3 id="where-to-start">Where to start?</h3>
+<p>The starting screen of the GUI shows a number of buttons and text boxes.<br />
+Usually one would start by loading a previously stored HistStruct (a structure containing all relevant histograms and classifiers) via the 'Load' button, or create a new one via the 'New' button. Many of the other buttons will not work if you have not loaded or created a valid HistStruct first. To create a HistStruct, the GUI expects input files in a specific format, see below.</p>
+<h3 id="input-files">Input files</h3>
+<p>To do: update this part of the documentation after discussing with Abhit about how to integrate this in the ML4DQM playground.</p>
+<h3 id="the-histstruct-object">The HistStruct object</h3>
+<p>The 'HistStruct' is the central object used in this program. It contains all relevant histograms (depending on the target run, training runs and histogram types) and their respective classifiers in a structured way.  </p>
+<p>Selecting subsets of histograms, e.g. for classifier training or evaluation, is managed by using masks, which you can initialize when creating the HistStruct. There are three types of masks:<br />
+- run masks: select lumisections belonging to a given run number.<br />
+- statistics masks: select lumisections with high or low statistics. Currently the criterion is simply based on the number of histogram entries divided by the number of bins. Might be extended in the future.<br />
+- json masks: select lumisections with a custom json file in the same format as the typical so-called golden json file. Any json file in the correct format can be uploaded, which allows full flexibility in selecting lumisections.  </p>
+<h3 id="typical-workflow">Typical workflow</h3>
+<p>After having loaded or created a new HistStruct object, you can start the training and evaluation of histogram classifiers. A typical workflow would consist of (most of) the following steps:<br />
+- preprocessing the histograms (i.e. rebinning, normalizing and/or cropping). See the 'Preprocessing' button.<br />
+- make plots of the training set, target set and other histograms that might be relevant. See the 'Plotting' button.<br />
+- resample the training set to increase statistics (might not be needed for some types of classifiers). See the 'Resampling' button.<br />
+- adding classifiers for each histogram type. See the 'Add classifiers' button.<br />
+- train all classifiers. See the 'Train classifiers' button.
+- fit a probability density function to the resulting classifier scores in order to get from a per-histogram score to a per-lumisection score. See the 'Fit' button.
+- evaluate the model. See 'Evaluate model' button.<br />
+- take a closer look at some lumisections. For example in the case of an autoencoder one might be interested to compare the original histogram to its autoencoder reconstruction. Or more generally one could be interested to see what histogram types are causing the high lumisection score. See 'Plot lumisection' button.  </p></div>
         </div>
 
         <footer class="col-md-12">

@@ -95,6 +95,15 @@
                                 </ul>
                             </li>
                             <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">run <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../run/">README</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">src <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
@@ -252,7 +261,7 @@
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#hist-utils">hist utils</a></li>
             <li><a href="#crophists">crophists</a></li>
-            <li><a href="#crophistsgui">crophistsgui</a></li>
+            <li><a href="#get95cropslices95from95str">get_cropslices_from_str</a></li>
             <li><a href="#rebinhists">rebinhists</a></li>
             <li><a href="#normalizehists">normalizehists</a></li>
             <li><a href="#averagehists">averagehists</a></li>
@@ -297,13 +306,14 @@ returns:
 - a numpy array containing the same histograms as input but cropped according to the slices argument  
 </code></pre>
 
-<h3 id="crophistsgui">crophistsgui</h3>
+<h3 id="get95cropslices95from95str">get_cropslices_from_str</h3>
 <p>full signature:  </p>
-<pre><code class="text">def crophistsgui(hists, slicestr=None)  
+<pre><code class="text">def get_cropslices_from_str(slicestr)  
 </code></pre>
 
 <p>comments:  </p>
-<pre><code class="text">same as crophists, but different input argument format  
+<pre><code class="text">get a collection of slices from a string (e.g. argument in gui)  
+note: the resulting slices are typically passed to crophists (see above)  
 - input arguments:  
 - slicestr: string representation of slices  
             e.g. '0:6:2' for slice(0,6,2)  
