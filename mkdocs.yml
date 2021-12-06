@@ -31,6 +31,7 @@ nav:
             - ExponentialFitter: 'src/cloudfitters/ExponentialFitter.md'
             - GaussianKdeFitter: 'src/cloudfitters/GaussianKdeFitter.md'
             - HyperRectangleFitter: 'src/cloudfitters/HyperRectangleFitter.md'
+            - IdentityFitter: 'src/cloudfitters/IdentityFitter.md'
             - LogNormalFitter: 'src/cloudfitters/LogNormalFitter.md'
             - SeminormalFitter: 'src/cloudfitters/SeminormalFitter.md'
     - utils:

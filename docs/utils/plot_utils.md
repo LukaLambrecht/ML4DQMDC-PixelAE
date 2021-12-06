@@ -271,9 +271,9 @@ def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,  onlyconto
 ```  
 comments:  
 ```text  
-make a scatter plot of a 2D point cloud with fitted contour  
+make a 2D scatter plot of a point cloud with fitted contour  
 input arguments:  
-- points: a numpy array of shape (npoints,ndims)  
+- points: a numpy array of shape (npoints,ndims), where ndims is supposed to be 2  
 - fitfunc: an object of type CloudFitter (see src/cloudfitters)   
   or any other object that implements a pdf(points) method  
 - logprob: boolean whether to plot log probability or normal probability  
@@ -291,18 +291,65 @@ input arguments:
 ### plot\_fit\_2d\_clusters  
 full signature:  
 ```text  
-def plot_fit_2d_clusters( points, clusters, labels, colors, **kwargs )  
+def plot_fit_2d_clusters( points, clusters, labels=None, colors=None, **kwargs )  
 ```  
 comments:  
 ```text  
-make a scatter plot of a fitted contour with point clouds superimposed  
+make a 2D scatter plot of a fitted contour with point clouds superimposed  
 input arguments:   
-- points: numpy arrays of shape (npoints,ndims), usually the points to which the fit was done  
+- points: numpy arrays of shape (npoints,ndims), where ndims is supposed to be 2,  
+          usually the points to which the fit was done  
           note: only used to determine plotting range, these points are not plotted!  
-- clusters: list of numpy arrays of shape (npoints,ndims), clouds of points to plot  
+- clusters: list of numpy arrays of shape (npoints,ndims), where ndims is supposed to be 2,  
+            clouds of points to plot  
 - labels: list with legend entries (must be same length as clusters)  
 - colors: list with colors (must be same length as clusters)  
 - kwargs: passed down to plot_fit_2d   
+          note: onlycontour is set automatically and should not be in kwargs  
+```  
+  
+  
+### plot\_fit\_1d  
+full signature:  
+```text  
+def plot_fit_1d( points, fitfunc=None, logprob=False, clipprob=False, onlycontour=False, xlims=5, onlypositive=False, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, title=None, titlesize=None )  
+```  
+comments:  
+```text  
+make a 1D scatter plot of a point cloud with fitted contour  
+input arguments:  
+- points: a numpy array of shape (npoints,ndims), where ndims is supposed to be 1  
+- fitfunc: an object of type CloudFitter (see src/cloudfitters)   
+  or any other object that implements a pdf(points) method  
+- logprob: boolean whether to plot log probability or normal probability  
+- clipprob: boolean whether to replace +- inf values by (non-inf) max and min  
+- onlycontour: a boolean whether to draw only the fit or include the data points  
+- xlims: tuple of the form (low,high)  
+  note: can be an integer, in which case the range will be determined automatically  
+        from the formula low = mean-xlims*std, high = mean+xlims*std,  
+        where mean and std are determined from the points array.  
+- onlypositive: set lower bound of plotting range at 0 (overrides xlims)  
+- xaxtitle and yaxtitle: titles for axes.  
+```  
+  
+  
+### plot\_fit\_1d\_clusters  
+full signature:  
+```text  
+def plot_fit_1d_clusters( points, clusters, labels=None, colors=None, **kwargs )  
+```  
+comments:  
+```text  
+make a 1D scatter plot of a fitted contour with point clouds superimposed  
+input arguments:   
+- points: numpy arrays of shape (npoints,ndims), where ndims is supposed to be 1,  
+          usually the points to which the fit was done  
+          note: only used to determine plotting range, these points are not plotted!  
+- clusters: list of numpy arrays of shape (npoints,ndims), where ndims is supposed to be 1,  
+            clouds of points to plot  
+- labels: list with legend entries (must be same length as clusters)  
+- colors: list with colors (must be same length as clusters)  
+- kwargs: passed down to plot_fit_1d  
           note: onlycontour is set automatically and should not be in kwargs  
 ```  
   
