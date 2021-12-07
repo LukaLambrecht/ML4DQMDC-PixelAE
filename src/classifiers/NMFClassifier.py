@@ -7,20 +7,22 @@
 # It is basically a wrapper for a sklearn.decomposition.NMF instance.
 
 
-
 ### imports
 
 # external modules
+import os
 import sys
 import numpy as np
+import math
+import pickle
 from sklearn.decomposition import NMF
+import matplotlib.pyplot as plt
 
 # local modules
 from HistogramClassifier import HistogramClassifier
 sys.path.append('../../utils')
 from autoencoder_utils import mseTopNRaw, chiSquaredTopNRaw
-
-
+import plot_utils
 
 
 class NMFClassifier(HistogramClassifier):
@@ -39,8 +41,9 @@ class NMFClassifier(HistogramClassifier):
         self.NMF = NMF( n_components=ncomponents )
         self.loss_type = loss_type
         self.nmax = nmax
+        self.ncomponents = ncomponents
         
-    def train( self, histograms ):
+    def train( self, histograms, doplot=True ):
         ### train the NMF model on a given set of input histograms
         # input arguments:
         # - histograms: a numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins) that will be used to fit a NMF model
@@ -49,6 +52,17 @@ class NMFClassifier(HistogramClassifier):
         if len(histograms.shape)==3:
             histograms = histograms.reshape(histograms.shape[0],-1)
         self.NMF.fit( histograms )
+        if doplot: 
+            components = self.get_components()
+            if len(components.shape)==2:
+                plot_utils.plot_hists_multi( components, 
+                                colorlist=list(range(self.ncomponents)), 
+                                title='NMF model components')
+            elif len(components.shape)==3:
+                plot_utils.plot_hists_2d(components, 
+                                ncols=int(math.sqrt(self.ncomponents)), 
+                                title='NMF model components')
+            plt.show(block=False)
         
     def set_nmax( self, nmax ):
         ### set number of largest elements to keep in mean square error calculation
@@ -94,7 +108,16 @@ class NMFClassifier(HistogramClassifier):
         if len(self.shape)==2: reco = reco.reshape(len(histograms),self.shape[0],self.shape[1])
         return reco
 
+    def save( self, path ):
+        ### save the underlying NMF model
+        super( NMFClassifier, self ).save( path )
+        with open( path, 'wb' ) as f:
+            pickle.dump( self, f )
 
-
-
-
+    @classmethod
+    def load( self, path, **kwargs ):
+        ### get an NMFClassifier instance from a pkl file
+        super( NMFClassifier, self ).load( path )
+        with open( path, 'rb' ) as f:
+            obj = pickle.load( f )
+        return obj

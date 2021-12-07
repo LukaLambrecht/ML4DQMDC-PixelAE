@@ -57,15 +57,20 @@ def crophists(hists, slices=None):
 def get_cropslices_from_str(slicestr):
     ### get a collection of slices from a string (e.g. argument in gui)
     # note: the resulting slices are typically passed to crophists (see above)
-    # - input arguments:
+    # input arguments:
     # - slicestr: string representation of slices
     #             e.g. '0:6:2' for slice(0,6,2)
     #             e.g. '0:6:2,1:5:2' for [slice(0,6,2),slice(1,5,2)]
+    if slicestr is None: return None
     slices = []
-    for sstr in slicestr.split(','):
-        parts = sstr.split(':')
-        parts = [int(p) for p in parts]
-        slices.append( slice(parts[0],parts[1],parts[2]) )
+    try:
+        for sstr in slicestr.split(','):
+            parts = sstr.split(':')
+            parts = [int(p) for p in parts]
+            slices.append( slice(parts[0],parts[1],parts[2]) )
+    except:
+        raise Exception('ERROR in hist_utils.py / get_cropslices_from_str:'
+                +' could not convert {} to valid slices.'.format(slicestr))
     if len(slices)==1: slices = slices[0]
     return slices
         
@@ -84,6 +89,7 @@ def rebinhists(hists, factor=None):
     # returns:
     # - a numpy array containing the same histograms as input but rebinned according to the factor argument
     if factor is None: return hists
+    # case of 1D histograms
     if len(hists.shape)==2:
         if(not hists.shape[1]%factor==0): 
             print('WARNING in hist_utils.py / rebinhists: no rebinning performed since no suitable reduction factor was given.'
@@ -95,14 +101,21 @@ def rebinhists(hists, factor=None):
         for i in range(newnbins):
             rebinned[:,i] = np.sum(hists[:,factor*i:factor*(i+1)],axis=1)
         return rebinned
+    # case of 2D histograms
     elif len(hists.shape)==3:
-        if not len(factor)==2:
-            print('WARNING in hist_utils.py / rebinhists: no rebinning performed since no suitable reduction factor was given')
-            print('(must be a tuple of length 2 for 2D histograms)')
+        if( not ((isinstance(factor,tuple) or isinstance(factor,list)) and len(factor)==2) ):
+            msg = 'WARNING in hist_utils.py / rebinhists:'
+            msg += ' no rebinning performed since no suitable reduction factor was given'
+            msg += ' (must be a tuple of length 2 for 2D histograms'
+            msg += ' but found {} of type {})'.format(factor,type(factor))
+            print(msg)
             return hists
         if( not hists.shape[1]%factor[0]==0 or not hists.shape[2]%factor[1]==0):
-            print('WARNING: in hist_utils.py / rebinhists: no rebinning performed since no suitable reduction factor was given.'
-                 +' The rebinning factors ({}) are not divisors of the number of bins ({})'.format(factor,(hists.shape[1],hists.shape[2])))
+            msg = 'WARNING: in hist_utils.py / rebinhists:'
+            msg += ' no rebinning performed since no suitable reduction factor was given.'
+            msg += ' The rebinning factors ({})'.format(factor)
+            msg += ' are not divisors of the number of bins ({})'.format(hists.shape[1:])
+            print(msg)
             return hists
         (nhists,nybins,nxbins) = hists.shape
         newnybins = int(nybins/factor[0])
@@ -113,7 +126,27 @@ def rebinhists(hists, factor=None):
                 rebinned[:,i,j] = np.sum(hists[:,factor[0]*i:factor[0]*(i+1),factor[1]*j:factor[1]*(j+1)],axis=(1,2))
         return rebinned
     else:
-        raise Exception('ERROR in hist_utils.py / rebinhists: histograms have invalid input shape: {}'.format(hists.shape))
+        raise Exception('ERROR in hist_utils.py / rebinhists:'
+                +' histograms have invalid input shape: {}'.format(hists.shape))
+
+def get_rebinningfactor_from_str(factstr):
+    ### get a valid rebinning factor (int or tuple) from a string (e.g. argument in gui)
+    # note: the resulting factor is typically passed to rebinhists (see above)
+    # input arguments:
+    # - factstr: string representation of rebinning factor
+    #             e.g. '4' for 4 (for 1D histograms)
+    #             e.g. '4,4' for (4,4) (for 2D histograms)
+    if factstr is None: return None
+    if not isinstance(factstr,str): return factstr
+    factors = []
+    try:
+        for fstr in factstr.split(','):
+            factors.append( int(fstr) )
+    except:
+        raise Exception('ERROR in hist_utils.py / get_rebinningfactor_from_str:'
+                +' could not convert {} to a valid rebinning factor.'.format(factstr))
+    if len(factors)==1: return factors[0]
+    return tuple(factors)
 
 ### normalization
 

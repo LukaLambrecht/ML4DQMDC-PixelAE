@@ -139,6 +139,7 @@ class HistStruct(object):
         cpath = os.path.splitext(path)[0]+'_classifiers_storage'
         rootpath = os.path.dirname(path)
         zipcontents = {}
+        # case where classifiers should not be stored
         if( len(self.classifiers.keys())==0 or not save_classifiers ):
             classifiers = dict(self.classifiers)
             self.classifiers = {}
@@ -146,6 +147,7 @@ class HistStruct(object):
                 pickle.dump(self,f)
             self.classifiers = classifiers
             zipcontents[pklpath] = os.path.relpath(pklpath, start=rootpath)
+        # case where classifiers should be stored
         else:
             # save the classifiers and store the types in the HistStruct
             self.classifier_types = {}
@@ -795,13 +797,13 @@ class HistStruct(object):
             scores = self.classifiers[histname].evaluate(self.exthistograms[extname][histname])
             self.extscores[extname][histname] = scores
         return scores
-    
-    def plot_histograms( self, histnames=None, masknames=None, histograms=None, colorlist=[], labellist=[], transparencylist=[], 
-                         titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs ):
-        ### plot the histograms in a HistStruct, optionally after msking
-        # note: so far only for 1D histograms.
-        #       case of 2D histograms requires different plotting method since they cannot be clearly overlaid.
-        #       if a HistStruct contains both 1D and 2D histograms, the 1D histograms must be selected with the histnames argument.
+
+
+    def plot_histograms( self, histnames=None, masknames=None, histograms=None, 
+                            colorlist=[], labellist=[], transparencylist=[], 
+                            titledict=None, xaxtitledict=None, physicalxax=False, 
+                            yaxtitledict=None, **kwargs ):
+        ### plot the histograms in a HistStruct, optionally after masking
         # input arguments:
         # - histnames: list of names of the histogram types to plot (default: all)
         # - masknames: list of list of mask names
@@ -827,8 +829,9 @@ class HistStruct(object):
         if histograms is not None: histnames = list(histograms[0].keys())
         for histname in histnames:
             if not histname in self.histnames:
-                raise Exception('ERROR in HistStruct.plot_ls: requested to plot histogram type {}'.format(histname)
-                               +' but it is not present in the current HistStruct.')
+                raise Exception('ERROR in HistStruct.plot_ls:'
+                        +' requested to plot histogram type {}'.format(histname)
+                        +' but it is not present in the current HistStruct.')
             if len(self.histograms[histname].shape)==2: histnames1d.append(histname)
             elif len(self.histograms[histname].shape)==3: histnames2d.append(histname)
         
@@ -848,8 +851,10 @@ class HistStruct(object):
 
         # make plots of the 2D histograms
         if len(histnames2d)>0:
-            if 'ymaxfactor' in kwargs.keys(): kwargs.pop('ymaxfactor')
-            if 'legendsize' in kwargs.keys(): kwargs.pop('legendsize')
+            allowed_kwargs = [] # fill here allowed keyword arguments
+            present_kwargs = list(kwargs.keys())
+            for key in present_kwargs:
+                if key not in allowed_kwargs: kwargs.pop(key) 
             res2d = self.plot_histograms_2d( histnames=histnames2d, masknames=masknames,
                             histograms=histograms,
                             labellist=labellist,
@@ -859,6 +864,7 @@ class HistStruct(object):
         # return the figures and axes
         if len(histnames2d)==0: return (fig1d,axs1d) # for backward compatibility
         return (fig1d,axs1d,res2d)
+
 
     def plot_histograms_1d( self, histnames=None, masknames=None, histograms=None, 
                             colorlist=[], labellist=[], transparencylist=[],
@@ -898,6 +904,7 @@ class HistStruct(object):
                         **kwargs )
         return fig,axs
 
+
     def plot_histograms_2d( self, histnames=None, masknames=None, histograms=None,
                             labellist=[], titledict=None, xaxtitledict=None, yaxtitledict=None,
                             **kwargs ):
@@ -933,7 +940,7 @@ class HistStruct(object):
             nplots = len(histset[list(histset.keys())[0]])
             for i in range(nplots):
                 # make a figure
-                fig,axs = plt.subplots(nrows,ncols,figsize=(6*ncols,6*nrows),squeeze=False)
+                fig,axs = plt.subplots(nrows,ncols,figsize=(4*ncols,4*nrows),squeeze=False)
                 # loop over all histogram types
                 for j,name in enumerate(histnames):
                     # get the histogram
@@ -956,6 +963,7 @@ class HistStruct(object):
                 res.append( (fig,axs) )
         return res
     
+
     def plot_ls( self, runnb, lsnb, histnames=None, histlabel=None, 
                  recohist=None, recohistlabel='Reconstruction', 
                  refhists=None, refhistslabel='Reference histograms', refhiststransparency=None,
@@ -987,6 +995,8 @@ class HistStruct(object):
         
         # check validity of arguments
         if histnames is None: histnames = self.histnames
+        histnames1d = []
+        histnames2d = []
         for histname in histnames:
             if not histname in self.histnames:
                 raise Exception('ERROR in HistStruct.plot_ls: requested to plot histogram type {}'.format(histname)
@@ -1006,6 +1016,58 @@ class HistStruct(object):
                                +' seems to be missing.')
                 if( not isinstance(refhists[histname], np.ndarray) ):
                     raise Exception('ERROR: refhists has unexpected structure, it is supposed to be a dict matching strings to 2D numpy arrays')
+            if len(self.histograms[histname].shape)==2: histnames1d.append(histname)
+            elif len(self.histograms[histname].shape)==3: histnames2d.append(histname)
+
+        # initializations
+        fig1d = None
+        axs1d = None
+        fig2d = None
+        axs2d = None
+
+        # case of 1D histograms
+        if len(histnames1d)>0:
+            (fig1d, axs1d) = self.plot_ls_1d( runnb, lsnb, histnames=histnames, histlabel=histlabel,
+                                recohist=recohist, recohistlabel=recohistlabel,
+                                refhists=refhists, refhistslabel=refhistslabel, 
+                                refhiststransparency=refhiststransparency,
+                                titledict=titledict, xaxtitledict=xaxtitledict, physicalxax=physicalxax, 
+                                yaxtitledict=yaxtitledict, **kwargs )
+
+        if len(histnames2d)>0:
+            allowed_kwargs = [] # fill here allowed keyword arguments
+            present_kwargs = list(kwargs.keys())
+            for key in present_kwargs:
+                if key not in allowed_kwargs: kwargs.pop(key)
+            (fig2d, axs2d) = self.plot_ls_2d( runnb, lsnb, histnames=histnames, histlabel=histlabel,
+                                recohist=recohist, recohistlabel=recohistlabel,
+                                titledict=titledict, 
+                                xaxtitledict=xaxtitledict,
+                                yaxtitledict=yaxtitledict, **kwargs )
+
+        # return the figures and axes
+        if len(histnames2d)==0: return (fig1d,axs1d) # for backward compatibility
+        return (fig1d,axs1d,fig2d,axs2d)
+
+
+    def plot_run( self, runnb, masknames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False):
+        ### call plot_ls for all lumisections in a given run
+        runnbs = self.get_runnbs( masknames=masknames )
+        lsnbs = self.get_lsnbs( masknames=masknames )
+        runsel = np.where(runnbs==runnb)
+        lsnbs = lsnbs[runsel]
+        print('plotting {} lumisections...'.format(len(lsnbs)))
+        for lsnb in lsnbs:
+            _ = self.plot_ls(runnb, lsnb, recohist=recohist, recohistlabel=recohistlabel, refhists=refhists, refhistslabel=refhistslabel)
+
+
+    def plot_ls_1d( self, runnb, lsnb, histnames=None, histlabel=None,
+                 recohist=None, recohistlabel='Reconstruction',
+                 refhists=None, refhistslabel='Reference histograms', refhiststransparency=None,
+                 titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs):
+        ### plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction
+        # internal helper function, use only via plot_ls
+
         # find index that given run and ls number correspond to
         index = self.get_index( runnb, lsnb )
         # initializations
@@ -1063,17 +1125,68 @@ class HistStruct(object):
                   **kwargs)
         return fig,axs
 
-    def plot_run( self, runnb, masknames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False):
-        ### call plot_ls for all lumisections in a given run
-        runnbs = self.get_runnbs( masknames=masknames )
-        lsnbs = self.get_lsnbs( masknames=masknames )
-        runsel = np.where(runnbs==runnb)
-        lsnbs = lsnbs[runsel]
-        print('plotting {} lumisections...'.format(len(lsnbs)))
-        for lsnb in lsnbs:
-            _ = self.plot_ls(runnb, lsnb, recohist=recohist, recohistlabel=recohistlabel, refhists=refhists, refhistslabel=refhistslabel)
 
-
-
-
-
+    def plot_ls_2d( self, runnb, lsnb, histnames=None, histlabel=None,
+                 recohist=None, recohistlabel='Reconstruction',
+                 titledict=None, xaxtitledict=None, yaxtitledict=None, **kwargs):
+        ### plot the histograms in a HistStruct for a given run/ls number versus their reconstruction
+        # internal helper function, use only via plot_ls
+        
+        # find index that given run and ls number correspond to
+        index = self.get_index( runnb, lsnb )
+        # initializations
+        if recohist is None:
+            ncols = min(4,len(histnames))
+            nrows = int(math.ceil(len(histnames)/ncols))
+        else:
+            ncols = 2 
+            nrows = len(histnames)
+        fig,axs = plt.subplots(nrows,ncols,figsize=(4*ncols,4*nrows),squeeze=False)
+        if histlabel is None: histlabel = 'Run: '+str(int(runnb))+', LS: '+str(int(lsnb))+')'
+        # loop over all histograms belonging to this lumisection and make the plots
+        for j,name in enumerate(histnames):
+            # get the original histogram
+            hist = self.histograms[name][index:index+1]
+            reco = None
+            # get the automatically reconstructed histogram
+            if recohist=='auto':
+                if not hasattr(self.classifiers[name],'reconstruct'):
+                    raise Exception('ERROR in HistStruct.plot_ls: automatic calculation of reco hist requires the classifiers '
+                                   +'to have a method called "reconstruct", but this does not seem to be the case for histogram type {}, '.format(name)
+                                   +' whose classifier is of type {}'.format(type(self.classifiers[name])))
+                reco = self.classifiers[name].reconstruct(hist)
+            # get the provided reconstructed histogram
+            elif recohist is not None:
+                reco = recohist[name]
+            # get the title and axes
+            title = pu.make_text_latex_safe(name)
+            if( titledict is not None and name in titledict ): title = titledict[name]
+            xaxtitle = None
+            if( xaxtitledict is not None and name in xaxtitledict ): xaxtitle = xaxtitledict[name]
+            yaxtitle = None
+            if( yaxtitledict is not None and name in yaxtitledict ): yaxtitle = yaxtitledict[name]
+            # make the plot for original histogram
+            row = j
+            column = 0
+            if recohist is None:
+                row = int(j/ncols)
+                column = j%ncols
+            pu.plot_hist_2d( hist[0],
+                  fig=fig,ax=axs[row,column],
+                  title=title, xaxtitle=xaxtitle, yaxtitle=yaxtitle,
+                  **kwargs)
+            # add the label
+            pu.add_text( axs[0,0], histlabel, (0.05, 1.1), fontsize=12,
+                            background_edgecolor='black' )
+            # make the plot for reconstructed histogram
+            if recohist is not None:
+                row = j
+                column = 1
+                pu.plot_hist_2d( reco[0],
+                    fig=fig,ax=axs[row,column],
+                    title=title, xaxtitle=xaxtitle, yaxtitle=yaxtitle,
+                    **kwargs)
+                # add the label
+                pu.add_text( axs[0,1], recohistlabel, (0.05, 1.1), fontsize=12,
+                            background_edgecolor='black' )
+        return fig,axs

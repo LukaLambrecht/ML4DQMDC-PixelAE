@@ -102,8 +102,3 @@ class AutoEncoder(HistogramClassifier):
         # to do: check if it is possible to add all custom objects without using the kwargs
         classifier = AutoEncoder( model=model )
         return classifier
-
-
-
-
-

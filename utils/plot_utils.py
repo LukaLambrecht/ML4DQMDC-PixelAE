@@ -385,8 +385,8 @@ def plot_mse(mse, rmlargest=0., doplot=True,
 
 def plot_score_dist( scores, labels, fig=None, ax=None,
                         nbins=20, normalize=False,
-                        siglabel='signal', sigcolor='g',
-                        bcklabel='background', bckcolor='r',
+                        siglabel='Signal', sigcolor='g',
+                        bcklabel='Background', bckcolor='r',
                         title=None, xaxtitle=None, yaxtitle=None,
                         doshow=True):
     ### make a plot showing the distributions of the output scores for signal and background
@@ -402,8 +402,8 @@ def plot_score_dist( scores, labels, fig=None, ax=None,
         sighist = sighist/np.sum(sighist)
         bckhist = bckhist/np.sum(bckhist)
     if( fig is None or ax is None): (fig,ax) = plt.subplots()
-    ax.step(scoreax,sighist,color=sigcolor,label=siglabel,where='mid')
     ax.step(scoreax,bckhist,color=bckcolor,label=bcklabel,where='mid')
+    ax.step(scoreax,sighist,color=sigcolor,label=siglabel,where='mid')
     ax.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
     if title is not None: ax.set_title(title)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
@@ -411,6 +411,39 @@ def plot_score_dist( scores, labels, fig=None, ax=None,
     ax.legend()
     if doshow: plt.show(block=False)
     return (fig,ax)
+
+
+def plot_score_ls( thisscore, refscores, fig=None, ax=None, 
+                    thislabel='This LS', thiscolor='black',
+                    reflabel='Reference LS', refcolor='dodgerblue', **kwargs ):
+    ### make a plot of the score for a single lumisection comparing to some reference distribution
+    
+    # make a dummy plot of the reference distribution only
+    extraargs = {}
+    if 'nbins' in kwargs.keys(): extraargs['nbins'] = kwargs['nbins']
+    fig,ax = plot_score_dist( refscores, np.zeros(len(refscores)), 
+                        fig=fig, ax=ax, normalize=False, doshow=False, **extraargs )
+
+    # make the peak score to superimpose
+    ymax = ax.get_ylim()[1]
+    sigscores = [thisscore]*int(ymax)
+    scores = np.concatenate((refscores,sigscores))
+    labels = np.concatenate((np.zeros(len(refscores)),np.ones(len(sigscores))))
+
+    # clear the current plot
+    ax.clear()
+
+    # make the plot
+    # note: for now, normalized distribution is not supported since thisscores 
+    #       will always reach to 1, while refscores might have a much lower maximum
+    if 'normalize' in kwargs.keys(): kwargs.pop('normalize')
+    fig,ax = plot_score_dist( scores, labels, fig=fig, ax=ax,
+                            siglabel=thislabel, sigcolor=thiscolor,
+                            bcklabel=reflabel, bckcolor=refcolor,
+                            normalize=False,
+                            **kwargs )
+    return (fig,ax)
+
 
 def plot_metric( wprange, metric, label=None, color=None,
                     sig_eff=None, sig_label=None, sig_color=None,

@@ -1038,7 +1038,7 @@ class PlotSetsWindow(tk.Toplevel):
 
     def open_selection_window(self, idx):
         self.set_selector_list[idx] = SelectorWindow(self.master, self.histstruct,
-                                                        only_mask_selection=True)
+                                                        set_selection=False, post_selection=False)
         self.select_set_button_list[idx]['bg'] = 'green'
         # (to do: make check if sets were actually selected more robust, as selection window
         #         could be closed without making a selection, but button would still be green.)
@@ -1121,8 +1121,8 @@ class PreProcessingWindow(tk.Toplevel):
         options = []
         options.append( {'name':'cropping', 'val':None, 'type':tk.Text, 
                          'docurl':get_docurl(hu.get_cropslices_from_str)} )
-        options.append( {'name':'rebinningfactor', 'val':1, 'type':tk.Text,
-                        'docurl':get_docurl(hu.rebinhists)} )
+        options.append( {'name':'rebinningfactor', 'val':None, 'type':tk.Text,
+                        'docurl':get_docurl(hu.get_rebinningfactor_from_str)} )
         options.append( {'name':'donormalize', 'val':[False,True], 'type':ttk.Combobox,
                         'docurl':get_docurl(hu.normalizehists)} )
         labels = [el['name'] for el in options]
@@ -1143,6 +1143,8 @@ class PreProcessingWindow(tk.Toplevel):
         # do special treatment if needed
         slices = hu.get_cropslices_from_str(options.pop('cropping'))
         options['cropslices'] = slices
+        rebinningfactor = hu.get_rebinningfactor_from_str(options.pop('rebinningfactor'))
+        options['rebinningfactor'] = rebinningfactor
         # disable frame for the remainder of the processing time
         disable_frame( self )
         # do the preprocessing
@@ -1173,8 +1175,9 @@ class SelectorWindow(tk.Toplevel):
     ### popup window class for histogram selection
     # (common to several other popup windows)
 
-    def __init__(self, master, histstruct, only_mask_selection=False,
-                                            only_set_selection=False,
+    def __init__(self, master, histstruct, mask_selection=True,
+                                            set_selection=True,
+                                            post_selection=True,
                                             allow_multi_mask=True,
                                             allow_multi_set=False):
         super().__init__(master=master)
@@ -1202,7 +1205,7 @@ class SelectorWindow(tk.Toplevel):
         if len(self.histstruct.get_masknames())==0:
             self.histstruct_masks_listbox.insert(tk.END, '[no masks available]')
         self.histstruct_masks_listbox.grid(row=1, column=0, sticky='nsew')
-        if not only_set_selection: self.histstruct_masks_frame.grid(row=0, column=0, sticky='nsew')
+        if mask_selection: self.histstruct_masks_frame.grid(row=0, column=0, sticky='nsew')
         
         # add widgets for choosing a (resampled) set directly
         self.histstruct_sets_frame = tk.Frame(self)
@@ -1217,7 +1220,7 @@ class SelectorWindow(tk.Toplevel):
         if len(self.histstruct.exthistograms.keys())==0:
             self.histstruct_sets_listbox.insert(tk.END, '[no sets available]')
         self.histstruct_sets_listbox.grid(row=1, column=0, sticky='nsew')
-        if not only_mask_selection: self.histstruct_sets_frame.grid(row=1, column=0, sticky='nsew')
+        if set_selection: self.histstruct_sets_frame.grid(row=1, column=0, sticky='nsew')
 
         # add widgets for randoms, first, or averages
         self.other_options_frame = tk.Frame(self)
@@ -1227,7 +1230,7 @@ class SelectorWindow(tk.Toplevel):
         self.optionsframe = OptionsFrame(self.other_options_frame, labels=list(options.keys()),
                                             values=list(options.values()))
         self.optionsframe.frame.grid(row=1, column=0)
-        self.other_options_frame.grid(row=2, column=0, sticky='nsew')
+        if post_selection: self.other_options_frame.grid(row=2, column=0, sticky='nsew')
 
         # add widget for selection
         self.select_button = tk.Button(self, text='Select', command=self.select_histograms)
@@ -1387,24 +1390,31 @@ class TrainClassifiersWindow(tk.Toplevel):
         for widget in self.container_frame.winfo_children(): widget.destroy()
         # make new options and frame
         for i,histname in enumerate(histnames):
+            # make a frame and put some labels
             this_options_frame = tk.Frame(self.container_frame)
             this_options_frame.grid(row=0, column=i)
             set_frame_default_style( this_options_frame )
             hist_label = tk.Label(this_options_frame, text=histname)
-            hist_label.grid(row=0, column=0, columnspan=2)
-            key_label = tk.Label(this_options_frame, text='Parameters')
-            key_label.grid(row=1, column=0)
-            value_label = tk.Label(this_options_frame, text='Values')
-            value_label.grid(row=1, column=1)
+            hist_label.grid(row=0, column=0)
+            # get the training options
             arghistname = histname
             if histname=='all histogram types': arghistname = None
             (c,options) = get_training_options( self.histstruct, histname=arghistname )
+            labels = list(options.keys())
+            values = list(options.values())
+            wtypes = [None]*len(labels)
+            # overwrite or parse training options in special cases
+            for j in range(len(labels)):
+                if is_bool(str(values[j])):
+                    wtypes[j] = ttk.Combobox
+                    values[j] = [values[j], not values[j]]
             # get docurl
             docurl = get_docurl(c)
+            # make the options frame
             options_frame = OptionsFrame(this_options_frame,
-                labels=options.keys(),values=options.values(),
+                labels=labels, values=values, types=wtypes,
                 docurl=docurl)
-            options_frame.frame.grid(row=2, column=0, columnspan=2)
+            options_frame.frame.grid(row=1, column=0)
             self.training_options[histname] = options_frame
 
     def do_training(self):
@@ -2240,7 +2250,7 @@ class ApplyClassifiersWindow(tk.Toplevel):
 
     def open_selection_window(self):
         self.set_selector = SelectorWindow(self.master, self.histstruct, 
-                                only_set_selection=True,
+                                mask_selection=False, post_selection=False,
                                 allow_multi_set=True)
 
     def evaluate(self):
@@ -2254,6 +2264,7 @@ class ApplyClassifiersWindow(tk.Toplevel):
         self.destroy()
         self.update()
         print('done')
+
 
 class ApplyFitWindow(ApplyClassifiersWindow):
     ### popup window class for evaluating the fitter
@@ -2278,6 +2289,7 @@ class ApplyFitWindow(ApplyClassifiersWindow):
         self.update()
         print('done')
 
+
 class PlotLumisectionWindow(tk.Toplevel):
     ### popup window class for plotting a run/lumisection
 
@@ -2287,6 +2299,7 @@ class PlotLumisectionWindow(tk.Toplevel):
         self.histstruct = histstruct
         self.plotstyleparser = plotstyleparser
         self.inspect_set_selector = None
+        self.refscore_set_selector = None
         self.ref_set_selector = None
 
         # create a frame for the buttons
@@ -2295,16 +2308,29 @@ class PlotLumisectionWindow(tk.Toplevel):
         set_frame_default_style( self.buttons_frame )
 
         # add widgets with options
+        # define options and default values
         options = {'mode':'ls', 'run': '', 'lumisection':'', 
-                    'histlabel': 'Original histogram',
+                    'histlabel': '',
                     'recomode':'auto',
                     'recohistlabel': 'Reconstruction',
                     'refhistslabel': 'Reference histograms',
                     'refhiststransparency': 0.2,
                     'plotscore': False}
+        labels = list(options.keys())
+        values = list(options.values())
+        wtypes = [None]*len(labels)
+        # overwrite options in special cases
+        for i in range(len(labels)):
+            if is_bool(str(values[i])):
+                wtypes[i] = ttk.Combobox
+                values[i] = [values[i], not values[i]]
+            if labels[i]=='mode':
+                wtypes[i] = ttk.Combobox
+                values[i] = ['ls','run']
+        # make the options frame
         docurl = get_docurl(self.histstruct.plot_ls)
         self.options_frame = OptionsFrame(self.buttons_frame, 
-                                labels=options.keys(), values=options.values(),
+                                labels=labels, values=values, types=wtypes,
                                 docurl=docurl)
         self.options_frame.frame.grid(row=0, column=0, sticky='nsew')
         
@@ -2321,31 +2347,41 @@ class PlotLumisectionWindow(tk.Toplevel):
         self.plot_button = tk.Button(self.buttons_frame, text='Plot', command=self.plot)
         self.plot_button.grid(row=2, column=0, columnspan=2, sticky='nsew')
 
-        # add widgets for selecting inspect datasets
+        # add widgets for selecting inspect dataset
         self.inspect_set_frame = tk.Frame(self)
         self.inspect_set_frame.grid(row=0, column=1, sticky='nsew')
         set_frame_default_style( self.inspect_set_frame )
-        self.inspect_set_label = tk.Label(self.inspect_set_frame, text='Select masks for plotting')
+        label = 'Select masks for plotting\n(ignored when plotting single lumisection)'
+        self.inspect_set_label = tk.Label(self.inspect_set_frame, text=label)
         self.inspect_set_label.grid(row=0, column=0)
         self.inspect_set_button = tk.Button(self.inspect_set_frame, text='Select masks',
                                             command=self.open_select_inspect_set_window,
                                             bg='orange')
         self.inspect_set_button.grid(row=1, column=0)
 
-        # add widgets for selecting reference datasets
+        # add widgets for selecting reference score dataset
+        self.refscore_set_frame = tk.Frame(self)
+        self.refscore_set_frame.grid(row=0, column=2, sticky='nsew')
+        set_frame_default_style( self.refscore_set_frame )
+        label = 'Select masks for reference scores\n(ignored when not plotting score comparison)'
+        self.refscore_set_label = tk.Label(self.refscore_set_frame, text=label)
+        self.refscore_set_label.grid(row=0, column=0)
+        self.refscore_set_button = tk.Button(self.refscore_set_frame, text='Select masks',
+                                            command=self.open_select_refscore_set_window,
+                                            bg='orange')
+        self.refscore_set_button.grid(row=1, column=0)
+
+        # add widgets for selecting reference histogram dataset
         self.ref_set_frame = tk.Frame(self)
-        self.ref_set_frame.grid(row=0, column=2, sticky='nsew')
+        self.ref_set_frame.grid(row=0, column=3, sticky='nsew')
         set_frame_default_style( self.ref_set_frame )
-        self.ref_set_label = tk.Label(self.ref_set_frame, text='Choose reference dataset')
+        label = 'Select reference histograms\n(ignored when not plotting reference histograms)'
+        self.ref_set_label = tk.Label(self.ref_set_frame, text=label)
         self.ref_set_label.grid(row=0, column=0)
         self.ref_set_button = tk.Button(self.ref_set_frame, text='Select dataset',
                                             command=self.open_select_ref_set_window,
                                             bg='orange')
         self.ref_set_button.grid(row=1, column=0)
-        options = {'partitions':'-1'}
-        self.ref_set_options_frame = OptionsFrame(self.ref_set_frame,
-                                    labels=options.keys(), values=options.values())
-        self.ref_set_options_frame.frame.grid(row=2, column=0)
 
     def load_plotstyle(self):
         initialdir = os.path.abspath(os.path.dirname(__file__))
@@ -2363,8 +2399,13 @@ class PlotLumisectionWindow(tk.Toplevel):
 
     def open_select_inspect_set_window(self):
         self.inspect_set_selector = SelectorWindow(self.master, self.histstruct, 
-                                                    only_mask_selection=True)
+                                                    set_selection=False, post_selection=False)
         self.inspect_set_button['bg'] = 'green'
+
+    def open_select_refscore_set_window(self):
+        self.refscore_set_selector = SelectorWindow(self.master, self.histstruct,
+                                                    set_selection=False, post_selection=False)
+        self.refscore_set_button['bg'] = 'green'
 
     def open_select_ref_set_window(self):
         self.ref_set_selector = SelectorWindow(self.master, self.histstruct)
@@ -2372,17 +2413,16 @@ class PlotLumisectionWindow(tk.Toplevel):
 
     def get_reference_histograms(self):
         if self.ref_set_selector is None: return None
-        histograms = self.ref_set_selector.histograms
-        if histograms is None: return None
-        partitions = self.ref_set_options_frame.get_dict()['partitions']
-        if partitions<0: return histograms
-        for histname in histograms.keys():
-            histograms[histname] = hu.averagehists( histograms[histname], partitions )
-        return histograms
+        return self.ref_set_selector.get_histograms()
 
     def get_inspect_masks(self):
         if self.inspect_set_selector is None: return None
         masks = self.inspect_set_selector.masks
+        return masks
+
+    def get_refscore_masks(self):
+        if self.refscore_set_selector is None: return None
+        masks = self.refscore_set_selector.masks
         return masks
 
     def plot(self):
@@ -2396,12 +2436,20 @@ class PlotLumisectionWindow(tk.Toplevel):
         options['recohist'] = options.pop('recomode')
         if mode=='ls': pass
         elif mode=='run':
+            # check if masks were defined for this case
+            if self.get_inspect_masks() is None:
+                msg = 'WARNING: no masks were defined,'
+                msg += ' will plot all lumisections in run {}...'.format(runnb)
+            # get the run and lumisection numbers
             runnbs = self.histstruct.get_runnbs( masknames=self.get_inspect_masks() )
             lsnbs = self.histstruct.get_lsnbs( masknames=self.get_inspect_masks() )
             runsel = np.where(runnbs==runnb)
             lsnbs = lsnbs[runsel]
-            plotscore = False # disable for now for mode==run,
-                              # maybe enable later.
+            # disable plotting scores in this case (maybe enable later)
+            plotscore = False
+            msg = 'WARNING: plotscore is automatically set to False for mode run!'
+            print(msg)
+            # print number of lumisections to plot
             print('plotting {} lumisections...'.format(len(lsnbs)))
         else: raise Exception('ERROR: option mode = {} not recognized;'.format(options['mode'])
                                 +' should be either "run" or "ls".')
@@ -2427,31 +2475,43 @@ class PlotLumisectionWindow(tk.Toplevel):
             #if i>4: 
             #    print('WARNING: plotting loop closed after 5 iterations for testing')
             #    break
-            fig,axs = self.histstruct.plot_ls(runnb, lsnb, refhists=refhists,
-                                             **options, 
-                                             opaque_legend=True,
-                                             **plotstyle_options )
-            # add extra text to the axes
+            res = self.histstruct.plot_ls(runnb, lsnb, refhists=refhists,
+                        **options, opaque_legend=True, **plotstyle_options )
+            fig = res[0]
+            axs = res[1]
+            fig2d = None
+            axs2d = None
+            if len(res)==4:
+                fig2d = res[2]
+                axs2d = res[3]
+            
+            # post-processing of 1D figure
             # (might need updates to make it more flexible)
-            if self.plotstyleparser is not None:
-                counter = -1
-                for i in range(axs.shape[0]):
-                    for j in range(axs.shape[1]):
-                        counter += 1
-                        histname = self.histstruct.histnames[counter]
-                        ax = axs[i,j]
-                        pu.add_cms_label( ax, pos=(0.05,0.9),
+            if( fig is not None and axs is not None ):
+                if self.plotstyleparser is not None:
+                    counter = -1
+                    for i in range(axs.shape[0]):
+                        for j in range(axs.shape[1]):
+                            counter += 1
+                            histname = self.histstruct.histnames[counter]
+                            ax = axs[i,j]
+                            pu.add_cms_label( ax, pos=(0.05,0.9),
                                   extratext=self.plotstyleparser.get_extracmstext(),
                                   fontsize=self.plotstyleparser.get_cmstextsize() )
-                        extratext = self.plotstyleparser.get_extratext(histname=histname)
-                        if extratext is not None:
-                            pu.add_text( ax, extratext,
-                                 (0.5,0.75), fontsize=self.plotstyleparser.get_extratextsize() )
-                        condtext = self.plotstyleparser.get_condtext()
-                        if condtext is not None:
-                            pu.add_text( ax, condtext, (0.75,1.01),
-                                 fontsize=self.plotstyleparser.get_condtextsize() )
+                            extratext = self.plotstyleparser.get_extratext(histname=histname)
+                            if extratext is not None:
+                                pu.add_text( ax, extratext,
+                                    (0.5,0.75), fontsize=self.plotstyleparser.get_extratextsize() )
+                            condtext = self.plotstyleparser.get_condtext()
+                            if condtext is not None:
+                                pu.add_text( ax, condtext, (0.75,1.01),
+                                    fontsize=self.plotstyleparser.get_condtextsize() )
+            # post-processing of 2D figure
+            if( fig2d is not None and axs2d is not None ):
+                pass
             plt.show(block=False)
+
+            # get the score
             scorepoint = self.histstruct.get_scores_ls( runnb, lsnb )
             try:
                 logprob = self.histstruct.get_globalscore_ls( runnb, lsnb )
@@ -2460,28 +2520,36 @@ class PlotLumisectionWindow(tk.Toplevel):
                         +' for run {}, lumisection {};'.format(runnb, lsnb)
                         +' was it initialized?')
                 logprob = None
-            print('-------------')
-            print('scores:')
+            print('--- Run: {}, LS: {} ---'.format(runnb, lsnb))
+            print('Scores:')
             for histname in self.histstruct.histnames: 
                 print('{} : {}'.format(histname,scorepoint[histname]))
-            print('-------------')
-            print('logprob: '+str(logprob))
+            print('Log probability: '+str(logprob))
 
             if plotscore:
+                # check if a reference set was defined
+                if self.get_refscore_masks() is None:
+                    msg = 'WARNING: requested to plot a reference score distribution,'
+                    msg += ' but no reference set for the scores was defined;'
+                    msg += ' using all lumisections in the current HistStruct.'
+                    print(msg)
+                # initialize the figure
                 ncols = min(4,len(self.histstruct.histnames))
                 nrows = int(math.ceil(len(self.histstruct.histnames)/ncols))
                 fig,axs = plt.subplots(nrows,ncols,figsize=(6*ncols,6*nrows),squeeze=False)
+                # loop over histogram types
                 for dim,histname in enumerate(self.histstruct.histnames):
-                    scores = self.histstruct.get_scores( histname=histname, 
-                                                     masknames=self.get_inspect_masks() )
-                    nscores = len(scores)
-                    labels = np.zeros(nscores)
-                    scores = np.concatenate((scores,np.ones(int(nscores/15))*scorepoint[histname]))
-                    labels = np.concatenate((labels,np.ones(int(nscores/15))))
-                    pu.plot_score_dist( scores, labels, fig=fig, ax=axs[int(dim/ncols),dim%ncols], 
-                            nbins=200, normalize=False,
-                            siglabel='this lumisection', bcklabel='all (masked) lumisections',
-                            title=pu.make_text_latex_safe(histname), doshow=False )
+                    thisscore = scorepoint[histname]
+                    refscores = self.histstruct.get_scores( histname=histname, 
+                                masknames=self.get_refscore_masks() )
+                    _ = pu.plot_score_ls( thisscore, refscores, fig=fig, ax=axs[int(dim/ncols),dim%ncols],
+                            thislabel='This LS', 
+                            reflabel='Reference LS',
+                            title=pu.make_text_latex_safe(histname),
+                            xaxtitle='Model output score',
+                            yaxtitle='Arbitrary units',
+                            doshow=False,
+                            nbins=200, normalize=True )
                 plt.show(block=False)
 
     def close(self):
