@@ -654,20 +654,20 @@ class NewHistStructWindow(tk.Toplevel):
         self.make_histstruct_button.grid(row=3, column=0)
 
     def get_target_run(self):
+        ### get the target run from the corresponding Text widget
+        # return None if the widget is empty
         target_run_text = self.target_run_text.get(1.0, tk.END).strip(' \t\n')
         if len(target_run_text)==0: return None
         return int(target_run_text)
 
     def get_local_training_runs(self, filename):
+        ### get the training runs from the corresponding Text widgets
+        # return None if the target run is None
         target_run = self.get_target_run()
+        if target_run is None: return None
         ntraining = int(self.ntraining_text.get(1.0, tk.END).strip(' \t\n'))
         offset = int(self.offset_text.get(1.0, tk.END).strip(' \t\n'))
-        #try:
         runs = dfu.get_runs( dfu.select_dcson( csvu.read_csv( filename ) ) )
-        #except:
-        #    print('WARNING in get_local_training_runs: could not filter runs by DCS-on.'
-        #            +' Check access to the DCS-on json file.')
-        #    runs = dfu.get_runs( csvu.read_csv( filename ) )
         runs = dfu.get_runs( csvu.read_csv( filename ) )
         target_run_index = runs.index(target_run)
         training_runs = runs[target_run_index-ntraining-offset:target_run_index-offset]
@@ -679,6 +679,7 @@ class NewHistStructWindow(tk.Toplevel):
         for run in self.get_run_masks().values():
             all_runs.append(run)
         # for local training: add target and training runs
+        # (in case a target run is specified)
         if is_local:
             if filename is None:
                 raise Exception('ERROR: a filename must be specified'
@@ -686,9 +687,10 @@ class NewHistStructWindow(tk.Toplevel):
             if not os.path.exists(filename):
                 raise Exception('ERROR: the file {} does not seem to exist.'.format(filename))
             target_run = self.get_target_run()
-            training_runs = self.get_local_training_runs( filename )
-            all_runs.append(target_run)
-            for run in training_runs: all_runs.append(run)
+            if target_run is not None:
+                training_runs = self.get_local_training_runs( filename )
+                all_runs.append(target_run)
+                for run in training_runs: all_runs.append(run)
         return all_runs
 
     def add_run_mask(self, parent=None):
@@ -831,11 +833,14 @@ class NewHistStructWindow(tk.Toplevel):
         # add training and target mask for local training
         # to do: make this more flexible (e.g. choosing names)
         if training_mode=='local':
-            print('adding masks for target run and local training runs...')
-            json = {str(self.get_target_run()): [[-1]]}
-            self.histstruct.add_json_mask( 'target_run', json )
-            json = {str(run): [[-1]] for run in self.get_local_training_runs(firstfilename)}
-            self.histstruct.add_json_mask( 'local_training', json )
+            if self.get_target_run() is not None:
+                print('adding mask for target runs...')
+                json = {str(self.get_target_run()): [[-1]]}
+                self.histstruct.add_json_mask( 'target_run', json )
+            if self.get_local_training_runs(firstfilename) is not None:
+                print('adding mask for local training runs...')
+                json = {str(run): [[-1]] for run in self.get_local_training_runs(firstfilename)}
+                self.histstruct.add_json_mask( 'local_training', json )
 
         # add high statistics mask(s)
         highstat_masks = self.get_highstat_masks()
@@ -1064,30 +1069,38 @@ class PlotSetsWindow(tk.Toplevel):
             optionsdict['yaxtitlesize'] = self.plotstyleparser.get_yaxtitlesize()
             optionsdict['ymaxfactor'] = self.plotstyleparser.get_ymaxfactor()
             optionsdict['legendsize'] = self.plotstyleparser.get_legendsize()
+        # make the plots
         print('making plot...')
-        fig,axs = self.histstruct.plot_histograms( **optionsdict )
-        # add extra text to the axes
+        res = self.histstruct.plot_histograms( **optionsdict )
+        fig = res[0]
+        axs = res[1]
+        res2d = res[2] if len(res)>2 else None
+        # post-processing of figure for 1D histograms
         # (might need updates to make it more flexible)
-        if self.plotstyleparser is not None:
-            counter = -1
-            for i in range(axs.shape[0]):
-                for j in range(axs.shape[1]):
-                    counter += 1
-                    histname = self.histstruct.histnames[counter]
-                    ax = axs[i,j]
-                    pu.add_cms_label( ax, pos=(0.05,0.9), 
+        if( fig is not None and axs is not None ):
+            if self.plotstyleparser is not None:
+                counter = -1
+                for i in range(axs.shape[0]):
+                    for j in range(axs.shape[1]):
+                        counter += 1
+                        histname = self.histstruct.histnames[counter]
+                        ax = axs[i,j]
+                        pu.add_cms_label( ax, pos=(0.05,0.9), 
                                   extratext=self.plotstyleparser.get_extracmstext(), 
                                   fontsize=self.plotstyleparser.get_cmstextsize() )
-                    extratext = self.plotstyleparser.get_extratext(histname=histname)
-                    if extratext is not None:
-                        pu.add_text( ax, extratext,
+                        extratext = self.plotstyleparser.get_extratext(histname=histname)
+                        if extratext is not None:
+                            pu.add_text( ax, extratext,
                                  (0.5,0.75), fontsize=self.plotstyleparser.get_extratextsize() )
-                    condtext = self.plotstyleparser.get_condtext()
-                    if condtext is not None: 
-                        pu.add_text( ax, condtext, (0.75,1.01), 
+                        condtext = self.plotstyleparser.get_condtext()
+                        if condtext is not None: 
+                            pu.add_text( ax, condtext, (0.75,1.01), 
                                  fontsize=self.plotstyleparser.get_condtextsize() )
-        # save or plot the figure
-        #fig.savefig('test.png')
+        # post-processing of figures for 2D histograms
+        if res2d is not None:
+            for (fig,axs) in res2d:
+                pass
+        # show the figures
         plt.show(block=False)
 
     def close(self):

@@ -131,7 +131,9 @@ def normalizehists(hists):
     elif len(hists.shape)==3:
         normhists = []
         for i in range(len(hists)):
-            normhists.append( hists[i]/hists[i].max() )
+            hmax = hists[i].max()
+            if hmax==0: hmax = 1
+            normhists.append( hists[i]/hmax )
         return np.array(normhists)
     else:
         raise Exception('ERROR in hist_utils.py / normalizehists: histograms have invalid input shape: {}'.format(hists.shape))

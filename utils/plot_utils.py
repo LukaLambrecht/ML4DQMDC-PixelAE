@@ -151,7 +151,9 @@ def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], tr
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
     return (fig,ax)
 
-def plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None, caxrange=None):
+def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None,
+                xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
+                caxrange=None):
     ### plot a 2D histogram
     # - hist is a 2D numpy array of shape (nxbins, nybins)
     # notes:
@@ -174,9 +176,9 @@ def plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=No
     cobject.set_array([]) # ad-hoc bug fix
     ax.imshow(hist, interpolation='none', norm=my_norm, cmap=my_cmap)
     fig.colorbar(cobject,ax=ax)
-    if title is not None: ax.set_title(title)
-    if xaxtitle is not None: ax.set_xlabel(xaxtitle)
-    if yaxtitle is not None: ax.set_ylabel(yaxtitle)
+    if title is not None: ax.set_title(title, fontsize=titlesize)
+    if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
+    if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
     return (fig,ax)
 
 def plot_hists_2d(hists, ncols=4, title=None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None):

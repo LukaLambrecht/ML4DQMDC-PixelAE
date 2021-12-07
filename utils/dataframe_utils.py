@@ -8,7 +8,6 @@
 # - selecting specific runs, lumisections, or types of histograms
 
 
-
 ### imports
 
 # external modules
@@ -21,8 +20,6 @@ import importlib
 # local modules
 import json_utils
 importlib.reload(json_utils)
-
-
 
 
 # getter and selector for histogram names 
@@ -44,6 +41,7 @@ def select_histnames(df, histnames):
     df.reset_index(drop=True,inplace=True)
     return df
 
+
 # getter and selector for run numbers
 
 def get_runs(df):
@@ -62,6 +60,7 @@ def select_runs(df, runnbs):
     df = df[df['fromrun'].isin(runnbs)]
     df.reset_index(drop=True,inplace=True)
     return df
+
 
 # getter and selector for lumisection numbers
 
@@ -83,6 +82,7 @@ def select_ls(df, lsnbs):
     df.reset_index(drop=True,inplace=True)
     return df
 
+
 ### general getter and selector in json format
 
 def get_runsls(df):
@@ -103,6 +103,7 @@ def select_runsls(df, jsondict):
     dfres = df[ json_utils.injson(df['fromrun'].values,df['fromlumi'].values,jsondict=jsondict) ]
     dfres.reset_index(drop=True,inplace=True)
     return dfres
+
 
 ### selectors for golden json and other important json files
 
@@ -136,12 +137,12 @@ def select_pixelgood(df):
     dfres.reset_index(drop=True,inplace=True)
     return dfres
 
-
 def select_pixelbad(df):
     ### keep only lumisections in df that are in bad pixel json
     dfres = df[ json_utils.ispixelbad(df['fromrun'].values,df['fromlumi'].values) ]
     dfres.reset_index(drop=True,inplace=True)
     return dfres
+
 
 # getter and selector for sufficient statistics
 
@@ -152,8 +153,6 @@ def get_highstat(df, entries_to_bins_ratio=100):
 def select_highstat(df, entries_to_bins_ratio=100):
     ### keep only lumisection in df with high statistics
     return select_runsls(df,get_highstat(df,entries_to_bins_ratio))
-
-
 
 
 # functions to obtain histograms in np array format
@@ -171,9 +170,17 @@ def get_hist_values(df):
     # - np array of run numbers of length nhists
     # - np array of lumisection numbers of length nhists
     # warning: no check is done to assure that all histograms are of the same type!
+    
+    # check for corruption of data types (observed once after merging several csv files)
+    if isinstance( df.at[0,'Xbins'], str ):
+        raise Exception('ERROR in dataframe_utils.py / get_hist_values:'
+                +' the "Xbins" entry in the dataframe is of type str, while a numpy int is expected;'
+                +' check for file corruption.')
+    # check dimension
     dim = 1
     if 'Ybins' in df.keys():
         if df.at[0,'Ybins']>1: dim=2
+    # initializations
     nxbins = df.at[0,'Xbins']+2 # +2 for under- and overflow bins
     vals = np.zeros((len(df),nxbins))
     if dim==2: 
@@ -181,6 +188,7 @@ def get_hist_values(df):
         vals = np.zeros((len(df),nybins,nxbins))
     ls = np.zeros(len(df))
     runs = np.zeros(len(df))
+    # loop over all entries
     for i in range(len(df)):
         hist = np.array(json.loads(df.at[i,'histo']))
         if dim==2: hist = hist.reshape((nybins,nxbins))
@@ -190,8 +198,3 @@ def get_hist_values(df):
     ls = ls.astype(int)
     runs = runs.astype(int)
     return (vals,runs,ls)
-
-
-
-
-

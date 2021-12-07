@@ -89,7 +89,8 @@ class HistStruct(object):
         info = ''
         # histogram names:
         info += '- histogram types ({}): \n'.format(len(self.histnames))
-        for histname in self.histnames: info += '  -- {} (nbins: {})\n'.format(histname,self.histograms[histname].shape[1])
+        for histname in self.histnames:
+            info += '  -- {} (nbins: {})\n'.format(histname,self.histograms[histname].shape[1:])
         # size of histogram sets:
         info += '- number of lumisections: {}\n'.format(len(self.lsnbs))
         # masks:
@@ -798,7 +799,7 @@ class HistStruct(object):
     def plot_histograms( self, histnames=None, masknames=None, histograms=None, colorlist=[], labellist=[], transparencylist=[], 
                          titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs ):
         ### plot the histograms in a HistStruct, optionally after msking
-        # note: so far only for 1D hsitograms.
+        # note: so far only for 1D histograms.
         #       case of 2D histograms requires different plotting method since they cannot be clearly overlaid.
         #       if a HistStruct contains both 1D and 2D histograms, the 1D histograms must be selected with the histnames argument.
         # input arguments:
@@ -820,12 +821,52 @@ class HistStruct(object):
         # - kwargs: keyword arguments passed down to plot_utils.plot_sets 
         
         # check validity of requested histnames
+        histnames1d = []
+        histnames2d = []
         if histnames is None: histnames = self.histnames
         if histograms is not None: histnames = list(histograms[0].keys())
         for histname in histnames:
             if not histname in self.histnames:
                 raise Exception('ERROR in HistStruct.plot_ls: requested to plot histogram type {}'.format(histname)
                                +' but it is not present in the current HistStruct.')
+            if len(self.histograms[histname].shape)==2: histnames1d.append(histname)
+            elif len(self.histograms[histname].shape)==3: histnames2d.append(histname)
+        
+        # initializations
+        fig1d = None
+        axs1d = None
+        res2d = None
+
+        # make a plot of the 1D histograms
+        if len(histnames1d)>0:
+            fig1d,axs1d = self.plot_histograms_1d( histnames=histnames1d, masknames=masknames, 
+                            histograms=histograms,
+                            colorlist=colorlist, labellist=labellist, transparencylist=transparencylist,
+                            titledict=titledict, xaxtitledict=xaxtitledict, physicalxax=physicalxax, 
+                            yaxtitledict=yaxtitledict,
+                            **kwargs )
+
+        # make plots of the 2D histograms
+        if len(histnames2d)>0:
+            if 'ymaxfactor' in kwargs.keys(): kwargs.pop('ymaxfactor')
+            if 'legendsize' in kwargs.keys(): kwargs.pop('legendsize')
+            res2d = self.plot_histograms_2d( histnames=histnames2d, masknames=masknames,
+                            histograms=histograms,
+                            labellist=labellist,
+                            titledict=titledict, xaxtitledict=xaxtitledict, yaxtitledict=yaxtitledict,
+                            **kwargs )
+
+        # return the figures and axes
+        if len(histnames2d)==0: return (fig1d,axs1d) # for backward compatibility
+        return (fig1d,axs1d,res2d)
+
+    def plot_histograms_1d( self, histnames=None, masknames=None, histograms=None, 
+                            colorlist=[], labellist=[], transparencylist=[],
+                            titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, 
+                            **kwargs ):
+        ### plot the histograms in a histstruct, optionally after masking
+        # internal helper function, use only via plot_histograms
+        
         # initializations
         ncols = min(4,len(histnames))
         nrows = int(math.ceil(len(histnames)/ncols))
@@ -856,6 +897,64 @@ class HistStruct(object):
                         colorlist=colorlist, labellist=labellist, transparencylist=transparencylist,
                         **kwargs )
         return fig,axs
+
+    def plot_histograms_2d( self, histnames=None, masknames=None, histograms=None,
+                            labellist=[], titledict=None, xaxtitledict=None, yaxtitledict=None,
+                            **kwargs ):
+        ### plot the histograms in a histstruct, optionally after masking
+        # internal helper function, use only via plot_histograms
+
+        # initializations
+        res = []
+        ncols = min(4,len(histnames))
+        nrows = int(math.ceil(len(histnames)/ncols))
+        
+        # get the histograms to plot
+        if histograms is None:
+            histograms = []
+            for maskset in masknames:
+                thishistograms = {}
+                for histname in histnames:
+                    thishistograms[histname] = self.get_histograms(histname=histname, masknames=maskset)
+                histograms.append(thishistograms)
+
+        # check total number of plots to make
+        nplot = 0
+        for histset in histograms:
+            nplot += len(histset[list(histset.keys())[0]])
+        threshold = 10
+        if nplot > threshold:
+            raise Exception('ERROR in HistStruct.plot_histograms_2d:'
+                    +' plotting more than {} lumisections is not supported for now.'.format(threshold))
+
+        # loop over histogram sets
+        for setn, histset in enumerate(histograms):
+            # loop over instances within a set
+            nplots = len(histset[list(histset.keys())[0]])
+            for i in range(nplots):
+                # make a figure
+                fig,axs = plt.subplots(nrows,ncols,figsize=(6*ncols,6*nrows),squeeze=False)
+                # loop over all histogram types
+                for j,name in enumerate(histnames):
+                    # get the histogram
+                    histogram = histset[name][i]
+                    # get the title and axes
+                    title = pu.make_text_latex_safe(name)
+                    if( titledict is not None and name in titledict ): title = titledict[name]
+                    xaxtitle = None
+                    if( xaxtitledict is not None and name in xaxtitledict ): xaxtitle = xaxtitledict[name]
+                    yaxtitle = None
+                    if( yaxtitledict is not None and name in yaxtitledict ): yaxtitle = yaxtitledict[name]
+                    # make the plot
+                    pu.plot_hist_2d( histogram,
+                        fig=fig,ax=axs[int(j/ncols),j%ncols],
+                        title=title, xaxtitle=xaxtitle, yaxtitle=yaxtitle,
+                        **kwargs )
+                # add the label
+                pu.add_text( axs[0,0], labellist[setn], (0.05, 1.2), fontsize=12, 
+                            background_edgecolor='black' )
+                res.append( (fig,axs) )
+        return res
     
     def plot_ls( self, runnb, lsnb, histnames=None, histlabel=None, 
                  recohist=None, recohistlabel='Reconstruction', 
