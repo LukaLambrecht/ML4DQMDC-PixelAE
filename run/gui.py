@@ -882,6 +882,65 @@ class NewHistStructWindow(tk.Toplevel):
         print('done creating HistStruct.')
 
 
+class AddRunMasksWindow(tk.Toplevel):
+    ### popup window class for adding run masks to a HistStruct
+    # functionality already exists in NewHistStructWindow, but here one has the advantage
+    # that a list of available run numbers in the (existing) HistStruct can be made.
+
+    def __init__(self, master, histstruct):
+        super().__init__(master=master)
+        self.title('Add run masks')
+        self.histstruct = histstruct
+        self.run_mask_widgets = []
+
+        # create a frame for run mask addition
+        self.run_mask_frame = tk.Frame(self)
+        set_frame_default_style( self.run_mask_frame )
+        self.run_mask_frame.grid(row=0, column=1, sticky='nsew', rowspan=3)
+        # add widgets for run mask addition
+        self.add_run_mask_button = tk.Button(self.run_mask_frame, text='Add...',
+                                command=functools.partial(self.add_run_mask, self.run_mask_frame))
+        self.add_run_mask_button.grid(row=0, column=0)
+        self.apply_button = tk.Button(self.run_mask_frame, text='Apply',
+                                command=self.apply)
+        self.apply_button.grid(row=0, column=1)
+        name_label = tk.Label(self.run_mask_frame, text='Name:')
+        name_label.grid(row=1, column=0)
+        run_label = tk.Label(self.run_mask_frame, text='Run number:')
+        run_label.grid(row=1, column=1)
+        # add a single run mask already
+        self.add_run_mask(self.run_mask_frame)
+
+    def add_run_mask(self, parent=None):
+        if parent is None: parent = self
+        row = len(self.run_mask_widgets)+2
+        column = 0
+        name_text = tk.Text(parent, height=1, width=25)
+        name_text.grid(row=row, column=column)
+        run_box = ttk.Combobox(parent, values=self.histstruct.get_runnbs_unique(), height=10)
+        run_box.grid(row=row, column=column+1)
+        self.run_mask_widgets.append({'name_text':name_text,'run_box':run_box})
+
+    def get_run_masks(self):
+        run_masks = {}
+        for el in self.run_mask_widgets:
+            name = el['name_text'].get(1.0, tk.END).strip(' \t\n')
+            run = int(el['run_box'].get())
+            run_masks[name] = run
+        return run_masks
+
+    def apply(self):
+        run_masks = self.get_run_masks()
+        for name, run in run_masks.items():
+            print('adding mask "{}"'.format(name))
+            json = {str(run):[[-1]]}
+            self.histstruct.add_json_mask( name, json )
+        # close the window
+        self.destroy()
+        self.update()
+        print('done creating HistStruct.')
+
+
 class AddClassifiersWindow(tk.Toplevel):
     ### popup window class for adding classifiers to a histstruct
 
@@ -2584,9 +2643,12 @@ class ML4DQMGUI:
         self.newhs_button = tk.Button(self.newhs_frame, text='New', 
                                         command=self.open_new_histstruct_window)
         self.newhs_button.grid(row=1, column=0, sticky='ew')
+        self.addrunmasks_button = tk.Button(self.newhs_frame, text='Add run masks',
+                                        command=self.open_add_runmasks_window)
+        self.addrunmasks_button.grid(row=2, column=0, sticky='ew')
         self.addclassifiers_button = tk.Button(self.newhs_frame, text='Add classifiers',
                                         command=self.open_add_classifiers_window)
-        self.addclassifiers_button.grid(row=2, column=0, sticky='ew')
+        self.addclassifiers_button.grid(row=3, column=0, sticky='ew')
         # add the frame to the window
         self.newhs_frame.grid(row=0, column=0, sticky='nsew')
         self.button_frames.append(self.newhs_frame)
@@ -2822,6 +2884,13 @@ class ML4DQMGUI:
     def open_new_histstruct_window(self):
         self.histstruct = HistStruct.HistStruct()
         _ = NewHistStructWindow(self.master, self.histstruct)
+        return
+
+    def open_add_runmasks_window(self):
+        if not self.histstruct:
+            print('ERROR: need to load a HistStruct first')
+            return
+        _ = AddRunMasksWindow(self.master, self.histstruct)
         return
 
     def open_add_classifiers_window(self):

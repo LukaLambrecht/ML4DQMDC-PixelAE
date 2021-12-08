@@ -480,6 +480,13 @@ class HistStruct(object):
         # - masknames: list of names of masks (default: no masking, return full array)
         if masknames is None: return self.runnbs[:]
         return self.runnbs[ self.get_combined_mask(masknames) ]
+
+    def get_runnbs_unique( self ):
+        ### get a list of unique run numbers
+        res = []
+        for runnb in self.runnbs:
+            if runnb not in res: res.append(runnb)
+        return res
     
     def get_lsnbs( self, masknames=None ):
         ### get the array of lumisection numbers, optionally after masking
