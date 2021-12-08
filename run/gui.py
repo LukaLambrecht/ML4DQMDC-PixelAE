@@ -1097,7 +1097,7 @@ class PlotSetsWindow(tk.Toplevel):
 
     def open_selection_window(self, idx):
         self.set_selector_list[idx] = SelectorWindow(self.master, self.histstruct,
-                                                        set_selection=False, post_selection=False)
+                                                        set_selection=True, post_selection=True)
         self.select_set_button_list[idx]['bg'] = 'green'
         # (to do: make check if sets were actually selected more robust, as selection window
         #         could be closed without making a selection, but button would still be green.)
@@ -1933,12 +1933,14 @@ class EvaluateWindow(tk.Toplevel):
                 score_dist_options_dict.pop(key)
         # set some default arguments
         for key in list(score_dist_options_dict.keys()):
-            if key=='siglabel': score_dist_options_dict[key] = 'anomalous'
+            if key=='siglabel': score_dist_options_dict[key] = 'Anomalous'
             elif key=='sigcolor': score_dist_options_dict[key] = 'r'
-            elif key=='bcklabel': score_dist_options_dict[key] = 'good'
+            elif key=='bcklabel': score_dist_options_dict[key] = 'Good'
             elif key=='bckcolor': score_dist_options_dict[key] = 'g'
             elif key=='nbins': score_dist_options_dict[key] = 200
             elif key=='normalize': score_dist_options_dict[key] = True
+            elif key=='xaxtitle': 
+                score_dist_options_dict[key] = 'Model score'
             elif key=='yaxtitle': 
                 score_dist_options_dict[key] = 'Normalized number of lumisections'
         # add meta arguments

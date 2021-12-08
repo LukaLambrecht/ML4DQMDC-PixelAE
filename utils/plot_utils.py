@@ -39,20 +39,34 @@ def make_legend_opaque( leg ):
         except: lh._legmarker.set_alpha(1)
             
 def add_text( ax, text, pos, 
-              fontsize=10, background_facecolor=None, 
-              background_alpha=None, background_edgecolor=None ):
+              fontsize=10,
+              horizontalalignment='left',
+              verticalalignment='bottom',
+              background_facecolor=None, 
+              background_alpha=None, 
+              background_edgecolor=None ):
     ### add text to an axis at a specified position (in relative figure coordinates)
     # input arguments:
     # - ax: matplotlib axis object
     # - text: string, can contain latex syntax such as /textbf{} and /textit{}
     # - pos: tuple with relative x- and y-axis coordinates of bottom left corner
-    text = ax.text(pos[0], pos[1], text, fontsize=fontsize, 
-                   horizontalalignment='left', verticalalignment='bottom', transform=ax.transAxes)
-    if( background_facecolor is not None or background_alpha is not None or background_edgecolor is not None ):
+    txt = None
+    if( isinstance(ax, plt.Axes) ): 
+        txt = ax.text(pos[0], pos[1], text, fontsize=fontsize, 
+                   horizontalalignment=horizontalalignment, verticalalignment=verticalalignment, 
+                   transform=ax.transAxes)
+    else:
+        txt = ax.text(pos[0], pos[1], text, fontsize=fontsize,
+                   horizontalalignment=horizontalalignment, verticalalignment=verticalalignment)
+    if( background_facecolor is not None 
+            or background_alpha is not None 
+            or background_edgecolor is not None ):
         if background_facecolor is None: background_facecolor = 'white'
         if background_alpha is None: background_alpha = 1.
         if background_edgecolor is None: background_edgecolor = 'black'
-        text.set_bbox(dict(facecolor=background_facecolor, alpha=background_alpha, edgecolor=background_edgecolor))
+        txt.set_bbox(dict(facecolor=background_facecolor, 
+                            alpha=background_alpha, 
+                            edgecolor=background_edgecolor))
         
 def add_cms_label( ax, pos=(0.1,0.9), extratext=None, **kwargs ):
     ### add the CMS label and extra text (e.g. 'Preliminary') to a plot
@@ -175,26 +189,84 @@ def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None,
     cobject = mpl.cm.ScalarMappable(norm=my_norm, cmap=my_cmap)
     cobject.set_array([]) # ad-hoc bug fix
     ax.imshow(hist, interpolation='none', norm=my_norm, cmap=my_cmap)
-    fig.colorbar(cobject,ax=ax)
+    # add the colorbar
+    # it is not straightforward to position it properly;
+    # the 'magic values' are fraction=0.046 and pad=0.04, but have to be modified by aspect ratio;
+    # for this, use the fact that imshow uses same scale for both axes, 
+    # so can use array aspect ratio as proxy
+    fraction = 0.046; pad = 0.04
+    aspect_ratio = hist.shape[0]/hist.shape[1]
+    fraction *= aspect_ratio
+    pad *= aspect_ratio
+    fig.colorbar(cobject, ax=ax, fraction=fraction, pad=pad)
+    # add titles
     if title is not None: ax.set_title(title, fontsize=titlesize)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
     return (fig,ax)
 
-def plot_hists_2d(hists, ncols=4, title=None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None):
+def plot_hists_2d(hists, ncols=4, axsize=5, title=None, titlesize=None,
+                    subtitles=None, subtitlesize=None, xaxtitles=None, yaxtitles=None,
+                    **kwargs):
     ### plot multiple 2D histograms next to each other
+    # input arguments
     # - hists: list of 2D numpy arrays of shape (nxbins,nybins), or an equivalent 3D numpy array
     # - ncols: number of columns to use
-    nrows = int(math.ceil(len(hists)/ncols))
-    fig,axs = plt.subplots(nrows,ncols,figsize=(6*ncols,4*nrows),squeeze=False)
+    # - figsize: approximate size of a single axis in the figure
+    #            (will be modified by aspect ratio)
+    # - title, titlesize: properties of the super title for the entire figure
+    # - subtitles, subtitlesize: properties of the individual histogram titles
+    # - xaxtitles, yaxtitles: properties of axis titles of individual histograms
+    # - kwargs: passed down to plot_hist_2d
+
+    # check arugments
     if( subtitles is not None and len(subtitles)!=len(hists) ):
-        raise Exception('ERROR in plot_utils.py / plot_hists_2d: subtitles must have same length as hists or be None')
+        raise Exception('ERROR in plot_utils.py / plot_hists_2d:'
+                +' subtitles must have same length as hists or be None')
+    if( xaxtitles is not None and len(xaxtitles)!=len(hists) ):
+        raise Exception('ERROR in plot_utils.py / plot_hists_2d:'
+                +' xaxtitles must have same length as hists or be None')
+    if( yaxtitles is not None and len(yaxtitles)!=len(hists) ):
+        raise Exception('ERROR in plot_utils.py / plot_hists_2d:'
+                +' yaxtitles must have same length as hists or be None')
+
+    # initialize number of rows
+    nrows = int(math.ceil(len(hists)/ncols))
+
+    # calculate the aspect ratio of the plots and the size of the figure
+    shapes = []
+    for hist in hists: shapes.append( hist.shape )
+    aspect_ratios = [el[0]/el[1] for el in shapes]
+    aspect_ratio_max = max(aspect_ratios)
+    aspect_ratio_min = min(aspect_ratios)
+    aspect_ratio = 1
+    if aspect_ratio_min > 1: aspect_ratio = aspect_ratio_min
+    if aspect_ratio_max < 1: aspect_ratio = aspect_ratio_max
+    figsize=None
+    aspect_ratio *= 0.9 # correction for color bar
+    if aspect_ratio>1: figsize = (axsize*ncols,axsize*nrows*aspect_ratio)
+    if aspect_ratio<1: figsize = (axsize*ncols/aspect_ratio,axsize*nrows)
+
+    # initalize the figure
+    fig,axs = plt.subplots(nrows,ncols,figsize=figsize,squeeze=False)
+    
     # loop over all histograms belonging to this lumisection and make the plots
     for i,hist in enumerate(hists):
         subtitle = None
+        xaxtitle = None
+        yaxtitle = None
         if subtitles is not None: subtitle = subtitles[i]
-        plot_hist_2d(hist,fig=fig,ax=axs[int(i/ncols),i%ncols],title=subtitle,xaxtitle=xaxtitle,yaxtitle=yaxtitle,caxrange=caxrange)
-    if title is not None: fig.suptitle(title)
+        if xaxtitles is not None: xaxtitle = xaxtitles[i]
+        if yaxtitles is not None: yaxtitle = yaxtitles[i]
+        # make the plot
+        plot_hist_2d(hist, fig=fig,ax=axs[int(i/ncols),i%ncols],
+                title=subtitle, titlesize=subtitlesize, xaxtitle=xaxtitle, yaxtitle=yaxtitle, 
+                **kwargs)
+    
+    # add a title
+    if title is not None: fig.suptitle(title, fontsize=titlesize)
+    
+    # return the figure and axes
     return (fig,axs)
 
 def plot_hists_2d_gif(hists, titles=None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp_gif.gif'):

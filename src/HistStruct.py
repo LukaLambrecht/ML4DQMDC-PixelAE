@@ -883,7 +883,7 @@ class HistStruct(object):
         # initializations
         ncols = min(4,len(histnames))
         nrows = int(math.ceil(len(histnames)/ncols))
-        fig,axs = plt.subplots(nrows,ncols,figsize=(6*ncols,6*nrows),squeeze=False)
+        fig,axs = plt.subplots(nrows,ncols,figsize=(5*ncols,5*nrows),squeeze=False)
         # loop over all histogram types
         for j,name in enumerate(histnames):
             # get the histograms to plot
@@ -946,26 +946,31 @@ class HistStruct(object):
             # loop over instances within a set
             nplots = len(histset[list(histset.keys())[0]])
             for i in range(nplots):
-                # make a figure
-                fig,axs = plt.subplots(nrows,ncols,figsize=(4*ncols,4*nrows),squeeze=False)
-                # loop over all histogram types
+                histograms = []
+                subtitles = []
+                xaxtitles = []
+                yaxtitles = []
                 for j,name in enumerate(histnames):
                     # get the histogram
-                    histogram = histset[name][i]
+                    histograms.append( histset[name][i] )
                     # get the title and axes
                     title = pu.make_text_latex_safe(name)
                     if( titledict is not None and name in titledict ): title = titledict[name]
+                    subtitles.append(title)
                     xaxtitle = None
                     if( xaxtitledict is not None and name in xaxtitledict ): xaxtitle = xaxtitledict[name]
+                    xaxtitles.append(xaxtitle)
                     yaxtitle = None
                     if( yaxtitledict is not None and name in yaxtitledict ): yaxtitle = yaxtitledict[name]
-                    # make the plot
-                    pu.plot_hist_2d( histogram,
-                        fig=fig,ax=axs[int(j/ncols),j%ncols],
-                        title=title, xaxtitle=xaxtitle, yaxtitle=yaxtitle,
-                        **kwargs )
+                    yaxtitles.append(yaxtitle)
+                # make the plot
+                fig,axs = pu.plot_hists_2d( histograms, ncols=ncols, 
+                                        subtitles=subtitles, xaxtitles=xaxtitles, 
+                                        yaxtitles=yaxtitles, **kwargs)
+
                 # add the label
-                pu.add_text( axs[0,0], labellist[setn], (0.05, 1.2), fontsize=12, 
+                pu.add_text( fig, labellist[setn], (0.5, 0.95), fontsize=12, 
+                            horizontalalignment='center',
                             background_edgecolor='black' )
                 res.append( (fig,axs) )
         return res
@@ -1080,8 +1085,8 @@ class HistStruct(object):
         # initializations
         ncols = min(4,len(histnames))
         nrows = int(math.ceil(len(histnames)/ncols))
-        fig,axs = plt.subplots(nrows,ncols,figsize=(6*ncols,6*nrows),squeeze=False)
-        if histlabel is None: histlabel = 'hist (run: '+str(int(runnb))+', ls: '+str(int(lsnb))+')'
+        fig,axs = plt.subplots(nrows,ncols,figsize=(5*ncols,5*nrows),squeeze=False)
+        if histlabel is None: histlabel = 'Run: '+str(int(runnb))+', LS: '+str(int(lsnb))+')'
         # loop over all histograms belonging to this lumisection and make the plots
         for j,name in enumerate(histnames):
             # get the original histogram
@@ -1148,7 +1153,7 @@ class HistStruct(object):
         else:
             ncols = 2 
             nrows = len(histnames)
-        fig,axs = plt.subplots(nrows,ncols,figsize=(4*ncols,4*nrows),squeeze=False)
+        fig,axs = plt.subplots(nrows,ncols,figsize=(5*ncols,5*nrows),squeeze=False)
         if histlabel is None: histlabel = 'Run: '+str(int(runnb))+', LS: '+str(int(lsnb))+')'
         # loop over all histograms belonging to this lumisection and make the plots
         for j,name in enumerate(histnames):

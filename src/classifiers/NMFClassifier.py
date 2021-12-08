@@ -59,7 +59,7 @@ class NMFClassifier(HistogramClassifier):
                                 colorlist=list(range(self.ncomponents)), 
                                 title='NMF model components')
             elif len(components.shape)==3:
-                plot_utils.plot_hists_2d(components, 
+                plot_utils.plot_hists_2d(components, axsize=3, 
                                 ncols=int(math.sqrt(self.ncomponents)), 
                                 title='NMF model components')
             plt.show(block=False)
