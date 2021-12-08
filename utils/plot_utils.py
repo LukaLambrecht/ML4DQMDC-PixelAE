@@ -490,11 +490,13 @@ def plot_score_ls( thisscore, refscores, fig=None, ax=None,
                     reflabel='Reference LS', refcolor='dodgerblue', **kwargs ):
     ### make a plot of the score for a single lumisection comparing to some reference distribution
     
-    # make a dummy plot of the reference distribution only
+    # make a dummy plot of the score distributions with thisscore unnormalized
+    scores = np.concatenate((refscores,np.array([thisscore])))
+    labels = np.concatenate((np.zeros(len(refscores)),np.ones(1)))
     extraargs = {}
     if 'nbins' in kwargs.keys(): extraargs['nbins'] = kwargs['nbins']
-    fig,ax = plot_score_dist( refscores, np.zeros(len(refscores)), 
-                        fig=fig, ax=ax, normalize=False, doshow=False, **extraargs )
+    fig,ax = plot_score_dist( scores, labels, fig=fig, ax=ax, 
+                                normalize=False, doshow=False, **extraargs )
 
     # make the peak score to superimpose
     ymax = ax.get_ylim()[1]

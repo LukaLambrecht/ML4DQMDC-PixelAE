@@ -1788,28 +1788,23 @@ class ResampleWindow(tk.Toplevel):
         name_label.grid(row=1, column=0)
         name_text = tk.Text(set_frame, height=1, width=15)
         name_text.grid(row=1, column=1)
-        partitions_label = tk.Label(set_frame, text='Partitions')
-        partitions_label.grid(row=2, column=0)
-        partitions_text = tk.Text(set_frame, height=1, width=15)
-        partitions_text.insert(tk.INSERT, '-1')
-        partitions_text.grid(row=2, column=1)
         function_label = tk.Label(set_frame, text='Function')
-        function_label.grid(row=3, column=0)
+        function_label.grid(row=2, column=0)
         function_box = ttk.Combobox(set_frame, values=get_resampling_function())
         function_box.current(0)
         function_box['state'] = 'readonly'
         function_box.bind('<<ComboboxSelected>>', functools.partial(
             self.set_function_options, setindex=idx))
-        function_box.grid(row=3, column=1)
+        function_box.grid(row=2, column=1)
         key_label = tk.Label(set_frame, text='Parameters')
-        key_label.grid(row=4, column=0)
+        key_label.grid(row=3, column=0)
         value_label = tk.Label(set_frame, text='Values')
-        value_label.grid(row=4, column=1)
+        value_label.grid(row=3, column=1)
         function_options_frame = OptionsFrame(set_frame, labels=[], values=[])
-        function_options_frame.frame.grid(row=5, column=0, columnspan=2)
+        function_options_frame.frame.grid(row=4, column=0, columnspan=2)
 
         self.set_widget_list.append({'select_button':select_button,
-                                    'name':name_text,'partitions':partitions_text,
+                                    'name':name_text,
                                     'function':function_box,
                                     'function_options':function_options_frame})
         self.set_function_options(None, idx)
@@ -1837,12 +1832,6 @@ class ResampleWindow(tk.Toplevel):
         name = nstr.strip(' \t\n')
         return name 
 
-    def get_partitions(self, setindex):
-        ### get currently entered partitions
-        text = self.set_widget_list[setindex]['partitions']
-        pstr = text.get(1.0,tk.END)
-        return int(pstr)
-
     def get_function_name(self, setindex):
         widgets = self.set_widget_list[setindex]
         function_name = widgets['function'].get()
@@ -1861,11 +1850,10 @@ class ResampleWindow(tk.Toplevel):
             print('generating data for set {} of {}'.format(i+1,nsets))
             hists = self.set_selector_list[i].get_histograms()
             extname = self.get_name(i)
-            partitions = self.get_partitions(i)
             (function, function_options) = self.get_function(i)
             for histname in self.histstruct.histnames:
                 print('  now processing histogram type {}'.format(histname))
-                thishists = hu.averagehists( hists[histname], partitions )
+                thishists = hists[histname]
                 exthists = function( thishists, **function_options )
                 self.histstruct.add_exthistograms( extname, histname, exthists )
                 print('  -> generated {} histograms'.format(len(exthists)))
@@ -2388,12 +2376,25 @@ class PlotLumisectionWindow(tk.Toplevel):
             if labels[i]=='mode':
                 wtypes[i] = ttk.Combobox
                 values[i] = ['ls','run']
+            if labels[i]=='run':
+                wtypes[i] = ttk.Combobox
+                values[i] = self.histstruct.get_runnbs_unique()
+            if labels[i]=='lumisection':
+                wtypes[i] = ttk.Combobox
+                values[i] = [1]
         # make the options frame
         docurl = get_docurl(self.histstruct.plot_ls)
         self.options_frame = OptionsFrame(self.buttons_frame, 
                                 labels=labels, values=values, types=wtypes,
                                 docurl=docurl)
         self.options_frame.frame.grid(row=0, column=0, sticky='nsew')
+        # special case: set available lumisections based on chosen run number
+        runidx = labels.index('run')
+        lsidx = labels.index('lumisection')
+        self.run_box = self.options_frame.widgets[runidx]
+        self.lumisection_box = self.options_frame.widgets[lsidx]
+        self.run_box.bind('<<ComboboxSelected>>', self.set_lsnbs)
+        self.set_lsnbs(None)
         
         # add button to overwrite plotting style
         self.load_plotstyle_button = tk.Button(self.buttons_frame, text='Load plot style', 
@@ -2443,6 +2444,14 @@ class PlotLumisectionWindow(tk.Toplevel):
                                             command=self.open_select_ref_set_window,
                                             bg='orange')
         self.ref_set_button.grid(row=1, column=0)
+
+    def set_lsnbs(self, event):
+        runnb = int(self.run_box.get())
+        runnbs = self.histstruct.get_runnbs()
+        lsnbs = self.histstruct.get_lsnbs()
+        lsnbs = lsnbs[np.nonzero(runnbs==runnb)]
+        lsnbslist = [int(el) for el in lsnbs]
+        self.lumisection_box.config(values=lsnbslist)
 
     def load_plotstyle(self):
         initialdir = os.path.abspath(os.path.dirname(__file__))
