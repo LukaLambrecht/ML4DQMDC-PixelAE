@@ -349,7 +349,7 @@ class OptionsFrame:
     ### contains a tk.Frame holding a list of customization options
 
     def __init__(self, master, labels=None, types=None, values=None,
-                        docurls=None, docurl=None):
+                        docurls=None, docurl=None, autobool=False):
         # input arguments:
         # - labels: list of strings with the names/labels of the options
         # - types: list of tk types, defaults to tk.Text for each option
@@ -361,12 +361,15 @@ class OptionsFrame:
         #       in which case these elements will be set to default
         # - docurls: list of urls to documentation per option
         # - docurl: url to documentation for the option collection
+        # - autobool: automatically convert boolean arguments to a binary ttk.Combobox 
+        #             (instead of Text entry)
         self.frame = tk.Frame(master,width=200)
         self.labels = []
         self.wtypes = []
         self.widgets = []
         self.docwidgets = []
         self.docwidget = None
+        self.autobool = autobool
         self.set_options( labels=labels, types=types, values=values, docurls=docurls, docurl=docurl )
 
     def set_options(self, labels=None, types=None, values=None, docurls=None, docurl=None):
@@ -385,6 +388,16 @@ class OptionsFrame:
                 or len(docurls)!=len(labels) ):
             raise Exception('ERROR in OptionsFrame initialization:'
                             +' argument lists have unequal lengths.')
+        labels = list(labels) # explicit conversion from dict_keys or dict_values to list
+        types = list(types) # explicit conversion from dict_keys or dict_values to list
+        values = list(values) # explicit conversion from dict_keys or dict_values to list
+
+        # additional argument parsing
+        if self.autobool:
+            for j in range(len(labels)):
+                if is_bool(str(values[j])):
+                    types[j] = ttk.Combobox
+                    values[j] = [values[j], not values[j]]
 
         # clear current OptionsFrame
         self.labels.clear()
@@ -1846,7 +1859,7 @@ class ResampleWindow(tk.Toplevel):
             key_label.grid(row=3, column=0)
             value_label = tk.Label(this_set_frame, text='Values')
             value_label.grid(row=3, column=1)
-            function_options_frame = OptionsFrame(this_set_frame, labels=[], values=[])
+            function_options_frame = OptionsFrame(this_set_frame, labels=[], values=[], autobool=True)
             function_options_frame.frame.grid(row=4, column=0, columnspan=2)
             # add objects to the dicts
             self.resample_set_selectors[histname] = None
