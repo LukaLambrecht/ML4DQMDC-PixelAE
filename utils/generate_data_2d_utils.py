@@ -4,7 +4,6 @@
 # **Extension of generate\_data\_utils.py towards 2D histograms** 
 
 
-
 ### imports
 
 # external modules
@@ -17,8 +16,6 @@ import importlib
 # local modules
 import hist_utils
 importlib.reload(hist_utils)
-
-
 
 
 ### help functions
@@ -76,6 +73,7 @@ def goodnoise_nd(shape, fstd=None, kmaxscale=0.25, ncomponents=3):
     if fstd is not None: noise = np.multiply(noise,fstd)
     return noise
 
+
 def whitenoise_nd(shape, fstd=None):
     ### generate one sample of white noise (standard normally distributed, uncorrelated between bins)
     # generalization of whitenoise (see generate_data_utils) to arbitrary number of dimensions
@@ -90,6 +88,7 @@ def whitenoise_nd(shape, fstd=None):
     noise = np.random.normal(size=shape)
     if fstd is not None: noise = np.multiply(noise,fstd)
     return noise
+
 
 def random_lico_nd(hists):
     ### generate one linear combination of histograms with random coefficients in (0,1) summing to 1.
@@ -106,23 +105,28 @@ def random_lico_nd(hists):
     return res
 
 
+### resampling functions
 
-
-def fourier_noise_nd(hists, outfilename='', figname='', nresamples=1, nonnegative=True, 
+def fourier_noise_nd(hists, outfilename=None, figname=None, ntarget=None, nresamples=1, nonnegative=True, 
                      stdfactor=15., kmaxscale=0.25, ncomponents=3):
     ### apply fourier noise on random histograms with simple flat amplitude scaling.
     # generalization of fourier_noise (see generate_data_utils) to arbitrary number of dimensions.
     # input args: 
     # - hists: numpy array of shape (nhists,<arbitrary number of dimensions>) used for seeding
     # - outfilename: path to csv file to write results to (default: no writing)
-    # - figname: path to figure plotting examples (default: no plotting)
+    # - figname: path to figure for plotting examples (default: no plotting) (not yet implemented!)
+    # - ntarget: total target number of histograms (default: use nresamples instead)
     # - nresamples: number of samples to draw per input histogram
+    #   (note: ignored if ntarget is not None)
     # - nonnegative: boolean whether to set all bins to minimum zero after applying noise
     # - stdfactor: factor to scale magnitude of noise (larger factor = smaller noise)
     # - kmaxscale and ncomponents: see goodnoise_nd
     
+    # initializations
     nhists = hists.shape[0]
     histshape = hists.shape[1:]
+    if ntarget is not None:
+        nresamples = max(1,int(float(ntarget)/nhists))
     outshape = tuple([nresamples*nhists]+list(histshape))
     reshists = np.zeros(outshape)
     
@@ -143,28 +147,34 @@ def fourier_noise_nd(hists, outfilename='', figname='', nresamples=1, nonnegativ
     #    plot_data_and_gen(50,hists,reshists,figname)
     
     # store results if requested
-    if len(outfilename)>0: np.savetxt(outfilename.split('.')[0]+'.csv',reshists)
+    if( outfilename is not None and len(outfilename)>0 ):
+        np.savetxt(outfilename.split('.')[0]+'.csv', reshists)
 
+    # return the result
     return reshists
 
 
-
-
-def white_noise_nd(hists, figname='', nresamples=1, nonnegative=True, stdfactor=15.):
+def white_noise_nd(hists, figname=None, ntarget=None, nresamples=1, nonnegative=True, stdfactor=15.):
     ### apply white noise to the histograms in hists.
     # generalization of white_noise (see generate_data_utils) to arbitrary number of dimensions.
     # input args:
     # - hists: np array (nhists,<arbitrary number of dimensions>) containing input histograms
-    # - figname: path to figure plotting examples (default: no plotting)
+    # - figname: path to figure plotting examples (default: no plotting) (not yet implemented!)
+    # - ntarget: total target number of histograms (default: use nresamples instead)
     # - nresamples: number of samples to draw per input histogram
+    #   (note: ignored if ntarget is not None)
     # - nonnegative: boolean whether to set all bins to minimum zero after applying noise
     # - stdfactor: scaling factor of white noise amplitude (higher factor = smaller noise)
 
+    # initializations
     nhists = hists.shape[0]
     histshape = hists.shape[1:]
+    if ntarget is not None:
+        nresamples = max(1,int(float(ntarget)/nhists))
     outshape = tuple([nresamples*nhists]+list(histshape))
     reshists = np.zeros(outshape)
 
+    # generate the data
     for i in range(nhists):
         for j in range(nresamples):
             reshists[nresamples*i+j] = hists[i] + whitenoise_nd(histshape,fstd=hists[i]/stdfactor)
@@ -178,36 +188,29 @@ def white_noise_nd(hists, figname='', nresamples=1, nonnegative=True, stdfactor=
     return reshists
 
 
-
-
-def resample_lico_nd(hists, nresamples=1, nonnegative=True):
+def resample_lico_nd(hists, ntarget=None, nonnegative=True):
     ### take random linear combinations of input histograms
     # generalization of fourier_noise (see generate_data_utils) to arbitrary number of dimensions.
     # input args: 
     # - hists: numpy array of shape (nhists,<arbitrary number of dimensions>) used for seeding
-    # - nresamples: number of samples to draw
+    # - ntarget: total target number of histograms (default: same as number of input histograms)
     # - nonnegative: boolean whether to set all bins to minimum zero after applying noise
-    #   note: coefficients in linear combination are always nonnegative, so this setting is superfluous is input histograms are all nonnegative
+    #   note: coefficients in linear combination are always nonnegative, 
+    #         so this setting is superfluous is input histograms are all nonnegative
     
+    # initializations
     nhists = hists.shape[0]
     histshape = hists.shape[1:]
-    outshape = tuple([nresamples]+list(histshape))
+    if ntarget is None:
+        ntarget = nhists
+    outshape = tuple([ntarget]+list(histshape))
     reshists = np.zeros(outshape)
 
-    for i in range(nresamples):
+    # generate the data
+    for i in range(ntarget):
         reshists[i] = random_lico_nd( hists )
         
     if nonnegative:
         reshists = np.where(reshists>0,reshists,0)
 
     return reshists
-
-
-
-
-
-
-
-
-
-

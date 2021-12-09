@@ -44,6 +44,7 @@ print('  import hist_utils as hu'); import hist_utils as hu
 print('  import autoencoder_utils as aeu'); import autoencoder_utils as aeu
 print('  import plot_utils as pu'); import plot_utils as pu
 print('  import generate_data_utils as gdu'); import generate_data_utils as gdu
+print('  import generate_data_2d_utils as gd2u'); import generate_data_2d_utils as gd2u
 print('  import refruns_utils as rru'); import refruns_utils as rru
 print('  import mask_utils as mu'); import mask_utils as mu
 
@@ -111,15 +112,20 @@ def get_resampling_function( key=None ):
     # - key: string representing name or key of resampling function
 
     # return all valid keys
-    allowed = ['None','upsample_hist_set']
+    allowed = (['None',
+                'upsample_hist_set',
+                'fourier_noise_nd',
+                'white_noise_nd',
+                'resample_lico_nd'])
     if key is None: return allowed
 
     # map key to function
     key = key.strip(' \t\n')
     if key=='None': return (None,{})
     if key=='upsample_hist_set': f = gdu.upsample_hist_set
-    elif key=='dummy1': pass
-    elif key=='dummy2': pass
+    elif key=='fourier_noise_nd': f = gd2u.fourier_noise_nd
+    elif key=='white_noise_nd': f = gd2u.white_noise_nd
+    elif key=='resample_lico_nd': f = gd2u.resample_lico_nd
     else:
         raise Exception('ERROR: resampling function {} not recognized.'.format(key))
     return (f,get_args_dict(f))
@@ -1727,8 +1733,15 @@ class ResampleWindow(tk.Toplevel):
         super().__init__(master=master)
         self.title('Resampling window')
         self.histstruct = histstruct
-        self.set_widget_list = []
-        self.set_selector_list = []
+        self.resample_set_selectors = {}
+        self.resample_set_selector_buttons = {}
+        self.resample_functions = {}
+        self.resample_options = {}
+        self.allhistostr = 'All histogram types'
+        self.noresamplestr = '[No resampling]'
+        self.nonestr = 'None' # not free to choose, 
+                              # should correspond to the one in the global function
+                              # get_resampling_function
 
         # create a frame for the buttons
         self.buttons_frame = tk.Frame(self)
@@ -1736,13 +1749,21 @@ class ResampleWindow(tk.Toplevel):
         set_frame_default_style( self.buttons_frame )
         
         # add widget to add a set
-        self.add_button = tk.Button(self.buttons_frame, text='Add', command=self.add_set)
-        self.add_button.grid(row=1, column=0)
+        # new approach: do not allow to add multiple sets at once 
+        # (can simply open this window multiple times sequentially for that),
+        # but instead allow splitting between different histogram types
+        # add widget to expand options for different histograms
+        self.expand_options_button = tk.Button(self.buttons_frame,
+                                                text='Expand/collapse',
+                                                command=self.expandcollapse)
+        self.expand_options_button.grid(row=0, column=0)
+        # set initial state to single
+        self.expandstate = 'multi' # set multi since automatic expandcollapse call
 
         # add widgets to start resampling
         self.resample_button = tk.Button(self.buttons_frame, text='Start resampling',
                                         command=self.do_resampling)
-        self.resample_button.grid(row=2,column=0)
+        self.resample_button.grid(row=1,column=0)
 
         # add widgets to view current resampled sets
         self.view_frame = tk.Frame(self)
@@ -1755,8 +1776,11 @@ class ResampleWindow(tk.Toplevel):
         self.update_sets_list()
         self.sets_listbox.grid(row=1,column=0)
 
-        # add one set
-        self.add_set()
+        # add widgets for training options
+        self.container_frame = tk.Frame(self)
+        self.container_frame.grid(row=0, column=2)
+        set_frame_default_style( self.container_frame )
+        self.expandcollapse()
 
     def update_sets_list(self):
         self.sets_listbox.delete(0, tk.END)
@@ -1766,97 +1790,137 @@ class ResampleWindow(tk.Toplevel):
         if len(extnames)==0:
             self.sets_listbox.insert(tk.END, '[no sets available]')
 
-    def add_set(self):
-        ### add widgets for one more histogram set to plot
-        column = len(self.set_widget_list)+2
-        row = 0
-        idx = len(self.set_widget_list)
-        
-        # create a frame to hold the widgets
-        set_frame = tk.Frame(self)
-        set_frame.grid(row=row, column=column)
-        set_frame_default_style( set_frame )
-
-        # add widgets for choosing resampling basis set
-        select_button = tk.Button(set_frame, text='Select set',
-                                    command=functools.partial(self.open_select_window,idx),
+    def expandcollapse(self):
+        # check whether need to collapse or expand
+        if self.expandstate=='multi':
+            histnames = [self.allhistostr]
+            self.expandstate = 'single'
+        elif self.expandstate=='single':
+            histnames = self.histstruct.histnames
+            self.expandstate = 'multi'
+        else:
+            raise Exception('ERROR: expandstate {} not recognized.'.format(self.expandstate))
+        # clear current options and frame
+        self.resample_set_selectors = {}
+        self.resample_set_selector_buttons = {}
+        self.resample_functions = {}
+        self.resample_options = {}
+        for widget in self.container_frame.winfo_children(): widget.destroy()
+        # make new name label and text entry
+        self.name_label = tk.Label(self.container_frame, text='Set name')
+        self.name_label.grid(row=0, column=0)
+        self.name_text = tk.Text(self.container_frame, height=1, width=15)
+        self.name_text.grid(row=0, column=1)
+        # make new options and frame
+        for i,histname in enumerate(histnames):
+            # create a frame to hold the widgets and put some labels
+            this_set_frame = tk.Frame(self.container_frame)
+            this_set_frame.grid(row=1, column=2*i, columnspan=2)
+            set_frame_default_style( this_set_frame )
+            hist_label = tk.Label(this_set_frame, text=histname)
+            hist_label.grid(row=0, column=0, columnspan=2)
+            # add widgets for choosing resampling basis set
+            select_button = tk.Button(this_set_frame, text='Select set',
+                                    command=functools.partial(self.open_select_window, histname),
                                     bg='orange')
-        select_button.grid(row=0, column=0, columnspan=2)
+            select_button.grid(row=1, column=0, columnspan=2)
+            # add label and text entry for dataset name -> to take out of the loop!
+            #name_label = tk.Label(set_frame, text='Name')
+            #name_label.grid(row=1, column=0)
+            #name_text = tk.Text(set_frame, height=1, width=15)
+            #name_text.grid(row=1, column=1)
+            # add label and box entry for resampling function
+            function_label = tk.Label(this_set_frame, text='Function')
+            function_label.grid(row=2, column=0)
+            allowed_functions = get_resampling_function()
+            for i,f in enumerate(allowed_functions): 
+                if f==self.nonestr: allowed_functions[i] = self.noresamplestr
+            function_box = ttk.Combobox(this_set_frame, values=allowed_functions)
+            function_box.current(0)
+            function_box['state'] = 'readonly'
+            function_box.bind('<<ComboboxSelected>>', functools.partial(
+                self.set_function_options, histname=histname))
+            function_box.grid(row=2, column=1)
+            # make initial (empty) OptionsFrame
+            key_label = tk.Label(this_set_frame, text='Parameters')
+            key_label.grid(row=3, column=0)
+            value_label = tk.Label(this_set_frame, text='Values')
+            value_label.grid(row=3, column=1)
+            function_options_frame = OptionsFrame(this_set_frame, labels=[], values=[])
+            function_options_frame.frame.grid(row=4, column=0, columnspan=2)
+            # add objects to the dicts
+            self.resample_set_selectors[histname] = None
+            self.resample_set_selector_buttons[histname] = select_button
+            self.resample_functions[histname] = function_box
+            self.resample_options[histname] = function_options_frame
 
-        # add widgets for resampling options
-        name_label = tk.Label(set_frame, text='Name')
-        name_label.grid(row=1, column=0)
-        name_text = tk.Text(set_frame, height=1, width=15)
-        name_text.grid(row=1, column=1)
-        function_label = tk.Label(set_frame, text='Function')
-        function_label.grid(row=2, column=0)
-        function_box = ttk.Combobox(set_frame, values=get_resampling_function())
-        function_box.current(0)
-        function_box['state'] = 'readonly'
-        function_box.bind('<<ComboboxSelected>>', functools.partial(
-            self.set_function_options, setindex=idx))
-        function_box.grid(row=2, column=1)
-        key_label = tk.Label(set_frame, text='Parameters')
-        key_label.grid(row=3, column=0)
-        value_label = tk.Label(set_frame, text='Values')
-        value_label.grid(row=3, column=1)
-        function_options_frame = OptionsFrame(set_frame, labels=[], values=[])
-        function_options_frame.frame.grid(row=4, column=0, columnspan=2)
-
-        self.set_widget_list.append({'select_button':select_button,
-                                    'name':name_text,
-                                    'function':function_box,
-                                    'function_options':function_options_frame})
-        self.set_function_options(None, idx)
-        self.set_selector_list.append( None )
-
-    def set_function_options(self, event, setindex):
-        fname = self.get_function_name(setindex)
+    def set_function_options(self, event, histname):
+        fname = self.get_function_name(histname)
         (f, foptions) = get_resampling_function(key=fname)
         fdocurl = get_docurl(f)
-        self.set_widget_list[setindex]['function_options'].set_options( 
+        self.resample_options[histname].set_options(
             labels=foptions.keys(), values=foptions.values(), docurl=fdocurl)
 
-    def open_select_window(self, idx):
-        self.set_selector_list[idx] = SelectorWindow(self.master, self.histstruct)
-        self.set_widget_list[idx]['select_button']['bg'] = 'green'
+    def open_select_window(self, histname):
+        self.resample_set_selectors[histname] = SelectorWindow(self.master, self.histstruct)
+        self.resample_set_selector_buttons[histname]['bg'] = 'green'
         return
 
     def check_all_selected(self):
-        if None in self.test_set_selector_list: return False
+        if None in list(self.resample_set_selectors.values()): return False
         else: return True
 
-    def get_name(self, setindex):
-        text = self.set_widget_list[setindex]['name']
-        nstr = text.get(1.0,tk.END)
-        name = nstr.strip(' \t\n')
-        return name 
+    def get_name(self):
+        return self.name_text.get(1.0,tk.END).strip(' \t\n') 
 
-    def get_function_name(self, setindex):
-        widgets = self.set_widget_list[setindex]
-        function_name = widgets['function'].get()
-        return function_name
+    def get_function_name(self, histname):
+        fname = self.resample_functions[histname].get()
+        if fname==self.noresamplestr: fname = self.nonestr
+        return fname
 
-    def get_function(self, setindex):
-        fname = self.get_function_name(setindex)
+    def get_function(self, histname):
+        fname = self.get_function_name(histname)
         (function, _) = get_resampling_function(fname)
-        function_options = self.set_widget_list[setindex]['function_options'].get_dict()
+        function_options = self.resample_options[histname].get_dict()
         return (function, function_options)
 
     def do_resampling(self):
 
-        nsets = len(self.set_widget_list)
-        for i in range(nsets):
-            print('generating data for set {} of {}'.format(i+1,nsets))
-            hists = self.set_selector_list[i].get_histograms()
-            extname = self.get_name(i)
-            (function, function_options) = self.get_function(i)
-            for histname in self.histstruct.histnames:
-                print('  now processing histogram type {}'.format(histname))
-                thishists = hists[histname]
-                exthists = function( thishists, **function_options )
-                self.histstruct.add_exthistograms( extname, histname, exthists )
-                print('  -> generated {} histograms'.format(len(exthists)))
+        # check whether the same set, function and options can be used for all histogram types
+        split = None
+        if self.expandstate == 'single': split = False
+        elif self.expandstate == 'multi': split = True
+        else:
+            raise Exception('ERROR: expandstate {} not recognized.'.format(self.expandstate))
+        # check whether all required sets have been selected
+        if not self.check_all_selected():
+            for histname, selector in self.resample_set_selectors.items():
+                # get the function (allow None selector if no resampling required)
+                histkey = histname if split else self.allhistostr
+                (function,_) = self.get_function(histkey)
+                if( selector is None and function is not None ):
+                    raise Exception('ERROR: requested to resample histogram type {}'.format(histname)
+                            +' but selector was not set.')
+        # get the name for the extended set
+        extname = self.get_name()
+        if len(extname)==0:
+            raise Exception('ERROR: name "{}" is not valid.'.format(extname))
+        # loop over histogram types
+        for histname in self.histstruct.histnames:
+            print('  now processing histogram type {}'.format(histname))
+            histkey = histname if split else self.allhistostr
+            # get resampling function
+            (function, function_options) = self.get_function(histkey)
+            if function is None:
+                print('WARNING: resampling function for histogram type {}'.format(histname)
+                        +' is None, it will not be present in the resampled set.')
+                continue
+            # get histograms
+            hists = self.resample_set_selectors[histkey].get_histograms()[histname]
+            exthists = function( hists, **function_options )
+            # add extended set to histstruct
+            self.histstruct.add_exthistograms( extname, histname, exthists )
+            print('  -> generated {} histograms'.format(len(exthists)))
         self.update_sets_list()
         plt.show(block=False)
         # close the window
