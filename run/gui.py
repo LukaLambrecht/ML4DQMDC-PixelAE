@@ -1084,9 +1084,17 @@ class AddClassifiersWindow(tk.Toplevel):
             value_label.grid(row=2, column=1)
             classifier_options_frame = OptionsFrame(frame, labels=[], values=[])
             classifier_options_frame.frame.grid(row=3, column=0, columnspan=2)
-
+            # add option to evaluate the model after adding it
+            evaluate_label = tk.Label(frame, text='evaluate')
+            evaluate_label.grid(row=4, column=0)
+            evaluate_box = ttk.Combobox(frame, values=[False,True])
+            evaluate_box['state'] = 'readonly'
+            evaluate_box.current(0)
+            evaluate_box.grid(row=4, column=1)
+            # add everything to a structure 
             self.classifier_widgets[histname] = {'type':classifier_type_box, 
-                                                 'options':classifier_options_frame}
+                                                 'options':classifier_options_frame,
+                                                 'evaluate':evaluate_box}
             self.set_classifier_options(None, histname)
 
         # add a button for adding the classifiers
@@ -1124,6 +1132,10 @@ class AddClassifiersWindow(tk.Toplevel):
             (classifier, classifier_options) = self.get_classifier(histname)
             classifier = classifier( **classifier_options )
             self.histstruct.add_classifier( histname, classifier )
+            # check if need to evaluate
+            do_evaluate = (self.classifier_widgets[histname]['evaluate'].get()=='True')
+            if do_evaluate:
+                self.histstruct.evaluate_classifier(histname)
         # close the window
         self.destroy()
         self.update()
