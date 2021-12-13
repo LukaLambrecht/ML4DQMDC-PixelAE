@@ -208,14 +208,19 @@ class HistStruct(object):
             print(obj)
         return obj
         
-    def add_dataframe( self, df, cropslices=None, rebinningfactor=None, donormalize=True ):
+    def add_dataframe( self, df, cropslices=None, rebinningfactor=None, 
+                        smoothingwindow=None, smoothingweights=None,
+                        donormalize=True ):
         ### add a dataframe to a HistStruct
         # input arguments:
         # - df: a pandas dataframe as read from the input csv files
         # - cropslices: list of slices (one per dimension) by which to crop the histograms
-        # - donormalize: boolean whether to normalize the histograms
         # - rebinningfactor: factor by which to group bins together
-        # for more details on cropslices, donormalize and rebinningfactor, see hist_utils.py / preparedatafromdf!
+        # - smoothingwindow: window (int for 1D, tuple for 2D) for doing smoothing of histograms
+        # - smoothingweights: weight array (1D for 1D, 2D for 2D) for smoothing of histograms
+        # - donormalize: boolean whether to normalize the histograms
+        # for more details on cropslices, rebinningfactor, smoothingwindow, smoothingweights
+        # and donormalize: see hist_utils.py!
         # notes:
         # - the new dataframe can contain one or multiple histogram types
         # - the new dataframe must contain the same run and lumisection numbers (for each histogram type in it)
@@ -238,9 +243,11 @@ class HistStruct(object):
             xmax = thisdf.at[0, 'Xmax']
             # prepare the data
             (hists_all,runnbs_all,lsnbs_all) = hu.preparedatafromdf(thisdf,returnrunls=True,
-                                                                    cropslices=cropslices,
-                                                                    rebinningfactor=rebinningfactor,
-                                                                    donormalize=donormalize)
+                                                cropslices=cropslices,
+                                                rebinningfactor=rebinningfactor,
+                                                smoothingwindow=smoothingwindow,
+                                                smoothingweights=smoothingweights,
+                                                donormalize=donormalize)
             runnbs_all = runnbs_all.astype(int)
             lsnbs_all = lsnbs_all.astype(int)
             # check consistency in run and lumisection numbers
@@ -295,7 +302,9 @@ class HistStruct(object):
         self.runnbs = runnbs
         self.lsnbs = lsnbs
 
-    def preprocess( self, cropslices=None, rebinningfactor=None, donormalize=False ):
+    def preprocess( self, cropslices=None, rebinningfactor=None,
+                    smoothingwindow=None, smoothingweights=None,
+                    donormalize=False ):
         ### do preprocessing
         # the input arguments are equivalent to those given in add_dataframe,
         # but this function allows to do preprocessing after the dataframes have already been loaded
@@ -305,6 +314,9 @@ class HistStruct(object):
             hists = self.histograms[histname]
             if cropslices is not None:  hists = hu.crophists(hists, cropslices)
             if rebinningfactor is not None: hists = hu.rebinhists(hists, rebinningfactor)
+            if smoothingwindow is not None: hists = hu.smoothhists(hists, 
+                                                        window=smoothingwindow,
+                                                        weights=smoothingweights)
             if donormalize: hists = hu.normalizehists(hists)
             self.histograms[histname] = hists
         
