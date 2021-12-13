@@ -44,7 +44,8 @@ def add_text( ax, text, pos,
               verticalalignment='bottom',
               background_facecolor=None, 
               background_alpha=None, 
-              background_edgecolor=None ):
+              background_edgecolor=None,
+              **kwargs ):
     ### add text to an axis at a specified position (in relative figure coordinates)
     # input arguments:
     # - ax: matplotlib axis object
@@ -54,10 +55,11 @@ def add_text( ax, text, pos,
     if( isinstance(ax, plt.Axes) ): 
         txt = ax.text(pos[0], pos[1], text, fontsize=fontsize, 
                    horizontalalignment=horizontalalignment, verticalalignment=verticalalignment, 
-                   transform=ax.transAxes)
+                   transform=ax.transAxes, **kwargs)
     else:
         txt = ax.text(pos[0], pos[1], text, fontsize=fontsize,
-                   horizontalalignment=horizontalalignment, verticalalignment=verticalalignment)
+                   horizontalalignment=horizontalalignment, verticalalignment=verticalalignment,
+                   **kwargs)
     if( background_facecolor is not None 
             or background_alpha is not None 
             or background_edgecolor is not None ):
@@ -301,7 +303,8 @@ def plot_hists_from_df(df, histtype, nhists):
 def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[],
              title=None, titlesize=None, 
              xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1), 
-             yaxtitle=None, yaxtitlesize=None, ymaxfactor=None, 
+             remove_underflow=False, remove_overflow=False,
+             yaxtitle=None, yaxtitlesize=None, ylims=None, ymaxfactor=None, 
              legendsize=None, opaque_legend=False):
     ### plot multiple sets of histograms to compare the shapes
     # - setlist is a list of 2D numpy arrays containing histograms
@@ -319,10 +322,18 @@ def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparen
             return
     if len(transparencylist)==0:
         transparencylist = [1.]*len(setlist)
-    if xlims[1]<xlims[0]: xlims = (0,len(setlist[0][0]))
-    xax = np.linspace(xlims[0],xlims[1],num=len(setlist[0][0]))
+    # make x axis
+    nbins = len(setlist[0][0])
+    if remove_underflow: nbins -= 1
+    if remove_overflow: nbins -= 1
+    if xlims[1]<xlims[0]: xlims = (0,nbins)
+    xax = np.linspace(xlims[0],xlims[1],num=nbins)
+    # create the figure
     if fig is None or ax is None: fig,ax = plt.subplots()
+    # loop over sets
     for i,histlist in enumerate(setlist):
+        if remove_underflow: histlist = histlist[:,1:]
+        if remove_overflow: histlist = histlist[:,:-1]
         row = histlist[0]
         ax.step(xax,row,where='mid',color=colorlist[i],label=labellist[i],alpha=transparencylist[i])
         if len(histlist)<2: continue
@@ -331,6 +342,8 @@ def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparen
     if ymaxfactor is not None:
         ymin,ymax = ax.get_ylim()
         ax.set_ylim( (ymin, ymax*ymaxfactor) )
+    if ylims is not None:
+        ax.set_ylim( ylims )
     if dolabel: 
         leg = ax.legend(loc='upper right', fontsize=legendsize)
         if opaque_legend: make_legend_opaque(leg)
