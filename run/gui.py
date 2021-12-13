@@ -957,7 +957,95 @@ class AddRunMasksWindow(tk.Toplevel):
         # close the window
         self.destroy()
         self.update()
-        print('done creating HistStruct.')
+        print('done')
+
+
+class AddStatMasksWindow(tk.Toplevel):
+    ### popup window class for adding statistics masks to a HistStruct
+    # functionality already exists in NewHistStructWindow, but here masks can be added on the fly.
+
+    def __init__(self, master, histstruct):
+        super().__init__(master=master)
+        self.title('Add statistics masks')
+        self.histstruct = histstruct
+        self.stat_mask_widgets = []
+
+        # create a frame for stat mask addition
+        self.stat_mask_frame = tk.Frame(self)
+        set_frame_default_style( self.stat_mask_frame )
+        self.stat_mask_frame.grid(row=0, column=1, sticky='nsew', rowspan=3)
+        # add widgets for stat mask addition
+        self.add_stat_mask_button = tk.Button(self.stat_mask_frame, text='Add...',
+                                command=functools.partial(self.add_stat_mask, self.stat_mask_frame))
+        self.add_stat_mask_button.grid(row=0, column=0)
+        self.apply_button = tk.Button(self.stat_mask_frame, text='Apply',
+                                command=self.apply)
+        self.apply_button.grid(row=0, column=1)
+        name_label = tk.Label(self.stat_mask_frame, text='Name:')
+        name_label.grid(row=1, column=0)
+        operator_label = tk.Label(self.stat_mask_frame, text='Operator:')
+        operator_label.grid(row=1, column=1)
+        apply_label = tk.Label(self.stat_mask_frame, text='Apply on:')
+        apply_label.grid(row=1, column=2)
+        threshold_label = tk.Label(self.stat_mask_frame, text='Threshold:')
+        threshold_label.grid(row=1, column=3)
+
+        # add a single stat mask already
+        self.add_stat_mask(self.stat_mask_frame)
+
+    def add_stat_mask(self, parent=None):
+        if parent is None: parent = self
+        row = len(self.stat_mask_widgets)+2
+        column = 0
+        name_text = tk.Text(parent, height=1, width=15)
+        name_text.grid(row=row, column=column)
+        operator_box = ttk.Combobox(parent, width=2, values=['>','<'])
+        operator_box.current(0)
+        operator_box['state'] = 'readonly'
+        operator_box.grid(row=row, column=column+1)
+        apply_box = ttk.Combobox(parent, values=['all']+self.histstruct.histnames)
+        apply_box.current(0)
+        apply_box['state'] = 'readonly'
+        apply_box.grid(row=row, column=column+2)
+        threshold_text = tk.Text(parent, height=1, width=8)
+        threshold_text.grid(row=row, column=column+3)
+        self.stat_mask_widgets.append({'name_text':name_text,
+                                            'operator_box': operator_box,
+                                            'apply_box': apply_box,
+                                            'threshold_text':threshold_text})
+    def get_stat_masks(self):
+        stat_masks = {}
+        for el in self.stat_mask_widgets:
+            name = el['name_text'].get(1.0, tk.END).strip(' \t\n')
+            operator = el['operator_box'].get()
+            applyon = el['apply_box'].get()
+            threshold = float(el['threshold_text'].get(1.0, tk.END).strip(' \t\n'))
+            stat_masks[name] = (operator,applyon,threshold)
+        return stat_masks
+
+    def apply(self):
+        stat_masks = self.get_stat_masks()
+        for name, (operator,applyon,threshold) in stat_masks.items():
+            print('adding mask "{}"'.format(name))
+            # set operator type
+            min_entries_to_bins_ratio=-1
+            max_entries_to_bins_ratio=-1
+            if operator=='>':
+                min_entries_to_bins_ratio = threshold
+            elif operator=='<':
+                max_entries_to_bins_ratio = threshold
+            else:
+                raise Exception('ERROR: stat mask operator {} not recognized.'.format(operator))
+            # set application histograms
+            histnames = None
+            if applyon!='all': histnames=[applyon]
+            self.histstruct.add_stat_mask( name, histnames=histnames,
+                                            min_entries_to_bins_ratio=min_entries_to_bins_ratio,
+                                            max_entries_to_bins_ratio=max_entries_to_bins_ratio)
+        # close the window
+        self.destroy()
+        self.update()
+        print('done')
 
 
 class AddClassifiersWindow(tk.Toplevel):
@@ -1194,6 +1282,7 @@ class PreProcessingWindow(tk.Toplevel):
         super().__init__(master=master)
         self.title('Preprocessing window')
         self.histstruct = histstruct
+        self.set_selector = None
 
         # add a frame for preprocessing options
         options = []
@@ -1201,6 +1290,8 @@ class PreProcessingWindow(tk.Toplevel):
                          'docurl':get_docurl(hu.get_cropslices_from_str)} )
         options.append( {'name':'rebinningfactor', 'val':None, 'type':tk.Text,
                         'docurl':get_docurl(hu.get_rebinningfactor_from_str)} )
+        options.append( {'name':'smoothinghalfwindow', 'val':None, 'type':tk.Text,
+                        'docurl':get_docurl(hu.get_smoothinghalfwindow_from_str)} )
         options.append( {'name':'donormalize', 'val':[False,True], 'type':ttk.Combobox,
                         'docurl':get_docurl(hu.normalizehists)} )
         labels = [el['name'] for el in options]
@@ -1208,14 +1299,28 @@ class PreProcessingWindow(tk.Toplevel):
         values = [el['val'] for el in options]
         docurls = [el['docurl'] for el in options]
         self.optionsframe = OptionsFrame(self, labels=labels, types=types, values=values, 
-                                            docurls=docurls, docurl=get_docurl(histstruct.preprocess))
+                                        docurls=docurls, docurl=get_docurl(histstruct.preprocess))
         self.optionsframe.frame.grid(row=0, column=0, sticky='nsew')
+
+        # add a frame for selecting histograms
+        self.selectionframe = tk.Frame(self)
+        set_frame_default_style(self.selectionframe)
+        self.selectionbutton = tk.Button(self.selectionframe, text='Select histogram set',
+                                command=self.open_selection_window)
+        self.selectionbutton.grid(row=0, column=0, sticky='nsew')
+        self.selectionlabel = tk.Label(self.selectionframe, text='Test')
+        self.selectionlabel.grid(row=0, column=1, sticky='nsew')
+        self.selectionframe.grid(row=1, column=0, sticky='nsew')
 
         # add a button to apply the preprocessing
         self.apply_button = tk.Button(self, text='Apply', command=self.apply)
-        self.apply_button.grid(row=1, column=0, sticky='nsew')
+        self.apply_button.grid(row=2, column=0, sticky='nsew')
 
     def apply(self):
+        # get masks
+        masknames = None
+        if self.set_selector is not None:
+            masknames = self.set_selector.masks
         # get options
         options = self.optionsframe.get_dict()
         # do special treatment if needed
@@ -1223,14 +1328,21 @@ class PreProcessingWindow(tk.Toplevel):
         options['cropslices'] = slices
         rebinningfactor = hu.get_rebinningfactor_from_str(options.pop('rebinningfactor'))
         options['rebinningfactor'] = rebinningfactor
+        smoothinghalfwindow = hu.get_smoothinghalfwindow_from_str(options.pop('smoothinghalfwindow'))
+        options['smoothinghalfwindow'] = smoothinghalfwindow
         # disable frame for the remainder of the processing time
         disable_frame( self )
         # do the preprocessing
-        self.histstruct.preprocess(**options)
+        self.histstruct.preprocess(masknames=masknames, **options)
         # close the window
         self.destroy()
         self.update()
         print('done')
+
+    def open_selection_window(self):
+        self.set_selector = SelectorWindow(self.master, self.histstruct,
+                                set_selection=False, post_selection=False)
+        return
 
 
 class DisplayHistStructWindow(tk.Toplevel):
@@ -2734,9 +2846,12 @@ class ML4DQMGUI:
         self.addrunmasks_button = tk.Button(self.newhs_frame, text='Add run masks',
                                         command=self.open_add_runmasks_window)
         self.addrunmasks_button.grid(row=2, column=0, sticky='ew')
+        self.addstatmasks_button = tk.Button(self.newhs_frame, text='Add stat masks',
+                                        command=self.open_add_statmasks_window)
+        self.addstatmasks_button.grid(row=3, column=0, sticky='ew')
         self.addclassifiers_button = tk.Button(self.newhs_frame, text='Add classifiers',
                                         command=self.open_add_classifiers_window)
-        self.addclassifiers_button.grid(row=3, column=0, sticky='ew')
+        self.addclassifiers_button.grid(row=4, column=0, sticky='ew')
         # add the frame to the window
         self.newhs_frame.grid(row=0, column=0, sticky='nsew')
         self.button_frames.append(self.newhs_frame)
@@ -2979,6 +3094,13 @@ class ML4DQMGUI:
             print('ERROR: need to load a HistStruct first')
             return
         _ = AddRunMasksWindow(self.master, self.histstruct)
+        return
+
+    def open_add_statmasks_window(self):
+        if not self.histstruct:
+            print('ERROR: need to load a HistStruct first')
+            return
+        _ = AddStatMasksWindow(self.master, self.histstruct)
         return
 
     def open_add_classifiers_window(self):

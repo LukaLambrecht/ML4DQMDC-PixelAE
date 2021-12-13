@@ -209,14 +209,14 @@ class HistStruct(object):
         return obj
         
     def add_dataframe( self, df, cropslices=None, rebinningfactor=None, 
-                        smoothingwindow=None, smoothingweights=None,
+                        smoothinghalfwindow=None, smoothingweights=None,
                         donormalize=True ):
         ### add a dataframe to a HistStruct
         # input arguments:
         # - df: a pandas dataframe as read from the input csv files
         # - cropslices: list of slices (one per dimension) by which to crop the histograms
         # - rebinningfactor: factor by which to group bins together
-        # - smoothingwindow: window (int for 1D, tuple for 2D) for doing smoothing of histograms
+        # - smoothinghalfwindow: half window (int for 1D, tuple for 2D) for doing smoothing of histograms
         # - smoothingweights: weight array (1D for 1D, 2D for 2D) for smoothing of histograms
         # - donormalize: boolean whether to normalize the histograms
         # for more details on cropslices, rebinningfactor, smoothingwindow, smoothingweights
@@ -245,7 +245,7 @@ class HistStruct(object):
             (hists_all,runnbs_all,lsnbs_all) = hu.preparedatafromdf(thisdf,returnrunls=True,
                                                 cropslices=cropslices,
                                                 rebinningfactor=rebinningfactor,
-                                                smoothingwindow=smoothingwindow,
+                                                smoothinghalfwindow=smoothinghalfwindow,
                                                 smoothingweights=smoothingweights,
                                                 donormalize=donormalize)
             runnbs_all = runnbs_all.astype(int)
@@ -302,23 +302,35 @@ class HistStruct(object):
         self.runnbs = runnbs
         self.lsnbs = lsnbs
 
-    def preprocess( self, cropslices=None, rebinningfactor=None,
-                    smoothingwindow=None, smoothingweights=None,
+    def preprocess( self, masknames=None, cropslices=None, rebinningfactor=None,
+                    smoothinghalfwindow=None, smoothingweights=None,
                     donormalize=False ):
         ### do preprocessing
-        # the input arguments are equivalent to those given in add_dataframe,
+        # input arguments:
+        # - masknames: names of masks to select histograms to which to apply the preprocessing
+        #               (histograms not passing the masks are simply copied)
+        # the other input arguments are equivalent to those given in add_dataframe,
         # but this function allows to do preprocessing after the dataframes have already been loaded
         # note: does not work on extended histograms sets!
         #       one needs to apply preprocessing before generating extra histograms.
         for histname in self.histnames:
-            hists = self.histograms[histname]
+            # get the histograms
+            hists = self.get_histograms(histname=histname, masknames=masknames)
+            # do the preprocessing
             if cropslices is not None:  hists = hu.crophists(hists, cropslices)
             if rebinningfactor is not None: hists = hu.rebinhists(hists, rebinningfactor)
-            if smoothingwindow is not None: hists = hu.smoothhists(hists, 
-                                                        window=smoothingwindow,
+            if smoothinghalfwindow is not None: hists = hu.smoothhists(hists, 
+                                                        halfwindow=smoothinghalfwindow,
                                                         weights=smoothingweights)
             if donormalize: hists = hu.normalizehists(hists)
-            self.histograms[histname] = hists
+            # put the histograms back in the histstruct
+            if masknames is None:
+                self.histograms[histname] = hists
+            else:
+                runnbs = self.get_runnbs(masknames=masknames)
+                lsnbs = self.get_lsnbs(masknames=masknames)
+                ids = [self.get_index(runnb,lsnb) for runnb,lsnb in zip(runnbs,lsnbs)]
+                for i,idx in enumerate(ids): self.histograms[histname][idx] = hists[i]
         
     def add_globalscores( self, globalscores ):
         ### add an array of global scores (one per lumisection)
@@ -916,6 +928,7 @@ class HistStruct(object):
             yaxtitle = None
             if( yaxtitledict is not None and name in yaxtitledict ): yaxtitle = yaxtitledict[name]
             # make the plot
+            for el in histlist: print(el.shape)
             pu.plot_sets( histlist,
                         fig=fig,ax=axs[int(j/ncols),j%ncols],
                         title=title, xaxtitle=xaxtitle, xlims=xlims, yaxtitle=yaxtitle,

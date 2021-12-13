@@ -321,6 +321,25 @@ def smoothhists(hists, halfwindow=None, weights=None):
         smhists[i] = scipy.signal.convolve( hist, weights, mode='same' )
     return smhists
 
+def get_smoothinghalfwindow_from_str(windowstr):
+    ### get a valid smoothing half window (int or tuple) from a string (e.g. argument in gui)
+    # note: the resulting factor is typically passed to smoothhists (see above)
+    # input arguments:
+    # - windowstr: string representation of smoothing window
+    #               e.g. '4' for 4 (for 1D histograms)
+    #               e.g. '4,4' for (4,4) (for 2D histograms)
+    if windowstr is None: return None
+    if not isinstance(windowstr,str): return windowstr
+    windows = []
+    try:
+        for wstr in windowstr.split(','):
+            windows.append( int(wstr) )
+    except:
+        raise Exception('ERROR in hist_utils.py / get_smoothingwindow_from_str:'
+                +' could not convert {} to a valid smoothing window.'.format(windowstr))
+    if len(windows)==1: return windows[0]
+    return tuple(windows)
+
 
 ### functions for calculating moments of a histogram
 
@@ -374,7 +393,7 @@ def histmoments(bins, counts, orders):
 ### higher level function for automatic preprocessing of data
 
 def preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None, 
-        smoothingwindow=None, smoothingweights=None, 
+        smoothinghalfwindow=None, smoothingweights=None, 
         donormalize=True, doplot=False):
     ### read a .npy file and output the histograms
     # input arguments: 
@@ -386,7 +405,8 @@ def preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None,
     # preprocessing of the data: rebinning and normalizing
     if cropslices is not None:  hist = crophists(hist,cropslices)
     if rebinningfactor is not None: hist = rebinhists(hist,rebinningfactor)
-    if smoothingwindow is not None: hist = smoothhists(hist,window=smoothingwindow,
+    if smoothinghalfwindow is not None: hist = smoothhists(hist,
+                                            halfwindow=smoothinghalfwindow,
                                             weights=smoothingweights)
     if donormalize: hist = normalizehists(hist)
         
@@ -407,7 +427,7 @@ def preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None,
     return hist
 
 def preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=None, 
-        smoothingwindow=None, smoothingweights=None,
+        smoothinghalfwindow=None, smoothingweights=None,
         donormalize=False, doplot=False):
     ### prepare the data contained in a dataframe in the form of a numpy array
     # input arguments:
@@ -418,7 +438,7 @@ def preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=No
     #   (default: no cropping)
     # - rebinningfactor: an integer (or tuple of integers for 2D histograms) 
     #   to downsample/rebin the histograms (default: no rebinning)
-    # - smoothingwindow: int or tuple (for 1D/2D histograms) used for smoothing the histograms
+    # - smoothinghalfwindow: int or tuple (for 1D/2D histograms) used for smoothing the histograms
     # - smoothingweights: 1D or 2D array (for 1D/2D histograms) with weights for smoothing
     # - donormalize: boolean whether to normalize the data
     # - doplot: if True, some example plots are made showing the histograms
@@ -427,7 +447,8 @@ def preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=No
     (hist,runnbs,lsnbs) = dataframe_utils.get_hist_values(df)
     if cropslices is not None:  hist = crophists(hist,cropslices)
     if rebinningfactor is not None: hist = rebinhists(hist,rebinningfactor)
-    if smoothingwindow is not None: hist = smoothhists(hist,window=smoothingwindow,
+    if smoothinghalfwindow is not None: hist = smoothhists(hist,
+                                            halfwindow=smoothinghalfwindow,
                                             weights=smoothingweights)
     if donormalize: hist = normalizehists(hist)
         
@@ -451,7 +472,7 @@ def preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=No
     else: return hist
 
 def preparedatafromcsv(dataname, returnrunls=False, cropslices=None, rebinningfactor=None, 
-        smoothingwindow=None, smoothingweights=None,
+        smoothinghalfwindow=None, smoothingweights=None,
         donormalize=True, doplot=False):
     ### prepare the data contained in a dataframe csv file in the form of a numpy array
     # input arguments:
@@ -461,7 +482,7 @@ def preparedatafromcsv(dataname, returnrunls=False, cropslices=None, rebinningfa
     #   (default: no cropping)
     # - rebinningfactor: an integer (or tuple of integers for 2D histograms) 
     #   to downsample/rebin the histograms (default: no rebinning)
-    # - smoothingwindow: int or tuple (for 1D/2D histograms) used for smoothing the histograms
+    # - smoothinghalfwindow: int or tuple (for 1D/2D histograms) used for smoothing the histograms
     # - smoothingweights: 1D or 2D array (for 1D/2D histograms) with weights for smoothing
     # - donormalize: boolean whether to normalize the data
     # - doplot: if True, some example plots are made showing the histograms
@@ -471,6 +492,6 @@ def preparedatafromcsv(dataname, returnrunls=False, cropslices=None, rebinningfa
     # prepare data from df
     return preparedatafromdf(df, returnrunls=returnrunls, cropslices=cropslices, 
             rebinningfactor=rebinningfactor, 
-            smoothingwindow=smoothingwindow,
+            smoothinghalfwindow=smoothinghalfwindow,
             smoothingweights=smoothingweights,
             donormalize=donormalize,doplot=doplot)
