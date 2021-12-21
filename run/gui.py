@@ -373,11 +373,6 @@ class UrlWidget:
 
     def openurl(self, event):
         # open a webbrowser on the requested url
-        # note: for the compiled executable version, need additional logic 
-        #       to export the browser environment variable
-        # to do: check how to set to default browser, not necessarily firefox
-        os.system('export BROWSER=$(which firefox)')
-        # open the webbrowser
         webbrowser.open_new(self.url)
 
 

@@ -928,7 +928,6 @@ class HistStruct(object):
             yaxtitle = None
             if( yaxtitledict is not None and name in yaxtitledict ): yaxtitle = yaxtitledict[name]
             # make the plot
-            for el in histlist: print(el.shape)
             pu.plot_sets( histlist,
                         fig=fig,ax=axs[int(j/ncols),j%ncols],
                         title=title, xaxtitle=xaxtitle, xlims=xlims, yaxtitle=yaxtitle,
