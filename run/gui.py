@@ -36,7 +36,7 @@ except:
 # local modules
 
 print('importing utils...')
-sys.path.append('../utils')
+sys.path.append(os.path.abspath('../utils'))
 print('  import csv_utils as csvu'); import csv_utils as csvu
 print('  import json_utils as jsonu'); import json_utils as jsonu
 print('  import dataframe_utils as dfu'); import dataframe_utils as dfu
@@ -49,9 +49,9 @@ print('  import refruns_utils as rru'); import refruns_utils as rru
 print('  import mask_utils as mu'); import mask_utils as mu
 
 print('importing src...')
-sys.path.append('../src')
-sys.path.append('../src/classifiers')
-sys.path.append('../src/cloudfitters')
+sys.path.append(os.path.abspath('../src'))
+sys.path.append(os.path.abspath('../src/classifiers'))
+sys.path.append(os.path.abspath('../src/cloudfitters'))
 print('  import HistStruct'); import HistStruct
 print('  import PlotStyleParser'); import PlotStyleParser
 print('  import HistogramClassifier'); import HistogramClassifier
@@ -205,11 +205,24 @@ def get_docurl( obj ):
     try:
         # get the physical path of the file where the object is defined
         try:
+            # case of a class name or function name
             physicalpath = os.path.abspath(sys.modules[obj.__module__].__file__)
             objname = obj.__name__
         except:
+            # case of a class instance
             physicalpath = os.path.abspath(sys.modules[obj.__class__.__module__].__file__)
             objname = obj.__class__.__name__
+        # the above does not work in compiled executable mode, need additional logic
+        # note: the file directories must be added under 'ML4DQM-DC/' under the temporary directory 
+        #       created by the executable, see the gui.spec file.
+        if '/tmp/' in physicalpath:
+            tempdir,filename = os.path.split(physicalpath)
+            sourcedir = os.path.join(tempdir,'ML4DQM-DC')
+            filename = filename.replace('.pyc','.py')
+            for root, dirs, files in os.walk(sourcedir):
+                for f in files:
+                    if f==filename: 
+                        physicalpath = os.path.join(root,f)
         # make the path relative to the top of the project and remove extensions
         relpath = physicalpath.split('ML4DQM-DC/',-1)[1]
         reldoc = os.path.splitext(relpath)[0]
@@ -223,6 +236,23 @@ def get_docurl( obj ):
     except:
         print('WARNING: could not retrieve doc url for object "{}"'.format(obj))
         return None
+
+
+### get initial directory for file loaders and savers
+
+def get_initialdir():
+    # original: use physical __file__ location
+    # does not work well in compiled executable version, points to shady places...
+    #initialdir = os.path.abspath(os.path.dirname(__file__))
+    # alternative: simply use working directory
+    initialdir = os.path.abspath(os.getcwd().rstrip('/'))
+    # if run from a 'dist' subfolder, return one directory level above
+    if os.path.basename(initialdir)=='dist':
+        initialdir = os.path.dirname(initialdir)
+    # return one directory level above this one
+    initialdir = os.path.dirname(initialdir)
+    return initialdir
+
 
 ### other help functions
 
@@ -280,7 +310,7 @@ class GenericFileLoader:
 
     def load_filename(self, filetypes=None):
         if filetypes is None: filetypes = (('all files','*.*'),)
-        initialdir = os.path.abspath(os.path.dirname(__file__))
+        initialdir = get_initialdir()
         filename = fldlg.askopenfilename(initialdir=initialdir,
                     title='Choose file',
                     filetypes=filetypes)
@@ -311,7 +341,7 @@ class GenericFileSaver:
 
     def save_filename(self, filetypes=None):
         if filetypes is None: filetypes = (('all files','*.*'),)
-        initialdir = os.path.abspath(os.path.dirname(__file__))
+        initialdir = get_initialdir
         filename = fldlg.asksaveasfilename(initialdir=initialdir,
                     title='Save a file',
                     filetypes=filetypes)
@@ -342,6 +372,12 @@ class UrlWidget:
         self.label.grid(**kwargs)
 
     def openurl(self, event):
+        # open a webbrowser on the requested url
+        # note: for the compiled executable version, need additional logic 
+        #       to export the browser environment variable
+        # to do: check how to set to default browser, not necessarily firefox
+        os.system('export BROWSER=$(which firefox)')
+        # open the webbrowser
         webbrowser.open_new(self.url)
 
 
@@ -784,13 +820,13 @@ class NewHistStructWindow(tk.Toplevel):
         self.histnames_listbox.delete(0, tk.END)
 
     def add_histnames(self):
-        initialdir = os.path.abspath(os.path.dirname(__file__))
+        initialdir = get_initialdir()
         filenames = fldlg.askopenfilenames(initialdir=initialdir,
                     title='Load histograms',
                     filetypes=(('csv files','*.csv'),('all files','*.*')))
         # if filename is invalid, return
         if len(filenames)==0:
-            print('Loading of plot style canceled')
+            print('Loading of histograms canceled')
             return
         for filename in filenames:
             histname = os.path.basename(filename).replace('.csv','')
@@ -1180,7 +1216,7 @@ class PlotSetsWindow(tk.Toplevel):
         self.add_set()
 
     def load_plotstyle(self):
-        initialdir = os.path.abspath(os.path.dirname(__file__))
+        initialdir = get_initialdir()
         filename = fldlg.askopenfilename(initialdir=initialdir,
                     title='Load a plot style',
                     filetypes=(('json files','*.json'),('all files','*.*')))
@@ -2655,7 +2691,7 @@ class PlotLumisectionWindow(tk.Toplevel):
         self.lumisection_box.config(values=lsnbslist)
 
     def load_plotstyle(self):
-        initialdir = os.path.abspath(os.path.dirname(__file__))
+        initialdir = get_initialdir()
         filename = fldlg.askopenfilename(initialdir=initialdir,
                     title='Load a plot style',
                     filetypes=(('json files','*.json'),('all files','*.*')))
@@ -3047,7 +3083,7 @@ class ML4DQMGUI:
 
     def load_histstruct(self):
         ### load a histstruct from a stored zip file
-        initialdir = os.path.abspath(os.path.dirname(__file__))
+        initialdir = get_initialdir()
         filename = fldlg.askopenfilename(initialdir=initialdir,
                     title='Load a HistStruct',
                     filetypes=(('zip files','*.zip'),('all files','*.*')))
@@ -3069,7 +3105,7 @@ class ML4DQMGUI:
         if not self.histstruct:
             print('ERROR: need to load a HistStruct first')
             return
-        initialdir = os.path.abspath(os.path.dirname(__file__))
+        initialdir = get_initialdir()
         filename = fldlg.asksaveasfilename(initialdir=initialdir,
                     title='Save a HistStruct',
                     filetypes=(('zip files','*.zip'),('all files','*.*')))
@@ -3082,7 +3118,7 @@ class ML4DQMGUI:
 
     def load_plotstyle(self):
         ### load a plot style from a json file
-        initialdir = os.path.abspath(os.path.dirname(__file__))
+        initialdir = get_initialdir()
         filename = fldlg.askopenfilename(initialdir=initialdir,
                     title='Load a plot style',
                     filetypes=(('json files','*.json'),('all files','*.*')))

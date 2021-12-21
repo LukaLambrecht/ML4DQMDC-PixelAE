@@ -19,17 +19,13 @@
 # There is one exception to this rule: instead of \[ start, stop \], the lumisection list can also be \[ -1 \], which is short for all lumisections within that run.
 
 
-
 ### imports
 
 # external modules
 import os
+import sys
 import json
 import numpy as np
-
-# local modules
-
-
 
 
 ### reading and writing json files
@@ -49,7 +45,6 @@ def loadjson( jsonfile ):
     with open(jsonfile) as f: jsondict = json.load(f)
     return jsondict
 
-
 def writejson( jsondict, outputfile, overwrite=False ):
     ### inverse function of loadjson
     # input arguments
@@ -60,8 +55,6 @@ def writejson( jsondict, outputfile, overwrite=False ):
         raise Exception('ERROR in json_utils.py / writejson: requested output file already exists.'
                        +' You can suppress this error by giving "overwrite=True" as additional argument')
     with open(outputfile,'w') as f: json.dump(jsondict,f)
-
-
 
 
 ### checking if given run/lumi values are in a given json object
@@ -82,7 +75,6 @@ def injson_single( run, lumi, jsondict ):
         if( lumi>=lumirange[0] and lumi<=lumirange[1] ): 
             return True
     return False
-
 
 def injson( run, lumi, jsonfile=None, jsondict=None ):
     ### find if a run and lumi combination is in a given json file
@@ -114,11 +106,17 @@ def injson( run, lumi, jsonfile=None, jsondict=None ):
     if len(res)==1: res = res[0]
     return res
 
-
 def getjsondir():
     ### internal helper function returning the path to where json files are stored
     thisdir = os.path.abspath(os.path.dirname(__file__))
     jsondir = os.path.join(thisdir,'../jsons')
+    # the above method does not work in compiled executable version;
+    # need different approach in that case.
+    # note: the json directory must be added as 'ML4DQM-DC/jsons' under the temporary directory 
+    #       created by the executable, see the gui.spec file.
+    if not os.path.exists(jsondir):
+        jsondir = sys._MEIPASS
+        jsondir = os.path.join(jsondir,'ML4DQM-DC/jsons')
     return jsondir
 
 def isgolden(run, lumi):
