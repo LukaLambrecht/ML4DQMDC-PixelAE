@@ -18,7 +18,7 @@ set the transparency of all entries in a legend to zero
 ### add\_text  
 full signature:  
 ```text  
-def add_text( ax, text, pos,  fontsize=10, background_facecolor=None,  background_alpha=None, background_edgecolor=None )  
+def add_text( ax, text, pos,  fontsize=10, horizontalalignment='left', verticalalignment='bottom', background_facecolor=None,  background_alpha=None,  background_edgecolor=None )  
 ```  
 comments:  
 ```text  
@@ -95,7 +95,7 @@ output: tuple of figure and axis objects, that can be used to further tune the l
 ### plot\_hist\_2d  
 full signature:  
 ```text  
-def plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None, caxrange=None)  
+def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, caxrange=None)  
 ```  
 comments:  
 ```text  
@@ -111,13 +111,20 @@ notes:
 ### plot\_hists\_2d  
 full signature:  
 ```text  
-def plot_hists_2d(hists, ncols=4, title=None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None)  
+def plot_hists_2d(hists, ncols=4, axsize=5, title=None, titlesize=None, subtitles=None, subtitlesize=None, xaxtitles=None, yaxtitles=None, **kwargs)  
 ```  
 comments:  
 ```text  
 plot multiple 2D histograms next to each other  
+input arguments  
 - hists: list of 2D numpy arrays of shape (nxbins,nybins), or an equivalent 3D numpy array  
 - ncols: number of columns to use  
+- figsize: approximate size of a single axis in the figure  
+           (will be modified by aspect ratio)  
+- title, titlesize: properties of the super title for the entire figure  
+- subtitles, subtitlesize: properties of the individual histogram titles  
+- xaxtitles, yaxtitles: properties of axis titles of individual histograms  
+- kwargs: passed down to plot_hist_2d  
 ```  
   
   
@@ -233,11 +240,22 @@ input args:
 ### plot\_score\_dist  
 full signature:  
 ```text  
-def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='signal', sigcolor='g', bcklabel='background', bckcolor='r', title=None, xaxtitle=None, yaxtitle=None, doshow=True)  
+def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='Signal', sigcolor='g', bcklabel='Background', bckcolor='r', title=None, xaxtitle=None, yaxtitle=None, doshow=True)  
 ```  
 comments:  
 ```text  
 make a plot showing the distributions of the output scores for signal and background  
+```  
+  
+  
+### plot\_score\_ls  
+full signature:  
+```text  
+def plot_score_ls( thisscore, refscores, fig=None, ax=None,  thislabel='This LS', thiscolor='black', reflabel='Reference LS', refcolor='dodgerblue', **kwargs )  
+```  
+comments:  
+```text  
+make a plot of the score for a single lumisection comparing to some reference distribution  
 ```  
   
   

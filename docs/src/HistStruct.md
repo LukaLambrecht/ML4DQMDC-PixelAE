@@ -104,7 +104,7 @@ input arguments:
 ### &#10551; add\_dataframe  
 full signature:  
 ```text  
-def add_dataframe( self, df, cropslices=None, rebinningfactor=None, donormalize=True )  
+def add_dataframe( self, df, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None, donormalize=True )  
 ```  
 comments:  
 ```text  
@@ -112,9 +112,12 @@ add a dataframe to a HistStruct
 input arguments:  
 - df: a pandas dataframe as read from the input csv files  
 - cropslices: list of slices (one per dimension) by which to crop the histograms  
-- donormalize: boolean whether to normalize the histograms  
 - rebinningfactor: factor by which to group bins together  
-for more details on cropslices, donormalize and rebinningfactor, see hist_utils.py / preparedatafromdf!  
+- smoothinghalfwindow: half window (int for 1D, tuple for 2D) for doing smoothing of histograms  
+- smoothingweights: weight array (1D for 1D, 2D for 2D) for smoothing of histograms  
+- donormalize: boolean whether to normalize the histograms  
+for more details on cropslices, rebinningfactor, smoothingwindow, smoothingweights  
+and donormalize: see hist_utils.py!  
 notes:  
 - the new dataframe can contain one or multiple histogram types  
 - the new dataframe must contain the same run and lumisection numbers (for each histogram type in it)  
@@ -151,12 +154,15 @@ notes:
 ### &#10551; preprocess  
 full signature:  
 ```text  
-def preprocess( self, cropslices=None, rebinningfactor=None, donormalize=False )  
+def preprocess( self, masknames=None, cropslices=None, rebinningfactor=None, smoothinghalfwindow=None, smoothingweights=None, donormalize=False )  
 ```  
 comments:  
 ```text  
 do preprocessing  
-the input arguments are equivalent to those given in add_dataframe,  
+input arguments:  
+- masknames: names of masks to select histograms to which to apply the preprocessing  
+              (histograms not passing the masks are simply copied)  
+the other input arguments are equivalent to those given in add_dataframe,  
 but this function allows to do preprocessing after the dataframes have already been loaded  
 note: does not work on extended histograms sets!  
       one needs to apply preprocessing before generating extra histograms.  
@@ -325,6 +331,15 @@ comments:
 get the array of run numbers, optionally after masking  
 input arguments:  
 - masknames: list of names of masks (default: no masking, return full array)  
+```  
+### &#10551; get\_runnbs\_unique  
+full signature:  
+```text  
+def get_runnbs_unique( self )  
+```  
+comments:  
+```text  
+get a list of unique run numbers  
 ```  
 ### &#10551; get\_lsnbs  
 full signature:  
@@ -543,14 +558,11 @@ notes:
 ### &#10551; plot\_histograms  
 full signature:  
 ```text  
-def plot_histograms( self, histnames=None, masknames=None, histograms=None, colorlist=[], labellist=[], transparencylist=[],  titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs )  
+def plot_histograms( self, histnames=None, masknames=None, histograms=None,  colorlist=[], labellist=[], transparencylist=[],  titledict=None, xaxtitledict=None, physicalxax=False,  yaxtitledict=None, **kwargs )  
 ```  
 comments:  
 ```text  
-plot the histograms in a HistStruct, optionally after msking  
-note: so far only for 1D hsitograms.  
-      case of 2D histograms requires different plotting method since they cannot be clearly overlaid.  
-      if a HistStruct contains both 1D and 2D histograms, the 1D histograms must be selected with the histnames argument.  
+plot the histograms in a HistStruct, optionally after masking  
 input arguments:  
 - histnames: list of names of the histogram types to plot (default: all)  
 - masknames: list of list of mask names  
@@ -568,6 +580,26 @@ input arguments:
 - yaxtitledict: dict mapping histogram names to y-axis titles for the subplots (default: no y-axis title)  
 - physicalxax: bool whether to use physical x-axis range or simply use bin number (default)  
 - kwargs: keyword arguments passed down to plot_utils.plot_sets   
+```  
+### &#10551; plot\_histograms\_1d  
+full signature:  
+```text  
+def plot_histograms_1d( self, histnames=None, masknames=None, histograms=None,  colorlist=[], labellist=[], transparencylist=[], titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None,  **kwargs )  
+```  
+comments:  
+```text  
+plot the histograms in a histstruct, optionally after masking  
+internal helper function, use only via plot_histograms  
+```  
+### &#10551; plot\_histograms\_2d  
+full signature:  
+```text  
+def plot_histograms_2d( self, histnames=None, masknames=None, histograms=None, labellist=[], titledict=None, xaxtitledict=None, yaxtitledict=None, **kwargs )  
+```  
+comments:  
+```text  
+plot the histograms in a histstruct, optionally after masking  
+internal helper function, use only via plot_histograms  
 ```  
 ### &#10551; plot\_ls  
 full signature:  
@@ -609,6 +641,26 @@ def plot_run( self, runnb, masknames=None, recohist=None, recohistlabel='reco', 
 comments:  
 ```text  
 call plot_ls for all lumisections in a given run  
+```  
+### &#10551; plot\_ls\_1d  
+full signature:  
+```text  
+def plot_ls_1d( self, runnb, lsnb, histnames=None, histlabel=None, recohist=None, recohistlabel='Reconstruction', refhists=None, refhistslabel='Reference histograms', refhiststransparency=None, titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs)  
+```  
+comments:  
+```text  
+plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction  
+internal helper function, use only via plot_ls  
+```  
+### &#10551; plot\_ls\_2d  
+full signature:  
+```text  
+def plot_ls_2d( self, runnb, lsnb, histnames=None, histlabel=None, recohist=None, recohistlabel='Reconstruction', titledict=None, xaxtitledict=None, yaxtitledict=None, **kwargs)  
+```  
+comments:  
+```text  
+plot the histograms in a HistStruct for a given run/ls number versus their reconstruction  
+internal helper function, use only via plot_ls  
 ```  
 - - -  
   
