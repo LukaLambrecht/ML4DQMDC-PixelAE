@@ -264,10 +264,13 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#how-to-start-the-program">How to start the program</a></li>
+            <li><a href="#option-1-downloading-the-repository">Option 1: downloading the repository</a></li>
+            <li><a href="#option-2-download-executable-file">Option 2: download executable file</a></li>
         <li class="main "><a href="#where-to-start">Where to start?</a></li>
         <li class="main "><a href="#input-files">Input files</a></li>
         <li class="main "><a href="#the-histstruct-object">The HistStruct object</a></li>
         <li class="main "><a href="#typical-workflow">Typical workflow</a></li>
+        <li class="main "><a href="#example-usage">Example usage</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -275,16 +278,22 @@
 <p><strong>Run the ML4DQM functionality using the GUI</strong></p>
 <h3 id="how-to-start-the-program">How to start the program</h3>
 <p>The GUI cannot be run in SWAN, it needs to be run locally on your computer.<br />
-Download the repository, navigate to this folder and run via 'python3 gui.py'.<br />
+You can either download the full repository, or a single executable file.  </p>
+<h4 id="option-1-downloading-the-repository">Option 1: downloading the repository</h4>
+<p>Go to the <a href="https://github.com/LukaLambrecht/ML4DQM-DC">GitHub page</a> and clone or download the repository via git.<br />
+In the main project directory, avigate to the 'run' folder and start the program via 'python3 gui.py'.<br />
 Dependencies:<br />
-- The GUI will not work with python 2, it is required to use python 3.<br />
-- Apart from tools within this repository, there are quite a few other python dependencies.<br />
-- To do: make executable with all dependencies included and update this part of documentation.  </p>
+- You need to have python installed. The GUI will not work with python 2, it is required to use python 3.<br />
+- Apart from tools within this repository, there are quite a few other python dependencies, such as matplotlib, numpy, math, pandas, etc. To do: make complete list of dependencies.  </p>
+<h4 id="option-2-download-executable-file">Option 2: download executable file</h4>
+<p>To do: update this part of the documentation.  </p>
 <h3 id="where-to-start">Where to start?</h3>
 <p>The starting screen of the GUI shows a number of buttons and text boxes.<br />
 Usually one would start by loading a previously stored HistStruct (a structure containing all relevant histograms and classifiers) via the 'Load' button, or create a new one via the 'New' button. Many of the other buttons will not work if you have not loaded or created a valid HistStruct first. To create a HistStruct, the GUI expects input files in a specific format, see below.</p>
 <h3 id="input-files">Input files</h3>
-<p>To do: update this part of the documentation after discussing with Abhit about how to integrate this in the ML4DQM playground.</p>
+<p>Some example input files are provided on this <a href="https://cernbox.cern.ch/index.php/s/E9GzJ4WMZs3jbPd">CERNBox location</a>.<br />
+They are skimmed versions of the centrally provided csv files with monintoring elements (both 1D and 2D histograms) with a per-lumisection granularity. The central files are available on EOS: <code>/eos/project/c/cmsml4dc/ML_2020</code>.<br />
+How to produce your own skimmed input files from the centrally provided csv files is still under discussion. The code to do so is available in this repository (if run on SWAN, which has direct access to EOS), but not in the executable file (which is run locally). To do: update documentation when other options are available.  </p>
 <h3 id="the-histstruct-object">The HistStruct object</h3>
 <p>The 'HistStruct' is the central object used in this program. It contains all relevant histograms (depending on the target run, training runs and histogram types) and their respective classifiers in a structured way.  </p>
 <p>Selecting subsets of histograms, e.g. for classifier training or evaluation, is managed by using masks, which you can initialize when creating the HistStruct. There are three types of masks:<br />
@@ -300,7 +309,9 @@ Usually one would start by loading a previously stored HistStruct (a structure c
 - train all classifiers. See the 'Train classifiers' button.
 - fit a probability density function to the resulting classifier scores in order to get from a per-histogram score to a per-lumisection score. See the 'Fit' button.
 - evaluate the model. See 'Evaluate model' button.<br />
-- take a closer look at some lumisections. For example in the case of an autoencoder one might be interested to compare the original histogram to its autoencoder reconstruction. Or more generally one could be interested to see what histogram types are causing the high lumisection score. See 'Plot lumisection' button.  </p></div>
+- take a closer look at some lumisections. For example in the case of an autoencoder one might be interested to compare the original histogram to its autoencoder reconstruction. Or more generally one could be interested to see what histogram types are causing the high lumisection score. See 'Plot lumisection' button.  </p>
+<h3 id="example-usage">Example usage</h3>
+<p>Some examples on how to use the GUI are put in slides and collected on this <a href="https://cernbox.cern.ch/index.php/s/QEUAG7eKmgSeRns">CERNBox location</a></p></div>
         </div>
 
         <footer class="col-md-12">

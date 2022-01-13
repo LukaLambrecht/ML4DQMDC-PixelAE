@@ -298,7 +298,7 @@ TODO: add keyword arguments to pass down to sklearn.decomposition.NMF
 
 <h3 id="train">&#10551; train</h3>
 <p>full signature:  </p>
-<pre><code class="text">def train( self, histograms )  
+<pre><code class="text">def train( self, histograms, doplot=True )  
 </code></pre>
 
 <p>comments:  </p>
@@ -362,6 +362,24 @@ a numpy array of shape (ncomponents,nbins) or (ncomponents,nybins,nxbins)
 <pre><code class="text">return the NMF reconstruction for a given set of histograms  
 input arguments:  
 - histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins)  
+</code></pre>
+
+<h3 id="save">&#10551; save</h3>
+<p>full signature:  </p>
+<pre><code class="text">def save( self, path )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">save the underlying NMF model  
+</code></pre>
+
+<h3 id="load">&#10551; load</h3>
+<p>full signature:  </p>
+<pre><code class="text">def load( self, path, **kwargs )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">get an NMFClassifier instance from a pkl file  
 </code></pre>
 
 <hr /></div>

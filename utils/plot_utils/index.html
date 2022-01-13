@@ -281,6 +281,7 @@
             <li><a href="#plot95loss">plot_loss</a></li>
             <li><a href="#plot95mse">plot_mse</a></li>
             <li><a href="#plot95score95dist">plot_score_dist</a></li>
+            <li><a href="#plot95score95ls">plot_score_ls</a></li>
             <li><a href="#plot95metric">plot_metric</a></li>
             <li><a href="#plot95fit952d">plot_fit_2d</a></li>
             <li><a href="#plot95fit952d95clusters">plot_fit_2d_clusters</a></li>
@@ -304,7 +305,7 @@
 
 <h3 id="add95text">add_text</h3>
 <p>full signature:  </p>
-<pre><code class="text">def add_text( ax, text, pos,  fontsize=10, background_facecolor=None,  background_alpha=None, background_edgecolor=None )  
+<pre><code class="text">def add_text( ax, text, pos,  fontsize=10, horizontalalignment='left', verticalalignment='bottom', background_facecolor=None,  background_alpha=None,  background_edgecolor=None )  
 </code></pre>
 
 <p>comments:  </p>
@@ -371,7 +372,7 @@ output: tuple of figure and axis objects, that can be used to further tune the l
 
 <h3 id="plot95hist952d">plot_hist_2d</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_hist_2d(hist, fig=None, ax=None, title=None, xaxtitle=None, yaxtitle=None, caxrange=None)  
+<pre><code class="text">def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, caxrange=None)  
 </code></pre>
 
 <p>comments:  </p>
@@ -385,13 +386,20 @@ notes:
 
 <h3 id="plot95hists952d">plot_hists_2d</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_hists_2d(hists, ncols=4, title=None, subtitles=None, xaxtitle=None, yaxtitle=None, caxrange=None)  
+<pre><code class="text">def plot_hists_2d(hists, ncols=4, axsize=5, title=None, titlesize=None, subtitles=None, subtitlesize=None, xaxtitles=None, yaxtitles=None, **kwargs)  
 </code></pre>
 
 <p>comments:  </p>
 <pre><code class="text">plot multiple 2D histograms next to each other  
+input arguments  
 - hists: list of 2D numpy arrays of shape (nxbins,nybins), or an equivalent 3D numpy array  
 - ncols: number of columns to use  
+- figsize: approximate size of a single axis in the figure  
+           (will be modified by aspect ratio)  
+- title, titlesize: properties of the super title for the entire figure  
+- subtitles, subtitlesize: properties of the individual histogram titles  
+- xaxtitles, yaxtitles: properties of axis titles of individual histograms  
+- kwargs: passed down to plot_hist_2d  
 </code></pre>
 
 <h3 id="plot95hists952d95gif">plot_hists_2d_gif</h3>
@@ -489,11 +497,20 @@ input args:
 
 <h3 id="plot95score95dist">plot_score_dist</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='signal', sigcolor='g', bcklabel='background', bckcolor='r', title=None, xaxtitle=None, yaxtitle=None, doshow=True)  
+<pre><code class="text">def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='Signal', sigcolor='g', bcklabel='Background', bckcolor='r', title=None, xaxtitle=None, yaxtitle=None, doshow=True)  
 </code></pre>
 
 <p>comments:  </p>
 <pre><code class="text">make a plot showing the distributions of the output scores for signal and background  
+</code></pre>
+
+<h3 id="plot95score95ls">plot_score_ls</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_score_ls( thisscore, refscores, fig=None, ax=None,  thislabel='This LS', thiscolor='black', reflabel='Reference LS', refcolor='dodgerblue', **kwargs )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">make a plot of the score for a single lumisection comparing to some reference distribution  
 </code></pre>
 
 <h3 id="plot95metric">plot_metric</h3>
