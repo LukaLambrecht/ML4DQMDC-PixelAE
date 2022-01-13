@@ -281,12 +281,15 @@
 You can either download the full repository, or a single executable file.  </p>
 <h4 id="option-1-downloading-the-repository">Option 1: downloading the repository</h4>
 <p>Go to the <a href="https://github.com/LukaLambrecht/ML4DQM-DC">GitHub page</a> and clone or download the repository via git.<br />
-In the main project directory, avigate to the 'run' folder and start the program via 'python3 gui.py'.<br />
+In the main project directory, avigate to the <code>run</code> folder and start the program via <code>python3 gui.py</code>.<br />
 Dependencies:<br />
 - You need to have python installed. The GUI will not work with python 2, it is required to use python 3.<br />
 - Apart from tools within this repository, there are quite a few other python dependencies, such as matplotlib, numpy, math, pandas, etc. To do: make complete list of dependencies.  </p>
 <h4 id="option-2-download-executable-file">Option 2: download executable file</h4>
-<p>To do: update this part of the documentation.  </p>
+<p>Go to this <a href="https://cernbox.cern.ch/index.php/s/R9BtMUP2g9XAw0t">CERNBox location</a> and download the executable file with the most recent date (format: <code>gui_vYYYYMMDD</code>). Run via <code>./gui_&lt;version&gt;</code>.<br />
+Drawbacks:<br />
+- The file is rather large (about 600MB) since it includes a complete python interpreter.<br />
+- So far only a Linux version is available; it will not work on Windows or MacOS.  </p>
 <h3 id="where-to-start">Where to start?</h3>
 <p>The starting screen of the GUI shows a number of buttons and text boxes.<br />
 Usually one would start by loading a previously stored HistStruct (a structure containing all relevant histograms and classifiers) via the 'Load' button, or create a new one via the 'New' button. Many of the other buttons will not work if you have not loaded or created a valid HistStruct first. To create a HistStruct, the GUI expects input files in a specific format, see below.</p>
