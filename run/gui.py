@@ -1,17 +1,14 @@
 # to do:
-# - see to do's in the code
-# - see Gabriele's feedback on 15/11/2021
-# - see other feedback on 19/11/2021
 # - small bug: when a frame is made inactive and then active again,
 #   non-editable Comboboxes become editable, probably because the state is set to 'normal'.
 # - small bug: when the 'new histstruct' button is pressed, the histstruct is set to a new empty one,
 #   even if the new histstruct window is closed without actually creating the histstruct.
-# - continue making styling more uniform (e.g. everything in a Frame)
 
 # external modules
 
 print('importing external modules...')
 print('  import os'); import os
+os.environ['BROWSER'] = '/usr/bin/firefox'
 print('  import sys'); import sys
 print('  import math'); import math
 print('  import pandas as pd'); import pandas as pd

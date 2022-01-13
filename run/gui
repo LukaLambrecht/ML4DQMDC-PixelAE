@@ -1,2 +1,0 @@
-export BROWSER=$(which firefox)
-./dist/gui
