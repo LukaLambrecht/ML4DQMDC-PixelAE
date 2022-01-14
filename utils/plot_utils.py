@@ -220,7 +220,7 @@ def plot_hists_2d(hists, ncols=4, axsize=5, title=None, titlesize=None,
     # - kwargs: passed down to plot_hist_2d
 
     # check for empty array
-    if hists.shape[0]==0:
+    if len(hists)==0:
         raise Exception('ERROR in plot_utils.py / plot_hists_2d:'
                     +' the histogram set is empty, '
                     +' this is currently not supported for plotting')
