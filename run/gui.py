@@ -1348,7 +1348,8 @@ class PreProcessingWindow(tk.Toplevel):
         self.selectionbutton = tk.Button(self.selectionframe, text='Select histogram set',
                                 command=self.open_selection_window)
         self.selectionbutton.grid(row=0, column=0, sticky='nsew')
-        self.selectionlabel = tk.Label(self.selectionframe, text='Test')
+        self.selectionlabel = tk.Label(self.selectionframe, 
+                                text='(Default: apply on all original histograms)')
         self.selectionlabel.grid(row=0, column=1, sticky='nsew')
         self.selectionframe.grid(row=1, column=0, sticky='nsew')
 
