@@ -32,7 +32,7 @@ TODO: add keyword arguments to pass down to sklearn.decomposition.NMF
 ### &#10551; train  
 full signature:  
 ```text  
-def train( self, histograms )  
+def train( self, histograms, doplot=True )  
 ```  
 comments:  
 ```text  
@@ -96,6 +96,24 @@ comments:
 return the NMF reconstruction for a given set of histograms  
 input arguments:  
 - histograms: numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins)  
+```  
+### &#10551; save  
+full signature:  
+```text  
+def save( self, path )  
+```  
+comments:  
+```text  
+save the underlying NMF model  
+```  
+### &#10551; load  
+full signature:  
+```text  
+def load( self, path, **kwargs )  
+```  
+comments:  
+```text  
+get an NMFClassifier instance from a pkl file  
 ```  
 - - -  
   

@@ -221,6 +221,12 @@ def plot_hists_2d(hists, ncols=4, axsize=5, title=None, titlesize=None,
     # - xaxtitles, yaxtitles: properties of axis titles of individual histograms
     # - kwargs: passed down to plot_hist_2d
 
+    # check for empty array
+    if len(hists)==0:
+        raise Exception('ERROR in plot_utils.py / plot_hists_2d:'
+                    +' the histogram set is empty, '
+                    +' this is currently not supported for plotting')
+
     # check arugments
     if( subtitles is not None and len(subtitles)!=len(hists) ):
         raise Exception('ERROR in plot_utils.py / plot_hists_2d:'
@@ -311,6 +317,14 @@ def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparen
     # - fig and ax: a pyplot figure and axis object (if one of both is none a new figure is created)
     # - title is a string that will be used as the title for the ax object
     # other parameters are lists of which each element applies to one list of histograms
+
+    # check for empty arrays
+    for i,hists in enumerate(setlist):
+        if hists.shape[0]==0:
+            raise Exception('ERROR in plot_utils.py / plot_sets:'
+                    +' the {}th histogram set is empty, '.format(i)
+                    +' this is currently not supported for plotting')
+    # parse arguments
     dolabel = True
     if len(labellist)==0:
         labellist = ['']*len(setlist)
@@ -318,8 +332,8 @@ def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparen
     if len(colorlist)==0:
         colorlist = ['red','blue','green','orange']
         if len(setlist)>4:
-            print('ERROR in plot_utils.py / plot_sets: please specify the colors if you plot more than four sets.')
-            return
+            raise Exception('ERROR in plot_utils.py / plot_sets: '
+                    +'please specify the colors if you plot more than four sets.')
     if len(transparencylist)==0:
         transparencylist = [1.]*len(setlist)
     # make x axis

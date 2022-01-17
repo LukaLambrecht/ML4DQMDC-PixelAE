@@ -1,17 +1,14 @@
 # to do:
-# - see to do's in the code
-# - see Gabriele's feedback on 15/11/2021
-# - see other feedback on 19/11/2021
 # - small bug: when a frame is made inactive and then active again,
 #   non-editable Comboboxes become editable, probably because the state is set to 'normal'.
 # - small bug: when the 'new histstruct' button is pressed, the histstruct is set to a new empty one,
 #   even if the new histstruct window is closed without actually creating the histstruct.
-# - continue making styling more uniform (e.g. everything in a Frame)
 
 # external modules
 
 print('importing external modules...')
 print('  import os'); import os
+os.environ['BROWSER'] = '/usr/bin/firefox'
 print('  import sys'); import sys
 print('  import math'); import math
 print('  import pandas as pd'); import pandas as pd
@@ -36,7 +33,7 @@ except:
 # local modules
 
 print('importing utils...')
-sys.path.append('../utils')
+sys.path.append(os.path.abspath('../utils'))
 print('  import csv_utils as csvu'); import csv_utils as csvu
 print('  import json_utils as jsonu'); import json_utils as jsonu
 print('  import dataframe_utils as dfu'); import dataframe_utils as dfu
@@ -49,9 +46,9 @@ print('  import refruns_utils as rru'); import refruns_utils as rru
 print('  import mask_utils as mu'); import mask_utils as mu
 
 print('importing src...')
-sys.path.append('../src')
-sys.path.append('../src/classifiers')
-sys.path.append('../src/cloudfitters')
+sys.path.append(os.path.abspath('../src'))
+sys.path.append(os.path.abspath('../src/classifiers'))
+sys.path.append(os.path.abspath('../src/cloudfitters'))
 print('  import HistStruct'); import HistStruct
 print('  import PlotStyleParser'); import PlotStyleParser
 print('  import HistogramClassifier'); import HistogramClassifier
@@ -205,11 +202,24 @@ def get_docurl( obj ):
     try:
         # get the physical path of the file where the object is defined
         try:
+            # case of a class name or function name
             physicalpath = os.path.abspath(sys.modules[obj.__module__].__file__)
             objname = obj.__name__
         except:
+            # case of a class instance
             physicalpath = os.path.abspath(sys.modules[obj.__class__.__module__].__file__)
             objname = obj.__class__.__name__
+        # the above does not work in compiled executable mode, need additional logic
+        # note: the file directories must be added under 'ML4DQM-DC/' under the temporary directory 
+        #       created by the executable, see the gui.spec file.
+        if '/tmp/' in physicalpath:
+            tempdir,filename = os.path.split(physicalpath)
+            sourcedir = os.path.join(tempdir,'ML4DQM-DC')
+            filename = filename.replace('.pyc','.py')
+            for root, dirs, files in os.walk(sourcedir):
+                for f in files:
+                    if f==filename: 
+                        physicalpath = os.path.join(root,f)
         # make the path relative to the top of the project and remove extensions
         relpath = physicalpath.split('ML4DQM-DC/',-1)[1]
         reldoc = os.path.splitext(relpath)[0]
@@ -223,6 +233,23 @@ def get_docurl( obj ):
     except:
         print('WARNING: could not retrieve doc url for object "{}"'.format(obj))
         return None
+
+
+### get initial directory for file loaders and savers
+
+def get_initialdir():
+    # original: use physical __file__ location
+    # does not work well in compiled executable version, points to shady places...
+    #initialdir = os.path.abspath(os.path.dirname(__file__))
+    # alternative: simply use working directory
+    initialdir = os.path.abspath(os.getcwd().rstrip('/'))
+    # if run from a 'dist' subfolder, return one directory level above
+    if os.path.basename(initialdir)=='dist':
+        initialdir = os.path.dirname(initialdir)
+    # return one directory level above this one
+    initialdir = os.path.dirname(initialdir)
+    return initialdir
+
 
 ### other help functions
 
@@ -280,7 +307,7 @@ class GenericFileLoader:
 
     def load_filename(self, filetypes=None):
         if filetypes is None: filetypes = (('all files','*.*'),)
-        initialdir = os.path.abspath(os.path.dirname(__file__))
+        initialdir = get_initialdir()
         filename = fldlg.askopenfilename(initialdir=initialdir,
                     title='Choose file',
                     filetypes=filetypes)
@@ -311,7 +338,7 @@ class GenericFileSaver:
 
     def save_filename(self, filetypes=None):
         if filetypes is None: filetypes = (('all files','*.*'),)
-        initialdir = os.path.abspath(os.path.dirname(__file__))
+        initialdir = get_initialdir
         filename = fldlg.asksaveasfilename(initialdir=initialdir,
                     title='Save a file',
                     filetypes=filetypes)
@@ -342,6 +369,7 @@ class UrlWidget:
         self.label.grid(**kwargs)
 
     def openurl(self, event):
+        # open a webbrowser on the requested url
         webbrowser.open_new(self.url)
 
 
@@ -349,7 +377,7 @@ class OptionsFrame:
     ### contains a tk.Frame holding a list of customization options
 
     def __init__(self, master, labels=None, types=None, values=None,
-                        docurls=None, docurl=None):
+                        docurls=None, docurl=None, autobool=False):
         # input arguments:
         # - labels: list of strings with the names/labels of the options
         # - types: list of tk types, defaults to tk.Text for each option
@@ -361,12 +389,15 @@ class OptionsFrame:
         #       in which case these elements will be set to default
         # - docurls: list of urls to documentation per option
         # - docurl: url to documentation for the option collection
+        # - autobool: automatically convert boolean arguments to a binary ttk.Combobox 
+        #             (instead of Text entry)
         self.frame = tk.Frame(master,width=200)
         self.labels = []
         self.wtypes = []
         self.widgets = []
         self.docwidgets = []
         self.docwidget = None
+        self.autobool = autobool
         self.set_options( labels=labels, types=types, values=values, docurls=docurls, docurl=docurl )
 
     def set_options(self, labels=None, types=None, values=None, docurls=None, docurl=None):
@@ -385,6 +416,16 @@ class OptionsFrame:
                 or len(docurls)!=len(labels) ):
             raise Exception('ERROR in OptionsFrame initialization:'
                             +' argument lists have unequal lengths.')
+        labels = list(labels) # explicit conversion from dict_keys or dict_values to list
+        types = list(types) # explicit conversion from dict_keys or dict_values to list
+        values = list(values) # explicit conversion from dict_keys or dict_values to list
+
+        # additional argument parsing
+        if self.autobool:
+            for j in range(len(labels)):
+                if is_bool(str(values[j])):
+                    types[j] = ttk.Combobox
+                    values[j] = [values[j], not values[j]]
 
         # clear current OptionsFrame
         self.labels.clear()
@@ -771,13 +812,13 @@ class NewHistStructWindow(tk.Toplevel):
         self.histnames_listbox.delete(0, tk.END)
 
     def add_histnames(self):
-        initialdir = os.path.abspath(os.path.dirname(__file__))
+        initialdir = get_initialdir()
         filenames = fldlg.askopenfilenames(initialdir=initialdir,
                     title='Load histograms',
                     filetypes=(('csv files','*.csv'),('all files','*.*')))
         # if filename is invalid, return
         if len(filenames)==0:
-            print('Loading of plot style canceled')
+            print('Loading of histograms canceled')
             return
         for filename in filenames:
             histname = os.path.basename(filename).replace('.csv','')
@@ -944,7 +985,95 @@ class AddRunMasksWindow(tk.Toplevel):
         # close the window
         self.destroy()
         self.update()
-        print('done creating HistStruct.')
+        print('done')
+
+
+class AddStatMasksWindow(tk.Toplevel):
+    ### popup window class for adding statistics masks to a HistStruct
+    # functionality already exists in NewHistStructWindow, but here masks can be added on the fly.
+
+    def __init__(self, master, histstruct):
+        super().__init__(master=master)
+        self.title('Add statistics masks')
+        self.histstruct = histstruct
+        self.stat_mask_widgets = []
+
+        # create a frame for stat mask addition
+        self.stat_mask_frame = tk.Frame(self)
+        set_frame_default_style( self.stat_mask_frame )
+        self.stat_mask_frame.grid(row=0, column=1, sticky='nsew', rowspan=3)
+        # add widgets for stat mask addition
+        self.add_stat_mask_button = tk.Button(self.stat_mask_frame, text='Add...',
+                                command=functools.partial(self.add_stat_mask, self.stat_mask_frame))
+        self.add_stat_mask_button.grid(row=0, column=0)
+        self.apply_button = tk.Button(self.stat_mask_frame, text='Apply',
+                                command=self.apply)
+        self.apply_button.grid(row=0, column=1)
+        name_label = tk.Label(self.stat_mask_frame, text='Name:')
+        name_label.grid(row=1, column=0)
+        operator_label = tk.Label(self.stat_mask_frame, text='Operator:')
+        operator_label.grid(row=1, column=1)
+        apply_label = tk.Label(self.stat_mask_frame, text='Apply on:')
+        apply_label.grid(row=1, column=2)
+        threshold_label = tk.Label(self.stat_mask_frame, text='Threshold:')
+        threshold_label.grid(row=1, column=3)
+
+        # add a single stat mask already
+        self.add_stat_mask(self.stat_mask_frame)
+
+    def add_stat_mask(self, parent=None):
+        if parent is None: parent = self
+        row = len(self.stat_mask_widgets)+2
+        column = 0
+        name_text = tk.Text(parent, height=1, width=15)
+        name_text.grid(row=row, column=column)
+        operator_box = ttk.Combobox(parent, width=2, values=['>','<'])
+        operator_box.current(0)
+        operator_box['state'] = 'readonly'
+        operator_box.grid(row=row, column=column+1)
+        apply_box = ttk.Combobox(parent, values=['all']+self.histstruct.histnames)
+        apply_box.current(0)
+        apply_box['state'] = 'readonly'
+        apply_box.grid(row=row, column=column+2)
+        threshold_text = tk.Text(parent, height=1, width=8)
+        threshold_text.grid(row=row, column=column+3)
+        self.stat_mask_widgets.append({'name_text':name_text,
+                                            'operator_box': operator_box,
+                                            'apply_box': apply_box,
+                                            'threshold_text':threshold_text})
+    def get_stat_masks(self):
+        stat_masks = {}
+        for el in self.stat_mask_widgets:
+            name = el['name_text'].get(1.0, tk.END).strip(' \t\n')
+            operator = el['operator_box'].get()
+            applyon = el['apply_box'].get()
+            threshold = float(el['threshold_text'].get(1.0, tk.END).strip(' \t\n'))
+            stat_masks[name] = (operator,applyon,threshold)
+        return stat_masks
+
+    def apply(self):
+        stat_masks = self.get_stat_masks()
+        for name, (operator,applyon,threshold) in stat_masks.items():
+            print('adding mask "{}"'.format(name))
+            # set operator type
+            min_entries_to_bins_ratio=-1
+            max_entries_to_bins_ratio=-1
+            if operator=='>':
+                min_entries_to_bins_ratio = threshold
+            elif operator=='<':
+                max_entries_to_bins_ratio = threshold
+            else:
+                raise Exception('ERROR: stat mask operator {} not recognized.'.format(operator))
+            # set application histograms
+            histnames = None
+            if applyon!='all': histnames=[applyon]
+            self.histstruct.add_stat_mask( name, histnames=histnames,
+                                            min_entries_to_bins_ratio=min_entries_to_bins_ratio,
+                                            max_entries_to_bins_ratio=max_entries_to_bins_ratio)
+        # close the window
+        self.destroy()
+        self.update()
+        print('done')
 
 
 class AddClassifiersWindow(tk.Toplevel):
@@ -983,9 +1112,17 @@ class AddClassifiersWindow(tk.Toplevel):
             value_label.grid(row=2, column=1)
             classifier_options_frame = OptionsFrame(frame, labels=[], values=[])
             classifier_options_frame.frame.grid(row=3, column=0, columnspan=2)
-
+            # add option to evaluate the model after adding it
+            evaluate_label = tk.Label(frame, text='evaluate')
+            evaluate_label.grid(row=4, column=0)
+            evaluate_box = ttk.Combobox(frame, values=[False,True])
+            evaluate_box['state'] = 'readonly'
+            evaluate_box.current(0)
+            evaluate_box.grid(row=4, column=1)
+            # add everything to a structure 
             self.classifier_widgets[histname] = {'type':classifier_type_box, 
-                                                 'options':classifier_options_frame}
+                                                 'options':classifier_options_frame,
+                                                 'evaluate':evaluate_box}
             self.set_classifier_options(None, histname)
 
         # add a button for adding the classifiers
@@ -1023,6 +1160,10 @@ class AddClassifiersWindow(tk.Toplevel):
             (classifier, classifier_options) = self.get_classifier(histname)
             classifier = classifier( **classifier_options )
             self.histstruct.add_classifier( histname, classifier )
+            # check if need to evaluate
+            do_evaluate = (self.classifier_widgets[histname]['evaluate'].get()=='True')
+            if do_evaluate:
+                self.histstruct.evaluate_classifier(histname)
         # close the window
         self.destroy()
         self.update()
@@ -1067,7 +1208,7 @@ class PlotSetsWindow(tk.Toplevel):
         self.add_set()
 
     def load_plotstyle(self):
-        initialdir = os.path.abspath(os.path.dirname(__file__))
+        initialdir = get_initialdir()
         filename = fldlg.askopenfilename(initialdir=initialdir,
                     title='Load a plot style',
                     filetypes=(('json files','*.json'),('all files','*.*')))
@@ -1181,6 +1322,7 @@ class PreProcessingWindow(tk.Toplevel):
         super().__init__(master=master)
         self.title('Preprocessing window')
         self.histstruct = histstruct
+        self.set_selector = None
 
         # add a frame for preprocessing options
         options = []
@@ -1188,6 +1330,8 @@ class PreProcessingWindow(tk.Toplevel):
                          'docurl':get_docurl(hu.get_cropslices_from_str)} )
         options.append( {'name':'rebinningfactor', 'val':None, 'type':tk.Text,
                         'docurl':get_docurl(hu.get_rebinningfactor_from_str)} )
+        options.append( {'name':'smoothinghalfwindow', 'val':None, 'type':tk.Text,
+                        'docurl':get_docurl(hu.get_smoothinghalfwindow_from_str)} )
         options.append( {'name':'donormalize', 'val':[False,True], 'type':ttk.Combobox,
                         'docurl':get_docurl(hu.normalizehists)} )
         labels = [el['name'] for el in options]
@@ -1195,14 +1339,29 @@ class PreProcessingWindow(tk.Toplevel):
         values = [el['val'] for el in options]
         docurls = [el['docurl'] for el in options]
         self.optionsframe = OptionsFrame(self, labels=labels, types=types, values=values, 
-                                            docurls=docurls, docurl=get_docurl(histstruct.preprocess))
+                                        docurls=docurls, docurl=get_docurl(histstruct.preprocess))
         self.optionsframe.frame.grid(row=0, column=0, sticky='nsew')
+
+        # add a frame for selecting histograms
+        self.selectionframe = tk.Frame(self)
+        set_frame_default_style(self.selectionframe)
+        self.selectionbutton = tk.Button(self.selectionframe, text='Select histogram set',
+                                command=self.open_selection_window)
+        self.selectionbutton.grid(row=0, column=0, sticky='nsew')
+        self.selectionlabel = tk.Label(self.selectionframe, 
+                                text='(Default: apply on all original histograms)')
+        self.selectionlabel.grid(row=0, column=1, sticky='nsew')
+        self.selectionframe.grid(row=1, column=0, sticky='nsew')
 
         # add a button to apply the preprocessing
         self.apply_button = tk.Button(self, text='Apply', command=self.apply)
-        self.apply_button.grid(row=1, column=0, sticky='nsew')
+        self.apply_button.grid(row=2, column=0, sticky='nsew')
 
     def apply(self):
+        # get masks
+        masknames = None
+        if self.set_selector is not None:
+            masknames = self.set_selector.masks
         # get options
         options = self.optionsframe.get_dict()
         # do special treatment if needed
@@ -1210,14 +1369,21 @@ class PreProcessingWindow(tk.Toplevel):
         options['cropslices'] = slices
         rebinningfactor = hu.get_rebinningfactor_from_str(options.pop('rebinningfactor'))
         options['rebinningfactor'] = rebinningfactor
+        smoothinghalfwindow = hu.get_smoothinghalfwindow_from_str(options.pop('smoothinghalfwindow'))
+        options['smoothinghalfwindow'] = smoothinghalfwindow
         # disable frame for the remainder of the processing time
         disable_frame( self )
         # do the preprocessing
-        self.histstruct.preprocess(**options)
+        self.histstruct.preprocess(masknames=masknames, **options)
         # close the window
         self.destroy()
         self.update()
         print('done')
+
+    def open_selection_window(self):
+        self.set_selector = SelectorWindow(self.master, self.histstruct,
+                                set_selection=False, post_selection=False)
+        return
 
 
 class DisplayHistStructWindow(tk.Toplevel):
@@ -1846,7 +2012,7 @@ class ResampleWindow(tk.Toplevel):
             key_label.grid(row=3, column=0)
             value_label = tk.Label(this_set_frame, text='Values')
             value_label.grid(row=3, column=1)
-            function_options_frame = OptionsFrame(this_set_frame, labels=[], values=[])
+            function_options_frame = OptionsFrame(this_set_frame, labels=[], values=[], autobool=True)
             function_options_frame.frame.grid(row=4, column=0, columnspan=2)
             # add objects to the dicts
             self.resample_set_selectors[histname] = None
@@ -2518,7 +2684,7 @@ class PlotLumisectionWindow(tk.Toplevel):
         self.lumisection_box.config(values=lsnbslist)
 
     def load_plotstyle(self):
-        initialdir = os.path.abspath(os.path.dirname(__file__))
+        initialdir = get_initialdir()
         filename = fldlg.askopenfilename(initialdir=initialdir,
                     title='Load a plot style',
                     filetypes=(('json files','*.json'),('all files','*.*')))
@@ -2721,9 +2887,12 @@ class ML4DQMGUI:
         self.addrunmasks_button = tk.Button(self.newhs_frame, text='Add run masks',
                                         command=self.open_add_runmasks_window)
         self.addrunmasks_button.grid(row=2, column=0, sticky='ew')
+        self.addstatmasks_button = tk.Button(self.newhs_frame, text='Add stat masks',
+                                        command=self.open_add_statmasks_window)
+        self.addstatmasks_button.grid(row=3, column=0, sticky='ew')
         self.addclassifiers_button = tk.Button(self.newhs_frame, text='Add classifiers',
                                         command=self.open_add_classifiers_window)
-        self.addclassifiers_button.grid(row=3, column=0, sticky='ew')
+        self.addclassifiers_button.grid(row=4, column=0, sticky='ew')
         # add the frame to the window
         self.newhs_frame.grid(row=0, column=0, sticky='nsew')
         self.button_frames.append(self.newhs_frame)
@@ -2907,7 +3076,7 @@ class ML4DQMGUI:
 
     def load_histstruct(self):
         ### load a histstruct from a stored zip file
-        initialdir = os.path.abspath(os.path.dirname(__file__))
+        initialdir = get_initialdir()
         filename = fldlg.askopenfilename(initialdir=initialdir,
                     title='Load a HistStruct',
                     filetypes=(('zip files','*.zip'),('all files','*.*')))
@@ -2929,7 +3098,7 @@ class ML4DQMGUI:
         if not self.histstruct:
             print('ERROR: need to load a HistStruct first')
             return
-        initialdir = os.path.abspath(os.path.dirname(__file__))
+        initialdir = get_initialdir()
         filename = fldlg.asksaveasfilename(initialdir=initialdir,
                     title='Save a HistStruct',
                     filetypes=(('zip files','*.zip'),('all files','*.*')))
@@ -2942,7 +3111,7 @@ class ML4DQMGUI:
 
     def load_plotstyle(self):
         ### load a plot style from a json file
-        initialdir = os.path.abspath(os.path.dirname(__file__))
+        initialdir = get_initialdir()
         filename = fldlg.askopenfilename(initialdir=initialdir,
                     title='Load a plot style',
                     filetypes=(('json files','*.json'),('all files','*.*')))
@@ -2966,6 +3135,13 @@ class ML4DQMGUI:
             print('ERROR: need to load a HistStruct first')
             return
         _ = AddRunMasksWindow(self.master, self.histstruct)
+        return
+
+    def open_add_statmasks_window(self):
+        if not self.histstruct:
+            print('ERROR: need to load a HistStruct first')
+            return
+        _ = AddStatMasksWindow(self.master, self.histstruct)
         return
 
     def open_add_classifiers_window(self):

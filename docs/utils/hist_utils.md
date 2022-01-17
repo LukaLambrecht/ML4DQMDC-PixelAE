@@ -3,10 +3,12 @@
 **A collection of useful basic functions for processing histograms.**  
 
 Functionality includes:
-- rebinning and normalization
+- rebinning, cropping and normalization
 - moment calculation
-- averaging
-- higher-level functions preparing data for ML training, starting from a dataframe or input csv file.
+- averaging over neighbouring histograms
+- smoothing over neighbouring bins
+- higher-level functions preparing data for ML training, 
+  starting from a dataframe or input csv file.
 - - -
   
   
@@ -42,7 +44,7 @@ comments:
 ```text  
 get a collection of slices from a string (e.g. argument in gui)  
 note: the resulting slices are typically passed to crophists (see above)  
-- input arguments:  
+input arguments:  
 - slicestr: string representation of slices  
             e.g. '0:6:2' for slice(0,6,2)  
             e.g. '0:6:2,1:5:2' for [slice(0,6,2),slice(1,5,2)]  
@@ -66,6 +68,22 @@ example usage:
 - see tutorials/plot_histograms_2d.ipynb  
 returns:  
 - a numpy array containing the same histograms as input but rebinned according to the factor argument  
+```  
+  
+  
+### get\_rebinningfactor\_from\_str  
+full signature:  
+```text  
+def get_rebinningfactor_from_str(factstr)  
+```  
+comments:  
+```text  
+get a valid rebinning factor (int or tuple) from a string (e.g. argument in gui)  
+note: the resulting factor is typically passed to rebinhists (see above)  
+input arguments:  
+- factstr: string representation of rebinning factor  
+            e.g. '4' for 4 (for 1D histograms)  
+            e.g. '4,4' for (4,4) (for 2D histograms)  
 ```  
   
   
@@ -134,6 +152,48 @@ notes:
 ```  
   
   
+### smoothhists  
+full signature:  
+```text  
+def smoothhists(hists, halfwindow=None, weights=None)  
+```  
+comments:  
+```text  
+perform histogram smoothing by averaging over neighbouring bins  
+input arguments:  
+- hists: a numpy array of shape (nhistograms, nbins) for 1D  
+         or (nhistograms, nybins, nxbins) for 2D.  
+- halfwindow: number of bins to consider for the averaging;  
+              for 1D histograms, must be an int, corresponding to the number of bins  
+              before and after the current bin to average over;  
+              for 2D histograms, must be a tuple of (halfwindow_y, halfwindow_x).  
+- weights: numpy array containing the relative weights of the bins for the averaging;  
+           for 1D histograms, must have length 2*halfwindow+1;  
+           for 2D histograms, must have shape (2*halfwindow_y+1, 2*halfwindow_x+1).  
+           note: the weights can be any number, but they will be normalized to have unit sum.  
+           note: the default behaviour is a uniform array  
+returns:  
+- a numpy array with same shape as input but where each histogram is replaced   
+  by its smoothed version  
+```  
+  
+  
+### get\_smoothinghalfwindow\_from\_str  
+full signature:  
+```text  
+def get_smoothinghalfwindow_from_str(windowstr)  
+```  
+comments:  
+```text  
+get a valid smoothing half window (int or tuple) from a string (e.g. argument in gui)  
+note: the resulting factor is typically passed to smoothhists (see above)  
+input arguments:  
+- windowstr: string representation of smoothing window  
+              e.g. '4' for 4 (for 1D histograms)  
+              e.g. '4,4' for (4,4) (for 2D histograms)  
+```  
+  
+  
 ### moment  
 full signature:  
 ```text  
@@ -197,7 +257,7 @@ returns:
 ### preparedatafromnpy  
 full signature:  
 ```text  
-def preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None, donormalize=True, doplot=False)  
+def preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None,  donormalize=True, doplot=False)  
 ```  
 comments:  
 ```text  
@@ -212,16 +272,21 @@ notes:
 ### preparedatafromdf  
 full signature:  
 ```text  
-def preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=None, donormalize=False, doplot=False)  
+def preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None, donormalize=False, doplot=False)  
 ```  
 comments:  
 ```text  
 prepare the data contained in a dataframe in the form of a numpy array  
 input arguments:  
-- returnrunls: boolean whether to return a tuple of (histograms, run numbers, lumisection numbers).  
+- returnrunls: boolean whether to return a tuple of   
+  (histograms, run numbers, lumisection numbers).  
   (default: return only histograms)  
-- cropslices: list of slices (one per dimension) by which to crop the historams (default: no cropping)  
-- rebinningfactor: an integer (or tuple of integers for 2D histograms) to downsample/rebin the histograms (default: no rebinning)  
+- cropslices: list of slices (one per dimension) by which to crop the historams   
+  (default: no cropping)  
+- rebinningfactor: an integer (or tuple of integers for 2D histograms)   
+  to downsample/rebin the histograms (default: no rebinning)  
+- smoothinghalfwindow: int or tuple (for 1D/2D histograms) used for smoothing the histograms  
+- smoothingweights: 1D or 2D array (for 1D/2D histograms) with weights for smoothing  
 - donormalize: boolean whether to normalize the data  
 - doplot: if True, some example plots are made showing the histograms  
 ```  
@@ -230,7 +295,7 @@ input arguments:
 ### preparedatafromcsv  
 full signature:  
 ```text  
-def preparedatafromcsv(dataname, returnrunls=False, cropslices=None, rebinningfactor=None, donormalize=True, doplot=False)  
+def preparedatafromcsv(dataname, returnrunls=False, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None, donormalize=True, doplot=False)  
 ```  
 comments:  
 ```text  
@@ -238,8 +303,12 @@ prepare the data contained in a dataframe csv file in the form of a numpy array
 input arguments:  
 - returnrunls: boolean whether to return a tuple of (histograms, run numbers, lumisection numbers).  
   (default: return only histograms)  
-- cropslices: list of slices (one per dimension) by which to crop the historams (default: no cropping)  
-- rebinningfactor: an integer (or tuple of integers for 2D histograms) to downsample/rebin the histograms (default: no rebinning)  
+- cropslices: list of slices (one per dimension) by which to crop the historams   
+  (default: no cropping)  
+- rebinningfactor: an integer (or tuple of integers for 2D histograms)   
+  to downsample/rebin the histograms (default: no rebinning)  
+- smoothinghalfwindow: int or tuple (for 1D/2D histograms) used for smoothing the histograms  
+- smoothingweights: 1D or 2D array (for 1D/2D histograms) with weights for smoothing  
 - donormalize: boolean whether to normalize the data  
 - doplot: if True, some example plots are made showing the histograms  
 ```  
