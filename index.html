@@ -266,6 +266,7 @@
         <li class="main active"><a href="#some-utilities-and-example-notebooks-for-ml4dqmdc">Some utilities and example notebooks for ML4DQM/DC</a></li>
             <li><a href="#structure-of-this-repository">Structure of this repository:</a></li>
             <li><a href="#tutorials">Tutorials:</a></li>
+            <li><a href="#graphical-interface">Graphical interface:</a></li>
             <li><a href="#other-remarks">Other remarks:</a></li>
             <li><a href="#to-get-the-tutorial-notebooks-running-in-swan">To get the tutorial notebooks running in SWAN</a></li>
             <li><a href="#further-documentation">Further documentation:</a></li>
@@ -278,36 +279,39 @@
 It was developed with the idea of training autoencoders on the per-lumisection histograms stored in dedicated DQMIO files in order to (partially) automate the DQM and/or DC process. However, it is intended to be generally useful for any ML4DQM/DC study (i.e. any subsystem, any type of histogram, any classification method).  </p>
 <p>In more detail:  </p>
 <ul>
-<li>The framework has been developed based on a number of 1D histograms related to the status of the pixel tracker. Support for 2D histograms was added later and tested preliminarily, but some parts of the code may not yet support them. Please feel free to contact me if you notice a place in the code where this is the case.</li>
-<li>Likewise, most of the development effort went into using an autoencoder as classification algorithm, i.e. looking at the mean-squared-difference between a histogram and its reconstruction as a measure for anomality. Support for other algorithms is also present, one just needs to define a class deriving from src/classifiers/HistogramClassifier. Working examples for NMF, PCA and a couple of other classifiers are present in the tutorials.</li>
+<li>The framework has been developed based on a number of 1D histograms related to the status of the pixel tracker. Support for 2D histograms was added later.  </li>
+<li>Likewise, most of the development effort went into using an autoencoder as classification algorithm, looking at the mean-squared-difference between a histogram and its reconstruction as a measure for anomality. Support for other algorithms is also present, one just needs to define a class deriving from <code>src/classifiers/HistogramClassifier</code>. Working examples for NMF, PCA and a couple of other classifiers are present in the tutorials.  </li>
+<li>Furthermore, the idea is to train a separate classifier on each histogram type, and then combine the output scores in some way. Using instead only one histogram type is of course also possible (examples are present in the tutorials). Combining histograms in different ways (e.g. appending them together and training an autoencoder on the result) is not explicitly supported yet, though many parts of the code should still be perfectly usable.</li>
 </ul>
 <h3 id="structure-of-this-repository">Structure of this repository:</h3>
 <p>There are five important directories: tutorials, utils, src, run and omsapi.<br />
 The other directories in the repository contain either data or meta-information (e.g. for documentation).<br />
 In more detail:  </p>
 <ul>
-<li>utils: contains a number of python notebooks and equivalent scripts with static utility functions for general use. They are being called and used in various places throughout the code.  </li>
-<li>src: contains the classes for this repository:<ul>
-<li>DataLoader: class for convenient loading of histograms from the input csv files.</li>
-<li>HistStruct: a histogram container for easy handling of multiple types of histograms simultaneously and consistently.</li>
-<li>classifiers: folder containing an abstract base HistogramClassifier class and derived classes representing concrete examples of histogram classification algorithms.</li>
-<li>cloudfitters: folder containing an abstract base CloudFitter class and derived classes representing concrete examples of point cloud fitting algorithms (used when working with multiple types of histograms simultaneously).</li>
+<li><code>utils</code>: contains a number of python files with static utility functions for general use. They are being called and used in various places throughout the code.  </li>
+<li><code>src</code>: contains the classes for this repository:<ul>
+<li><code>DataLoader</code>: class for convenient loading of histograms from the input csv files.  </li>
+<li><code>HistStruct</code>: a histogram container for easy handling of multiple types of histograms simultaneously and consistently.  </li>
+<li><code>classifiers</code>: folder containing an abstract base <code>HistogramClassifier</code> class and derived classes representing concrete examples of histogram classification algorithms.  </li>
+<li><code>cloudfitters</code>: folder containing an abstract base <code>CloudFitter</code> class and derived classes representing concrete examples of point cloud fitting algorithms (used when working with multiple types of histograms simultaneously).  </li>
 </ul>
 </li>
-<li>tutorials: contains a number of notebooks that can be used to get familiar with the code and its capabilities.  </li>
-<li>run: contains code for alternative ways of running the workflow, e.g. with configuration files or with a GUI. Note: under development, recommended to start with script-based workflows first (as exemplified in the tutorials).</li>
-<li>omsapi: standalone API for retrieving information from OMS.</li>
+<li><code>tutorials</code>: contains a number of notebooks that can be used to get familiar with the code and its capabilities (see more info below).  </li>
+<li><code>run</code>: contains code for graphical interface (see more info below).  </li>
+<li><code>omsapi</code>: standalone API for retrieving information from OMS.  </li>
 </ul>
 <h3 id="tutorials">Tutorials:</h3>
 <p>Some tutorials are located in the tutorials folder in this repository, that should help you get started with the code. They can be grouped into different steps:  </p>
 <ul>
-<li>Step 1: put the data in a more manageable format. The raw csv files that are our common input are not very easy to work with. Therefore you would probably first want to do something similar to what's done in the notebook read_and_write_data.ipynb. See the code and inline comments in that script and the functions it refers to for more detailed explanation. Its output is one single csv file per histogram type and per year, which is often much more convenient than the original csv files (which contain all histogram types together and are split per number of lines, not per run). All other functions and notebooks presuppose this first step.  </li>
-<li>Step 2: plot the data. Next, you can run plot_histograms.ipynb and plot_histograms_loop.ipynb. These notebooks should help you get a feeling of what your histogram looks like in general, and perhaps help you find some anomalies that you can use for testing. For 2D histograms, look at plot_histograms_2d.ipynb instead.  </li>
-<li>Step 3: train an autoencoder. The scripts autoencoder.ipynb and autoencoder_iterative.ipynb are used to train an autoencoder on the whole dataset or a particular subset respectively. Finally, autoencoder_combine.ipynb trains autoencoders on multiple types of histograms and combines the mse's for each. An example on how to implement another classification method is shown in template_combine.ipynb.  </li>
+<li>Step 1: put the data in a more manageable format. The raw csv files that are our common input are not very easy to work with. Therefore you would probably first want to do something similar to what's done in the notebook <code>read_and_write_data.ipynb</code>. See the code and inline comments in that script and the functions it refers to for more detailed explanation. Its output is one single csv file per histogram type and per year, which is often much more convenient than the original csv files (which contain all histogram types together and are split per number of lines, not per run). All other functions and notebooks presuppose this first step.  </li>
+<li>Step 2: plot the data. Next, you can run <code>plot_histograms.ipynb</code> and <code>plot_histograms_loop.ipynb</code>. These notebooks should help you get a feeling of what your histogram looks like in general, and perhaps help you find some anomalies that you can use for testing. For 2D histograms, look at <code>plot_histograms_2d.ipynb</code> instead.  </li>
+<li>Step 3: train an autoencoder. The scripts autoencoder.ipynb and <code>autoencoder_iterative.ipynb</code> are used to train an autoencoder on the whole dataset or a particular subset respectively. Finally, <code>autoencoder_combine.ipynb</code> trains autoencoders on multiple types of histograms and combines the mse's for each. An example on how to implement another classification method is shown in <code>template_combine.ipynb</code>.  </li>
 </ul>
+<h3 id="graphical-interface">Graphical interface:</h3>
+<p>See more info <a href="https://lukalambrecht.github.io/ML4DQM-DC/run/">here</a></p>
 <h3 id="other-remarks">Other remarks:</h3>
 <ul>
-<li>The repository contains no data files. I was planning to put some example data files in a data folder, but the files are too big for github. However, the tutorial read_and_write_data.ipynb should help you get the data from where it is stored and put it in a useful format for further processing.  </li>
+<li>The repository contains no data files. I was planning to put some example data files in a data folder, but the files are too big for github. However, the tutorial <code>read_and_write_data.ipynb</code> should help you get the data from where it is stored and put it in a useful format for further processing.  </li>
 <li>Another way to get started is to get them from my <a href="https://cernbox.cern.ch/index.php/s/E9GzJ4WMZs3jbPd">CERNBox</a></li>
 <li>Disclaimer: the whole repository is still in development stage. Feel free to contact me in case you found bugs or if you have other suggestions.  </li>
 </ul>
@@ -330,7 +334,7 @@ In more detail:  </p>
 </ul>
 <h3 id="further-documentation">Further documentation:</h3>
 <ul>
-<li>Documentation for all the class definitions and functions in the relevant code directories: https://LukaLambrecht.github.io/ML4DQM-DC/ (note: this documentation is generated automatically from comments in the code and currently not yet in perfect shape, both regarding content and layout).  </li>
+<li>Documentation for all the class definitions and functions in the relevant code directories can be found <a href="https://LukaLambrecht.github.io/ML4DQM-DC/">here</a>.</li>
 <li>Note that the website above does not include documentation for the tutorials (yet?). However, some comments in the tutorial notebooks should provide (enough?) explanation to follow along.  </li>
 </ul></div>
         </div>
@@ -415,5 +419,5 @@ In more detail:  </p>
 
 <!--
 MkDocs version : 1.0.4
-Build Date UTC : 2022-01-13 14:03:59
+Build Date UTC : 2022-01-19 11:31:37
 -->
