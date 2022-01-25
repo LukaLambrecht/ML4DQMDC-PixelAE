@@ -414,7 +414,7 @@ class HistStruct(object):
         ### add a mask to a HistStruct
         # input arguments:
         # - name: a name for the mask
-        # - mask: a 1D np array of booleans  with same length as number of lumisections in HistStruct
+        # - mask: a 1D np array of booleans with same length as number of lumisections in HistStruct
         if name in self.masks.keys():
             raise Exception('ERROR in HistStruct.add_mask: name {} already exists!'.format(name))
         if( len(mask)!=len(self.runnbs) ):
@@ -428,6 +428,26 @@ class HistStruct(object):
             print('WARNING in HistStruct.remove_mask: name {} is not in list of masks...'.format(name))
             return
         self.masks.pop( name )
+        
+    def add_index_mask( self, name, indices ):
+        ### add a mask corresponding to predefined indices
+        # input arguments:
+        # - name: a name for the mask
+        # - indices: a 1D np array of integer indices, between 0 and the number of lumisections in HistStruct
+        if(np.amax(indices)>=len(self.lsnbs)):
+            raise Exception('ERROR in HistStruct.add_index_mask: largest index is {}'.format(np.amax(indices))
+                           +' but there are only {} lumisections in the HistStruct'.format(len(self.lsnbs)))
+        mask = np.zeros(len(self.lsnbs), dtype=np.bool)
+        mask[indices] = True
+        self.add_mask( name, mask)
+        
+    def add_run_mask( self, name, runnb ):
+        ### add a mask corresponding to a given run number
+        # input arguments:
+        # - name: a name for the mask
+        # - runnb: run number
+        json = {str(runnb):[[-1]]}
+        self.add_json_mask( name, json )
       
     def add_json_mask( self, name, jsondict ):
         ### add a mask corresponding to a json dict
@@ -998,6 +1018,89 @@ class HistStruct(object):
                             background_edgecolor='black' )
                 res.append( (fig,axs) )
         return res
+    
+    
+    def plot_histograms_run( self, histnames=None, masknames=None, histograms=None,  
+                            titledict=None, xaxtitledict=None, physicalxax=False, 
+                            yaxtitledict=None, **kwargs ):
+        ### plot a set of histograms in a HistStruct with a smooth color gradient.
+        # typical use case: plot a single run.
+        # note: only for 1D histograms!
+        # input arguments:
+        # - histnames: list of names of the histogram types to plot (default: all)
+        # - masknames: list mask names (typically should contain a run number mask)
+        # - histograms: dict of histnames to 2D arrays of histograms,
+        #               can be used to plot a given collection of histograms directly,
+        #               and bypass the histnames and masknames arguments
+        #               (note: for use in the gui, not recommended outside of it.
+        # - titledict: dict mapping histogram names to titles for the subplots (default: title = histogram name)
+        # - xaxtitledict: dict mapping histogram names to x-axis titles for the subplots (default: no x-axis title)
+        # - yaxtitledict: dict mapping histogram names to y-axis titles for the subplots (default: no y-axis title)
+        # - physicalxax: bool whether to use physical x-axis range or simply use bin number (default)
+        # - kwargs: keyword arguments passed down to plot_utils.plot_hists_multi
+        
+        # check validity of requested histnames
+        histnames1d = []
+        histnames2d = []
+        if histnames is None: histnames = self.histnames
+        if histograms is not None: histnames = list(histograms[0].keys())
+        for histname in histnames:
+            if not histname in self.histnames:
+                raise Exception('ERROR in HistStruct.plot_ls:'
+                        +' requested to plot histogram type {}'.format(histname)
+                        +' but it is not present in the current HistStruct.')
+            if len(self.histograms[histname].shape)==2: histnames1d.append(histname)
+            elif len(self.histograms[histname].shape)==3: histnames2d.append(histname)
+        
+        # initializations
+        fig1d = None
+        axs1d = None
+
+        # make a plot of the 1D histograms
+        if len(histnames1d)>0:
+            fig1d,axs1d = self.plot_histograms_run_1d( histnames=histnames1d, masknames=masknames, 
+                            histograms=histograms,
+                            titledict=titledict, xaxtitledict=xaxtitledict, physicalxax=physicalxax, 
+                            yaxtitledict=yaxtitledict,
+                            **kwargs )
+
+        # return the figures and axes
+        return (fig1d,axs1d)
+
+
+    def plot_histograms_run_1d( self, histnames=None, masknames=None, histograms=None, 
+                            titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, 
+                            **kwargs ):
+        ### plot the histograms in a histstruct, optionally after masking
+        # internal helper function, use only via plot_histograms_run
+        
+        # initializations
+        ncols = min(4,len(histnames))
+        nrows = int(math.ceil(len(histnames)/ncols))
+        fig,axs = plt.subplots(nrows,ncols,figsize=(5*ncols,5*nrows),squeeze=False)
+        # loop over all histogram types
+        for j,name in enumerate(histnames):
+            # get the histograms to plot
+            if histograms is not None: hists = histograms[name]
+            else: hists = self.get_histograms(histname=name, masknames=masknames)
+            # get the title and axes
+            title = pu.make_text_latex_safe(name)
+            if( titledict is not None and name in titledict ): title = titledict[name]
+            xaxtitle = None
+            if( xaxtitledict is not None and name in xaxtitledict ): xaxtitle = xaxtitledict[name]
+            xlims = (-0.5,-1)
+            if physicalxax: xlims = self.histranges[name]
+            yaxtitle = None
+            if( yaxtitledict is not None and name in yaxtitledict ): yaxtitle = yaxtitledict[name]
+            # set the color
+            colorlist = np.arange(len(hists))
+            # make the plot
+            pu.plot_hists_multi( hists,
+                        fig=fig,ax=axs[int(j/ncols),j%ncols],
+                        title=title, xaxtitle=xaxtitle, xlims=xlims, yaxtitle=yaxtitle,
+                        colorlist=colorlist,
+                        **kwargs )
+        return fig,axs
     
 
     def plot_ls( self, runnb, lsnb, histnames=None, histlabel=None, 

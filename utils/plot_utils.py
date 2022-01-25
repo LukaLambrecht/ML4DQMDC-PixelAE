@@ -138,7 +138,9 @@ def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transpar
     return (fig,ax)
     
 def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1),
-                    title=None, xaxtitle=None, yaxtitle=None):
+                     title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
+                     remove_underflow=False, remove_overflow=False,
+                     ylims=None, ymaxfactor=None, legendsize=None, opaque_legend=False):
     ### plot many histograms (in histlist) in one figure using specified colors and/or labels
     # - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))
     # - colorlist is a list or array containing numbers to be mapped to colors
@@ -146,25 +148,43 @@ def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], tr
     # output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it
     if fig is None or ax is None: fig,ax = plt.subplots()
     dolabel = True; docolor = True
+    # make label list for legend
     if len(labellist)==0:
         labellist = ['']*len(histlist)
         dolabel = False
+    # make color list
     if len(colorlist)==0:
         docolor = False
-    if xlims[1]<xlims[0]: xlims = (0,len(histlist[0]))
-    xax = np.linspace(xlims[0],xlims[1],num=len(histlist[0]))
+    # make x-axis
+    nbins = len(histlist[0])
+    if remove_underflow: nbins -= 1
+    if remove_overflow: nbins -= 1
+    if xlims[1]<xlims[0]: xlims = (0,nbins)
+    xax = np.linspace(xlims[0],xlims[1],num=nbins)
+    # remove under- and overflow
+    if remove_underflow: histlist = histlist[:,1:]
+    if remove_overflow: histlist = histlist[:,:-1]
+    # make color map
     if docolor:
         norm = mpl.colors.Normalize(vmin=np.min(colorlist),vmax=np.max(colorlist))
         cobject = mpl.cm.ScalarMappable(norm=norm, cmap=mpl.cm.jet)
         cobject.set_array([]) # ad-hoc bug fix
+    # loop over histograms
     for i,row in enumerate(histlist):
         if docolor: ax.step(xax,row,where='mid',color=cobject.to_rgba(colorlist[i]),label=labellist[i],alpha=transparency)
         else: ax.step(xax,row,where='mid',label=labellist[i],alpha=transparency)
-    if docolor: fig.colorbar(cobject, ax=ax)
-    if dolabel: ax.legend()
-    if title is not None: ax.set_title(title)
-    if xaxtitle is not None: ax.set_xlabel(xaxtitle)
-    if yaxtitle is not None: ax.set_ylabel(yaxtitle)
+    if docolor: fig.colorbar(cobject, ax=ax)   
+    if ymaxfactor is not None:
+        ymin,ymax = ax.get_ylim()
+        ax.set_ylim( (ymin, ymax*ymaxfactor) )
+    if ylims is not None:
+        ax.set_ylim( ylims )
+    if dolabel: 
+        leg = ax.legend(loc='upper right', fontsize=legendsize)
+        if opaque_legend: make_legend_opaque(leg)
+    if title is not None: ax.set_title(title, fontsize=titlesize)
+    if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
+    if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)      
     return (fig,ax)
 
 def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None,
