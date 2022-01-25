@@ -139,6 +139,7 @@ def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transpar
     
 def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1),
                      title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
+                     caxtitle=None, caxtitlesize=None, caxtitleoffset=None,
                      remove_underflow=False, remove_overflow=False,
                      ylims=None, ymaxfactor=None, legendsize=None, opaque_legend=False):
     ### plot many histograms (in histlist) in one figure using specified colors and/or labels
@@ -173,7 +174,10 @@ def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], tr
     for i,row in enumerate(histlist):
         if docolor: ax.step(xax,row,where='mid',color=cobject.to_rgba(colorlist[i]),label=labellist[i],alpha=transparency)
         else: ax.step(xax,row,where='mid',label=labellist[i],alpha=transparency)
-    if docolor: fig.colorbar(cobject, ax=ax)   
+    if docolor: 
+        cbar = fig.colorbar(cobject, ax=ax)
+        if caxtitleoffset is not None: cbar.ax.get_yaxis().labelpad = caxtitleoffset
+        if caxtitle is not None: cbar.ax.set_ylabel(caxtitle, fontsize=caxtitlesize, rotation=270)
     if ymaxfactor is not None:
         ymin,ymax = ax.get_ylim()
         ax.set_ylim( (ymin, ymax*ymaxfactor) )

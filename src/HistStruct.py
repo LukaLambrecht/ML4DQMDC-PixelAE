@@ -1077,7 +1077,7 @@ class HistStruct(object):
         # initializations
         ncols = min(4,len(histnames))
         nrows = int(math.ceil(len(histnames)/ncols))
-        fig,axs = plt.subplots(nrows,ncols,figsize=(5*ncols,5*nrows),squeeze=False)
+        fig,axs = plt.subplots(nrows,ncols,figsize=(7*ncols,5*nrows),squeeze=False)
         # loop over all histogram types
         for j,name in enumerate(histnames):
             # get the histograms to plot
