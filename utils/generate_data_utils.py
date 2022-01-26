@@ -7,7 +7,6 @@
 # Also check the tutorial generate\_data.ipynb for examples!
 
 
-
 ### imports
 
 # external modules
@@ -15,13 +14,12 @@ import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import cm
 import importlib
 
 # local modules
 import hist_utils
 importlib.reload(hist_utils)
-
-
 
 
 ### help functions
@@ -123,88 +121,91 @@ def moments_correlation_vector(moments, index):
     return mse_correlation_vector(moments,index)
 
 
-
-
 ### plot functions
 
-def plot_data_and_gen(datahists, genhists, nplot=10, figname='fig.png'):
+def plot_data_and_gen(datahists, genhists, 
+                      fig=None, axs=None,
+                      datacolor='b', gencolor='b',
+                      datalabel='Histograms from data', 
+                      genlabel='Artificially generated histograms'):
     ### plot a couple of random examples from data and generated histograms
+    # note: both are plotted in different subplots of the same figure
     # input arguments:
     # - datahists, genhists: numpy arrays of shape (nhists,nbins)
-    # - nplot: integer, maximum number of examples to plot
-    # - figname: name of figure to plot
-
-    # make sure that figname contains absolute path
-    figname = os.path.abspath(figname)
-
-    # data
+    # - fig, axs: a matplotlib figure object and a list of two axes objects
+    #             (if either is None, a new figure with two subplots will be created)
+    if(fig is None or axs is None): fig,axs = plt.subplots(ncols=2)
     xlims = (0,len(datahists[0]))
     xax = np.linspace(xlims[0],xlims[1],num=len(datahists[0]))
-    randint = np.random.choice(np.arange(len(datahists)),size=min(len(datahists),nplot),replace=False)
-    fig,ax = plt.subplots()
-    for i in randint: ax.step(xax,datahists[i,:],color='r')
-    ax.set_title('histograms from data')
-    #plt.savefig(figname.split('.')[0]+'_data.png')
+    # data
+    axs[0].step(xax, datahists[0,:], color=datacolor, label=datalabel)
+    for i in range(1,len(datahists)): axs[0].step(xax, datahists[int(i),:], color=datacolor)
+    axs[0].legend()
     # artificial histograms
-    randint = np.random.choice(np.arange(len(genhists)),size=min(len(genhists),nplot),replace=False)
-    fig,ax = plt.subplots()
-    for i in randint: ax.step(xax,genhists[int(i),:],color='r')
-    ax.set_title('artificially generated histograms')
-    #plt.savefig(figname.split('.')[0]+'_gen.png')
-    #plt.close()
-    return (fig,ax)
+    axs[1].step(xax, genhists[0,:], color=gencolor, label=genlabel)
+    for i in range(1,len(genhists)): axs[1].step(xax, genhists[int(i),:], color=gencolor)
+    axs[1].legend()
+    return (fig,axs)
 
-
-def plot_seed_and_gen(seedhists, genhists, figname='fig.png'):
+def plot_seed_and_gen(seedhists, genhists, 
+                      fig=None, ax=None,
+                      seedcolor='b', gencolor='g',
+                      seedlabel='Histograms from data', 
+                      genlabel='Artificially generated histograms'):
     ### plot seed and generated histograms
+    # note: both are plotted in the same subplot
     # input arguments:
     # - seedhists, genhists: numpy arrays of shape (nhists,nbins)
-    # - figname: name of figure to plot
-
-    # make sure that figname contains absolute path
-    figname = os.path.abspath(figname)
-
+    # - fig, ax: a matplotlib figure object and an axes object
+    #             (if either is None, a new figure will be created)
+    if(fig is None or axs is None): fig,ax = plt.subplots()
+    xlims = (0,len(datahists[0]))
+    xax = np.linspace(xlims[0],xlims[1],num=len(datahists[0]))
     # data
-    fig,ax = plt.subplots()
-    gen_colors = [cm.viridis(i) for i in np.linspace(0, 1, len( genhists ))]
-    seed_colors = [cm.Reds(i) for i in np.linspace(0, 1, len( seedhists ))]
-    for i in range(len(genhists)): ax.plot(genhists[i,:], color = gen_colors[i] )
-    for i in range(len(seedhists)): ax.plot(seedhists[i,:], color = 'r',label='seed')
-    ax.set_title('seed and resampled histograms')
+    ax.step(xax, genhists[0,:], color=gencolor, label=genlabel)
+    for i in range(1,len(genhists)): ax.plot(genhists[i,:], color=gencolor)
+    # seed
+    ax.step(xax, seedhists[0,:], color=seedcolor, label=seedlabel)
+    for i in range(1,len(seedhists)): ax.plot(seedhists[i,:], color=seedcolor)
     ax.legend()
-    #plt.savefig(figname.split('.')[0]+'_show.png')
-    #plt.close()
     return (fig,ax)
     
-def plot_noise(noise, histstd=None, figname='fig.png'):
+def plot_noise(noise, fig=None, ax=None,
+               noiselabel='Examples of noise', noisecolor='b', 
+               histstd=None, histstdlabel='Variation'):
     ### plot histograms in noise (numpy array of shape (nhists,nbins))
-    # optional argument histstd plots +- histstd as boundaries
-
-    # make sure that figname contains absolute path
-    figname = os.path.abspath(figname)
-
-    fig,ax = plt.subplots()
-    for i in range(len(noise)): ax.plot(noise[i,:],'r--')
+    # input arguments:
+    # - noise: 2D numpy array of shape (nexamples,nbins)
+    # - fig, ax: a matplotlib figure object and an axes object
+    #             (if either is None, a new figure will be created)
+    # - noiselabel: label for noise examples (use None to not add a legend entry for noise)
+    # - noisecolor: color for noise examples on plot
+    # - histstd: 1D numpy array of shape (nbins) displaying some order-of-magnitude allowed variation
+    #            (typically some measure of per-bin variation in the input histogram(s))
+    # - histstdlabel: label for histstd (use None to not add a legend entry for histstd)
+    if(fig is None or ax is None): fig,ax = plt.subplots()
+    ax.plot(noise[0,:], color=noisecolor, label=noiselabel)
+    for i in range(1,len(noise)): ax.plot(noise[i,:], color=noisecolor)
     if histstd is not None:
-        ax.plot(histstd,'k--',label='pm 1 std')
-        ax.plot(-histstd,'k--')
+        ax.plot(histstd, 'k--', label=histstdlabel)
+        ax.plot(-histstd, 'k--')
     ax.legend()
-    ax.set_title('examples of noise')
-    #plt.savefig(figname.split('.')[0]+'_noise.png')
-    #plt.close()
     return (fig,ax)
 
 
+### resampling functions
 
-
-def fourier_noise_on_mean(hists, outfilename='', figname='', nresamples=0, nonnegative=True):
+def fourier_noise_on_mean(hists, outfilename='', nresamples=0, nonnegative=True, doplot=True):
     ### apply fourier noise on the bin-per-bin mean histogram, with amplitude scaling based on bin-per-bin std histogram.
     # input args:
     # - hists: numpy array of shape (nhists,nbins) used for determining mean and std
     # - outfilename: path to csv file to write results to (default: no writing)
-    # - figname: path to figure plotting examples (default: no plotting)
     # - nresamples: number of samples to draw (default: number of input histograms / 10)
     # - nonnegative: boolean whether to set all bins to minimum zero after applying noise
+    # - doplot: boolean whether to make a plot
+    # returns:
+    #   a tuple of the form (resulting histograms, maplotlib figure, matplotlib axes),
+    #   figure and axes are None if doplot was set to False
     # MOSTLY SUITABLE AS HELP FUNCTION FOR RESAMPLE_SIMILAR_FOURIER_NOISE, NOT AS GENERATOR IN ITSELF
     # advantages: mean histogram is almost certainly 'good' because of averaging, eliminate bad histograms
     # disadvantages: deviations from mean are small, does not model systematic shifts by lumi.
@@ -215,50 +216,56 @@ def fourier_noise_on_mean(hists, outfilename='', figname='', nresamples=0, nonne
     histmean = np.mean(hists,axis=0)
     histstd = np.std(hists,axis=0)
     nbins = len(histmean)
-
-    # plot examples of histograms mean, and std
-    if len(figname)>0:
-        nplot = min(200,len(hists))
-        randint = np.random.choice(np.arange(len(hists)),size=nplot,replace=False)
-        plt.figure()
-        for i in randint: plt.plot(hists[int(i),:],color='b',alpha=0.1)
-        plt.plot(histmean,color='black',label='mean')
-        plt.plot(histmean-histstd,color='r',label='pm 1 std')
-        plt.plot(histmean+histstd,color='r')
-        plt.legend()
-        #plt.savefig(figname.split('.')[0]+'_meanstd.png')
-        #plt.close()
     
     # generate data
     reshists = np.zeros((nresamples,nbins))
     for i in range(nresamples): reshists[i,:] = histmean + goodnoise(nbins,histstd)
     if nonnegative:
         reshists = np.where(reshists>0,reshists,0)
-        
-    # plot examples of good and bad histograms
-    if len(figname)>0:
+    
+    # make a figure
+    fig = None
+    axs = None
+    if doplot:
+        fig,axs = plt.subplots(nrows=2, ncols=2, figsize=(10,10))
+        # plot examples of histograms mean, and std
+        ax = axs[0,0]
+        nplot = min(200,len(hists))
+        randint = np.random.choice(np.arange(len(hists)), size=nplot, replace=False)
+        for i in randint: ax.plot(hists[int(i),:], color='b', alpha=0.1)
+        ax.plot(histmean,color='black',label='Mean histogram')
+        ax.plot(histmean-histstd,color='r',label='$\pm$ 1 $\sigma$')
+        ax.plot(histmean+histstd,color='r')
+        ax.legend()
+        # plot examples of noise
         noise_examples = []
         for i in range(5): noise_examples.append(goodnoise(nbins,histstd))
-        plot_noise(np.array(noise_examples),histstd,figname)
-        plot_data_and_gen(hists,reshists,nplot=50,figname=figname)
+        plot_noise(np.array(noise_examples), fig=fig, ax=axs[0,1], histstd=histstd)
+        # plot examples of good and bad histograms
+        nplot_hists = min(20, len(hists))
+        randint_hists = np.random.choice(np.arange(len(hists)), size=nplot_hists, replace=False)
+        nplot_reshists = min(20, len(reshists))
+        randint_reshists = np.random.choice(np.arange(len(reshists)), size=nplot_reshists, replace=False)
+        plot_data_and_gen(hists[randint_hists], reshists[randint_reshists], fig=fig, axs=[axs[1,0],axs[1,1]])
 
     # store results if requested
     if len(outfilename)>0: np.savetxt(outfilename.split('.')[0]+'.csv',reshists)
     
-    return reshists
+    return (reshists, fig, axs)
 
 
-
-
-def fourier_noise(hists, outfilename='', figname='', nresamples=1, nonnegative=True, stdfactor=15.):
+def fourier_noise(hists, outfilename='', nresamples=1, nonnegative=True, stdfactor=15., doplot=True):
     ### apply fourier noise on random histograms with simple flat amplitude scaling.
     # input args: 
     # - hists: numpy array of shape (nhists,nbins) used for seeding
     # - outfilename: path to csv file to write results to (default: no writing)
-    # - figname: path to figure plotting examples (default: no plotting)
     # - nresamples: number of samples to draw per input histogram
     # - nonnegative: boolean whether to set all bins to minimum zero after applying noise
     # - stdfactor: factor to scale magnitude of noise (larger factor = smaller noise)
+    # - doplot: boolean whether to make a plot
+    # returns:
+    #   a tuple of the form (resulting histograms, maplotlib figure, matplotlib axes),
+    #   figure and axes are None if doplot was set to False
     # advantages: resampled histograms will have statistically same features as original input set
     # disadvantages: also 'bad' histograms will be resampled if included in hists
     
@@ -274,63 +281,88 @@ def fourier_noise(hists, outfilename='', figname='', nresamples=1, nonnegative=T
     np.random.shuffle(reshists)
 
     # plot examples of good and bad histograms
-    if len(figname)>0: 
+    fig = None
+    axs = None
+    if doplot: 
+        fig,axs = plt.subplots(ncols=3, figsize=(15,5))
+        # plot examples of noise
         noise_examples = []
-        for i in range(5): noise_examples.append(goodnoise(nbins,hists[-1,:]/stdfactor))
-        plot_noise(np.array(noise_examples),hists[-1,:]/stdfactor,figname)
-        plot_data_and_gen(hists,reshists,nplot=50,figname=figname)
+        for i in range(5): noise_examples.append(goodnoise(nbins, hists[-1,:]/stdfactor))
+        plot_noise(np.array(noise_examples), fig=fig, ax=axs[1], histstd=hists[-1,:]/stdfactor)
+        # plot examples of good and bad histograms
+        nplot_hists = min(20, len(hists))
+        randint_hists = np.random.choice(np.arange(len(hists)), size=nplot_hists, replace=False)
+        nplot_reshists = min(20, len(reshists))
+        randint_reshists = np.random.choice(np.arange(len(reshists)), size=nplot_reshists, replace=False)
+        plot_data_and_gen(hists[randint_hists], reshists[randint_reshists], fig=fig, axs=[axs[0],axs[2]])
     
     # store results if requested
     if len(outfilename)>0: np.savetxt(outfilename.split('.')[0]+'.csv',reshists)
 
-    return reshists
+    return (reshists, fig, axs)
 
-def upsample_hist_set(hists, ntarget=-1, fourierstdfactor=15., figname='f'):
-    ### wrapper for fourier_noise allowing for a fixed target number of histograms instead of a fixed resampling factor
+
+def upsample_hist_set(hists, ntarget=-1, fourierstdfactor=15., doplot=True):
+    ### wrapper for fourier_noise allowing for a fixed target number of histograms instead of a fixed resampling factor.
     # useful function for quickly generating a fixed number of resampled histograms,
     # without bothering too much about what exact resampling technique or detailed settings would be most appropriate.
     # input arguments:
-    # hists: input histogram set
-    # ntarget: targetted number of resampled histograms (default: equally many as in hists)
-    # fourierstdfactor: see fourier_noise
+    # - hists: input histogram set
+    # - ntarget: targetted number of resampled histograms (default: equally many as in hists)
+    # - fourierstdfactor: see fourier_noise
+    # - doplot: boolean whether to make a plot
+    # returns:
+    #   a tuple of the form (resulting histograms, maplotlib figure, matplotlib axes),
+    #   figure and axes are None if doplot was set to False
     if ntarget<0: ntarget = len(hists)
     nresamples = max(1,int(float(ntarget)/len(hists)))    
-    hists_ext = fourier_noise(hists,figname=figname,nresamples=nresamples,nonnegative=True,stdfactor=fourierstdfactor)
-    return hists_ext
+    (hists_ext, fig, axs) = fourier_noise(hists, nresamples=nresamples, 
+                                          nonnegative=True, stdfactor=fourierstdfactor, 
+                                          doplot=doplot)
+    return (hists_ext, fig, axs)
 
 
-
-
-def white_noise(hists, figname='', stdfactor=15.):
+def white_noise(hists, stdfactor=15., doplot=True):
     ### apply white noise to the histograms in hists.
     # input args:
     # - hists: np array (nhists,nbins) containing input histograms
-    # - figname: path to figure plotting examples (default: no plotting)
     # - stdfactor: scaling factor of white noise amplitude (higher factor = smaller noise)
-
+    # - doplot: boolean whether to make a plot
+    # returns:
+    #   a tuple of the form (resulting histograms, maplotlib figure, matplotlib axes),
+    #   figure and axes are None if doplot was set to False
+    
     (nhists,nbins) = hists.shape
     reshists = np.zeros((nhists,nbins))
-
     for i in range(nhists):
         reshists[i,:] = hists[i,:] + np.multiply(np.random.normal(size=nbins), np.divide(hists[i,:],stdfactor) )
     
     # plot examples of generated histograms
-    if len(figname)>0: plot_data_and_gen(hists,reshists,nplot=50,figname=figname)
+    fig = None
+    axs = None
+    if doplot:
+        fig,axs = plt.subplots(ncols=2, figsize=(10,5))
+        nplot_hists = min(20, len(hists))
+        randint_hists = np.random.choice(np.arange(len(hists)), size=nplot_hists, replace=False)
+        nplot_reshists = min(20, len(reshists))
+        randint_reshists = np.random.choice(np.arange(len(reshists)), size=nplot_reshists, replace=False)
+        plot_data_and_gen(hists[randint_hists], reshists[randint_reshists], fig=fig, axs=axs)
 
-    return reshists
+    return (reshists, fig, axs)
 
 
-
-
-def resample_bin_per_bin(hists, outfilename='', figname='', nresamples=0, nonnegative=True, smoothinghalfwidth=2):
+def resample_bin_per_bin(hists, outfilename='', nresamples=0, nonnegative=True, smoothinghalfwidth=2, doplot=True):
     ### do resampling from bin-per-bin probability distributions
     # input args:
     # - hists: np array (nhists,nbins) containing the histograms to draw new samples from
     # - outfilename: path to csv file to write results to (default: no writing)
-    # - figname: path to figure plotting examples (default: no plotting)
     # - nresamples: number of samples to draw (default: 1/10 of number of input histograms)
     # - nonnegative: boolean whether or not to put all bins to minimum zero after applying noise
     # - smoothinghalfwidth: halfwidth of smoothing procedure to apply on the result (default: no smoothing)
+    # - doplot: boolean whether to make a plot
+    # returns:
+    #   a tuple of the form (resulting histograms, maplotlib figure, matplotlib axes),
+    #   figure and axes are None if doplot was set to False
     # advantages: no arbitrary noise modeling
     # disadvantages: bins are considered independent, shape of historams not taken into account,
     #                does not work well on small number of input histograms, 
@@ -349,27 +381,36 @@ def resample_bin_per_bin(hists, outfilename='', figname='', nresamples=0, nonneg
     if smoothinghalfwidth>0: reshists = smoother(reshists,halfwidth=smoothinghalfwidth)
 
     # plot examples of good and bad histograms
-    if len(figname)>0: plot_data_and_gen(hists,reshists,nplot=50,figname=figname)
+    fig = None
+    axs = None
+    if doplot:
+        fig,axs = plt.subplots(ncols=2, figsize=(10,5))
+        nplot_hists = min(20, len(hists))
+        randint_hists = np.random.choice(np.arange(len(hists)), size=nplot_hists, replace=False)
+        nplot_reshists = min(20, len(reshists))
+        randint_reshists = np.random.choice(np.arange(len(reshists)), size=nplot_reshists, replace=False)
+        plot_data_and_gen(hists[randint_hists], reshists[randint_reshists], fig=fig, axs=axs)
     
     # store results if requested
     if len(outfilename)>0: np.savetxt(outfilename.split('.')[0]+'.csv',reshists)
 
-    return reshists
+    return (reshists, fig, axs)
 
 
-
-
-def resample_similar_bin_per_bin( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,
-                                   keeppercentage=1.):
+def resample_similar_bin_per_bin( allhists, selhists, outfilename='', nresamples=1, 
+                                 nonnegative=True, keeppercentage=1., doplot=True):
     ### resample from bin-per-bin probability distributions, but only from similar looking histograms.
     # input args:
     # - allhists: np array (nhists,nbins) containing all available histograms (to determine mean)
     # - selhists: np array (nhists,nbins) conataining selected histograms used as seeds (e.g. 'good' histograms)
     # - outfilename: path of csv file to write results to (default: no writing)
-    # - figname: path to figure plotting examples (default: no plotting)
     # - nresamples: number of samples per input histogram in selhists
     # - nonnegative: boolean whether or not to put all bins to minimum zero after applying noise
     # - keeppercentage: percentage (between 1 and 100) of histograms in allhists to use per input histogram
+    # - doplot: boolean whether to make a plot
+    # returns:
+    #   a tuple of the form (resulting histograms, maplotlib figure, matplotlib axes),
+    #   figure and axes are None if doplot was set to False
     # advantages: no assumptions on shape of noise,
     #             can handle systematic shifts in histograms
     # disadvantages: bins are treated independently from each other
@@ -397,7 +438,8 @@ def resample_similar_bin_per_bin( allhists, selhists, outfilename='', figname=''
         simindices = np.nonzero(np.where(thisdiff<=threshold,1,0))[0]
         for j in range(nresamples):
             reshists[nresamples*i+j,:] = resample_bin_per_bin(allhists[simindices,:],
-               figname='',nresamples=1,nonnegative=nonnegative,smoothinghalfwidth=0)[0,:]
+                                           nresamples=1,nonnegative=nonnegative,smoothinghalfwidth=0,
+                                           doplot=False)[0][0,:]
     if nonnegative: reshists = np.maximum(0,reshists)
     np.random.shuffle(reshists)
     nsim = len(simindices)
@@ -406,28 +448,37 @@ def resample_similar_bin_per_bin( allhists, selhists, outfilename='', figname=''
     print('If this number is too high, systematic shifts of histograms can be averaged out.')
         
     # plot examples of good and bad histograms
-    if len(figname)>0: plot_data_and_gen(selhists,reshists,nplot=50,figname=figname)
+    fig = None
+    axs = None
+    if doplot:
+        fig,axs = plt.subplots(ncols=2, figsize=(10,5))
+        nplot_hists = min(20, len(selhists))
+        randint_hists = np.random.choice(np.arange(len(selhists)), size=nplot_hists, replace=False)
+        nplot_reshists = min(20, len(reshists))
+        randint_reshists = np.random.choice(np.arange(len(reshists)), size=nplot_reshists, replace=False)
+        plot_data_and_gen(selhists[randint_hists], reshists[randint_reshists], fig=fig, axs=axs)
 
     # store results if requested
     if len(outfilename)>0: np.savetxt(outfilename.split('.')[0]+'.csv',reshists)
         
-    return reshists
+    return (reshists, fig, axs)
 
 
-
-
-def resample_similar_fourier_noise( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,
-                                   keeppercentage=1.):
+def resample_similar_fourier_noise( allhists, selhists, outfilename='', nresamples=1, 
+                                   nonnegative=True, keeppercentage=1., doplot=True):
     ### apply fourier noise on mean histogram, 
     # where the mean is determined from a set of similar-looking histograms
     # input args:
     # - allhists: np array (nhists,nbins) containing all available histograms (to determine mean)
     # - selhists: np array (nhists,nbins) conataining selected histograms used as seeds (e.g. 'good' histograms)
     # - outfilename: path of csv file to write results to (default: no writing)
-    # - figname: path to figure plotting examples (default: no plotting)
     # - nresamples: number of samples per input histogram in selhists
     # - nonnegative: boolean whether or not to put all bins to minimum zero after applying noise
     # - keeppercentage: percentage (between 1 and 100) of histograms in allhists to use per input histogram
+    # - doplot: boolean whether to make a plot
+    # returns:
+    #   a tuple of the form (resulting histograms, maplotlib figure, matplotlib axes),
+    #   figure and axes are None if doplot was set to False
     # advantages: most of fourier_noise_on_mean but can additionally handle shifting histograms,
     #             apart from fourier noise, also white noise can be applied.
     # disadvantages: does not filter out odd histograms as long as enough other odd histograms look more or less similar
@@ -458,7 +509,8 @@ def resample_similar_fourier_noise( allhists, selhists, outfilename='', figname=
         simindices = np.nonzero(np.where(thisdiff<threshold,1,0))[0]
         for j in range(nresamples):
             reshists[nresamples*i+j,:] = fourier_noise_on_mean(allhists[simindices,:],
-                                                               figname='',nresamples=1,nonnegative=nonnegative)[0,:]
+                                          nresamples=1, nonnegative=nonnegative, 
+                                          doplot=False)[0][0,:]
     if nonnegative: reshists = np.maximum(0,reshists)
     np.random.shuffle(reshists)
     nsim = len(simindices)
@@ -468,27 +520,36 @@ def resample_similar_fourier_noise( allhists, selhists, outfilename='', figname=
 
     # plot examples of good and bad histograms
     # use only those histograms from real data that were used to create the resamples
-    if len(figname)>0: plot_data_and_gen(selhists,reshists,nplot=50,figname=figname)
+    fig = None
+    axs = None
+    if doplot:
+        fig,axs = plt.subplots(ncols=2, figsize=(10,5))
+        nplot_hists = min(20, len(selhists))
+        randint_hists = np.random.choice(np.arange(len(selhists)), size=nplot_hists, replace=False)
+        nplot_reshists = min(20, len(reshists))
+        randint_reshists = np.random.choice(np.arange(len(reshists)), size=nplot_reshists, replace=False)
+        plot_data_and_gen(selhists[randint_hists], reshists[randint_reshists], fig=fig, axs=axs)
 
     # store results if requested
     if len(outfilename)>0: np.savetxt(outfilename.split('.')[0]+'.csv',reshists)
 
-    return reshists
+    return (reshists, fig, axs)
 
 
-
-
-def resample_similar_lico( allhists, selhists, outfilename='', figname='', nresamples=1, nonnegative=True,
-                          keeppercentage=1.):
+def resample_similar_lico( allhists, selhists, outfilename='', nresamples=1, 
+                          nonnegative=True, keeppercentage=1., doplot=True):
     ### take linear combinations of similar histograms
     # input arguments:
     # - allhists: 2D np array (nhists,nbins) with all available histograms, used to take linear combinations
     # - selhists: 2D np array (nhists,nbins) with selected hists used for seeding (e.g. 'good' histograms)
     # - outfilename: path to csv file to write result to (default: no writing)
-    # - figname: path to figure plotting examples (defautl: no plotting)
     # - nresamples: number of combinations to make per input histogram
     # - nonnegative: boolean whether to make all final histograms nonnegative
     # - keeppercentage: percentage (between 0. and 100.) of histograms in allhists to use per input histogram
+    # - doplot: boolean whether to make a plot
+    # returns:
+    #   a tuple of the form (resulting histograms, maplotlib figure, matplotlib axes),
+    #   figure and axes are None if doplot was set to False
     # advantages: no assumptions on noise
     # disadvantages: sensitive to outlying histograms (more than with averaging)
     
@@ -534,19 +595,25 @@ def resample_similar_lico( allhists, selhists, outfilename='', figname='', nresa
         
     # plot examples of good and bad histograms
     # use only those histograms from real data that were used to create the resamples
-    if len(figname)>0: plot_data_and_gen(selhists,reshists,nplot=50,figname=figname)
+    fig = None
+    axs = None
+    if doplot:
+        fig,axs = plt.subplots(ncols=2, figsize=(10,5))
+        nplot_hists = min(20, len(selhists))
+        randint_hists = np.random.choice(np.arange(len(selhists)), size=nplot_hists, replace=False)
+        nplot_reshists = min(20, len(reshists))
+        randint_reshists = np.random.choice(np.arange(len(reshists)), size=nplot_reshists, replace=False)
+        plot_data_and_gen(selhists[randint_hists], reshists[randint_reshists], fig=fig, axs=axs)
         
     # store results if requested
     if len(outfilename)>0: np.savetxt(outfilename.split('.')[0]+'.csv',reshists)
 
-    return reshists
-
-
+    return (reshists, fig, axs)
 
 
 import random as rn
 
-def mc_sampling(hists, nMC=10000 , nresamples=10):
+def mc_sampling(hists, nMC=10000 , nresamples=10, doplot=True):
     ### resampling of a histogram using MC methods
     # Drawing random points from a space defined by the range of the histogram in all axes.
     # Points are "accepted" if the fall under the sampled histogram:
@@ -556,21 +623,26 @@ def mc_sampling(hists, nMC=10000 , nresamples=10):
     # weight = (sum of input hist)/(#mc points accepted)
     # this is equal to 
     # weight = (MC space volume)/(# all MC points)
+    
     (nHists,nBins) = hists.shape
     output = np.asarray( [ np.asarray([0.]*nBins) for _ in range(nHists*nresamples)])
     for i in range(nHists):
         for j in range(nresamples):
-        # norm = np.sum(hists[i])/(nbins*np.max(hists[i]))
             weight = nBins*np.max(hists[i])/nMC
             for _ in range(nMC):
                 x_r=rn.randrange(nBins)
                 y_r=rn.random()*np.max(hists[i])
                 if( y_r <= hists[i][x_r]):
                     output[i*nresamples+j][x_r]+=weight
-    plot_data_and_gen(hists,output,nplot=50,figname='temp')
-    return output
-
-
-
-
-
+    output = np.array(output)
+    # make a figure
+    fig = None
+    axs = None
+    if doplot:
+        fig,axs = plt.subplots(ncols=2, figsize=(10,5))
+        nplot_hists = min(20, len(hists))
+        randint_hists = np.random.choice(np.arange(len(hists)), size=nplot_hists, replace=False)
+        nplot_reshists = min(20, len(output))
+        randint_reshists = np.random.choice(np.arange(len(output)), size=nplot_reshists, replace=False)
+        plot_data_and_gen(hists[randint_hists], output[randint_reshists], fig=fig, axs=axs)
+    return (output, fig, axs)

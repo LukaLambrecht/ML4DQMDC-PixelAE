@@ -510,7 +510,9 @@ def plot_score_dist( scores, labels, fig=None, ax=None,
                         nbins=20, normalize=False,
                         siglabel='Signal', sigcolor='g',
                         bcklabel='Background', bckcolor='r',
-                        title=None, xaxtitle=None, yaxtitle=None,
+                        title=None, titlesize=12,
+                        xaxtitle=None, xaxtitlesize=12, 
+                        yaxtitle=None, yaxtitlesize=12,
                         doshow=True):
     ### make a plot showing the distributions of the output scores for signal and background
     minscore = np.min(scores)
@@ -528,9 +530,9 @@ def plot_score_dist( scores, labels, fig=None, ax=None,
     ax.step(scoreax,bckhist,color=bckcolor,label=bcklabel,where='mid')
     ax.step(scoreax,sighist,color=sigcolor,label=siglabel,where='mid')
     ax.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
-    if title is not None: ax.set_title(title)
-    if xaxtitle is not None: ax.set_xlabel(xaxtitle)
-    if yaxtitle is not None: ax.set_ylabel(yaxtitle)
+    if title is not None: ax.set_title(title, fontsize=titlesize)
+    if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
+    if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
     ax.legend()
     if doshow: plt.show(block=False)
     return (fig,ax)
