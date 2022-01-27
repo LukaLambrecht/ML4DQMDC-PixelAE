@@ -850,7 +850,7 @@ class HistStruct(object):
         return scores
 
 
-    def plot_histograms( self, histnames=None, masknames=None, histograms=None, 
+    def plot_histograms( self, histnames=None, masknames=None, histograms=None, ncols=4,
                             colorlist=[], labellist=[], transparencylist=[], 
                             titledict=None, xaxtitledict=None, physicalxax=False, 
                             yaxtitledict=None, **kwargs ):
@@ -864,6 +864,7 @@ class HistStruct(object):
         #               can be used to plot a given collection of histograms directly,
         #               and bypass the histnames and masknames arguments
         #               (note: for use in the gui, not recommended outside of it)
+        # - ncols: number of columns (only relevant for 1D histograms)
         # - colorlist: list of matplotlib colors, must have same length as masknames
         # - labellist: list of labels for the legend, must have same legnth as masknames
         # - transparencylist: list of transparency values, must have same length as masknames
@@ -893,7 +894,9 @@ class HistStruct(object):
 
         # make a plot of the 1D histograms
         if len(histnames1d)>0:
-            fig1d,axs1d = self.plot_histograms_1d( histnames=histnames1d, masknames=masknames, 
+            fig1d,axs1d = self.plot_histograms_1d( histnames=histnames1d, 
+                            ncols=ncols,
+                            masknames=masknames, 
                             histograms=histograms,
                             colorlist=colorlist, labellist=labellist, transparencylist=transparencylist,
                             titledict=titledict, xaxtitledict=xaxtitledict, physicalxax=physicalxax, 
@@ -917,7 +920,7 @@ class HistStruct(object):
         return (fig1d,axs1d,res2d)
 
 
-    def plot_histograms_1d( self, histnames=None, masknames=None, histograms=None, 
+    def plot_histograms_1d( self, histnames=None, masknames=None, histograms=None, ncols=4,
                             colorlist=[], labellist=[], transparencylist=[],
                             titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, 
                             **kwargs ):
@@ -925,7 +928,7 @@ class HistStruct(object):
         # internal helper function, use only via plot_histograms
         
         # initializations
-        ncols = min(4,len(histnames))
+        ncols = min(ncols,len(histnames))
         nrows = int(math.ceil(len(histnames)/ncols))
         fig,axs = plt.subplots(nrows,ncols,figsize=(5*ncols,5*nrows),squeeze=False)
         # loop over all histogram types

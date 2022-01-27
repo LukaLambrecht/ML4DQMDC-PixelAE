@@ -692,7 +692,8 @@ def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,
     
     return (fig,ax)
 
-def plot_fit_2d_clusters( points, clusters, labels=None, colors=None, **kwargs ):
+def plot_fit_2d_clusters( points, clusters, labels=None, colors=None, 
+                          legendsize=10, legendloc='best', **kwargs ):
     ### make a 2D scatter plot of a fitted contour with point clouds superimposed
     # input arguments: 
     # - points: numpy arrays of shape (npoints,ndims), where ndims is supposed to be 2,
@@ -722,7 +723,7 @@ def plot_fit_2d_clusters( points, clusters, labels=None, colors=None, **kwargs )
         label = labels[j]
         color = colors[j]
         ax.plot( cluster[:,0], cluster[:,1], '.', color=color, markersize=4,label=label )
-    if dolegend: ax.legend()
+    if dolegend: ax.legend(fontsize=legendsize, loc=legendloc)
     return (fig,ax)
 
 def plot_fit_1d( points, fitfunc=None, logprob=False, clipprob=False,
