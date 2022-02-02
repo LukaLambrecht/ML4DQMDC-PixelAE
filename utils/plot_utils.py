@@ -4,7 +4,6 @@
 # **A collection of useful basic functions for plotting.**  
 
 
-
 ### imports
 
 # external modules
@@ -15,22 +14,26 @@ import matplotlib as mpl
 import numpy as np
 from copy import copy
 try: import imageio
-except: print('WARNING: could not import package "imageio". This is only used to create gif animations, so it should be safe to proceed without, if you do not plan to do just that.')
+except: print('WARNING: could not import package "imageio".' 
+              +' This is only used to create gif animations, so it should be safe to proceed without,'
+              +' if you do not plan to do just that.')
 try:
     from matplotlib import rc
     rc('text', usetex=True)
     plot_utils_latex_formatting = True
 except: 
-    print('WARNING: could not set LaTEX rendering for matplotlib. Any TEX commands in figure labels might not work as expected.')
+    print('WARNING: could not set LaTEX rendering for matplotlib.'
+          +' Any TEX commands in figure labels might not work as expected.')
     plot_utils_latex_formatting = False
 import importlib
 
 # local modules
-import autoencoder_utils as aeu # needed for clip_scores in plot_fit_2d
-importlib.reload(aeu)
+from autoencoder_utils import clip_scores
 
 
-# help functions
+##################
+# help functions #
+##################
 
 def make_legend_opaque( leg ):
     ### set the transparency of all entries in a legend to zero
@@ -85,7 +88,10 @@ def make_text_latex_safe( text ):
     text = text.replace('_','\_')
     return text
 
-# functions for plotting 
+
+########################################
+# functions for plotting 1D histograms #
+########################################
       
 def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1),
               title=None, xaxtitle=None, yaxtitle=None, 
@@ -97,7 +103,8 @@ def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transpar
     # - labellist is a list or array containing labels for in legend, of length nhistograms
     # - xlims is a tuple of min and max for the x-axis labels, defaults to (-0.5,nbins-0.5)
     # - title, xaxtitle, yaxtitle: strings for histogram title, x-axis title and y-axis title respectively
-    # - bkgcolor: 1D array representing background color for the plot (color axis will be scaled between min and max in bkgcolor)
+    # - bkgcolor: 1D array representing background color for the plot 
+    #             (color axis will be scaled between min and max in bkgcolor)
     #   note: if bkgcolor does not have the same length as the x-axis, it will be compressed or stretched to fit the axis,
     #         but this might be meaningless, depending on what you are trying to visualize!
     # - bkgmap: name of valid pyplot color map for plotting the background color
@@ -136,6 +143,17 @@ def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transpar
     if xaxtitle is not None: ax.set_xlabel(xaxtitle)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle)
     return (fig,ax)
+
+def plot_hists_from_df(df, histtype, nhists):
+    ### plot a number of histograms in a dataframe
+    # - df is the dataframe from which to plot
+    # - histtype is the name of the histogram type (e.g. 'chargeInner_PXLayer_1')
+    # - nhists is the number of histograms to plot
+    dfs = select_histnames(df,[histtype])
+    nhists = min(len(dfs),nhists)
+    dfs = dfs[0:nhists+1]
+    val = get_hist_values(dfs)[0]
+    plot_hists(val)
     
 def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1),
                      title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
@@ -190,6 +208,98 @@ def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], tr
     if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)      
     return (fig,ax)
+    
+def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[],
+             title=None, titlesize=None, 
+             xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1), 
+             remove_underflow=False, remove_overflow=False,
+             yaxtitle=None, yaxtitlesize=None, ylims=None, ymaxfactor=None, 
+             legendsize=None, opaque_legend=False):
+    ### plot multiple sets of 1D histograms to compare the shapes
+    # - setlist is a list of 2D numpy arrays containing histograms
+    # - fig and ax: a pyplot figure and axis object (if one of both is none a new figure is created)
+    # - title is a string that will be used as the title for the ax object
+    # other parameters are lists of which each element applies to one list of histograms
+
+    # check for empty arrays
+    for i,hists in enumerate(setlist):
+        if hists.shape[0]==0:
+            raise Exception('ERROR in plot_utils.py / plot_sets:'
+                    +' the {}th histogram set is empty, '.format(i)
+                    +' this is currently not supported for plotting')
+    # parse arguments
+    dolabel = True
+    if len(labellist)==0:
+        labellist = ['']*len(setlist)
+        dolabel = False
+    if len(colorlist)==0:
+        colorlist = ['red','blue','green','orange']
+        if len(setlist)>4:
+            raise Exception('ERROR in plot_utils.py / plot_sets: '
+                    +'please specify the colors if you plot more than four sets.')
+    if len(transparencylist)==0:
+        transparencylist = [1.]*len(setlist)
+    # make x axis
+    nbins = len(setlist[0][0])
+    if remove_underflow: nbins -= 1
+    if remove_overflow: nbins -= 1
+    if xlims[1]<xlims[0]: xlims = (0,nbins)
+    xax = np.linspace(xlims[0],xlims[1],num=nbins)
+    # create the figure
+    if fig is None or ax is None: fig,ax = plt.subplots()
+    # loop over sets
+    for i,histlist in enumerate(setlist):
+        if remove_underflow: histlist = histlist[:,1:]
+        if remove_overflow: histlist = histlist[:,:-1]
+        row = histlist[0]
+        ax.step(xax,row,where='mid',color=colorlist[i],label=labellist[i],alpha=transparencylist[i])
+        if len(histlist)<2: continue
+        for j,row in enumerate(histlist[1:,:]):
+            ax.step(xax,row,where='mid',color=colorlist[i],alpha=transparencylist[i])
+    if ymaxfactor is not None:
+        ymin,ymax = ax.get_ylim()
+        ax.set_ylim( (ymin, ymax*ymaxfactor) )
+    if ylims is not None:
+        ax.set_ylim( ylims )
+    if dolabel: 
+        leg = ax.legend(loc='upper right', fontsize=legendsize)
+        if opaque_legend: make_legend_opaque(leg)
+    if title is not None: ax.set_title(title, fontsize=titlesize)
+    if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
+    if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
+    return (fig,ax)
+
+def plot_anomalous(histlist, ls, highlight=-1, hrange=-1):
+    ### plot a range of 1D histograms and highlight one of them
+    # input arguments:
+    # - histlist and ls: a list of histograms and corresponding lumisection numbers
+    # - highlight: the lumisection number of the histogram to highlight
+    # - hrange: the number of histograms before and after lsnumber to plot (default: whole run)
+    lshist = None
+    if highlight >= 0:
+        if not highlight in ls:
+            print('WARNING in plot_utils.py / plot_anomalous: requested lumisection number not in list of lumisections')
+            return None
+        index = np.where(ls==highlight)[0][0]
+        lshist = histlist[index]
+    if hrange > 0:
+        indexmax = min(index+hrange,len(ls))
+        indexmin = max(index-hrange,0)
+        histlist = histlist[indexmin:indexmax]
+        ls = ls[indexmin:indexmax]
+    # first plot all histograms in the run
+    fig,ax = plot_hists_multi(histlist,colorlist=ls,transparency=0.1)
+    # now plot a single histogram on top
+    if lshist is not None: 
+        xlims = (0,len(lshist))
+        xax = np.linspace(xlims[0],xlims[1],num=len(lshist))
+        ax.step(xax,lshist,where='mid',color='black',linewidth=2)
+    return (fig,ax)
+
+
+########################################
+# functions for plotting 2D histograms #
+########################################
 
 def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None,
                 xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
@@ -319,103 +429,10 @@ def plot_hists_2d_gif(hists, titles=None, xaxtitle=None, yaxtitle=None, duration
     for filename in filenames:
         os.remove(filename)
         
-def plot_hists_from_df(df, histtype, nhists):
-    ### plot a number of histograms in a dataframe
-    # - df is the dataframe from which to plot
-    # - histtype is the name of the histogram type (e.g. 'chargeInner_PXLayer_1')
-    # - nhists is the number of histograms to plot
-    dfs = select_histnames(df,[histtype])
-    nhists = min(len(dfs),nhists)
-    dfs = dfs[0:nhists+1]
-    val = get_hist_values(dfs)[0]
-    plot_hists(val)
-    
-def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[],
-             title=None, titlesize=None, 
-             xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1), 
-             remove_underflow=False, remove_overflow=False,
-             yaxtitle=None, yaxtitlesize=None, ylims=None, ymaxfactor=None, 
-             legendsize=None, opaque_legend=False):
-    ### plot multiple sets of histograms to compare the shapes
-    # - setlist is a list of 2D numpy arrays containing histograms
-    # - fig and ax: a pyplot figure and axis object (if one of both is none a new figure is created)
-    # - title is a string that will be used as the title for the ax object
-    # other parameters are lists of which each element applies to one list of histograms
-
-    # check for empty arrays
-    for i,hists in enumerate(setlist):
-        if hists.shape[0]==0:
-            raise Exception('ERROR in plot_utils.py / plot_sets:'
-                    +' the {}th histogram set is empty, '.format(i)
-                    +' this is currently not supported for plotting')
-    # parse arguments
-    dolabel = True
-    if len(labellist)==0:
-        labellist = ['']*len(setlist)
-        dolabel = False
-    if len(colorlist)==0:
-        colorlist = ['red','blue','green','orange']
-        if len(setlist)>4:
-            raise Exception('ERROR in plot_utils.py / plot_sets: '
-                    +'please specify the colors if you plot more than four sets.')
-    if len(transparencylist)==0:
-        transparencylist = [1.]*len(setlist)
-    # make x axis
-    nbins = len(setlist[0][0])
-    if remove_underflow: nbins -= 1
-    if remove_overflow: nbins -= 1
-    if xlims[1]<xlims[0]: xlims = (0,nbins)
-    xax = np.linspace(xlims[0],xlims[1],num=nbins)
-    # create the figure
-    if fig is None or ax is None: fig,ax = plt.subplots()
-    # loop over sets
-    for i,histlist in enumerate(setlist):
-        if remove_underflow: histlist = histlist[:,1:]
-        if remove_overflow: histlist = histlist[:,:-1]
-        row = histlist[0]
-        ax.step(xax,row,where='mid',color=colorlist[i],label=labellist[i],alpha=transparencylist[i])
-        if len(histlist)<2: continue
-        for j,row in enumerate(histlist[1:,:]):
-            ax.step(xax,row,where='mid',color=colorlist[i],alpha=transparencylist[i])
-    if ymaxfactor is not None:
-        ymin,ymax = ax.get_ylim()
-        ax.set_ylim( (ymin, ymax*ymaxfactor) )
-    if ylims is not None:
-        ax.set_ylim( ylims )
-    if dolabel: 
-        leg = ax.legend(loc='upper right', fontsize=legendsize)
-        if opaque_legend: make_legend_opaque(leg)
-    if title is not None: ax.set_title(title, fontsize=titlesize)
-    if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
-    if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
-    return (fig,ax)
-
-def plot_anomalous(histlist, ls, highlight=-1, hrange=-1):
-    ### plot a range of histograms and highlight one of them
-    # input arguments:
-    # - histlist and ls: a list of histograms and corresponding lumisection numbers
-    # - highlight: the lumisection number of the histogram to highlight
-    # - hrange: the number of histograms before and after lsnumber to plot (default: whole run)
-    lshist = None
-    if highlight >= 0:
-        if not highlight in ls:
-            print('WARNING in plot_utils.py / plot_anomalous: requested lumisection number not in list of lumisections')
-            return None
-        index = np.where(ls==highlight)[0][0]
-        lshist = histlist[index]
-    if hrange > 0:
-        indexmax = min(index+hrange,len(ls))
-        indexmin = max(index-hrange,0)
-        histlist = histlist[indexmin:indexmax]
-        ls = ls[indexmin:indexmax]
-    # first plot all histograms in the run
-    fig,ax = plot_hists_multi(histlist,colorlist=ls,transparency=0.1)
-    # now plot a single histogram on top
-    if lshist is not None: 
-        xlims = (0,len(lshist))
-        xax = np.linspace(xlims[0],xlims[1],num=len(lshist))
-        ax.step(xax,lshist,where='mid',color='black',linewidth=2)
-    return (fig,ax)
+        
+################################################################
+# functions for plotting moments and distances in moment space #
+################################################################
 
 def plot_moments(moments, ls, dims=(0,1), fig=None, ax=None, markersize=10):
     ### plot the moments of a set of histograms
@@ -438,7 +455,6 @@ def plot_moments(moments, ls, dims=(0,1), fig=None, ax=None, markersize=10):
         ax.set_ylabel('moment '+str(dims[1]+1))
         ax.set_zlabel('moment '+str(dims[2]+1))
     return (fig,ax)
-
 
 def plot_distance(dists, ls=None, rmlargest=0., doplot=True,
                  title=None, xaxtitle='lumisection number', yaxtitle='distance metric'):
@@ -471,24 +487,31 @@ def plot_distance(dists, ls=None, rmlargest=0., doplot=True,
     return (fig,ax)
 
 
+###################################################################
+# functions for plotting model training/validation losses and MSE #
+###################################################################
+
 ### plot model loss as a function of training epoch
 # credits to Francesco for this function
 def plot_loss(data, xlims=None,
-              title=None, xaxtitle='epoch', yaxtitle='loss',
+              title=None, titlesize=None, 
+              xaxtitle='Epoch', xaxtitlesize=None, 
+              yaxtitle='Loss', yaxtitlesize=None,
+              legendsize=None, legendloc='best',
               doshow=True):
-    ### plot the training and validation loss
-    # data is the object returned by the .fit method when called upon a keras model
-    # e.g. history = <your autoencoder>.fit(<training params>)
-    #      plot_loss(history,'a title')
+    ### plot the training and validation loss of a keras/tensorflow model
+    # input arguments:
+    # - data: the object returned by the .fit method when called upon a keras model
+    # - other: plot layout options
     fig,ax = plt.subplots()
-    ax.plot(data.history['loss'], linestyle=(0,()), color="#1A237E", linewidth=3, label='training')
-    ax.plot(data.history['val_loss'], linestyle=(0,(3,2)), color="#4DB6AC", linewidth=3, label='validation')
-    ax.legend(loc="upper right", frameon=False)
+    ax.plot(data.history['loss'], linestyle=(0,()), color="#1A237E", linewidth=3, label='Training')
+    ax.plot(data.history['val_loss'], linestyle=(0,(3,2)), color="#4DB6AC", linewidth=3, label='Validation')
+    ax.legend(loc=legendloc, fontsize=legendsize)
     ax.set_yscale('log')
     if xlims is not None: ax.set_xlim(xlims)
-    if title is not None: ax.set_title(title)
-    if xaxtitle is not None: ax.set_xlabel(xaxtitle)
-    if yaxtitle is not None: ax.set_ylabel(yaxtitle)
+    if title is not None: ax.set_title(title, fontsize=legendsize)
+    if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
+    if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=xaxtitlesize)
     if doshow: plt.show(block=False)
     return (fig,ax)
     
@@ -501,10 +524,13 @@ def plot_mse(mse, rmlargest=0., doplot=True,
     # - mse is a 1D numpy array of mse scores
     # - doplot: boolean whether to make a plot or simply return mean and std
     # - rmlargest: fraction of largest mse's to remove (to avoid being too sensitive to outliers)
-    
     (obj1,obj2) = plot_distance(mse,rmlargest=rmlargest,doplot=doplot,title=title,xaxtitle=xaxtitle,yaxtitle=yaxtitle)
     return (obj1,obj2)
 
+
+###########################################################
+# functions for plotting model output score distributions #
+###########################################################
 
 def plot_score_dist( scores, labels, fig=None, ax=None,
                         nbins=20, normalize=False,
@@ -513,6 +539,7 @@ def plot_score_dist( scores, labels, fig=None, ax=None,
                         title=None, titlesize=12,
                         xaxtitle=None, xaxtitlesize=12, 
                         yaxtitle=None, yaxtitlesize=12,
+                        legendsize=None, legendloc='best',
                         doshow=True):
     ### make a plot showing the distributions of the output scores for signal and background
     minscore = np.min(scores)
@@ -533,7 +560,7 @@ def plot_score_dist( scores, labels, fig=None, ax=None,
     if title is not None: ax.set_title(title, fontsize=titlesize)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
-    ax.legend()
+    ax.legend( loc=legendloc, fontsize=legendsize )
     if doshow: plt.show(block=False)
     return (fig,ax)
 
@@ -571,6 +598,10 @@ def plot_score_ls( thisscore, refscores, fig=None, ax=None,
                             **kwargs )
     return (fig,ax)
 
+
+##############################################
+# function for metric and ROC curve plotting #
+##############################################
 
 def plot_metric( wprange, metric, label=None, color=None,
                     sig_eff=None, sig_label=None, sig_color=None,
@@ -625,6 +656,49 @@ def plot_metric( wprange, metric, label=None, color=None,
     ax2.set_ylim( (ymin, ymax*ymaxfactor) )
     return (fig,ax,ax2)
 
+def plot_roc( sig_eff, bkg_eff, auc=None,
+              color='b',
+              title=None, titlesize=None,
+              xaxtitle='Background efficiency', xaxtitlesize=None,
+              yaxtitle='Signal efficiency', yaxtitlesize=None,
+              xaxlog=True, yaxlog=False, xlims='auto', ylims='auto', dogrid=True,
+              doshow=True ):
+    # note: automatic determination of xlims and ylims assumes log scale for x-axis and lin scale for y-axis;
+    #       might not work properly in other cases and ranges should be provided manually.
+    fig,ax = plt.subplots()
+    # general
+    ax.scatter(bkg_eff, sig_eff, color=color)
+    if title is not None: ax.set_title(title, fontsize=titlesize)
+    if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
+    if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)   
+    if xaxlog: ax.set_xscale('log')
+    if yaxlog: ax.set_yscale('log')
+    # set x axis limits
+    if xlims=='auto':
+        xlims = (np.amin(np.where(bkg_eff>0.,bkg_eff,1.))/2.,1.)
+    ax.set_xlim(xlims)
+    # set y axis limits
+    if ylims=='auto':
+        ylowlim = np.amin(np.where((sig_eff>0.) & (bkg_eff>0.),sig_eff,1.))
+        ylowlim = 2*ylowlim-1.
+        ylims = (ylowlim,1+(1-ylowlim)/5)
+        if ylowlim==1: ylims = (0.95,1.05)
+    ax.set_ylim(ylims)
+    # enable grid for easier reading
+    if dogrid: ax.grid()
+    # write AUC value
+    if auc is not None:
+        auctext = '{:.3f}'.format(auc)
+        if auc>0.99:
+            auctext = '1 - '+'{:.3e}'.format(1-auc)
+        ax.text(0.7,0.1,'AUC: '+auctext,transform=ax.transAxes)
+    if doshow: plt.show(block=False)
+    return (fig,ax)
+
+
+##################################################
+# functions for plotting fits and point clusters #
+##################################################
 
 def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False, 
                 onlycontour=False, xlims=5, ylims=5, onlypositive=False,
@@ -670,7 +744,7 @@ def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,
         gridpoints = np.transpose(np.vstack((np.ravel(x),np.ravel(y))))
         evalpoints = fitfunc.pdf(gridpoints)
         if logprob: evalpoints = np.log(evalpoints)
-        if clipprob: evalpoints = aeu.clip_scores(evalpoints)
+        if clipprob: evalpoints = clip_scores(evalpoints)
         z = np.reshape(evalpoints,x.shape)
 
         # make a plot of probability contours
@@ -693,7 +767,7 @@ def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,
     return (fig,ax)
 
 def plot_fit_2d_clusters( points, clusters, labels=None, colors=None, 
-                          legendsize=10, legendloc='best', **kwargs ):
+                          legendsize=10, legendloc='best', legendbbox=None, **kwargs ):
     ### make a 2D scatter plot of a fitted contour with point clouds superimposed
     # input arguments: 
     # - points: numpy arrays of shape (npoints,ndims), where ndims is supposed to be 2,
@@ -723,7 +797,7 @@ def plot_fit_2d_clusters( points, clusters, labels=None, colors=None,
         label = labels[j]
         color = colors[j]
         ax.plot( cluster[:,0], cluster[:,1], '.', color=color, markersize=4,label=label )
-    if dolegend: ax.legend(fontsize=legendsize, loc=legendloc)
+    if dolegend: ax.legend(fontsize=legendsize, loc=legendloc, bbox_to_anchor=legendbbox)
     return (fig,ax)
 
 def plot_fit_1d( points, fitfunc=None, logprob=False, clipprob=False,
@@ -763,7 +837,7 @@ def plot_fit_1d( points, fitfunc=None, logprob=False, clipprob=False,
         gridpoints = np.expand_dims(x, 1)
         evalpoints = fitfunc.pdf(gridpoints)
         if logprob: evalpoints = np.log(evalpoints)
-        if clipprob: evalpoints = aeu.clip_scores(evalpoints)
+        if clipprob: evalpoints = clip_scores(evalpoints)
         z = evalpoints
 
         # make a plot of probability contours

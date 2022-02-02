@@ -9,7 +9,6 @@
 # - definition of very simple ready-to-use keras model architectures
 
 
-
 ### imports
 
 # external modules
@@ -24,8 +23,6 @@ import importlib
 # local modules
 import plot_utils
 importlib.reload(plot_utils)
-
-
 
 
 ### define loss functions
@@ -130,7 +127,9 @@ def calculate_roc(scores, labels, scoreax):
         bkg_eff[i] = np.sum(np.where((labels==0) & (scores>scorethreshold),1,0))/nback
     return (sig_eff,bkg_eff)
 
-def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic', doshow=True):
+def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, 
+            doplot=True, doshow=True,
+            returneffs=False ):
     ### make a ROC curve
     # input arguments:
     # - scores is a 1D numpy array containing output scores of any algorithm
@@ -146,9 +145,12 @@ def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True,
     # - npoints: number of points where to calculate the signal and background efficiencies
     #   (ignored if mode is 'full')
     # - doprint: boolean whether to print score thresholds and corresponding signal and background efficiencies
-    # - doplot: boolean whether to make a plot or simply return the auc.
-    # - plotmode: how to plot the roc curve; options are:
-    #         - 'classic' = signal efficiency afo background efficiency
+    # - doplot: boolean whether to make a plot
+    # - doshow: boolean whether to call plt.show
+    # - returneffs: boolean whether to return the signal and background efficiencies
+    # returns:
+    # - if returneffs is False, only the AUC value is returned
+    # - if returneffs is True, the return type is a tuple of the form (auc,sigeff,bckeff)
     
     mlist = ['lin','geom','full']
     if not mode in mlist:
@@ -172,57 +174,29 @@ def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True,
         scoremax = np.amax(scores)+1e-7
         scoreax = np.geomspace(scoremin,scoremax,num=npoints)
     
+    # calculated signal and background efficencies
     (sig_eff,bkg_eff) = calculate_roc( scores, labels, scoreax )
+    
+    # print results if requested
     if doprint:
         print('calculating roc curve:')
         for i in range(len(scoreax)):
             #print('  threshold: {:.4e}, signal: {:.4f}, background: {:.4f}'.format(scoreax[i],sig_eff[i],bkg_eff[i]))
             print('  threshold: {}, signal: {}, background: {}'.format(scoreax[i],sig_eff[i],bkg_eff[i]))
     
-    # note: sig_eff = signal efficiency = tp = true positive = signal flagged as signal
-    # note: bkg_eff = background efficiency = fp = false positive = background flagged as signal
-    fn = 1 - sig_eff # signal marked as background
-    tn = 1 - bkg_eff # background marked as background
-    
-    
-    auc = np.trapz(sig_eff[::-1],bkg_eff[::-1])
-    
-    if not doplot:
-        return auc
-    
     # calculate auc
-    if plotmode=='classic':
-        # make plot
-        fig,ax = plt.subplots()
-        ax.scatter(bkg_eff,sig_eff)
-        ax.set_title('ROC curve')
-        # general axis titles:
-        #ax.set_xlabel('background effiency (background marked as signal)')
-        #ax.set_ylabel('signal efficiency (signal marked as signal)')
-        # specific axis titles:
-        ax.set_xlabel('good histograms flagged as anomalous')
-        ax.set_ylabel('bad histograms flagged as anomalous')
-        ax.set_xscale('log')
-        # set x axis limits
-        ax.set_xlim((np.amin(np.where(bkg_eff>0.,bkg_eff,1.))/2.,1.))
-        # set y axis limits: general case from 0 to 1.
-        #ax.set_ylim(0.,1.1)
-        # set y axis limits: adaptive limits based on measured signal efficiency array.
-        ylowlim = np.amin(np.where((sig_eff>0.) & (bkg_eff>0.),sig_eff,1.))
-        ylowlim = 2*ylowlim-1.
-        ax.set_ylim((ylowlim,1+(1-ylowlim)/5))
-        ax.grid()
-        auctext = '{:.3f}'.format(auc)
-        if auc>0.99:
-            auctext = '1 - '+'{:.3e}'.format(1-auc)
-        ax.text(0.7,0.1,'AUC: '+auctext,transform=ax.transAxes)
-        if doshow: plt.show()
+    auc = np.trapz(sig_eff[::-1],bkg_eff[::-1])
+  
+    # make a plot if requested
+    if doplot:
+        plot_utils.plot_roc( sig_eff, bkg_eff, auc=auc,
+                      xaxtitle='Fraction of good histograms flagged as anomalous', xaxtitlesize=12,
+                      yaxtitle='Fraction of bad histograms flagged as anomalous', yaxtitlesize=12,
+                      doshow=doshow )
         
-    else:
-        print('ERROR: mode not recognized: '+str(mode))
-        return 0
-    
-    return auc
+    # return the result
+    if returneffs: return (auc, sig_eff, bkg_eff)
+    else: return auc
 
 def get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic'):
     ### make a ROC curve without manually calculating the scores
@@ -380,13 +354,20 @@ def getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10):
 
 def train_simple_autoencoder(hists, nepochs=-1, modelname='', 
                              batch_size=500, shuffle=False, 
-                             verbose=1, validation_split=0.1):
+                             verbose=1, validation_split=0.1,
+                             returnhistory=False ):
     ### create and train a very simple keras model
-    # the model consists of one hidden layer (with half as many units as there are input bins), tanh activation, adam optimizer and mseTop10 loss.
+    # the model consists of one hidden layer (with half as many units as there are input bins), 
+    # tanh activation, adam optimizer and mseTop10 loss.
     # input args: 
     # - hists is a 2D numpy array of shape (nhistograms, nbins)
     # - nepochs is the number of epochs to use (has a default value if left unspecified)
     # - modelname is a file name to save the model in (default: model is not saved to a file)
+    # - batch_size, shuffle, verbose, validation_split: passed to keras .fit method
+    # - returnhistory: boolean whether to return the training history (e.g. for making plots)
+    # returns
+    # - if returnhistory is False, only the trained keras model is returned
+    # - if returnhistory is True, the return type is a tuple of the form (model, history)
     input_size = hists.shape[1]
     arch = [int(hists.shape[1]/2.)]
     act = ['tanh']*len(arch)
@@ -397,11 +378,9 @@ def train_simple_autoencoder(hists, nepochs=-1, modelname='',
     history = model.fit(hists, hists, epochs=nepochs, batch_size=batch_size, 
                         shuffle=shuffle, verbose=verbose, 
                         validation_split=validation_split)
-    plot_utils.plot_loss(history)
     if len(modelname)>0: model.save(modelname.split('.')[0]+'.h5')
-    return model
-
-
+    if not returnhistory: return model
+    else: return (model, history)
 
 
 ### replacing scores of +-inf with sensible value
