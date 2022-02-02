@@ -27,9 +27,6 @@ except:
     plot_utils_latex_formatting = False
 import importlib
 
-# local modules
-from autoencoder_utils import clip_scores
-
 
 ##################
 # help functions #
@@ -699,6 +696,20 @@ def plot_roc( sig_eff, bkg_eff, auc=None,
 ##################################################
 # functions for plotting fits and point clusters #
 ##################################################
+
+def clip_scores( scores ):
+    ### clip +-inf values in scores
+    # local copy of the same functions in autoencoder_utils.py
+    # (need to copy here locally to use in plot_fit_2d and plot_fit_1d without circular import...)
+    maxnoninf = np.max(np.where(scores==np.inf,np.min(scores),scores)) + 1
+    minnoninf = np.min(np.where(scores==-np.inf,np.max(scores),scores)) -1
+    if np.max(scores)>maxnoninf: 
+        scores = np.where(scores==np.inf,maxnoninf,scores)
+        print('NOTE: scores of +inf were reset to {}'.format(maxnoninf))
+    if np.min(scores)<minnoninf:
+        scores = np.where(scores==-np.inf,minnoninf,scores)
+        print('NOTE: scores of -inf were reset to {}'.format(minnoninf))
+    return scores
 
 def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False, 
                 onlycontour=False, xlims=5, ylims=5, onlypositive=False,
