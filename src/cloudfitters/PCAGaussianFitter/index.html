@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../../img/favicon.ico">
-        <title>IdentityFitter - Documentation for the ML4DQM/DC code</title>
+        <title>PCAGaussianFitter - Documentation for the ML4DQM/DC code</title>
         <link href="../../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../../css/base.css" rel="stylesheet">
@@ -169,16 +169,16 @@
     <a href="../HyperRectangleFitter/">HyperRectangleFitter</a>
 </li>
             
-<li class="active">
-    <a href="./">IdentityFitter</a>
+<li >
+    <a href="../IdentityFitter/">IdentityFitter</a>
 </li>
             
 <li >
     <a href="../LogNormalFitter/">LogNormalFitter</a>
 </li>
             
-<li >
-    <a href="../PCAGaussianFitter/">PCAGaussianFitter</a>
+<li class="active">
+    <a href="./">PCAGaussianFitter</a>
 </li>
             
 <li >
@@ -254,12 +254,12 @@
                             </a>
                         </li>
                             <li >
-                                <a rel="next" href="../HyperRectangleFitter/">
+                                <a rel="next" href="../LogNormalFitter/">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li >
-                                <a rel="prev" href="../LogNormalFitter/">
+                                <a rel="prev" href="../PCAGaussianKdeFitter/">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -271,32 +271,41 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#identityfitter">IdentityFitter</a></li>
-            <li><a href="#class-identityfitter">[class] IdentityFitter</a></li>
+        <li class="main active"><a href="#pcagaussianfitter">PCAGaussianFitter</a></li>
+            <li><a href="#class-pcagaussianfitter">[class] PCAGaussianFitter</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="identityfitter">IdentityFitter</h1>
-<p><strong>Class for using classifier scores directly as global scores</strong> </p>
+<h1 id="pcagaussianfitter">PCAGaussianFitter</h1>
+<p><strong>Class for fitting a multidimensional gaussian distribution to a PCA-reduced point cloud</strong></p>
+<p>Instead of fitting the full (high-dimensional) point cloud,
+a PCA-based dimensionality reduction is first applied on it.
+This has the advantage that the fit can be visualised correctly (in case of 2 reduced dimensions),
+instead of only projections of it.
+The potential disadvantage is that the PCA reduction might distort the relative separations.</p>
 <hr />
 <hr />
-<h2 id="class-identityfitter">[class] IdentityFitter</h2>
+<h2 id="class-pcagaussianfitter">[class] PCAGaussianFitter</h2>
 <p>comments:  </p>
-<pre><code class="text">class for propagating classifier output scores (e.g. MSE) to global lumisection score  
+<pre><code class="text">class for fitting a gaussian distribution to a PCA-reduced point cloud  
+parameters  
+- pca: sklearn.decomposition.pca object  
+- mean: multidim mean of normal distribution  
+- cov: multidim covariance matrix of normal distribution  
+- mvn: scipy.stats multivariate_normal object built from mean and cov  
 </code></pre>
 
 <h3 id="9595init9595">&#10551; __init__</h3>
 <p>full signature:  </p>
-<pre><code class="text">def __init__(self, points)  
+<pre><code class="text">def __init__(self, points, npcadims=2)  
 </code></pre>
 
 <p>comments:  </p>
 <pre><code class="text">constructor  
 input arguments:  
-- points: a numpy array of shape (npoints,ndims)   
-          note that ndims is supposed to be 1,   
-          else this type of classifier is not well defined.  
+- points: a np array of shape (npoints,ndims)  
+- npcadims: number of PCA compoments to keep  
 </code></pre>
 
 <h3 id="pdf">&#10551; pdf</h3>
@@ -306,6 +315,18 @@ input arguments:
 
 <p>comments:  </p>
 <pre><code class="text">get pdf at points  
+note: points can be both of shape (npoints,ndims) or of shape (npoints,npcadims);  
+      in the latter case it is assumed that the points are already PCA-transformed,  
+      and only the gaussian kernel density is applied on them.  
+</code></pre>
+
+<h3 id="transform">&#10551; transform</h3>
+<p>full signature:  </p>
+<pre><code class="text">def transform(self, points)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">perform PCA transformation  
 </code></pre>
 
 <hr /></div>

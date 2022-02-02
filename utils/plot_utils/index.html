@@ -178,6 +178,14 @@
 </li>
             
 <li >
+    <a href="../../src/cloudfitters/PCAGaussianFitter/">PCAGaussianFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/PCAGaussianKdeFitter/">PCAGaussianKdeFitter</a>
+</li>
+            
+<li >
     <a href="../../src/cloudfitters/SeminormalFitter/">SeminormalFitter</a>
 </li>
     </ul>
@@ -269,13 +277,13 @@
             <li><a href="#add95cms95label">add_cms_label</a></li>
             <li><a href="#make95text95latex95safe">make_text_latex_safe</a></li>
             <li><a href="#plot95hists">plot_hists</a></li>
+            <li><a href="#plot95hists95from95df">plot_hists_from_df</a></li>
             <li><a href="#plot95hists95multi">plot_hists_multi</a></li>
+            <li><a href="#plot95sets">plot_sets</a></li>
+            <li><a href="#plot95anomalous">plot_anomalous</a></li>
             <li><a href="#plot95hist952d">plot_hist_2d</a></li>
             <li><a href="#plot95hists952d">plot_hists_2d</a></li>
             <li><a href="#plot95hists952d95gif">plot_hists_2d_gif</a></li>
-            <li><a href="#plot95hists95from95df">plot_hists_from_df</a></li>
-            <li><a href="#plot95sets">plot_sets</a></li>
-            <li><a href="#plot95anomalous">plot_anomalous</a></li>
             <li><a href="#plot95moments">plot_moments</a></li>
             <li><a href="#plot95distance">plot_distance</a></li>
             <li><a href="#plot95loss">plot_loss</a></li>
@@ -283,6 +291,8 @@
             <li><a href="#plot95score95dist">plot_score_dist</a></li>
             <li><a href="#plot95score95ls">plot_score_ls</a></li>
             <li><a href="#plot95metric">plot_metric</a></li>
+            <li><a href="#plot95roc">plot_roc</a></li>
+            <li><a href="#clip95scores">clip_scores</a></li>
             <li><a href="#plot95fit952d">plot_fit_2d</a></li>
             <li><a href="#plot95fit952d95clusters">plot_fit_2d_clusters</a></li>
             <li><a href="#plot95fit951d">plot_fit_1d</a></li>
@@ -305,7 +315,7 @@
 
 <h3 id="add95text">add_text</h3>
 <p>full signature:  </p>
-<pre><code class="text">def add_text( ax, text, pos,  fontsize=10, horizontalalignment='left', verticalalignment='bottom', background_facecolor=None,  background_alpha=None,  background_edgecolor=None )  
+<pre><code class="text">def add_text( ax, text, pos,  fontsize=10, horizontalalignment='left', verticalalignment='bottom', background_facecolor=None,  background_alpha=None,  background_edgecolor=None, **kwargs )  
 </code></pre>
 
 <p>comments:  </p>
@@ -350,16 +360,29 @@ to be extended when the need arises!
 - labellist is a list or array containing labels for in legend, of length nhistograms  
 - xlims is a tuple of min and max for the x-axis labels, defaults to (-0.5,nbins-0.5)  
 - title, xaxtitle, yaxtitle: strings for histogram title, x-axis title and y-axis title respectively  
-- bkgcolor: 1D array representing background color for the plot (color axis will be scaled between min and max in bkgcolor)  
+- bkgcolor: 1D array representing background color for the plot   
+            (color axis will be scaled between min and max in bkgcolor)  
   note: if bkgcolor does not have the same length as the x-axis, it will be compressed or stretched to fit the axis,  
         but this might be meaningless, depending on what you are trying to visualize!  
 - bkgmap: name of valid pyplot color map for plotting the background color  
 output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it  
 </code></pre>
 
+<h3 id="plot95hists95from95df">plot_hists_from_df</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_hists_from_df(df, histtype, nhists)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">plot a number of histograms in a dataframe  
+- df is the dataframe from which to plot  
+- histtype is the name of the histogram type (e.g. 'chargeInner_PXLayer_1')  
+- nhists is the number of histograms to plot  
+</code></pre>
+
 <h3 id="plot95hists95multi">plot_hists_multi</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)  
+<pre><code class="text">def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, caxtitle=None, caxtitlesize=None, caxtitleoffset=None, remove_underflow=False, remove_overflow=False, ylims=None, ymaxfactor=None, legendsize=None, opaque_legend=False)  
 </code></pre>
 
 <p>comments:  </p>
@@ -368,6 +391,32 @@ output: tuple of figure and axis objects, that can be used to further tune the l
 - colorlist is a list or array containing numbers to be mapped to colors  
 - labellist is a list or array containing labels for in legend  
 output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it  
+</code></pre>
+
+<h3 id="plot95sets">plot_sets</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], title=None, titlesize=None,  xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1),  remove_underflow=False, remove_overflow=False, yaxtitle=None, yaxtitlesize=None, ylims=None, ymaxfactor=None,  legendsize=None, opaque_legend=False)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">plot multiple sets of 1D histograms to compare the shapes  
+- setlist is a list of 2D numpy arrays containing histograms  
+- fig and ax: a pyplot figure and axis object (if one of both is none a new figure is created)  
+- title is a string that will be used as the title for the ax object  
+other parameters are lists of which each element applies to one list of histograms  
+</code></pre>
+
+<h3 id="plot95anomalous">plot_anomalous</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_anomalous(histlist, ls, highlight=-1, hrange=-1)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">plot a range of 1D histograms and highlight one of them  
+input arguments:  
+- histlist and ls: a list of histograms and corresponding lumisection numbers  
+- highlight: the lumisection number of the histogram to highlight  
+- hrange: the number of histograms before and after lsnumber to plot (default: whole run)  
 </code></pre>
 
 <h3 id="plot95hist952d">plot_hist_2d</h3>
@@ -411,44 +460,6 @@ input arguments
 <pre><code class="text">(no valid documentation found)  
 </code></pre>
 
-<h3 id="plot95hists95from95df">plot_hists_from_df</h3>
-<p>full signature:  </p>
-<pre><code class="text">def plot_hists_from_df(df, histtype, nhists)  
-</code></pre>
-
-<p>comments:  </p>
-<pre><code class="text">plot a number of histograms in a dataframe  
-- df is the dataframe from which to plot  
-- histtype is the name of the histogram type (e.g. 'chargeInner_PXLayer_1')  
-- nhists is the number of histograms to plot  
-</code></pre>
-
-<h3 id="plot95sets">plot_sets</h3>
-<p>full signature:  </p>
-<pre><code class="text">def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], title=None, titlesize=None,  xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1),  yaxtitle=None, yaxtitlesize=None, ymaxfactor=None,  legendsize=None, opaque_legend=False)  
-</code></pre>
-
-<p>comments:  </p>
-<pre><code class="text">plot multiple sets of histograms to compare the shapes  
-- setlist is a list of 2D numpy arrays containing histograms  
-- fig and ax: a pyplot figure and axis object (if one of both is none a new figure is created)  
-- title is a string that will be used as the title for the ax object  
-other parameters are lists of which each element applies to one list of histograms  
-</code></pre>
-
-<h3 id="plot95anomalous">plot_anomalous</h3>
-<p>full signature:  </p>
-<pre><code class="text">def plot_anomalous(histlist, ls, highlight=-1, hrange=-1)  
-</code></pre>
-
-<p>comments:  </p>
-<pre><code class="text">plot a range of histograms and highlight one of them  
-input arguments:  
-- histlist and ls: a list of histograms and corresponding lumisection numbers  
-- highlight: the lumisection number of the histogram to highlight  
-- hrange: the number of histograms before and after lsnumber to plot (default: whole run)  
-</code></pre>
-
 <h3 id="plot95moments">plot_moments</h3>
 <p>full signature:  </p>
 <pre><code class="text">def plot_moments(moments, ls, dims=(0,1), fig=None, ax=None, markersize=10)  
@@ -472,14 +483,14 @@ input arguments:
 
 <h3 id="plot95loss">plot_loss</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_loss(data, xlims=None, title=None, xaxtitle='epoch', yaxtitle='loss', doshow=True)  
+<pre><code class="text">def plot_loss(data, xlims=None, title=None, titlesize=None,  xaxtitle='Epoch', xaxtitlesize=None,  yaxtitle='Loss', yaxtitlesize=None, legendsize=None, legendloc='best', doshow=True)  
 </code></pre>
 
 <p>comments:  </p>
-<pre><code class="text">plot the training and validation loss  
-data is the object returned by the .fit method when called upon a keras model  
-e.g. history = &lt;your autoencoder&gt;.fit(&lt;training params&gt;)  
-     plot_loss(history,'a title')  
+<pre><code class="text">plot the training and validation loss of a keras/tensorflow model  
+input arguments:  
+- data: the object returned by the .fit method when called upon a keras model  
+- other: plot layout options  
 </code></pre>
 
 <h3 id="plot95mse">plot_mse</h3>
@@ -497,7 +508,7 @@ input args:
 
 <h3 id="plot95score95dist">plot_score_dist</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='Signal', sigcolor='g', bcklabel='Background', bckcolor='r', title=None, xaxtitle=None, yaxtitle=None, doshow=True)  
+<pre><code class="text">def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='Signal', sigcolor='g', bcklabel='Background', bckcolor='r', title=None, titlesize=12, xaxtitle=None, xaxtitlesize=12,  yaxtitle=None, yaxtitlesize=12, legendsize=None, legendloc='best', doshow=True)  
 </code></pre>
 
 <p>comments:  </p>
@@ -534,6 +545,27 @@ input arguments:
 - ymaxfactor: factor to add extra space on the top of the plot (for the legend)  
 </code></pre>
 
+<h3 id="plot95roc">plot_roc</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_roc( sig_eff, bkg_eff, auc=None, color='b', title=None, titlesize=None, xaxtitle='Background efficiency', xaxtitlesize=None, yaxtitle='Signal efficiency', yaxtitlesize=None, xaxlog=True, yaxlog=False, xlims='auto', ylims='auto', dogrid=True, doshow=True )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">note: automatic determination of xlims and ylims assumes log scale for x-axis and lin scale for y-axis;  
+      might not work properly in other cases and ranges should be provided manually.  
+</code></pre>
+
+<h3 id="clip95scores">clip_scores</h3>
+<p>full signature:  </p>
+<pre><code class="text">def clip_scores( scores )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">clip +-inf values in scores  
+local copy of the same functions in autoencoder_utils.py  
+(need to copy here locally to use in plot_fit_2d and plot_fit_1d without circular import...)  
+</code></pre>
+
 <h3 id="plot95fit952d">plot_fit_2d</h3>
 <p>full signature:  </p>
 <pre><code class="text">def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,  onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,  title=None, titlesize=None, caxtitle=None, caxtitlesize=None, transparency=1 )  
@@ -558,7 +590,7 @@ input arguments:
 
 <h3 id="plot95fit952d95clusters">plot_fit_2d_clusters</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_fit_2d_clusters( points, clusters, labels=None, colors=None, **kwargs )  
+<pre><code class="text">def plot_fit_2d_clusters( points, clusters, labels=None, colors=None,  legendsize=10, legendloc='best', legendbbox=None, **kwargs )  
 </code></pre>
 
 <p>comments:  </p>

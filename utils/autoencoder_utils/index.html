@@ -178,6 +178,14 @@
 </li>
             
 <li >
+    <a href="../../src/cloudfitters/PCAGaussianFitter/">PCAGaussianFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/PCAGaussianKdeFitter/">PCAGaussianKdeFitter</a>
+</li>
+            
+<li >
     <a href="../../src/cloudfitters/SeminormalFitter/">SeminormalFitter</a>
 </li>
     </ul>
@@ -390,7 +398,7 @@ output:
 
 <h3 id="get95roc">get_roc</h3>
 <p>full signature:  </p>
-<pre><code class="text">def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic', doshow=True)  
+<pre><code class="text">def get_roc(scores, labels, mode='lin', npoints=100, doprint=False,  doplot=True, doshow=True, returneffs=False )  
 </code></pre>
 
 <p>comments:  </p>
@@ -409,9 +417,12 @@ input arguments:
 - npoints: number of points where to calculate the signal and background efficiencies  
   (ignored if mode is 'full')  
 - doprint: boolean whether to print score thresholds and corresponding signal and background efficiencies  
-- doplot: boolean whether to make a plot or simply return the auc.  
-- plotmode: how to plot the roc curve; options are:  
-        - 'classic' = signal efficiency afo background efficiency  
+- doplot: boolean whether to make a plot  
+- doshow: boolean whether to call plt.show  
+- returneffs: boolean whether to return the signal and background efficiencies  
+returns:  
+- if returneffs is False, only the AUC value is returned  
+- if returneffs is True, the return type is a tuple of the form (auc,sigeff,bckeff)  
 </code></pre>
 
 <h3 id="get95roc95from95hists">get_roc_from_hists</h3>
@@ -495,16 +506,22 @@ input args:
 
 <h3 id="train95simple95autoencoder">train_simple_autoencoder</h3>
 <p>full signature:  </p>
-<pre><code class="text">def train_simple_autoencoder(hists, nepochs=-1, modelname='',  batch_size=500, shuffle=False,  verbose=1, validation_split=0.1)  
+<pre><code class="text">def train_simple_autoencoder(hists, nepochs=-1, modelname='',  batch_size=500, shuffle=False,  verbose=1, validation_split=0.1, returnhistory=False )  
 </code></pre>
 
 <p>comments:  </p>
 <pre><code class="text">create and train a very simple keras model  
-the model consists of one hidden layer (with half as many units as there are input bins), tanh activation, adam optimizer and mseTop10 loss.  
+the model consists of one hidden layer (with half as many units as there are input bins),   
+tanh activation, adam optimizer and mseTop10 loss.  
 input args:   
 - hists is a 2D numpy array of shape (nhistograms, nbins)  
 - nepochs is the number of epochs to use (has a default value if left unspecified)  
 - modelname is a file name to save the model in (default: model is not saved to a file)  
+- batch_size, shuffle, verbose, validation_split: passed to keras .fit method  
+- returnhistory: boolean whether to return the training history (e.g. for making plots)  
+returns  
+- if returnhistory is False, only the trained keras model is returned  
+- if returnhistory is True, the return type is a tuple of the form (model, history)  
 </code></pre>
 
 <h3 id="clip95scores">clip_scores</h3>
