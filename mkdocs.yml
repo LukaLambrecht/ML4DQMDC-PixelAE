@@ -33,6 +33,8 @@ nav:
             - HyperRectangleFitter: 'src/cloudfitters/HyperRectangleFitter.md'
             - IdentityFitter: 'src/cloudfitters/IdentityFitter.md'
             - LogNormalFitter: 'src/cloudfitters/LogNormalFitter.md'
+            - PCAGaussianFitter: 'src/cloudfitters/PCAGaussianFitter.md'
+            - PCAGaussianKdeFitter: 'src/cloudfitters/PCAGaussianKdeFitter.md'
             - SeminormalFitter: 'src/cloudfitters/SeminormalFitter.md'
     - utils:
         - README: 'utils/README.md'

@@ -231,7 +231,7 @@ comments:
 add a mask to a HistStruct  
 input arguments:  
 - name: a name for the mask  
-- mask: a 1D np array of booleans  with same length as number of lumisections in HistStruct  
+- mask: a 1D np array of booleans with same length as number of lumisections in HistStruct  
 ```  
 ### &#10551; remove\_mask  
 full signature:  
@@ -241,6 +241,30 @@ def remove_mask( self, name )
 comments:  
 ```text  
 inverse operation of add_mask  
+```  
+### &#10551; add\_index\_mask  
+full signature:  
+```text  
+def add_index_mask( self, name, indices )  
+```  
+comments:  
+```text  
+add a mask corresponding to predefined indices  
+input arguments:  
+- name: a name for the mask  
+- indices: a 1D np array of integer indices, between 0 and the number of lumisections in HistStruct  
+```  
+### &#10551; add\_run\_mask  
+full signature:  
+```text  
+def add_run_mask( self, name, runnb )  
+```  
+comments:  
+```text  
+add a mask corresponding to a given run number  
+input arguments:  
+- name: a name for the mask  
+- runnb: run number  
 ```  
 ### &#10551; add\_json\_mask  
 full signature:  
@@ -558,7 +582,7 @@ notes:
 ### &#10551; plot\_histograms  
 full signature:  
 ```text  
-def plot_histograms( self, histnames=None, masknames=None, histograms=None,  colorlist=[], labellist=[], transparencylist=[],  titledict=None, xaxtitledict=None, physicalxax=False,  yaxtitledict=None, **kwargs )  
+def plot_histograms( self, histnames=None, masknames=None, histograms=None, ncols=4, colorlist=[], labellist=[], transparencylist=[],  titledict=None, xaxtitledict=None, physicalxax=False,  yaxtitledict=None, **kwargs )  
 ```  
 comments:  
 ```text  
@@ -572,6 +596,7 @@ input arguments:
               can be used to plot a given collection of histograms directly,  
               and bypass the histnames and masknames arguments  
               (note: for use in the gui, not recommended outside of it)  
+- ncols: number of columns (only relevant for 1D histograms)  
 - colorlist: list of matplotlib colors, must have same length as masknames  
 - labellist: list of labels for the legend, must have same legnth as masknames  
 - transparencylist: list of transparency values, must have same length as masknames  
@@ -584,7 +609,7 @@ input arguments:
 ### &#10551; plot\_histograms\_1d  
 full signature:  
 ```text  
-def plot_histograms_1d( self, histnames=None, masknames=None, histograms=None,  colorlist=[], labellist=[], transparencylist=[], titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None,  **kwargs )  
+def plot_histograms_1d( self, histnames=None, masknames=None, histograms=None, ncols=4, colorlist=[], labellist=[], transparencylist=[], titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None,  **kwargs )  
 ```  
 comments:  
 ```text  
@@ -600,6 +625,39 @@ comments:
 ```text  
 plot the histograms in a histstruct, optionally after masking  
 internal helper function, use only via plot_histograms  
+```  
+### &#10551; plot\_histograms\_run  
+full signature:  
+```text  
+def plot_histograms_run( self, histnames=None, masknames=None, histograms=None,   titledict=None, xaxtitledict=None, physicalxax=False,  yaxtitledict=None, **kwargs )  
+```  
+comments:  
+```text  
+plot a set of histograms in a HistStruct with a smooth color gradient.  
+typical use case: plot a single run.  
+note: only for 1D histograms!  
+input arguments:  
+- histnames: list of names of the histogram types to plot (default: all)  
+- masknames: list mask names (typically should contain a run number mask)  
+- histograms: dict of histnames to 2D arrays of histograms,  
+              can be used to plot a given collection of histograms directly,  
+              and bypass the histnames and masknames arguments  
+              (note: for use in the gui, not recommended outside of it.  
+- titledict: dict mapping histogram names to titles for the subplots (default: title = histogram name)  
+- xaxtitledict: dict mapping histogram names to x-axis titles for the subplots (default: no x-axis title)  
+- yaxtitledict: dict mapping histogram names to y-axis titles for the subplots (default: no y-axis title)  
+- physicalxax: bool whether to use physical x-axis range or simply use bin number (default)  
+- kwargs: keyword arguments passed down to plot_utils.plot_hists_multi  
+```  
+### &#10551; plot\_histograms\_run\_1d  
+full signature:  
+```text  
+def plot_histograms_run_1d( self, histnames=None, masknames=None, histograms=None,  titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None,  **kwargs )  
+```  
+comments:  
+```text  
+plot the histograms in a histstruct, optionally after masking  
+internal helper function, use only via plot_histograms_run  
 ```  
 ### &#10551; plot\_ls  
 full signature:  

@@ -18,7 +18,7 @@ set the transparency of all entries in a legend to zero
 ### add\_text  
 full signature:  
 ```text  
-def add_text( ax, text, pos,  fontsize=10, horizontalalignment='left', verticalalignment='bottom', background_facecolor=None,  background_alpha=None,  background_edgecolor=None )  
+def add_text( ax, text, pos,  fontsize=10, horizontalalignment='left', verticalalignment='bottom', background_facecolor=None,  background_alpha=None,  background_edgecolor=None, **kwargs )  
 ```  
 comments:  
 ```text  
@@ -69,7 +69,8 @@ plot some histograms (in histlist) in one figure using specified colors and/or l
 - labellist is a list or array containing labels for in legend, of length nhistograms  
 - xlims is a tuple of min and max for the x-axis labels, defaults to (-0.5,nbins-0.5)  
 - title, xaxtitle, yaxtitle: strings for histogram title, x-axis title and y-axis title respectively  
-- bkgcolor: 1D array representing background color for the plot (color axis will be scaled between min and max in bkgcolor)  
+- bkgcolor: 1D array representing background color for the plot   
+            (color axis will be scaled between min and max in bkgcolor)  
   note: if bkgcolor does not have the same length as the x-axis, it will be compressed or stretched to fit the axis,  
         but this might be meaningless, depending on what you are trying to visualize!  
 - bkgmap: name of valid pyplot color map for plotting the background color  
@@ -77,10 +78,24 @@ output: tuple of figure and axis objects, that can be used to further tune the l
 ```  
   
   
+### plot\_hists\_from\_df  
+full signature:  
+```text  
+def plot_hists_from_df(df, histtype, nhists)  
+```  
+comments:  
+```text  
+plot a number of histograms in a dataframe  
+- df is the dataframe from which to plot  
+- histtype is the name of the histogram type (e.g. 'chargeInner_PXLayer_1')  
+- nhists is the number of histograms to plot  
+```  
+  
+  
 ### plot\_hists\_multi  
 full signature:  
 ```text  
-def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None)  
+def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, caxtitle=None, caxtitlesize=None, caxtitleoffset=None, remove_underflow=False, remove_overflow=False, ylims=None, ymaxfactor=None, legendsize=None, opaque_legend=False)  
 ```  
 comments:  
 ```text  
@@ -89,6 +104,36 @@ plot many histograms (in histlist) in one figure using specified colors and/or l
 - colorlist is a list or array containing numbers to be mapped to colors  
 - labellist is a list or array containing labels for in legend  
 output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it  
+```  
+  
+  
+### plot\_sets  
+full signature:  
+```text  
+def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], title=None, titlesize=None,  xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1),  remove_underflow=False, remove_overflow=False, yaxtitle=None, yaxtitlesize=None, ylims=None, ymaxfactor=None,  legendsize=None, opaque_legend=False)  
+```  
+comments:  
+```text  
+plot multiple sets of 1D histograms to compare the shapes  
+- setlist is a list of 2D numpy arrays containing histograms  
+- fig and ax: a pyplot figure and axis object (if one of both is none a new figure is created)  
+- title is a string that will be used as the title for the ax object  
+other parameters are lists of which each element applies to one list of histograms  
+```  
+  
+  
+### plot\_anomalous  
+full signature:  
+```text  
+def plot_anomalous(histlist, ls, highlight=-1, hrange=-1)  
+```  
+comments:  
+```text  
+plot a range of 1D histograms and highlight one of them  
+input arguments:  
+- histlist and ls: a list of histograms and corresponding lumisection numbers  
+- highlight: the lumisection number of the histogram to highlight  
+- hrange: the number of histograms before and after lsnumber to plot (default: whole run)  
 ```  
   
   
@@ -139,50 +184,6 @@ comments:
 ```  
   
   
-### plot\_hists\_from\_df  
-full signature:  
-```text  
-def plot_hists_from_df(df, histtype, nhists)  
-```  
-comments:  
-```text  
-plot a number of histograms in a dataframe  
-- df is the dataframe from which to plot  
-- histtype is the name of the histogram type (e.g. 'chargeInner_PXLayer_1')  
-- nhists is the number of histograms to plot  
-```  
-  
-  
-### plot\_sets  
-full signature:  
-```text  
-def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], title=None, titlesize=None,  xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1),  yaxtitle=None, yaxtitlesize=None, ymaxfactor=None,  legendsize=None, opaque_legend=False)  
-```  
-comments:  
-```text  
-plot multiple sets of histograms to compare the shapes  
-- setlist is a list of 2D numpy arrays containing histograms  
-- fig and ax: a pyplot figure and axis object (if one of both is none a new figure is created)  
-- title is a string that will be used as the title for the ax object  
-other parameters are lists of which each element applies to one list of histograms  
-```  
-  
-  
-### plot\_anomalous  
-full signature:  
-```text  
-def plot_anomalous(histlist, ls, highlight=-1, hrange=-1)  
-```  
-comments:  
-```text  
-plot a range of histograms and highlight one of them  
-input arguments:  
-- histlist and ls: a list of histograms and corresponding lumisection numbers  
-- highlight: the lumisection number of the histogram to highlight  
-- hrange: the number of histograms before and after lsnumber to plot (default: whole run)  
-```  
-  
-  
 ### plot\_moments  
 full signature:  
 ```text  
@@ -211,14 +212,14 @@ comments:
 ### plot\_loss  
 full signature:  
 ```text  
-def plot_loss(data, xlims=None, title=None, xaxtitle='epoch', yaxtitle='loss', doshow=True)  
+def plot_loss(data, xlims=None, title=None, titlesize=None,  xaxtitle='Epoch', xaxtitlesize=None,  yaxtitle='Loss', yaxtitlesize=None, legendsize=None, legendloc='best', doshow=True)  
 ```  
 comments:  
 ```text  
-plot the training and validation loss  
-data is the object returned by the .fit method when called upon a keras model  
-e.g. history = <your autoencoder>.fit(<training params>)  
-     plot_loss(history,'a title')  
+plot the training and validation loss of a keras/tensorflow model  
+input arguments:  
+- data: the object returned by the .fit method when called upon a keras model  
+- other: plot layout options  
 ```  
   
   
@@ -240,7 +241,7 @@ input args:
 ### plot\_score\_dist  
 full signature:  
 ```text  
-def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='Signal', sigcolor='g', bcklabel='Background', bckcolor='r', title=None, xaxtitle=None, yaxtitle=None, doshow=True)  
+def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='Signal', sigcolor='g', bcklabel='Background', bckcolor='r', title=None, titlesize=12, xaxtitle=None, xaxtitlesize=12,  yaxtitle=None, yaxtitlesize=12, legendsize=None, legendloc='best', doshow=True)  
 ```  
 comments:  
 ```text  
@@ -282,6 +283,31 @@ input arguments:
 ```  
   
   
+### plot\_roc  
+full signature:  
+```text  
+def plot_roc( sig_eff, bkg_eff, auc=None, color='b', title=None, titlesize=None, xaxtitle='Background efficiency', xaxtitlesize=None, yaxtitle='Signal efficiency', yaxtitlesize=None, xaxlog=True, yaxlog=False, xlims='auto', ylims='auto', dogrid=True, doshow=True )  
+```  
+comments:  
+```text  
+note: automatic determination of xlims and ylims assumes log scale for x-axis and lin scale for y-axis;  
+      might not work properly in other cases and ranges should be provided manually.  
+```  
+  
+  
+### clip\_scores  
+full signature:  
+```text  
+def clip_scores( scores )  
+```  
+comments:  
+```text  
+clip +-inf values in scores  
+local copy of the same functions in autoencoder_utils.py  
+(need to copy here locally to use in plot_fit_2d and plot_fit_1d without circular import...)  
+```  
+  
+  
 ### plot\_fit\_2d  
 full signature:  
 ```text  
@@ -309,7 +335,7 @@ input arguments:
 ### plot\_fit\_2d\_clusters  
 full signature:  
 ```text  
-def plot_fit_2d_clusters( points, clusters, labels=None, colors=None, **kwargs )  
+def plot_fit_2d_clusters( points, clusters, labels=None, colors=None,  legendsize=10, legendloc='best', legendbbox=None, **kwargs )  
 ```  
 comments:  
 ```text  
