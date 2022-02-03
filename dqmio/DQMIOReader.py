@@ -42,7 +42,7 @@ def extractdatafromROOT(x, hist2array=False):
         if hist2array:
             raise NotImplementedError('ERROR in extractdatafromROOT: option hist2array is not yet supported.')
             #return root_numpy.hist2array(x)
-        else: return x
+        else: return x.Clone()
     
 
 ### DQMIOReader definition
@@ -54,6 +54,7 @@ class DQMIOReader:
     # - index: defaultdict matching tuples of the form (run number, lumisection number) to lists of IndexEntries
     # - melist: dict containing all available monitor element names matched to their type
     
+    @staticmethod # (needed in python 2, not in python 3)
     def getMEType(metype):
         ### convert integer monitoring element type to string representation
         # note: the string representation must correspond to the directory structure in a DQMIO file!
