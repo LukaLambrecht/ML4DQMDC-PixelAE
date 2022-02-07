@@ -112,15 +112,15 @@ class DQMIOReader:
         p = ThreadPool(NTHREADS)
         p.map(readfileidx, self.rootfiles)
         p.close()
-	
+        
     def sortIndex(self):
-	### sort the index by run and lumisection number
-	# note: preliminary implementation, not guaranteed to be optimal
-	# note: might not work in python 2, where dicts have no ordering
-	self.newindex = defaultdict(list)
-	for key,val in sorted(self.index.items()):
-	    self.newindex[key] = val
-	self.index = self.newindex
+        ### sort the index by run and lumisection number
+        # note: preliminary implementation, not guaranteed to be optimal
+        # note: might not work in python 2, where dicts have no ordering
+        self.newindex = defaultdict(list)
+        for key,val in sorted(self.index.items()):
+            self.newindex[key] = val
+        self.index = self.newindex
                 
     def makelist(self):
         ### make a cached list for monitoring elements
