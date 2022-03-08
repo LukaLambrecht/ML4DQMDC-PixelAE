@@ -1955,70 +1955,96 @@ class ML4DQMGUI:
         self.histstruct_filename = None
         self.plotstyleparser = PlotStyleParser.PlotStyleParser()
         self.plotstyle_filename = None
-        self.tabs = []
-        
-        # define all tabs below
-        
-        # define welcome tab
-        self.welcome_tab = WelcomeTab()
-        self.tabs.append(self.welcome_tab)
 
         # define tabs for creating a new histstruct
+        self.welcome_tab = WelcomeTab()
         self.newhs_tab = NewHistStructTab( self.histstruct )
-        self.tabs.append(self.newhs_tab)
         self.addrunmasks_tab = AddRunMasksTab()
-        self.tabs.append(self.addrunmasks_tab)
         self.addstatmasks_tab = AddStatMasksTab()
-        self.tabs.append(self.addstatmasks_tab)
         self.addclassifiers_tab = AddClassifiersTab()
-        self.tabs.append(self.addclassifiers_tab)
+        self.newhstabs = []
+        self.newhstabs.append( self.welcome_tab )
+        self.newhstabs.append( self.newhs_tab )
+        self.newhstabs.append( self.addrunmasks_tab )
+        self.newhstabs.append( self.addstatmasks_tab )
+        self.newhstabs.append( self.addclassifiers_tab )
+        self.newhstabwidget = ipw.Tab(children = [tab.tab for tab in self.newhstabs])
+        for i,tab in enumerate(self.newhstabs):
+            self.newhstabwidget.set_title(i, tab.title)
+        self.newhstabwidget.observe(self.refresh, names='selected_index')
 
         # define tabs for loading and saving a HistStruct
         self.load_tab = LoadHistStructTab( self.load )
-        self.tabs.append(self.load_tab)
         self.save_tab = SaveHistStructTab()
-        self.tabs.append(self.save_tab)
         self.display_tab = DisplayHistStructTab()
-        self.tabs.append(self.display_tab)
+        self.hsiotabs = []
+        self.hsiotabs.append( self.load_tab )
+        self.hsiotabs.append( self.save_tab )
+        self.hsiotabs.append( self.display_tab )
+        self.hsiotabwidget = ipw.Tab(children = [tab.tab for tab in self.hsiotabs])
+        for i,tab in enumerate(self.hsiotabs):
+            self.hsiotabwidget.set_title(i, tab.title)
+        self.hsiotabwidget.observe(self.refresh, names='selected_index')
 
-        # define tabs for preprocessing
+        # define tabs for preprocessing and resampling
         self.preprocessing_tab = PreprocessingTab()
-        self.tabs.append(self.preprocessing_tab)
+        self.resampling_tab = ResamplingTab()
+        self.procestabs = []
+        self.procestabs.append( self.preprocessing_tab )
+        self.procestabs.append( self.resampling_tab )
+        self.procestabwidget = ipw.Tab(children = [tab.tab for tab in self.procestabs])
+        for i,tab in enumerate(self.procestabs):
+            self.procestabwidget.set_title(i, tab.title)
+        self.procestabwidget.observe(self.refresh, names='selected_index')
 
         # define tabs for plotting
         self.load_plotstyle_tab = LoadPlotStyleTab()
-        self.tabs.append(self.load_plotstyle_tab)
         self.plotsets_tab = PlotSetsTab()
-        self.tabs.append(self.plotsets_tab)
-
-        # define tabs for resampling
-        self.resampling_tab = ResamplingTab()
-        self.tabs.append(self.resampling_tab)
+        self.plot_lumisection_tab = PlotLumisectionTab()
+        self.plottabs = []
+        self.plottabs.append( self.plotsets_tab )
+        self.plottabs.append( self.plot_lumisection_tab )
+        self.plottabs.append( self.load_plotstyle_tab )
+        self.plottabwidget = ipw.Tab(children = [tab.tab for tab in self.plottabs])
+        for i,tab in enumerate(self.plottabs):
+            self.plottabwidget.set_title(i, tab.title)
+        self.plottabwidget.observe(self.refresh, names='selected_index')
 
         # define tabs for classifier training, fitting and evaluation
         self.train_tab = TrainClassifiersTab()
-        self.tabs.append(self.train_tab)
         self.apply_classifiers_tab = ApplyClassifiersTab()
-        self.tabs.append(self.apply_classifiers_tab)
         self.fit_tab = FitTab()
-        self.tabs.append(self.fit_tab)
         self.apply_fit_tab = ApplyFitTab()
-        self.tabs.append(self.apply_fit_tab)
         self.evaluate_tab = EvaluateTab()
-        self.tabs.append(self.evaluate_tab)
-        self.plot_lumisection_tab = PlotLumisectionTab()
-        self.tabs.append(self.plot_lumisection_tab)
+        self.modeltabs = []
+        self.modeltabs.append( self.train_tab )
+        self.modeltabs.append( self.apply_classifiers_tab )
+        self.modeltabs.append( self.fit_tab )
+        self.modeltabs.append( self.apply_fit_tab )
+        self.modeltabs.append( self.evaluate_tab )
+        self.modeltabwidget = ipw.Tab(children = [tab.tab for tab in self.modeltabs])
+        for i,tab in enumerate(self.modeltabs):
+            self.modeltabwidget.set_title(i, tab.title)
+        self.modeltabwidget.observe(self.refresh, names='selected_index')
 
         # add all tabs
-        self.tabwidget = ipw.Tab(children = [tab.tab for tab in self.tabs])
-        for i,tab in enumerate(self.tabs):
-            self.tabwidget.set_title(i, tab.title)
-        self.tabwidget.observe(self.refresh, names='selected_index')
+        self.tabwidget = ipw.Tab(children = [self.newhstabwidget,
+                                             self.hsiotabwidget,
+                                             self.procestabwidget,
+                                             self.plottabwidget,
+                                             self.modeltabwidget])
+        self.tabwidget.set_title(0, 'New HistStruct')
+        self.tabwidget.set_title(1, 'HistStruct I/O')
+        self.tabwidget.set_title(2, 'Histogram processing')
+        self.tabwidget.set_title(3, 'Plotting')
+        self.tabwidget.set_title(4, 'Model training and evaluation')
         
     def refresh(self, event):
         ### the tab that is clicked
-        new_index = self.tabwidget.selected_index
-        new_tab = self.tabs[new_index]
+        new_superindex = self.tabwidget.selected_index
+        new_supertab = self.tabwidget.children[new_superindex]
+        new_index = new_supertab.selected_index
+        new_tab = new_supertab.children[new_index]
         # define default arguments
         kwargs = {}
         # list exceptions below
