@@ -15,10 +15,13 @@ class PlotStyleParser:
 
     def __init__(self, jsonfile=None):
         self.plotstyledict = {}
+        if jsonfile is not None: self.load(jsonfile)
+        
+    def load(self, jsonfile):
         if( jsonfile is None ): return
         # read json file
         if not os.path.exists(jsonfile):
-            print('WARNING in PlotStyleParser.__init__:'
+            print('WARNING in PlotStyleParser.load:'
                     +' plot style json file {} does not seem to exist;'.format(jsonfile)
                     +' initializing empty plot style parser.')
             return
@@ -86,4 +89,3 @@ class PlotStyleParser:
 
     def get_condtextsize(self):
         return self.get_general_plot_option('conditionstextsize')
-

@@ -242,7 +242,7 @@ class NewHistStructTab:
         filenames = self.filebrowser.get_selected_files()
         # if filename is invalid, return
         if len(filenames)==0:
-            print('Loading of histograms canceled')
+            with self.tab: print('Loading of histograms canceled')
             return
         for filename in filenames:
             histname = os.path.basename(filename).replace('.csv','')
@@ -261,19 +261,20 @@ class NewHistStructTab:
         histnames = [h.split('(')[0].strip(' ') for h in histnames]
         year = self.year_box.value
         training_mode = self.training_mode_box.value
-        print('creating a new HistStruct...')
-        print('found following settings:')
-        print('  - histogram names: {}'.format(histnames))
-        print('  - year: {}'.format(year))
-        print('  - training mode: {}'.format(training_mode))
-        print('finding all available runs...')
+        with self.tab: 
+            print('creating a new HistStruct...')
+            print('found following settings:')
+            print('  - histogram names: {}'.format(histnames))
+            print('  - year: {}'.format(year))
+            print('  - training mode: {}'.format(training_mode))
+            print('finding all available runs...')
         # get a comprehensive set of all explicitly needed runs (for throwing away the rest)
         firstfilename = self.histfiles[histnames[0]]
         needed_runs = self.get_needed_runs( is_local=(training_mode=='local'), 
                                             filename=firstfilename )
         # loop over the histogram types to take into account
         for histname in histnames:
-            print('adding {}...'.format(histname))
+            with self.tab: print('adding {}...'.format(histname))
             # read the histograms from the csv file
             filename = self.histfiles[histname]
             if not os.path.exists(filename):
@@ -285,28 +286,33 @@ class NewHistStructTab:
                 df = dfu.select_runsls( df, needed_runsls )
             # add the histograms to the HistStuct 
             self.histstruct.add_dataframe( df )
-        print('added {} lumisections with {} histograms each to the HistStruct.'.format(
+        with self.tab: 
+            print('added {} lumisections with {} histograms each to the HistStruct.'.format(
                 len(self.histstruct.runnbs),len(self.histstruct.histnames)))
     
         # add default masks for DCS-bit on and golden json
         # to do: make this more flexible with user options
-        print('adding default DCS-on and golden json masks...')
+        with self.tab: print('adding default DCS-on and golden json masks...')
         try: self.histstruct.add_dcsonjson_mask( 'dcson' )
-        except: print('WARNING: could not add a mask for DCS-on data.'
+        except: 
+            with self.tab:
+                print('WARNING: could not add a mask for DCS-on data.'
                       +' Check access to DCS-on json file.')
         try: self.histstruct.add_goldenjson_mask( 'golden' )
-        except: print('WARNING: could not add a mask for golden data.'
+        except: 
+            with self.tab:
+                print('WARNING: could not add a mask for golden data.'
                         +' Check access to golden json file.')
 
         # add training and target mask for local training
         # to do: make this more flexible (e.g. choosing names)
         if training_mode=='local':
             if self.get_target_run() is not None:
-                print('adding mask for target runs...')
+                with self.tab: print('adding mask for target runs...')
                 json = {str(self.get_target_run()): [[-1]]}
                 self.histstruct.add_json_mask( 'target_run', json )
             if self.get_local_training_runs(firstfilename) is not None:
-                print('adding mask for local training runs...')
+                with self.tab: print('adding mask for local training runs...')
                 json = {str(run): [[-1]] for run in self.get_local_training_runs(firstfilename)}
                 self.histstruct.add_json_mask( 'local_training', json )
 
@@ -319,7 +325,7 @@ class NewHistStructTab:
         # add json mask(s)
         json_masks = self.add_json_mask_obj.apply(None)
         
-        print('done')
+        with self.tab: print('done')
             
             
 class AddRunMasksTab:
@@ -441,13 +447,11 @@ class AddClassifiersTab:
             do_evaluate = (self.classifier_widgets[histname]['evaluate'].value)
             if do_evaluate:
                 self.histstruct.evaluate_classifier(histname)
-        print('done')
+        with self.tab: print('done')
             
             
 class LoadHistStructTab:
     def __init__(self, external_load_function):
-        ### initializer
-        #self.refresh(external_load_function)
         
         # initializations
         self.tab = ipw.Output()
@@ -471,7 +475,7 @@ class LoadHistStructTab:
     def load(self, event):
         filename = self.filebrowser.get_selected_files()
         if len(filename)!=1:
-            print('ERROR: {} files were selected while expecting 1.'.format(len(filename)))
+            with self.tab: print('ERROR: {} files were selected while expecting 1.'.format(len(filename)))
             return
         filename = filename[0]
         self.external_load_function(filename)
@@ -486,7 +490,10 @@ class SaveHistStructTab:
     def refresh(self, histstruct=None):
         ### initializer
         if histstruct is None:
-            print('[no histstruct found]')
+            with self.tab: print('[no histstruct found]')
+            return
+        if len(histstruct.get_runnbs())==0:
+            with self.tab: print('[current histstruct is empty]')
             return
         self.histstruct = histstruct
         
@@ -514,10 +521,10 @@ class SaveHistStructTab:
         filename = self.filename_text.value
         valid = self.filename_is_valid(filename)
         if not valid[0]:
-            print(valid[1])
+            with self.tab: print(valid[1])
             return
         self.histstruct.save(filename)
-        print('done')
+        with self.tab: print('done')
         
             
 class DisplayHistStructTab:
@@ -550,7 +557,10 @@ class PreprocessingTab:
         
         # initializations
         if histstruct is None:
-            print('[no histstruct found]')
+            with self.tab: print('[no histstruct found]')
+            return
+        if len(histstruct.get_runnbs())==0:
+            with self.tab: print('[current histstruct is empty]')
             return
         self.histstruct = histstruct
         self.set_selector = None
@@ -596,10 +606,11 @@ class PreprocessingTab:
         masknames = None
         if self.set_selector.valid:
             masknames = self.select_set_obj.get_masks()
-            print('Applying preprocessing on the following masks:')
-            for mask in masknames: print('  - {}'.format(mask))
+            with self.tab:
+                print('Applying preprocessing on the following masks:')
+                for mask in masknames: print('  - {}'.format(mask))
         else: 
-            print('Applying preprocessing on all histograms.')
+            with self.tab: print('Applying preprocessing on all histograms.')
         # get options
         options = self.optionsbox.get_dict()
         # do special treatment if needed
@@ -611,18 +622,41 @@ class PreprocessingTab:
         options['smoothinghalfwindow'] = smoothinghalfwindow
         # do the preprocessing
         self.histstruct.preprocess(masknames=masknames, **options)
-        print('done')
+        with self.tab: print('done')
             
             
 class LoadPlotStyleTab:
+    
     def __init__(self):
         ### initializer
-        
-        # initializations
         self.tab = ipw.Output()
         self.title = 'Load plot style'
+        
+    def refresh(self, plotstyleparser=None):
+        
+        # check arguments
+        if plotstyleparser is None: return
+        self.plotstyleparser = plotstyleparser
+        
+        # add file selector
+        self.filebrowser = FileBrowser()
+        
+        # add load button
+        self.load_button = ipw.Button(description='Load selected file')
+        self.load_button.on_click( self.load )
+        self.grid = ipw.GridBox(children=[self.load_button,self.filebrowser.get_widget()],
+                                layout=ipw.Layout(grid_template_rows='auto auto')) 
         with self.tab:
-            print('Not yet implemented')
+            clear_output()
+            display(self.grid)
+        
+    def load(self, event):
+        filename = self.filebrowser.get_selected_files()
+        if len(filename)!=1:
+            with self.tab: print('ERROR: {} files were selected while expecting 1.'.format(len(filename)))
+            return
+        filename = filename[0]
+        self.plotstyleparser.load(filename)
             
             
 class PlotSetsTab:
@@ -637,7 +671,10 @@ class PlotSetsTab:
         
         # check arguments
         if histstruct is None:
-            print('[no histstruct found]')
+            with self.tab: print('[no histstruct found]')
+            return
+        if len(histstruct.get_runnbs())==0:
+            with self.tab: print('[current histstruct is empty]')
             return
         
         # initializations
@@ -650,20 +687,15 @@ class PlotSetsTab:
         self.more_button = ipw.Button(description='Add a set')
         self.more_button.on_click(self.add_set)
 
-        # add a button to overwrite the plot style
-        self.load_plotstyle_button = ipw.Button(description='Load plot style')
-        self.load_plotstyle_button.on_click(self.load_plotstyle)
-
         # add a button to make the plot
         self.plot_button = ipw.Button(description='Make plot')
         self.plot_button.on_click(self.make_plot)
         
         # make the layout
         self.button_box = ipw.GridBox(children=([self.more_button,
-                                                self.load_plotstyle_button,
                                                 self.plot_button]),
                                       layout=ipw.Layout(
-                                          grid_template_rows='auto auto auto'
+                                          grid_template_rows='auto auto'
                                       )
         )
         self.grid = ipw.GridBox(children=[self.button_box],
@@ -675,21 +707,6 @@ class PlotSetsTab:
         with self.tab:
             clear_output()
             display(self.grid)
-
-    def load_plotstyle(self, event):
-        self.filebrowser = FileBrowser()
-        self.filebrowser.overwrite_selectbutton(self.load_plotstyle_select)
-        
-    def load_plotstyle_select(self, event):
-        filename = self.filebrowser.get_selected_files()
-        # if filename is invalid, return
-        if len(filename)!=1:
-            print('Loading of plot style canceled')
-            return
-        # clear current plotstyleparser and related info before loading new one
-        self.plotstyleparser = None
-        # load a new histstruct
-        self.plotstyleparser = PlotStyleParser.PlotStyleParser( filename )
 
     def add_set(self, event):
         ### add widgets for one more histogram set to plot
@@ -737,7 +754,7 @@ class PlotSetsTab:
             optionsdict['ymaxfactor'] = self.plotstyleparser.get_ymaxfactor()
             optionsdict['legendsize'] = self.plotstyleparser.get_legendsize()
         # make the plots
-        print('making plot...')
+        with self.tab: print('making plot...')
         res = self.histstruct.plot_histograms( **optionsdict )
         fig = res[0]
         axs = res[1]
@@ -783,7 +800,10 @@ class ResamplingTab:
         
         # check arguments
         if histstruct is None:
-            print('[no histstruct found]')
+            with self.tab: print('[no histstruct found]')
+            return
+        if len(histstruct.get_runnbs())==0:
+            with self.tab: print('[current histstruct is empty]')
             return
             
         # initializations
@@ -925,23 +945,23 @@ class ResamplingTab:
             raise Exception('ERROR: name "{}" is not valid.'.format(extname))
         # loop over histogram types
         for histname in self.histstruct.histnames:
-            print('  now processing histogram type {}'.format(histname))
+            with self.tab: print('  now processing histogram type {}'.format(histname))
             histkey = histname if split else self.allhistostr
             # get resampling function
             (function, function_options) = self.get_function(histkey)
             if function is None:
-                print('WARNING: resampling function for histogram type {}'.format(histname)
-                        +' is None, it will not be present in the resampled set.')
+                with self.tab: print('WARNING: resampling function for histogram type {}'.format(histname)
+                                     +' is None, it will not be present in the resampled set.')
                 continue
             # get histograms
             hists = self.set_selectors[histkey].get_histograms()[histname]
             exthists = function( hists, **function_options )[0]
             # add extended set to histstruct
             self.histstruct.add_exthistograms( extname, histname, exthists )
-            print('  -> generated {} histograms'.format(len(exthists)))
+            with self.tab: print('  -> generated {} histograms'.format(len(exthists)))
         self.update_sets_list()
         plt.show(block=False)
-        print('done')
+        with self.tab: print('done')
             
             
 class TrainClassifiersTab:
@@ -955,7 +975,10 @@ class TrainClassifiersTab:
         
         # check arguments
         if histstruct is None:
-            print('[no histstruct found]')
+            with self.tab: print('[no histstruct found]')
+            return
+        if len(histstruct.get_runnbs())==0:
+            with self.tab: print('[current histstruct is empty]')
             return
         self.histstruct = histstruct
         self.training_options = {}
@@ -981,6 +1004,7 @@ class TrainClassifiersTab:
         
         # make the layout
         with self.tab:
+            clear_output()
             display(self.select_set_box)
             display(self.expand_options_button)
             display(self.boxes)
@@ -991,8 +1015,8 @@ class TrainClassifiersTab:
         if self.expandstate=='multi':
             # check if this is allowed
             if get_training_options( self.histstruct ) is None:
-                print('WARNING: collapse not allowed'
-                        +' since different types of classifiers are present')
+                with self.tab: print('WARNING: collapse not allowed'
+                                    +' since different types of classifiers are present')
                 return
             histnames = ['all histogram types']
             self.expandstate = 'single'
@@ -1028,13 +1052,13 @@ class TrainClassifiersTab:
 
     def do_training(self, event):
         if not self.select_set_obj.valid:
-            print('ERROR: please select a training set before starting training.')
+            with self.tab: print('ERROR: please select a training set before starting training.')
             return
         training_histograms = self.select_set_obj.get_histograms()
         for histname in training_histograms.keys():
             # check if a classifier is initialized for this histogram type
             if histname not in self.histstruct.classifiers.keys():
-                print('WARNING: no classifier was found in the HistStruct'
+                with self.tab: print('WARNING: no classifier was found in the HistStruct'
                         +' for histogram type {}; skipping.'.format(histname))
                 continue
             # get the options for this histogram type
@@ -1043,14 +1067,15 @@ class TrainClassifiersTab:
             training_options = self.training_options[arghistname].get_dict()
             # get the training histograms
             hists = training_histograms[histname]
-            print('training a classifier for {}'.format(histname))
-            print('size of training set: {}'.format(hists.shape))
+            with self.tab:
+                print('training a classifier for {}'.format(histname))
+                print('size of training set: {}'.format(hists.shape))
             # do training
             self.histstruct.classifiers[histname].train( hists, **training_options )
             # do evaluation
-            print('evaluating model for '+histname)
+            with self.tab: print('evaluating model for '+histname)
             self.histstruct.evaluate_classifier( histname )
-        print('done')
+        with self.tab: print('done')
             
             
 class ApplyClassifiersTab:
@@ -1064,7 +1089,10 @@ class ApplyClassifiersTab:
         
         # check arguments
         if histstruct is None:
-            print('[no histstruct found]')
+            with self.tab: print('[no histstruct found]')
+            return
+        if len(histstruct.get_runnbs())==0:
+            with self.tab: print('[current histstruct is empty]')
             return
         self.histstruct = histstruct
         
@@ -1091,11 +1119,11 @@ class ApplyClassifiersTab:
         else:
             extnames = list(self.histstruct.exthistograms.keys())
         for extname in extnames:
-            print('evaluating classifiers on set {}'.format(extname))
+            with self.tab: print('evaluating classifiers on set {}'.format(extname))
             for histname in self.histstruct.histnames:
-                print('  now processing histogram type {}'.format(histname))
+                with self.tab: print('  now processing histogram type {}'.format(histname))
                 self.histstruct.evaluate_classifier( histname, extname=extname )
-        print('done')
+        with self.tab: print('done')
             
             
 class FitTab:
@@ -1109,7 +1137,10 @@ class FitTab:
         
         # check arguments
         if histstruct is None:
-            print('[no histstruct found]')
+            with self.tab: print('[no histstruct found]')
+            return
+        if len(histstruct.get_runnbs())==0:
+            with self.tab: print('[current histstruct is empty]')
             return
         self.histstruct = histstruct
         self.plotstyleparser = plotstyleparser
@@ -1185,11 +1216,11 @@ class FitTab:
     
     def get_fitting_scores(self):
         if not self.fitting_set_selector.valid:
-            print('ERROR: please select a set to fit to before doing the fit.')
+            with self.tab: print('ERROR: please select a set to fit to before doing the fit.')
             return
         scores_fit_dict = self.fitting_set_selector.get_scores()
         if scores_fit_dict is None:
-            print('ERROR: no valid scores could be found in the HistStruct '
+            with self.tab: print('ERROR: no valid scores could be found in the HistStruct '
                             +'for the specified fitting set.')
             return
         scores_fit = []
@@ -1199,7 +1230,7 @@ class FitTab:
         # transform to arrays with correct shape
         scores_fit = np.array(scores_fit)
         scores_fit = np.transpose(scores_fit)
-        print('found score array for fitting set of following shape: {}'.format(scores_fit.shape))
+        with self.tab: print('found score array for fitting set of following shape: {}'.format(scores_fit.shape))
         return scores_fit
 
     def get_fitter(self):
@@ -1288,7 +1319,10 @@ class ApplyFitTab:
         
         # check arguments
         if histstruct is None:
-            print('[no histstruct found]')
+            with self.tab: print('[no histstruct found]')
+            return
+        if len(histstruct.get_runnbs())==0:
+            with self.tab: print('[current histstruct is empty]')
             return
         self.histstruct = histstruct
         
@@ -1315,7 +1349,7 @@ class ApplyFitTab:
         else:
             extnames = list(self.histstruct.exthistograms.keys())
         for extname in extnames:
-            print('evaluating fitter on set {}'.format(extname))
+            with self.tab: print('evaluating fitter on set {}'.format(extname))
             scores_all = []
             for histname in self.histstruct.histnames:
                 scores_all.append( self.histstruct.get_extscores( extname, histname=histname ) )
@@ -1323,7 +1357,7 @@ class ApplyFitTab:
             scores_all = np.transpose(scores_all)
             self.histstruct.add_extglobalscores( extname, 
                             np.log(self.histstruct.fitfunc.pdf(scores_all)) )
-        print('done')
+        with self.tab: print('done')
             
             
 class EvaluateTab:
@@ -1336,7 +1370,10 @@ class EvaluateTab:
 
         # check arguments
         if histstruct is None:
-            print('[no histstruct found]')
+            with self.tab: print('[no histstruct found]')
+            return
+        if len(histstruct.get_runnbs())==0:
+            with self.tab: print('[current histstruct is empty]')
             return
         self.histstruct = histstruct
         self.plotstyleparser = plotstyleparser
@@ -1526,7 +1563,7 @@ class EvaluateTab:
             if el['type_box'].value != test_set_type: continue
             scores.append(el['selector'].get_scores())
         if len(scores)==0:
-            print('WARNING: there are no test sets with label {}'.format(test_set_type))
+            with self.tab: print('WARNING: there are no test sets with label {}'.format(test_set_type))
         return scores
 
     def get_globalscores(self, test_set_type):
@@ -1535,7 +1572,7 @@ class EvaluateTab:
             if el['type_box'].value != test_set_type: continue
             globalscores.append(el['selector'].get_globalscores())
         if len(globalscores)==0:
-            print('WARNING: there are no test sets with label {}'.format(test_set_type))
+            with self.tab: print('WARNING: there are no test sets with label {}'.format(test_set_type))
         return globalscores
 
     def get_labels(self, test_set_type):
@@ -1547,7 +1584,7 @@ class EvaluateTab:
 
     def evaluate(self, event):
         if not self.check_all_selected():
-            print('ERROR: some test sets were declared but not defined')
+            with self.tab: print('ERROR: some test sets were declared but not defined')
             return
         # load scores for good and bad test set
         scores_good_parts = self.get_scores('Good')
@@ -1615,10 +1652,10 @@ class EvaluateTab:
                              'fuchsia','orange','purple'])
             goodcolorlist = ['blue']
             if len(badcolorlist)<len(scores_bad_parts):
-                print('WARNING: too many bad test sets for available colors, putting all to red')
+                with self.tab: print('WARNING: too many bad test sets for available colors, putting all to red')
                 badcolorist = ['red']*len(scores_bad_parts)
             if len(goodcolorlist)<len(scores_good_parts):
-                print('WARNING: too many good test sets for available colors, putting all to blue')
+                with self.tab: print('WARNING: too many good test sets for available colors, putting all to blue')
                 goodcolorist = ['blue']*len(scores_good_parts)
 
             for dims,partialfitfunc in zip(self.histstruct.dimslist,self.histstruct.fitfunclist):
@@ -1685,9 +1722,13 @@ class PlotLumisectionTab:
         self.title = 'Plot lumisection'
                     
     def refresh(self, histstruct=None, plotstyleparser=None):
+        
         # check arguments
         if histstruct is None:
-            print('[no histstruct found]')
+            with self.tab: print('[no histstruct found]')
+            return
+        if len(histstruct.get_runnbs())==0:
+            with self.tab: print('[current histstruct is empty]')
             return
         self.histstruct = histstruct
         self.plotstyleparser = plotstyleparser
@@ -1729,10 +1770,6 @@ class PlotLumisectionTab:
         self.lumisection_box = self.options_frame.widgets[lsidx]
         self.run_box.observe(self.set_lsnbs, names='value')
         self.set_lsnbs(None)
-        
-        # add button to overwrite plotting style
-        self.load_plotstyle_button = ipw.Button(description='Load plot style') 
-        self.load_plotstyle_button.on_click(self.load_plotstyle)
 
         # add button to make the plot
         self.plot_button = ipw.Button(description='Plot')
@@ -1759,7 +1796,6 @@ class PlotLumisectionTab:
         
         # make the layout
         children = ([self.options_frame.get_widget(), 
-                     self.load_plotstyle_button,
                      self.inspect_set_label,
                      self.inspect_set_selector.get_widget(),
                      self.refscore_set_label,
@@ -1770,6 +1806,7 @@ class PlotLumisectionTab:
         self.grid = ipw.GridBox(children=children,
                                    layout = ipw.Layout(grid_template_rows='auto '*len(children)))
         with self.tab:
+            clear_output()
             display(self.grid)
 
     def set_lsnbs(self, event):
@@ -1779,14 +1816,6 @@ class PlotLumisectionTab:
         lsnbs = lsnbs[np.nonzero(runnbs==runnb)]
         lsnbslist = [int(el) for el in lsnbs]
         self.lumisection_box.options = lsnbslist
-
-    def load_plotstyle(self):
-        print('Not yet implememted')
-        return
-        # clear current plotstyleparser and related info before loading new one
-        self.plotstyleparser = None
-        # load a new histstruct
-        self.plotstyleparser = PlotStyleParser.PlotStyleParser( filename )
 
     def get_reference_histograms(self):
         if not self.ref_set_selector.valid: return None
@@ -1823,9 +1852,9 @@ class PlotLumisectionTab:
             # disable plotting scores in this case (maybe enable later)
             plotscore = False
             msg = 'WARNING: plotscore is automatically set to False for mode run!'
-            print(msg)
+            with self.tab: print(msg)
             # print number of lumisections to plot
-            print('plotting {} lumisections...'.format(len(lsnbs)))
+            with self.tab: print('plotting {} lumisections...'.format(len(lsnbs)))
         else: raise Exception('ERROR: option mode = {} not recognized;'.format(options['mode'])
                                 +' should be either "run" or "ls".')
 
@@ -1887,15 +1916,16 @@ class PlotLumisectionTab:
             try:
                 logprob = self.histstruct.get_globalscore_ls( runnb, lsnb )
             except:
-                print('WARNING: could not retrieve the global score'
+                with self.tab: print('WARNING: could not retrieve the global score'
                         +' for run {}, lumisection {};'.format(runnb, lsnb)
                         +' was it initialized?')
                 logprob = None
-            print('--- Run: {}, LS: {} ---'.format(runnb, lsnb))
-            print('Scores:')
-            for histname in self.histstruct.histnames: 
-                print('{} : {}'.format(histname,scorepoint[histname]))
-            print('Log probability: '+str(logprob))
+            with self.tab:
+                print('--- Run: {}, LS: {} ---'.format(runnb, lsnb))
+                print('Scores:')
+                for histname in self.histstruct.histnames: 
+                    print('{} : {}'.format(histname,scorepoint[histname]))
+                print('Log probability: '+str(logprob))
 
             if plotscore:
                 # check if a reference set was defined
@@ -1903,7 +1933,7 @@ class PlotLumisectionTab:
                     msg = 'WARNING: requested to plot a reference score distribution,'
                     msg += ' but no reference set for the scores was defined;'
                     msg += ' using all lumisections in the current HistStruct.'
-                    print(msg)
+                    with self.tab: print(msg)
                 # initialize the figure
                 ncols = min(4,len(self.histstruct.histnames))
                 nrows = int(math.ceil(len(self.histstruct.histnames)/ncols))
@@ -1955,6 +1985,7 @@ class ML4DQMGUI:
         self.histstruct_filename = None
         self.plotstyleparser = PlotStyleParser.PlotStyleParser()
         self.plotstyle_filename = None
+        self.alltabs = []
 
         # define tabs for creating a new histstruct
         self.welcome_tab = WelcomeTab()
@@ -1968,6 +1999,7 @@ class ML4DQMGUI:
         self.newhstabs.append( self.addrunmasks_tab )
         self.newhstabs.append( self.addstatmasks_tab )
         self.newhstabs.append( self.addclassifiers_tab )
+        self.alltabs.append( self.newhstabs )
         self.newhstabwidget = ipw.Tab(children = [tab.tab for tab in self.newhstabs])
         for i,tab in enumerate(self.newhstabs):
             self.newhstabwidget.set_title(i, tab.title)
@@ -1981,6 +2013,7 @@ class ML4DQMGUI:
         self.hsiotabs.append( self.load_tab )
         self.hsiotabs.append( self.save_tab )
         self.hsiotabs.append( self.display_tab )
+        self.alltabs.append( self.hsiotabs )
         self.hsiotabwidget = ipw.Tab(children = [tab.tab for tab in self.hsiotabs])
         for i,tab in enumerate(self.hsiotabs):
             self.hsiotabwidget.set_title(i, tab.title)
@@ -1992,6 +2025,7 @@ class ML4DQMGUI:
         self.procestabs = []
         self.procestabs.append( self.preprocessing_tab )
         self.procestabs.append( self.resampling_tab )
+        self.alltabs.append( self.procestabs )
         self.procestabwidget = ipw.Tab(children = [tab.tab for tab in self.procestabs])
         for i,tab in enumerate(self.procestabs):
             self.procestabwidget.set_title(i, tab.title)
@@ -2005,6 +2039,7 @@ class ML4DQMGUI:
         self.plottabs.append( self.plotsets_tab )
         self.plottabs.append( self.plot_lumisection_tab )
         self.plottabs.append( self.load_plotstyle_tab )
+        self.alltabs.append( self.plottabs )
         self.plottabwidget = ipw.Tab(children = [tab.tab for tab in self.plottabs])
         for i,tab in enumerate(self.plottabs):
             self.plottabwidget.set_title(i, tab.title)
@@ -2022,6 +2057,7 @@ class ML4DQMGUI:
         self.modeltabs.append( self.fit_tab )
         self.modeltabs.append( self.apply_fit_tab )
         self.modeltabs.append( self.evaluate_tab )
+        self.alltabs.append( self.modeltabs )
         self.modeltabwidget = ipw.Tab(children = [tab.tab for tab in self.modeltabs])
         for i,tab in enumerate(self.modeltabs):
             self.modeltabwidget.set_title(i, tab.title)
@@ -2038,13 +2074,13 @@ class ML4DQMGUI:
         self.tabwidget.set_title(2, 'Histogram processing')
         self.tabwidget.set_title(3, 'Plotting')
         self.tabwidget.set_title(4, 'Model training and evaluation')
+        self.tabwidget.observe(self.refresh, names='selected_index')
         
     def refresh(self, event):
         ### the tab that is clicked
         new_superindex = self.tabwidget.selected_index
-        new_supertab = self.tabwidget.children[new_superindex]
-        new_index = new_supertab.selected_index
-        new_tab = new_supertab.children[new_index]
+        new_index = self.tabwidget.children[new_superindex].selected_index
+        new_tab = self.alltabs[new_superindex][new_index]
         # define default arguments
         kwargs = {}
         # list exceptions below
@@ -2057,6 +2093,7 @@ class ML4DQMGUI:
         if isinstance(new_tab, SaveHistStructTab): kwargs['histstruct'] = self.histstruct
         if isinstance(new_tab, DisplayHistStructTab): kwargs['histstruct'] = self.histstruct
         if isinstance(new_tab, PreprocessingTab): kwargs['histstruct'] = self.histstruct
+        if isinstance(new_tab, LoadPlotStyleTab): kwargs['plotstyleparser'] = self.plotstyleparser
         if isinstance(new_tab, PlotSetsTab): 
             kwargs['histstruct'] = self.histstruct
             kwargs['plotstyleparser'] = self.plotstyleparser
