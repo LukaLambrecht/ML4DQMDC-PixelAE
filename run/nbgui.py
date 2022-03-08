@@ -583,18 +583,17 @@ class PreprocessingTab:
                                         docurls=docurls, docurl=get_docurl(histstruct.preprocess))
 
         # add widgets for selecting histograms
-        self.select_set_obj = SelectorWidget(self.histstruct, set_selection=False, post_selection=False)
-        select_set_box = self.select_set_obj.get_widget()
-        # make layout
-        self.accordion = ipw.Accordion(children=[select_set_box],titles=('Select histograms (default: all)',))
-        self.accordion.selected_index = None
+        self.select_set_obj = SelectorWidget(self.histstruct, 
+                                             title='Select set to process (default: all)',
+                                             set_selection=False, post_selection=False)
+        self.select_set_box = self.select_set_obj.get_widget()
 
         # add a button to apply the preprocessing
         self.apply_button = ipw.Button(description='Apply')
         self.apply_button.on_click(self.apply)
         
         # make the layout
-        self.grid = ipw.GridBox(children=[self.optionsbox.get_widget(), self.accordion, self.apply_button],
+        self.grid = ipw.GridBox(children=[self.optionsbox.get_widget(), self.select_set_box, self.apply_button],
                                 layout=ipw.Layout(grid_template_rows='auto auto auto'))
         
         with self.tab:
@@ -712,7 +711,8 @@ class PlotSetsTab:
         ### add widgets for one more histogram set to plot
         # make widgets
         newidx = len(self.set_selector_list)
-        select_set_obj = SelectorWidget(self.histstruct)
+        select_set_obj = SelectorWidget(self.histstruct,
+                                       title='Select set to plot')
         select_set_box = select_set_obj.get_widget()
         set_default_options = {'label':None, 'color':None}
         set_options_obj = OptionsBox( labels=set_default_options.keys(),
@@ -876,7 +876,9 @@ class ResamplingTab:
             # create a frame to hold the widgets and put some labels
             hist_label = ipw.Label(value=histname)
             # add widgets for choosing resampling basis set
-            select_set_obj = SelectorWidget(self.histstruct, set_selection=False)
+            select_set_obj = SelectorWidget(self.histstruct,
+                                            title='Select basis set for resampling',
+                                            set_selection=False)
             select_set_box = select_set_obj.get_widget()
             # add dropdown entry for resampling function
             allowed_functions = get_resampling_function()
@@ -980,11 +982,15 @@ class TrainClassifiersTab:
         if len(histstruct.get_runnbs())==0:
             with self.tab: print('[current histstruct is empty]')
             return
+        if len(histstruct.classifiers.keys())==0:
+            with self.tab: print('[current histstruct does not contain classifiers]')
+            return
         self.histstruct = histstruct
         self.training_options = {}
 
         # add widgets for choosing resampling basis set
-        self.select_set_obj = SelectorWidget(self.histstruct)
+        self.select_set_obj = SelectorWidget(self.histstruct,
+                                             title='Select training set')
         self.select_set_box = self.select_set_obj.get_widget()
 
         # add widget to expand options for different histograms
@@ -1098,6 +1104,7 @@ class ApplyClassifiersTab:
         
         # add widgets for choosing resampling basis set
         self.select_set_obj = SelectorWidget(self.histstruct, 
+                                             title='Select application set',
                                              mask_selection=False, post_selection=False,
                                              allow_multi_set=True)
         self.select_set_box = self.select_set_obj.get_widget()
@@ -1155,7 +1162,8 @@ class FitTab:
             self.plotdim = 2
 
         # add widgets for choosing fitting set
-        self.fitting_set_selector = SelectorWidget(self.histstruct)
+        self.fitting_set_selector = SelectorWidget(self.histstruct,
+                                                   title='Select fitting set')
 
         # add widgets to select fitting parameters
         self.fitter_box = ipw.Dropdown(options=get_fitter_class(), description='Fit type:')
@@ -1328,6 +1336,7 @@ class ApplyFitTab:
         
         # add widgets for choosing resampling basis set
         self.select_set_obj = SelectorWidget(self.histstruct, 
+                                             title='Select fit application set',
                                              mask_selection=False, post_selection=False,
                                              allow_multi_set=True)
         self.select_set_box = self.select_set_obj.get_widget()
@@ -1466,9 +1475,8 @@ class EvaluateTab:
         labels = list(json_options_dict.keys())
         values = list(json_options_dict.values())
         wtypes = None
-        #for i, label in enumerate(labels):
-        #    if label=='json filename': wtypes[i] = GenericFileSaver
-        self.json_options_frame = OptionsBox(labels=labels, types=wtypes, values=values, autobool=True)
+        self.json_options_frame = OptionsBox(labels=labels, types=wtypes, values=values, 
+                                             docurl='no documentation available at the moment', autobool=True)
         
         # add widgets for 2D contour plots
         self.contour_options_label = ipw.Label(text='Options for fit plots')
@@ -1536,7 +1544,8 @@ class EvaluateTab:
         column = len(self.test_set_widgets)+1
         idx = len(self.test_set_widgets)
         # add widget for set selection
-        selector = SelectorWidget(self.histstruct)
+        selector = SelectorWidget(self.histstruct,
+                                  title='Select evaluation set')
         # add dropdown for type
         type_box = ipw.Dropdown(options=['Good','Bad'], description='Type:')
         if default_type=='Bad': type_box.selected_index = 1
@@ -1627,18 +1636,21 @@ class EvaluateTab:
         json_options = self.json_options_frame.get_dict()
         do_json = json_options.pop('make json file')
         json_filename = json_options.pop('json filename')
-        if do_json:
-            print('Json not yet implemented.')
-        '''if do_json and len(json_filename)==0:
-            print('WARNING: invalid json filename; not writing an output json')
+        if do_json and len(json_filename)==0:
+            with self.tab: print('WARNING: invalid json filename; not writing an output json.')
             do_json = False
+        if do_json and not do_cm:
+            with self.tab: print('WARNING: no working point was set.')
+            working_point = None
         if do_json:
-            if(os.path.splitext(json_filename)[1] not in ['json','txt']):
-                print('WARNING: unrecognized extension in json filename, replacing by .json')
+            json_fileext = os.path.splitext(json_filename)[1]
+            if(json_fileext not in ['.json','.txt']):
+                print('WARNING: unrecognized extension in json filename ({}),'.format(json_fileext)
+                      +' replacing by .json')
                 json_filename = os.path.splitext(json_filename)[0]+'.json'
             with open(json_filename,'w') as f:
                 jsonlist = self.histstruct.get_globalscores_jsonformat(working_point=working_point)
-                json.dump( jsonlist, f, indent=2 )'''
+                json.dump( jsonlist, f, indent=2 )
 
         # contour plots
         contour_options = self.contour_options_frame.get_dict()

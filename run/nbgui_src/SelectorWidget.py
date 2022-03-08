@@ -7,11 +7,12 @@ from OptionsBox import OptionsBox
 
 class SelectorWidget:
 
-    def __init__(self, histstruct, mask_selection=True,
-                                   set_selection=True,
-                                   post_selection=True,
-                                   allow_multi_mask=True,
-                                   allow_multi_set=False):
+    def __init__(self, histstruct, title=None,
+                 mask_selection=True,
+                 set_selection=True,
+                 post_selection=True,
+                 allow_multi_mask=True,
+                 allow_multi_set=False):
         self.histstruct = histstruct
         self.histograms = None
         self.masks = None
@@ -73,7 +74,8 @@ class SelectorWidget:
         self.grid.layout.border = "1px solid black"
         
         # wrap the gridbox in an accordion
-        self.accordion = ipw.Accordion(children=[self.grid],titles=('SelectorWidget'))
+        self.accordion = ipw.Accordion(children=[self.grid])
+        if title is not None: self.accordion.set_title(0, title)
         self.accordion.selected_index = None
         
     def get_widget(self):

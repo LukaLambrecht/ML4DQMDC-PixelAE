@@ -225,7 +225,7 @@ def get_docurl( obj ):
         reldoc = os.path.splitext(relpath)[0]
         # documentation-specific parts: main webpage and paragraph structure
         # (this could be broken if the documentation structure changes!)
-        docweb = 'https://lukalambrecht.github.io/ML4DQM-DC/'
+        docweb = 'https://lukalambrecht.github.io/ML4DQMDC-PixelAE/'
         paragraph = '/#'+objname
         paragraph = paragraph.replace('_','95') # not sure how universally valid this is
         docurl = docweb+reldoc+paragraph
