@@ -40,21 +40,31 @@ if __name__=='__main__':
   istest = True 
   # (if set to true, only one file will be read for speed)
 
-  # make and execute the DAS client command
-  print('running DAS client to find files in dataset {}...'.format(datasetname))
-  dascmd = "dasgoclient -query 'file dataset={}' --limit 0".format(datasetname)
-  dasstdout = os.popen(dascmd).read()
-  dasfiles = [el.strip(' \t') for el in dasstdout.strip('\n').split('\n')]
-  if istest: 
-    #dasfiles = [dasfiles[0]] 
-    dasfiles = [f for f in dasfiles if '7C3F0' in f]
-  print('DAS client ready; found following files ({}):'.format(len(dasfiles)))
-  for f in dasfiles: print('  - {}'.format(f))
+  # overwrite the above default arguments with command line args
+  # (mainly for use in jobs submission script)
+  if len(sys.argv)>1:
+    rundas = False
+    dasfiles = sys.argv[1].split(',')
+    mename = sys.argv[2]
+    outputfile = sys.argv[3]
+  else: rundas = True
+
+  if rundas:
+    # make and execute the DAS client command
+    print('running DAS client to find files in dataset {}...'.format(datasetname))
+    dascmd = "dasgoclient -query 'file dataset={}' --limit 0".format(datasetname)
+    dasstdout = os.popen(dascmd).read()
+    dasfiles = [el.strip(' \t') for el in dasstdout.strip('\n').split('\n')]
+    if istest: 
+      #dasfiles = [dasfiles[0]] 
+      dasfiles = [f for f in dasfiles if '7C3F0' in f]
+    print('DAS client ready; found following files ({}):'.format(len(dasfiles)))
+    for f in dasfiles: print('  - {}'.format(f))
+    redirector = redirector.rstrip('/')+'/'
+    dasfiles = [redirector+f for f in dasfiles]
 
   # make a DQMIOReader instance and initialize it with the DAS files
   print('initializing DQMIOReader...')
-  redirector = redirector.rstrip('/')+'/'
-  dasfiles = [redirector+f for f in dasfiles]
   reader = DQMIOReader(*dasfiles)
   reader.sortIndex()
   print('initialized DQMIOReader with following properties')
