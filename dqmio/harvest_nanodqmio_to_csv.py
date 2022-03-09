@@ -28,94 +28,94 @@ from DQMIOReader import DQMIOReader
 
 if __name__=='__main__':
 
-    # definitions
-    datasetname = '/MinimumBias/Commissioning2021-900GeVmkFit-v2/DQMIO'
-    # (name of the data set on DAS)
-    redirector = 'root://cms-xrd-global.cern.ch/'
-    # (redirector used to access remote files)
-    mename = 'PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_1'
-    # (name of the monitoring element to store)
-    outputfile = 'test.csv'
-    # (path to output file)
-    istest = True 
-    # (if set to true, only one file will be read for speed)
+  # definitions
+  datasetname = '/MinimumBias/Commissioning2021-900GeVmkFit-v2/DQMIO'
+  # (name of the data set on DAS)
+  redirector = 'root://cms-xrd-global.cern.ch/'
+  # (redirector used to access remote files)
+  mename = 'PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_1'
+  # (name of the monitoring element to store)
+  outputfile = 'test.csv'
+  # (path to output file)
+  istest = True 
+  # (if set to true, only one file will be read for speed)
 
-    # make and execute the DAS client command
-    print('running DAS client to find files in dataset {}...'.format(datasetname))
-    dascmd = "dasgoclient -query 'file dataset={}' --limit 0".format(datasetname)
-    dasstdout = os.popen(dascmd).read()
-    dasfiles = [el.strip(' \t') for el in dasstdout.strip('\n').split('\n')]
-    if istest: 
-	#dasfiles = [dasfiles[0]] 
-	dasfiles = [f for f in dasfiles if '7C3F0' in f]
-    print('DAS client ready; found following files ({}):'.format(len(dasfiles)))
-    for f in dasfiles: print('  - {}'.format(f))
+  # make and execute the DAS client command
+  print('running DAS client to find files in dataset {}...'.format(datasetname))
+  dascmd = "dasgoclient -query 'file dataset={}' --limit 0".format(datasetname)
+  dasstdout = os.popen(dascmd).read()
+  dasfiles = [el.strip(' \t') for el in dasstdout.strip('\n').split('\n')]
+  if istest: 
+    #dasfiles = [dasfiles[0]] 
+    dasfiles = [f for f in dasfiles if '7C3F0' in f]
+  print('DAS client ready; found following files ({}):'.format(len(dasfiles)))
+  for f in dasfiles: print('  - {}'.format(f))
 
-    # make a DQMIOReader instance and initialize it with the DAS files
-    print('initializing DQMIOReader...')
-    redirector = redirector.rstrip('/')+'/'
-    dasfiles = [redirector+f for f in dasfiles]
-    reader = DQMIOReader(*dasfiles)
-    reader.sortIndex()
-    print('initialized DQMIOReader with following properties')
-    print('number of lumisections: {}'.format(len(reader.listLumis())))
-    print('number of monitoring elements per lumisection: {}'.format(len(reader.listMEs())))
+  # make a DQMIOReader instance and initialize it with the DAS files
+  print('initializing DQMIOReader...')
+  redirector = redirector.rstrip('/')+'/'
+  dasfiles = [redirector+f for f in dasfiles]
+  reader = DQMIOReader(*dasfiles)
+  reader.sortIndex()
+  print('initialized DQMIOReader with following properties')
+  print('number of lumisections: {}'.format(len(reader.listLumis())))
+  print('number of monitoring elements per lumisection: {}'.format(len(reader.listMEs())))
 
-    # select the monitoring element
-    print('selecting monitoring element {}...'.format(mename))
-    mes = reader.getSingleMEs(mename)
+  # select the monitoring element
+  print('selecting monitoring element {}...'.format(mename))
+  mes = reader.getSingleMEs(mename)
     
-    # write selected monitoring elements to output file
-    print('writing output file...')
-    with open(outputfile, 'w') as f:
-	# write header
-	header = ',fromrun,fromlumi,hname,metype,histo,entries,Xmax,Xmin,Xbins,Ymax,Ymin,Ybins'
-	f.write(header+'\n')
-	# extract bin edges (assume the same for all monitoring elements!)
-	metype = mes[0].type
-	if metype in [3,4,5]:
-	    nxbins = mes[0].data.GetNbinsX()
-	    xmin = mes[0].data.GetBinLowEdge(1)
-	    xmax = mes[0].data.GetBinLowEdge(nxbins)+mes[0].data.GetBinWidth(nxbins)
-	    nybins = 1
-	    ymin = 0
-	    ymax = 1
-	elif metype in [6,7,8]:
-	    nxbins = mes[0].data.GetNbinsX()
-            xmin = mes[0].data.GetXaxis().GetBinLowEdge(1)
-            xmax = (mes[0].data.GetXaxis().GetBinLowEdge(nxbins)
+  # write selected monitoring elements to output file
+  print('writing output file...')
+  with open(outputfile, 'w') as f:
+    # write header
+    header = ',fromrun,fromlumi,hname,metype,histo,entries,Xmax,Xmin,Xbins,Ymax,Ymin,Ybins'
+    f.write(header+'\n')
+    # extract bin edges (assume the same for all monitoring elements!)
+    metype = mes[0].type
+    if metype in [3,4,5]:
+      nxbins = mes[0].data.GetNbinsX()
+      xmin = mes[0].data.GetBinLowEdge(1)
+      xmax = mes[0].data.GetBinLowEdge(nxbins)+mes[0].data.GetBinWidth(nxbins)
+      nybins = 1
+      ymin = 0
+      ymax = 1
+    elif metype in [6,7,8]:
+      nxbins = mes[0].data.GetNbinsX()
+      xmin = mes[0].data.GetXaxis().GetBinLowEdge(1)
+      xmax = (mes[0].data.GetXaxis().GetBinLowEdge(nxbins)
 		    +mes[0].data.GetXaxis().GetBinWidth(nxbins))
-	    nybins = mes[0].data.GetNbinsY()
-	    ymin = mes[0].data.GetYaxis().GetBinLowEdge(1)
-	    ymax = (mes[0].data.GetYaxis().GetBinLowEdge(nybins)
+      nybins = mes[0].data.GetNbinsY()
+      ymin = mes[0].data.GetYaxis().GetBinLowEdge(1)
+      ymax = (mes[0].data.GetYaxis().GetBinLowEdge(nybins)
 		    +mes[0].data.GetYaxis().GetBinWidth(nybins))
-	else:
-	    raise Exception('ERROR: monitoring element type not recognized: {}'.format(metype))
-	# loop over monitoring elements
-	for idx,me in enumerate(mes):
-	    # extract the histogram
-	    if metype in [3,4,5]:
-		histo = np.zeros(nxbins+2, dtype=int)
-		for i in range(nxbins+2):
-		    histo[i] = int(me.data.GetBinContent(i))
-	    elif metype in [6,7,8]:
-		histo = np.zeros((nxbins+2)*(nybins+2), dtype=int)
-		for i in range(nybins+2):
-		    for j in range(nxbins+2):
-			histo[i*(nxbins+2)+j] = int(me.data.GetBinContent(j,i))
-	    # format info
-	    meinfo = ''
-	    meinfo += '{}'.format(idx)
-	    meinfo += ',{}'.format(int(me.run))
-	    meinfo += ',{}'.format(int(me.lumi))
-	    meinfo += ',{}'.format(me.name.split('/')[-1])
-	    meinfo += ',{}'.format(me.type)
-	    meinfo += ',"{}"'.format(json.dumps(list(histo)))
-	    meinfo += ',{}'.format(int(np.sum(histo)))
-	    meinfo += ',{}'.format(xmax)
-	    meinfo += ',{}'.format(xmin)
-	    meinfo += ',{}'.format(nxbins)
-	    meinfo += ',{}'.format(ymax)
-            meinfo += ',{}'.format(ymin)
-            meinfo += ',{}'.format(nybins)
-	    f.write(meinfo+'\n')
+    else:
+      raise Exception('ERROR: monitoring element type not recognized: {}'.format(metype))
+    # loop over monitoring elements
+    for idx,me in enumerate(mes):
+      # extract the histogram
+      if metype in [3,4,5]:
+        histo = np.zeros(nxbins+2, dtype=int)
+        for i in range(nxbins+2):
+          histo[i] = int(me.data.GetBinContent(i))
+      elif metype in [6,7,8]:
+        histo = np.zeros((nxbins+2)*(nybins+2), dtype=int)
+        for i in range(nybins+2):
+          for j in range(nxbins+2):
+            histo[i*(nxbins+2)+j] = int(me.data.GetBinContent(j,i))
+      # format info
+      meinfo = ''
+      meinfo += '{}'.format(idx)
+      meinfo += ',{}'.format(int(me.run))
+      meinfo += ',{}'.format(int(me.lumi))
+      meinfo += ',{}'.format(me.name.split('/')[-1])
+      meinfo += ',{}'.format(me.type)
+      meinfo += ',"{}"'.format(json.dumps(list(histo)))
+      meinfo += ',{}'.format(int(np.sum(histo)))
+      meinfo += ',{}'.format(xmax)
+      meinfo += ',{}'.format(xmin)
+      meinfo += ',{}'.format(nxbins)
+      meinfo += ',{}'.format(ymax)
+      meinfo += ',{}'.format(ymin)
+      meinfo += ',{}'.format(nybins)
+      f.write(meinfo+'\n')
