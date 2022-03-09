@@ -21,7 +21,6 @@ from multiprocessing.pool import ThreadPool
 # note: ThreadPool is used for parallel processing, calling the same function on parallel inputs 
 #       and collecting the results in a list
 
-from IPython import display
 from timeit import default_timer
 # note: only used for callback method to print the progress of getSingleMes
 
@@ -319,9 +318,9 @@ class DQMIOReader:
         lasttime = default_timer()
         deltacount = ncurrent - lastcount
         lastcount = ncurrent
-        display.clear_output(wait=True)
-        display.display("Processed {} out of {} lumis in {:.2f} s ({:.2f}%, {:.2f}/s, avg {:.2f}/s)".format(
-                        ncurrent, ntot, tottime, 100.0*ncurrent/ntot, deltacount/deltatime, ncurrent/tottime))
+        msg = "Processed {} out of {} lumis in {:.2f} s ({:.2f}%, {:.2f}/s, avg {:.2f}/s)".format(
+               ncurrent, ntot, tottime, 100.0*ncurrent/ntot, deltacount/deltatime, ncurrent/tottime)
+        print(msg)
     
     def getSingleMEs(self, name, callback='default'):
         ### read a single monitoring element with the given name from all lumis.
