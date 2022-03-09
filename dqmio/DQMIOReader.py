@@ -8,7 +8,7 @@
 import ROOT
 import numpy as np
 #import root_numpy
-# disable temporary since not available on SWAN, yet to find best solution...
+# disable temporary since not available on SWAN, for now just define manual conversion function from root to numpy array
 # note: root_numpy provides an efficient interface between ROOT and numpy
 from fnmatch import fnmatch 
 # note: fnmatch provides support for unix shell-style wildcards, which are not the same as regular expressions in python
@@ -21,11 +21,31 @@ from multiprocessing.pool import ThreadPool
 # note: ThreadPool is used for parallel processing, calling the same function on parallel inputs 
 #       and collecting the results in a list
 
+from IPython import display
+from timeit import default_timer
+# note: only used for callback method to print the progress of getSingleMes
+
+import pandas as pd
+# note: only used for conversion into dataframe
+
 
 ### static definitions
 
 IndexEntry = namedtuple('IndexEntry', ['run', 'lumi', 'type', 'file', 'firstidx', 'lastidx'])
+# an instance of IndexEntry represents one "entry" in a DQMIO file.
+# this "entry" corresponds to a single lumisection (characterized by run and lumi)
+# and a single type (e.g. TH1F, TH2F, etc.).
+# so all monitoring elements for this lumisection and for this type are in the same IndexEntry,
+# numbered from firstidx to lastidx.
+# note: the firstidx to lastidx range runs in parallel for multiple types (as they are stored in different trees);
+#       so multiple IndexEntries for the same lumisection (but different type) can have overlapping indices,
+#       but multiple IndexEntries for the same type and file but different lumisections have disjoint indices!
 MonitorElement = namedtuple('MonitorElement', ['run', 'lumi', 'name', 'type', 'data'])
+# an instance of MonitorElement represents one monitor element, with all associated information:
+# - the run and lumisection number
+# - the full name of the monitoring element
+# - the type (e.g. TH1F, TH2F, etc., see function getMEType below for all allowed types)
+# - the actual data
 NTHREADS=4 # not sure how high this can be put...
 
 def extractdatafromROOT(x, hist2array=False):
@@ -51,7 +71,10 @@ class DQMIOReader:
     ### class for reading (nano)DQMIO input files and extracting histograms
     # class attributes:
     # - rootfiles: a list of root files (DQMIO format), opened in read mode
-    # - index: defaultdict matching tuples of the form (run number, lumisection number) to lists of IndexEntries
+    # - index: defaultdict matching tuples of the form (run number, lumisection number) to lists of IndexEntries.
+    #          for each key of the form (run number, lumisection number), the value is a list of a few IndexEntries,
+    #          one for each monitoring element type (so 12 at maximum).
+    #          and empty list is returned from the dict if a given (run number, lumisection number) is not present.
     # - melist: dict containing all available monitor element names matched to their type
     
     @staticmethod # (needed in python 2, not in python 3)
@@ -91,7 +114,7 @@ class DQMIOReader:
         # note: for internal use in initializer only, do not call.
         self.index = defaultdict(list)
         def readfileidx(f):
-            ### read file index
+            ### read file index from one file
             # note: for internal use in initializer only, do not call.
             idxtree = getattr(f, "Indices")
             # release GIL in long operations. Disable if it causes trouble.
@@ -100,12 +123,14 @@ class DQMIOReader:
             # loop over all "entries" in the current file
             for i in range(idxtree.GetEntries()):
                 idxtree.GetEntry(i)
-                # get run number, lumi number, and type of monitoring element for this entry
+                # get run number, lumi number, and type of monitoring element for this entry.
+                # note: apparently idxtree contains one "entry" per run, lumisection and type;
+                #       that is: all monitoring elements of the same type (e.g. TH1F) and for the same lumisection
+                #       are in the same "entry"; this is what FirstIndex and LastIndex are for (see below).
+                # note: apparently idxtree.Lumi gives 0 for per-run monitoring elements,
+                #       but for now we ignore those and only read per-ls monitoring elements.
                 run, lumi, metype = idxtree.Run, idxtree.Lumi, idxtree.Type
-                if lumi == 0:
-                    # read only per-lumisection monitoring elements for now.
-                    continue
-                # inclusive range -- for 0 entries, row is left out
+                if lumi == 0: continue
                 firstidx, lastidx = idxtree.FirstIndex, idxtree.LastIndex
                 e = IndexEntry(run, lumi, metype, f, firstidx, lastidx)
                 self.index[(run, lumi)].append(e)
@@ -163,12 +188,15 @@ class DQMIOReader:
                              +" requested to read data for lumisection {},".format(runlumi)
                              +" but no data was found for this lumisection in the current DQMIOReader.")
         
-        # loop over all entries for this lumisection
+        # loop over all entries for this lumisection;
+        # this corresponds to looping over all types of monitoring elements
+        # (see the documentation of IndexEntry for more info).
         result = []
         for e in entries:
-            # read the tree and disable all branches except "FullName"
+            # read the correct tree from the file corresponding to this type of monitoring element
             metree = getattr(e.file, DQMIOReader.getMEType(e.type))
             metree.GetEntry(0)
+            # disable all branches except "FullName"
             metree.SetBranchStatus("*",0)
             metree.SetBranchStatus("FullName",1)
             # release GIL in long operations. Disable if it causes trouble.
@@ -265,29 +293,59 @@ class DQMIOReader:
         # a list of named tuples of type MonitorElement
         return sum((self.getMEsForLumi(lumi, *namepatterns) for lumi in self.listLumis()), [])
         # (note: sum is list concat here)
+ 
+    @staticmethod
+    def showcount(ncurrent, ntot):
+        ### default callback method showing the progress of getSingleMEs
+        # input arguments:
+        # - ncurrent: current number of instance being processed
+        # - ntot: total number of instances to process
+        global start, lasttime, lastcount
+        try:
+            assert(lastcount < ncurrent)
+            # this fails if things are not initialized (e.g. in the first call)
+            # or the ctr was reset.
+        except:
+            # (re-)initialize
+            start = default_timer()
+            lasttime = default_timer()
+            lastcount = 0
+        tottime = default_timer() - start
+        deltatime = default_timer() - lasttime
+        lasttime = default_timer()
+        deltacount = ncurrent - lastcount
+        lastcount = ncurrent
+        display.clear_output(wait=True)
+        display.display("Processed {} out of {} lumis in {:.2f} s ({:.2f}%, {:.2f}/s, avg {:.2f}/s)".format(
+                        ncurrent, ntot, tottime, 100.0*ncurrent/ntot, deltacount/deltatime, ncurrent/tottime))
     
-    def getSingleMEs(self, name, callback=None):
+    def getSingleMEs(self, name, callback='default'):
         ### read a single monitoring element with the given name from all lumis.
         # input arguments:
         # - name: the name of a monitoring element to extract
-        # - callback: ?
+        # - callback: can be used for progress printing.
+        #             can be None (no callback), a custom function, or 'default',
+        #             in which case the default callback showcount will be called.
         # returns:
         # a list of named tuples of type MonitorElement
-        # note: this can be much faster than getMEsForLumi when only few MEs are read per lumi.
+        # note: this can be much faster than getMEs when only few MEs are read per lumi.
         files = defaultdict(list)
         ctr = [0]
         # make a dict storing which lumisections are stored in which file
         for lumi in self.listLumis():
             files[self.index[lumi][0].file.GetName()].append(lumi)
+        # set the callback function as an instancde attribute
+        self.callback = callback
+        if self.callback=='default': self.callback = DQMIOReader.showcount
                              
         def readlumi(lumi):
             ### read a single lumisection
             # note: for internal use in getSingleMEs only, do not call.
             l = self.getSingleMEForLumi(lumi, name)
-            if callback:
+            if self.callback is not None:
                 ctr[0] += 1
-                if ctr[0] % 10 == 0:
-                    callback(ctr[0])
+                if ctr[0] % 1 == 0:
+                    self.callback(ctr[0], len(self.listLumis()))
             return l
                              
         def readfile(f):
@@ -299,3 +357,73 @@ class DQMIOReader:
         result = p.map(readfile, files.keys())
         p.close()
         return sum(result, [])
+    
+    def getSingleMEsToDataFrame(self, name):
+        ### return a pandas dataframe for a given monitoring element
+        # note: the same naming convention is used as in the 2017/2018 csv input!
+        
+        # get the monitoring elements
+        mes = self.getSingleMEs(name)
+        # initialize a dict with all info
+        dfdict = dict()
+        dfdict['fromrun'] = []
+        dfdict['fromlumi'] = []
+        dfdict['hname'] = []
+        dfdict['metype'] = []
+        dfdict['histo'] = []
+        dfdict['entries'] = []
+        dfdict['Xmax'] = []
+        dfdict['Xmin'] = []
+        dfdict['Xbins'] = []
+        dfdict['Ymax'] = []
+        dfdict['Ymin'] = []
+        dfdict['Ybins'] = []
+        # extract bin edges (assume the same for all monitoring elements!)
+        metype = mes[0].type
+        if metype in [3,4,5]:
+            nxbins = mes[0].data.GetNbinsX()
+            xmin = mes[0].data.GetBinLowEdge(1)
+            xmax = mes[0].data.GetBinLowEdge(nxbins)+mes[0].data.GetBinWidth(nxbins)
+            nybins = 1
+            ymin = 0
+            ymax = 1
+        elif metype in [6,7,8]:
+            nxbins = mes[0].data.GetNbinsX()
+            xmin = mes[0].data.GetXaxis().GetBinLowEdge(1)
+            xmax = (mes[0].data.GetXaxis().GetBinLowEdge(nxbins)
+                    +mes[0].data.GetXaxis().GetBinWidth(nxbins))
+            nybins = mes[0].data.GetNbinsY()
+            ymin = mes[0].data.GetYaxis().GetBinLowEdge(1)
+            ymax = (mes[0].data.GetYaxis().GetBinLowEdge(nybins)
+                    +mes[0].data.GetYaxis().GetBinWidth(nybins))
+        else:
+            raise Exception('ERROR in DQMIOReader.getSingleMEsToDataFrame:'
+                            +' monitoring element type not recognized: {}'.format(metype))
+        # loop over monitoring elements
+        for idx,me in enumerate(mes):
+            # extract the histogram
+            if metype in [3,4,5]:
+                histo = np.zeros(nxbins+2, dtype=int)
+                for i in range(nxbins+2):
+                    histo[i] = int(me.data.GetBinContent(i))
+            elif metype in [6,7,8]:
+                histo = np.zeros((nxbins+2)*(nybins+2), dtype=int)
+                for i in range(nybins+2):
+                    for j in range(nxbins+2):
+                        histo[i*(nxbins+2)+j] = int(me.data.GetBinContent(j,i))
+            # append all info
+            dfdict['fromrun'].append(me.run)
+            dfdict['fromlumi'].append(me.lumi)
+            dfdict['hname'].append(me.name)
+            dfdict['metype'].append(me.type)
+            dfdict['histo'].append(histo)
+            dfdict['entries'].append(int(np.sum(histo)))
+            dfdict['Xmax'].append(xmax)
+            dfdict['Xmin'].append(xmin)
+            dfdict['Xbins'].append(nxbins)
+            dfdict['Ymax'].append(ymax)
+            dfdict['Ymin'].append(ymin)
+            dfdict['Ybins'].append(nybins)
+        # make a dataframe
+        df = pd.DataFrame(dfdict)
+        return df
