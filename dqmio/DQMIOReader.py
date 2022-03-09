@@ -137,12 +137,16 @@ class DQMIOReader:
         p = ThreadPool(NTHREADS)
         p.map(readfileidx, self.rootfiles)
         p.close()
+        # convert the defaultdict to a regular dict
+        # (else unwanted behaviour when trying to retrieve lumisections that are not present;
+        #  in case of defaultdict they are added to the index as empty lists of IndexEntries)
+        self.index = dict(self.index)
         
     def sortIndex(self):
         ### sort the index by run and lumisection number
         # note: preliminary implementation, not guaranteed to be optimal
         # note: might not work in python 2, where dicts have no ordering
-        self.newindex = defaultdict(list)
+        self.newindex = dict()
         for key,val in sorted(self.index.items()):
             self.newindex[key] = val
         self.index = self.newindex
@@ -182,8 +186,8 @@ class DQMIOReader:
                 return False
  
         # get the data for the requested lumisection
-        entries = self.index[runlumi]
-        if not entries: 
+        entries = self.index.get(runlumi, None)
+        if entries is None: 
             raise IndexError("ERROR in DQMIOReader.getMEsForLumi:"
                              +" requested to read data for lumisection {},".format(runlumi)
                              +" but no data was found for this lumisection in the current DQMIOReader.")
@@ -253,7 +257,7 @@ class DQMIOReader:
             return 0
         
         # get all entries for the given lumisection and monitoring element name
-        entries = [e for e in self.index[runlumi] if e.type == self.melist[name]]
+        entries = [e for e in self.index.get(runlumi, []) if e.type == self.melist[name]]
         if len(entries)!=1:
             raise IndexError("ERROR in DQMIOReader.getSingleMEForLumi:"
                              +" requested to read data for lumisection {}".format(runlumi)
