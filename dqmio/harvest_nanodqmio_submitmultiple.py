@@ -16,10 +16,15 @@ import condortools as ct
 if __name__=='__main__':
 
   # definitions
+  filemode = 'das'
+  # (choose from 'das' or 'local';
+  #  in case of 'das', will read all files belonging to the specified dataset from DAS;
+  #  in case of 'local', will read all files in the specified folder on the local filesystem.)
   datasetname = '/MinimumBias/Commissioning2021-900GeVmkFit-v2/DQMIO'
-  # (name of the data set on DAS)
+  # (name of the data set on DAS (or filemode 'das') 
+  #  OR name of the folder holding input files (for filemode 'local'))
   redirector = 'root://cms-xrd-global.cern.ch/'
-  # (redirector used to access remote files)
+  # (redirector used to access remote files (ignored in filemode 'local'))
   menames = ({
     'PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_1': 'output_chargeInner_PXLayer_1.csv',
     'PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_2': 'output_chargeInner_PXLayer_2.csv',
@@ -33,27 +38,35 @@ if __name__=='__main__':
   runmode = 'condor'
   # (choose from 'condor' or 'local')
   proxy = os.path.abspath('x509up_u23078')
-  # (set location of a valid proxy created with --voms-proxy-init --voms cms)
+  # (set location of a valid proxy created with --voms-proxy-init --voms cms
+  #  (ignored in filemode 'local'))
 
-  # make and execute the DAS client command
-  print('running DAS client to find files in dataset {}...'.format(datasetname))
-  dascmd = "dasgoclient -query 'file dataset={}' --limit 0".format(datasetname)
-  dasstdout = os.popen(dascmd).read()
-  dasfiles = [el.strip(' \t') for el in dasstdout.strip('\n').split('\n')]
-  print('DAS client ready; found following files ({}):'.format(len(dasfiles)))
-  for f in dasfiles: print('  - {}'.format(f))
-  redirector = redirector.rstrip('/')+'/'
-  dasfiles = [redirector+f for f in dasfiles]
-  if len(dasfiles)==0:
-    raise Exception('ERROR: no files found by the DAS client'
-		    +' for the queried dataset {}'.format(datasetname))
+  # make a list of input files
+  if filemode=='das':
+    # make and execute the DAS client command
+    print('running DAS client to find files in dataset {}...'.format(datasetname))
+    dascmd = "dasgoclient -query 'file dataset={}' --limit 0".format(datasetname)
+    dasstdout = os.popen(dascmd).read()
+    dasfiles = [el.strip(' \t') for el in dasstdout.strip('\n').split('\n')]
+    print('DAS client ready; found following files ({}):'.format(len(dasfiles)))
+    for f in dasfiles: print('  - {}'.format(f))
+    redirector = redirector.rstrip('/')+'/'
+    inputfiles = [redirector+f for f in dasfiles]
+    if len(inputfiles)==0:
+      raise Exception('ERROR: no files found by the DAS client'
+		      +' for the queried dataset {}'.format(datasetname))
+  elif filemode=='local':
+    # read all root files in the given directory
+    inputfiles = ([os.path.join(datasetname,f) for f in os.listdir(datasetname)
+                      if f[-5:]=='.root'])
+    proxy = None
 
   # loop over the monitoring elements
   cmds = []
   for mename,outputfile in menames.items():
     # make the command
     cmd = exe
-    cmd += ' '+','.join(dasfiles)
+    cmd += ' '+','.join(inputfiles)
     cmd += ' {}'.format(mename)
     cmd += ' {}'.format(outputfile)
     cmds.append(cmd)
