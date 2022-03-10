@@ -24,20 +24,39 @@ if __name__=='__main__':
   istest = True 
   # (if set to true, only one file will be read for speed)
 
+  # overwrite the above default arguments with command line args
+  # (mainly for use in jobs submission script)
+  if len(sys.argv)>1:
+    rundas = False
+    dasfiles = sys.argv[1].split(',')
+    mename = sys.argv[2]
+    outputfile = sys.argv[3]
+  else: rundas = True
+
   # make and execute the DAS client command
-  print('running DAS client to find files in dataset {}...'.format(datasetname))
-  dascmd = "dasgoclient -query 'file dataset={}' --limit 0".format(datasetname)
-  dasstdout = os.popen(dascmd).read()
-  dasfiles = [el.strip(' \t') for el in dasstdout.strip('\n').split('\n')]
-  if istest: dasfiles = [dasfiles[0]] 
-  print('DAS client ready; found following files ({}):'.format(len(dasfiles)))
-  for f in dasfiles: print('  - {}'.format(f))
+  if rundas:
+    print('running DAS client to find files in dataset {}...'.format(datasetname))
+    dascmd = "dasgoclient -query 'file dataset={}' --limit 0".format(datasetname)
+    dasstdout = os.popen(dascmd).read()
+    dasfiles = [el.strip(' \t') for el in dasstdout.strip('\n').split('\n')]
+    if istest: dasfiles = [dasfiles[0]] 
+    print('DAS client ready; found following files ({}):'.format(len(dasfiles)))
+    for f in dasfiles: print('  - {}'.format(f))
+    redirector = redirector.rstrip('/')+'/'
+    dasfiles = [redirector+f for f in dasfiles]
+
+  # print configuration parameters
+  print('running with following parameters:')
+  print('input files:')
+  for dasfile in dasfiles: print('  - {}'.format(dasfile))
+  print('monitoring element: {}'.format(mename))
+  print('outputfile: {}'.format(outputfile))
 
   # make a DQMIOReader instance and initialize it with the DAS files
   print('initializing DQMIOReader...')
-  redirector = redirector.rstrip('/')+'/'
-  dasfiles = [redirector+f for f in dasfiles]
   reader = DQMIOReader(*dasfiles)
+  sys.stdout.flush()
+  sys.stderr.flush()
   reader.sortIndex()
   print('initialized DQMIOReader with following properties')
   print('number of lumisections: {}'.format(len(reader.listLumis())))

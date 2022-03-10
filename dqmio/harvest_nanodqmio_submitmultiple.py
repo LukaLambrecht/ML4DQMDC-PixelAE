@@ -1,3 +1,12 @@
+##########################################
+# submitter for DQMIO conversion scripts #
+##########################################
+# this script wraps conversion scripts (harvest_nanodqmio_to_*.py) in a job.
+# the difference with respect to harvest_nanodqmio_submit.py is that this script
+# makes it more easy to harvest multiple monitoring elements in one go
+# (instead of modifying and resubmitting harvest_nanodqmio_submit.py sequentially).
+# the parameters that should be modified according to your needs are explained below.
+
 ### imports
 import sys
 import os
@@ -19,11 +28,12 @@ if __name__=='__main__':
 	    })	
   # (names of the monitoring elements to store matched to output files)
   exe = 'python harvest_nanodqmio_to_csv.py'
-  # (executable to run)
+  # (executable to run, should be a valid conversion script 
+  # similar in structure and command line args to e.g. harvest_nanodqmio_to_csv.py)
   runmode = 'condor'
   # (choose from 'condor' or 'local')
   proxy = os.path.abspath('x509up_u23078')
-  # (set location of a valid proxy)
+  # (set location of a valid proxy created with --voms-proxy-init --voms cms)
 
   # make and execute the DAS client command
   print('running DAS client to find files in dataset {}...'.format(datasetname))

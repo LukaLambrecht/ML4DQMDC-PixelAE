@@ -1,3 +1,9 @@
+##########################################
+# submitter for DQMIO conversion scripts #
+##########################################
+# this script wraps conversion scripts (harvest_nanodqmio_to_*.py) in a job.
+# the parameters that should be modified according to your needs are explained below.
+
 ### imports
 import sys
 import os
@@ -16,13 +22,14 @@ if __name__=='__main__':
   outputfile = 'test.csv'
   # (path to output file)
   exe = 'python harvest_nanodqmio_to_csv.py'
-  # (executable to run)
+  # (executable to run, should be a valid conversion script 
+  # similar in structure and command line args to e.g. harvest_nanodqmio_to_csv.py)
   istest = False 
   # (if set to true, only one file will be read for speed)
   runmode = 'condor'
   # (choose from 'condor' or 'local')
   proxy = os.path.abspath('x509up_u23078')
-  # (set the location of a valid proxy)
+  # (set the location of a valid proxy created with --voms-proxy-init --voms cms)
 
   # make and execute the DAS client command
   print('running DAS client to find files in dataset {}...'.format(datasetname))
@@ -30,8 +37,7 @@ if __name__=='__main__':
   dasstdout = os.popen(dascmd).read()
   dasfiles = [el.strip(' \t') for el in dasstdout.strip('\n').split('\n')]
   if istest: 
-    #dasfiles = [dasfiles[0]] 
-    dasfiles = [f for f in dasfiles if '7C3F0' in f]
+    dasfiles = [dasfiles[0]] 
   print('DAS client ready; found following files ({}):'.format(len(dasfiles)))
   for f in dasfiles: print('  - {}'.format(f))
   redirector = redirector.rstrip('/')+'/'
