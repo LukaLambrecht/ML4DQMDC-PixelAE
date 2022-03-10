@@ -331,6 +331,8 @@ class DQMIOReader:
         msg = "Processed {} out of {} lumis in {:.2f} s ({:.2f}%, {:.2f}/s, avg {:.2f}/s)".format(
                ncurrent, ntot, tottime, 100.0*ncurrent/ntot, deltacount/deltatime, ncurrent/tottime)
         print(msg)
+	sys.stdout.flush()
+	sys.stderr.flush()
     
     def getSingleMEs(self, name, callback='default'):
         ### read a single monitoring element with the given name from all lumis.
