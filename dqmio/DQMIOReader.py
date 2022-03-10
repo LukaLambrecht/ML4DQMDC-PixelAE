@@ -105,17 +105,17 @@ class DQMIOReader:
         # - files: a filename (or multiple filenames) to open
         #          if stored locally, the filenames should contain the full path.
         #          if stored on the grid, prefix the file path with "root://cms-xrd-global.cern.ch/" (not yet tested)
-	print('DQMIOReader.__init__: opening {} files...'.format(len(files)))
-	sys.stdout.flush()
-	sys.stderr.flush()
-	self.rootfiles = [ROOT.TFile.Open(f) for f in files]
-	print('all files opened, now making index')
-	sys.stdout.flush()
-	sys.stderr.flush()
+        print('DQMIOReader.__init__: opening {} files...'.format(len(files)))
+        sys.stdout.flush()
+        sys.stderr.flush()
+        self.rootfiles = [ROOT.TFile.Open(f) for f in files]
+        print('all files opened, now making index')
+        sys.stdout.flush()
+        sys.stderr.flush()
         self.readindex()
-	print('index made, now making melist')
-	sys.stdout.flush()
-	sys.stderr.flush()
+        print('index made, now making melist')
+        sys.stdout.flush()
+        sys.stderr.flush()
         self.makelist()
 
     def readindex(self):
@@ -331,8 +331,8 @@ class DQMIOReader:
         msg = "Processed {} out of {} lumis in {:.2f} s ({:.2f}%, {:.2f}/s, avg {:.2f}/s)".format(
                ncurrent, ntot, tottime, 100.0*ncurrent/ntot, deltacount/deltatime, ncurrent/tottime)
         print(msg)
-	sys.stdout.flush()
-	sys.stderr.flush()
+        sys.stdout.flush()
+        sys.stderr.flush()
     
     def getSingleMEs(self, name, callback='default'):
         ### read a single monitoring element with the given name from all lumis.
