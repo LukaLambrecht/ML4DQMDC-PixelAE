@@ -5,6 +5,7 @@
 
 ### imports
 
+import sys
 import ROOT
 import numpy as np
 #import root_numpy
@@ -104,8 +105,17 @@ class DQMIOReader:
         # - files: a filename (or multiple filenames) to open
         #          if stored locally, the filenames should contain the full path.
         #          if stored on the grid, prefix the file path with "root://cms-xrd-global.cern.ch/" (not yet tested)
-        self.rootfiles = [ROOT.TFile.Open(f) for f in files]
+	print('DQMIOReader.__init__: opening {} files...'.format(len(files)))
+	sys.stdout.flush()
+	sys.stderr.flush()
+	self.rootfiles = [ROOT.TFile.Open(f) for f in files]
+	print('all files opened, now making index')
+	sys.stdout.flush()
+	sys.stderr.flush()
         self.readindex()
+	print('index made, now making melist')
+	sys.stdout.flush()
+	sys.stderr.flush()
         self.makelist()
 
     def readindex(self):

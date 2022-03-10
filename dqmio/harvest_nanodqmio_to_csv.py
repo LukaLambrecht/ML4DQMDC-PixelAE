@@ -63,8 +63,17 @@ if __name__=='__main__':
     redirector = redirector.rstrip('/')+'/'
     dasfiles = [redirector+f for f in dasfiles]
 
+  # print configuration parameters
+  print('running with following parameters:')
+  print('input files:')
+  for dasfile in dasfiles: print('  - {}'.format(dasfile))
+  print('monitoring element: {}'.format(mename))
+  print('outputfile: {}'.format(outputfile))
+
   # make a DQMIOReader instance and initialize it with the DAS files
   print('initializing DQMIOReader...')
+  sys.stdout.flush()
+  sys.stderr.flush()
   reader = DQMIOReader(*dasfiles)
   reader.sortIndex()
   print('initialized DQMIOReader with following properties')
