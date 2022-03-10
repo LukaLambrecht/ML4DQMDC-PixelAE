@@ -357,7 +357,7 @@ class DQMIOReader:
             l = self.getSingleMEForLumi(lumi, name)
             if self.callback is not None:
                 ctr[0] += 1
-                if ctr[0] % 1 == 0:
+                if ctr[0] % 10 == 0:
                     self.callback(ctr[0], len(self.listLumis()))
             return l
                              
