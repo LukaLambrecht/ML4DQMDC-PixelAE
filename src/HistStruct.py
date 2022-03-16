@@ -514,6 +514,28 @@ class HistStruct(object):
             mask = mask & self.masks[name]
         return mask
     
+    def pass_masks( self, masknames, runnbs=None, lsnbs=None ):
+        ### get a list of booleans
+        # input arguments:
+        # - masknames: list of mask names
+        # - runnbs: list of run numbers (default: all in histstruct)
+        # - lsnbs: list of lumisection numbers (equally long as runnbs) (default: al in histstruct)
+        res = []
+        if( runnbs is None or lsnbs is None ):
+            # fast method that does not require looping
+            mask = self.masks[masknames[0]]
+            for maskname in masknames[1:]:
+                mask = mask & self.masks[maskname]
+            return mask
+        for runnb, lsnb in zip(runnbs,lsnbs):
+            # slower method with looping
+            passmasks = True
+            idx = self.get_index(runnb, lsnb)
+            for mask in masknames:
+                if not self.masks[mask][idx]: passmasks = False
+            res.append(passmasks)
+        return res
+    
     def get_masknames( self ):
         ### return a simple list of all mask names in the current HistStruct
         return list( self.masks.keys() )

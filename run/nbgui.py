@@ -80,6 +80,9 @@ from SelectorWidget import SelectorWidget
 import OptionsBox
 importlib.reload(OptionsBox)
 from OptionsBox import OptionsBox
+import HistStructViewer
+importlib.reload(HistStructViewer)
+from HistStructViewer import HistStructViewer
 
 print('done')
 
@@ -291,7 +294,6 @@ class NewHistStructTab:
                 len(self.histstruct.runnbs),len(self.histstruct.histnames)))
     
         # add default masks for DCS-bit on and golden json
-        # to do: make this more flexible with user options
         with self.tab: print('adding default DCS-on and golden json masks...')
         try: self.histstruct.add_dcsonjson_mask( 'dcson' )
         except: 
@@ -305,7 +307,6 @@ class NewHistStructTab:
                         +' Check access to golden json file.')
 
         # add training and target mask for local training
-        # to do: make this more flexible (e.g. choosing names)
         if training_mode=='local':
             if self.get_target_run() is not None:
                 with self.tab: print('adding mask for target runs...')
@@ -544,6 +545,28 @@ class DisplayHistStructTab:
         with self.tab:
             clear_output()
             display(self.grid)
+            
+
+class DisplayHistStructNewTab:
+    def __init__(self):
+        ### initializer
+        self.tab = ipw.Output()
+        self.title = 'Display (new)'
+    
+    def refresh(self, histstruct=None):
+        if histstruct is None:
+            with self.tab: print('[no histstruct found]')
+            return
+        if len(histstruct.get_runnbs())==0:
+            with self.tab: print('[current histstruct is empty]')
+            return
+        self.histstruct = histstruct
+        hsviewer = HistStructViewer(histstruct=self.histstruct)
+        
+        with self.tab:
+            clear_output()
+            print('processing...')
+            display(hsviewer.get_widget())
             
             
 class PreprocessingTab:
@@ -2021,10 +2044,12 @@ class ML4DQMGUI:
         self.load_tab = LoadHistStructTab( self.load )
         self.save_tab = SaveHistStructTab()
         self.display_tab = DisplayHistStructTab()
+        self.displaynew_tab = DisplayHistStructNewTab()
         self.hsiotabs = []
         self.hsiotabs.append( self.load_tab )
         self.hsiotabs.append( self.save_tab )
         self.hsiotabs.append( self.display_tab )
+        self.hsiotabs.append( self.displaynew_tab )
         self.alltabs.append( self.hsiotabs )
         self.hsiotabwidget = ipw.Tab(children = [tab.tab for tab in self.hsiotabs])
         for i,tab in enumerate(self.hsiotabs):
@@ -2104,6 +2129,7 @@ class ML4DQMGUI:
         if isinstance(new_tab, LoadHistStructTab): kwargs['external_load_function'] = self.load
         if isinstance(new_tab, SaveHistStructTab): kwargs['histstruct'] = self.histstruct
         if isinstance(new_tab, DisplayHistStructTab): kwargs['histstruct'] = self.histstruct
+        if isinstance(new_tab, DisplayHistStructNewTab): kwargs['histstruct'] = self.histstruct
         if isinstance(new_tab, PreprocessingTab): kwargs['histstruct'] = self.histstruct
         if isinstance(new_tab, LoadPlotStyleTab): kwargs['plotstyleparser'] = self.plotstyleparser
         if isinstance(new_tab, PlotSetsTab): 
