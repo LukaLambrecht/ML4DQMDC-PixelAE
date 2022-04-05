@@ -1045,7 +1045,7 @@ class HistStruct(object):
         return res
     
     
-    def plot_histograms_run( self, histnames=None, masknames=None, histograms=None,  
+    def plot_histograms_run( self, histnames=None, masknames=None, histograms=None, ncols=4, 
                             titledict=None, xaxtitledict=None, physicalxax=False, 
                             yaxtitledict=None, **kwargs ):
         ### plot a set of histograms in a HistStruct with a smooth color gradient.
@@ -1084,7 +1084,7 @@ class HistStruct(object):
         # make a plot of the 1D histograms
         if len(histnames1d)>0:
             fig1d,axs1d = self.plot_histograms_run_1d( histnames=histnames1d, masknames=masknames, 
-                            histograms=histograms,
+                            histograms=histograms, ncols=ncols,
                             titledict=titledict, xaxtitledict=xaxtitledict, physicalxax=physicalxax, 
                             yaxtitledict=yaxtitledict,
                             **kwargs )
@@ -1093,14 +1093,14 @@ class HistStruct(object):
         return (fig1d,axs1d)
 
 
-    def plot_histograms_run_1d( self, histnames=None, masknames=None, histograms=None, 
+    def plot_histograms_run_1d( self, histnames=None, masknames=None, histograms=None, ncols=4,
                             titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, 
                             **kwargs ):
         ### plot the histograms in a histstruct, optionally after masking
         # internal helper function, use only via plot_histograms_run
         
         # initializations
-        ncols = min(4,len(histnames))
+        ncols = min(ncols,len(histnames))
         nrows = int(math.ceil(len(histnames)/ncols))
         fig,axs = plt.subplots(nrows,ncols,figsize=(7*ncols,5*nrows),squeeze=False)
         # loop over all histogram types
@@ -1128,7 +1128,7 @@ class HistStruct(object):
         return fig,axs
     
 
-    def plot_ls( self, runnb, lsnb, histnames=None, histlabel=None, 
+    def plot_ls( self, runnb, lsnb, histnames=None, histlabel=None, ncols=4,
                  recohist=None, recohistlabel='Reconstruction', 
                  refhists=None, refhistslabel='Reference histograms', refhiststransparency=None,
                  titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs):
@@ -1191,7 +1191,7 @@ class HistStruct(object):
 
         # case of 1D histograms
         if len(histnames1d)>0:
-            (fig1d, axs1d) = self.plot_ls_1d( runnb, lsnb, histnames=histnames, histlabel=histlabel,
+            (fig1d, axs1d) = self.plot_ls_1d( runnb, lsnb, histnames=histnames, histlabel=histlabel, ncols=ncols,
                                 recohist=recohist, recohistlabel=recohistlabel,
                                 refhists=refhists, refhistslabel=refhistslabel, 
                                 refhiststransparency=refhiststransparency,
@@ -1214,7 +1214,9 @@ class HistStruct(object):
         return (fig1d,axs1d,fig2d,axs2d)
 
 
-    def plot_run( self, runnb, masknames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False):
+    def plot_run( self, runnb, masknames=None, ncols=4, 
+                  recohist=None, recohistlabel='reco', 
+                  refhists=None, refhistslabel='reference', doprint=False):
         ### call plot_ls for all lumisections in a given run
         runnbs = self.get_runnbs( masknames=masknames )
         lsnbs = self.get_lsnbs( masknames=masknames )
@@ -1222,10 +1224,12 @@ class HistStruct(object):
         lsnbs = lsnbs[runsel]
         print('plotting {} lumisections...'.format(len(lsnbs)))
         for lsnb in lsnbs:
-            _ = self.plot_ls(runnb, lsnb, recohist=recohist, recohistlabel=recohistlabel, refhists=refhists, refhistslabel=refhistslabel)
+            _ = self.plot_ls(runnb, lsnb, ncols=ncols, 
+                             recohist=recohist, recohistlabel=recohistlabel, 
+                             refhists=refhists, refhistslabel=refhistslabel)
 
 
-    def plot_ls_1d( self, runnb, lsnb, histnames=None, histlabel=None,
+    def plot_ls_1d( self, runnb, lsnb, histnames=None, histlabel=None, ncols=4,
                  recohist=None, recohistlabel='Reconstruction',
                  refhists=None, refhistslabel='Reference histograms', refhiststransparency=None,
                  titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs):
@@ -1235,7 +1239,7 @@ class HistStruct(object):
         # find index that given run and ls number correspond to
         index = self.get_index( runnb, lsnb )
         # initializations
-        ncols = min(4,len(histnames))
+        ncols = min(ncols,len(histnames))
         nrows = int(math.ceil(len(histnames)/ncols))
         fig,axs = plt.subplots(nrows,ncols,figsize=(5*ncols,5*nrows),squeeze=False)
         if histlabel is None: histlabel = 'Run: '+str(int(runnb))+', LS: '+str(int(lsnb))+')'
