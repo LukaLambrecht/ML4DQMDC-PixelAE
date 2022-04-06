@@ -1245,37 +1245,47 @@ class HistStruct(object):
         if histlabel is None: histlabel = 'Run: '+str(int(runnb))+', LS: '+str(int(lsnb))+')'
         # loop over all histograms belonging to this lumisection and make the plots
         for j,name in enumerate(histnames):
-            # get the original histogram
+            histlist = []
+            colorlist = []
+            labellist = []
+            transparencylist = []
+            # first plot the provided reference histograms
+            if refhists is not None:
+                histlist.append(refhists[name])
+                colorlist.append('blue')
+                labellist.append(refhistslabel)
+                if refhiststransparency is None: refhiststransparency=0.3
+                transparencylist.append(refhiststransparency)
+            # then plot the original histogram
             hist = self.histograms[name][index:index+1,:]
-            histlist = [hist]
-            colorlist = ['black']
-            labellist = [histlabel]
-            transparencylist = [1.]
-            # get the automatically reconstructed histogram
+            histlist.append(hist)
+            colorlist.append('black')
+            labellist.append(histlabel)
+            transparencylist.append(1.)
+            # then plot the automatically reconstructed histogram
             if recohist=='auto':
                 if not hasattr(self.classifiers[name],'reconstruct'):
                     raise Exception('ERROR in HistStruct.plot_ls: automatic calculation of reco hist requires the classifiers '
                                    +'to have a method called "reconstruct", but this does not seem to be the case for histogram type {}, '.format(name)
                                    +' whose classifier is of type {}'.format(type(self.classifiers[name])))
                 reco = self.classifiers[name].reconstruct(hist)
-                histlist.insert(0,reco)
-                colorlist.insert(0,'red')
-                labellist.insert(0,recohistlabel)
-                transparencylist.insert(0,1.)
-            # get the provided reconstructed histogram
+                histlist.append(reco)
+                colorlist.append('red')
+                labellist.append(recohistlabel)
+                transparencylist.append(1.)
+            # or get the provided reconstructed histogram
             elif recohist is not None:
                 reco = recohist[name]
-                histlist.insert(0,reco)
-                colorlist.insert(0,'red')
-                labellist.insert(0,recohistlabel)
-                transparencylist.insert(0,1.)
-            # get the provided reference histograms
-            if refhists is not None:
-                histlist.insert(0,refhists[name])
-                colorlist.insert(0,'blue')
-                labellist.insert(0,refhistslabel)
-                if refhiststransparency is None: refhiststransparency=0.3
-                transparencylist.insert(0,refhiststransparency)
+                histlist.append(reco)
+                colorlist.append('red')
+                labellist.append(recohistlabel)
+                transparencylist.append(1.)
+            # re-plot original histogram on top but without label
+            histlist.append(hist)
+            colorlist.append('black')
+            labellist.append(None)
+            transparencylist.append(1.)
+            
             # get the title and axes
             title = pu.make_text_latex_safe(name)
             if( titledict is not None and name in titledict ): title = titledict[name]

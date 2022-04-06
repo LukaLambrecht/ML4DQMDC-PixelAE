@@ -692,6 +692,50 @@ def plot_roc( sig_eff, bkg_eff, auc=None,
     if doshow: plt.show(block=False)
     return (fig,ax)
 
+def plot_confusion_matrix( tp, tn, fp, fn, 
+                          true_positive_label='Good', true_negative_label='Anomalous',
+                          pred_positive_label='Predicted good', pred_negative_label='Predicted anomalous',
+                          xaxlabelsize=None, yaxlabelsize=None, textsize=None,
+                          colormap='Blues', colortitle=None ):
+    cmat = np.array([[tp,fn],[fp,tn]])
+    fig,ax = plt.subplots()
+    norm = mpl.colors.Normalize(0,1)
+    alpha = 1
+    # plot the matrix
+    ax.imshow(cmat, cmap=colormap, norm=norm, alpha=alpha)
+    # add axis labels
+    ax.set_xticks((0,1))
+    ax.set_xticklabels((pred_positive_label,pred_negative_label), fontsize=xaxlabelsize)
+    ax.set_yticks((0,1))
+    ax.set_yticklabels((true_positive_label,true_negative_label), fontsize=yaxlabelsize)
+    # add a color bar
+    cobject = mpl.cm.ScalarMappable(norm=norm, cmap=colormap)
+    cobject.set_array([]) # ad-hoc bug fix
+    cbar = fig.colorbar(cobject, ax=ax, alpha=alpha)
+    if colortitle is not None: cbar.ax.set_ylabel(colortitle, rotation=270, labelpad=20.)
+    # add text
+    def color(value):
+        if value>0.5: return 'w'
+        return 'k'
+    def valstr(value):
+        frmt = '{:.3f}'
+        if value<0.01: frmt = '{:.3E}'
+        return frmt.format(value)
+    ax.text(0, 0, valstr(tp), fontsize=textsize, 
+                   horizontalalignment='center', verticalalignment='center',
+                   color=color(tp))
+    ax.text(0, 1, valstr(fn), fontsize=textsize, 
+                   horizontalalignment='center', verticalalignment='center',
+                   color=color(fn))
+    ax.text(1, 0, valstr(fp), fontsize=textsize, 
+                   horizontalalignment='center', verticalalignment='center',
+                   color=color(fp))
+    ax.text(1, 1, valstr(tn), fontsize=textsize, 
+                   horizontalalignment='center', verticalalignment='center',
+                   color=color(tn))
+    
+    return (fig,ax)
+
 
 ##################################################
 # functions for plotting fits and point clusters #
@@ -746,7 +790,7 @@ def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,
     xstep = (xlims[1]-xlims[0])/100.
     ystep = (ylims[1]-ylims[0])/100.
         
-    (fig,ax) = plt.subplots()
+    (fig,ax) = plt.subplots(figsize=(8,5))
     
     if fitfunc is not None:
         

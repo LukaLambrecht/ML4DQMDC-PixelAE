@@ -43,7 +43,7 @@ class NMFClassifier(HistogramClassifier):
         self.nmax = nmax
         self.ncomponents = ncomponents
         
-    def train( self, histograms, doplot=True ):
+    def train( self, histograms, doplot=True, ncols=None, title=None ):
         ### train the NMF model on a given set of input histograms
         # input arguments:
         # - histograms: a numpy array of shape (nhists,nbins) or (nhists,nybins,nxbins) that will be used to fit a NMF model
@@ -54,14 +54,16 @@ class NMFClassifier(HistogramClassifier):
         self.NMF.fit( histograms )
         if doplot: 
             components = self.get_components()
+            if title is None: title = 'NMF model components'
             if len(components.shape)==2:
                 plot_utils.plot_hists_multi( components, 
                                 colorlist=list(range(self.ncomponents)), 
-                                title='NMF model components')
+                                title=title)
             elif len(components.shape)==3:
+                if ncols is None: ncols = int(math.sqrt(self.ncomponents))
                 plot_utils.plot_hists_2d(components, axsize=3, 
-                                ncols=int(math.sqrt(self.ncomponents)), 
-                                title='NMF model components')
+                                ncols=ncols, 
+                                title=title)
             plt.show(block=False)
         
     def set_nmax( self, nmax ):

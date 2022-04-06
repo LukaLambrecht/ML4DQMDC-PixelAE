@@ -210,7 +210,11 @@ def get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, 
     # score equals mse, since larger mse = more signal-like (signal=anomalies)
     return get_roc(mse,labels,mode=mode,npoints=npoints,doprint=doprint,doplot=doplot,plotmode=plotmode)
 
-def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True):
+def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True,
+                          true_positive_label='Good', true_negative_label='Anomalous',
+                          pred_positive_label='Predicted good', pred_negative_label='Predicted anomalous',
+                          xaxlabelsize=None, yaxlabelsize=None, textsize=None,
+                          colormap='Blues', colortitle=None):
     ### plot a confusion matrix
     # input arguments:
     # - scores and labels: defined in the same way as for get_roc
@@ -231,14 +235,19 @@ def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True):
     tn = 1-fp
     fn = 1-tp
     cmat = np.array([[tp,fn],[fp,tn]])
-    # general labels:
-    #df_cm = pd.DataFrame(cmat, index = ['signal','background'],
-    #              columns = ['predicted signal','predicted background'])
-    # specific labels:
-    df_cm = pd.DataFrame(cmat, index = ['bad','good'],
-                  columns = ['predicted anomalous','predicted good'])
-    plt.figure()
-    sn.heatmap(df_cm, annot=True, cmap=plt.cm.Blues)
+    
+    # old plotting method with seaborn
+    #df_cm = pd.DataFrame(cmat, index = [true_negative_label,true_positive_label],
+    #              columns = [predicted_negative_label,predicted_positive_label])
+    #fig,ax = plt.subplots()
+    #sn.heatmap(df_cm, annot=True, cmap=plt.cm.Blues)
+    
+    # new plotting method with pyplot
+    fig,ax = plot_utils.plot_confusion_matrix( tp, tn, fp, fn, 
+                          true_positive_label=true_positive_label, true_negative_label=true_negative_label,
+                          pred_positive_label=pred_positive_label, pred_negative_label=pred_negative_label,
+                          xaxlabelsize=xaxlabelsize, yaxlabelsize=yaxlabelsize, textsize=textsize,
+                          colormap=colormap, colortitle=colortitle )
 
     # printouts for testing
     #print('working point: {}'.format(wp))
@@ -248,7 +257,7 @@ def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True):
     #print('false positive / nback: {}'.format(fp))
 
     # return the working point (for later use if it was automatically calculated)
-    return wp
+    return (wp, fig, ax)
     
 def get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp=None):
     ### plot a confusion matrix without manually calculating the scores
