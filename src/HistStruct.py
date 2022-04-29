@@ -34,6 +34,8 @@ import matplotlib.pyplot as plt
 import importlib
 
 # local modules
+import ModelInterface
+from ModelInterface import ModelInterface
 sys.path.append('classifiers')
 from HistogramClassifier import HistogramClassifier
 sys.path.append('../utils')
@@ -76,17 +78,16 @@ class HistStruct(object):
         self.histranges = {}
         self.runnbs = []
         self.lsnbs = []
-        self.globalscores = []
-        self.classifiers = {}
         self.scores = {}
         self.masks = {}
         self.exthistograms = {}
-        self.extscores = {}
-        self.extglobalscores = {}
+        self.extnames = []
+        self.models = {}
+        self.modelnames = []
         
     def __str__( self ):
         ### get a printable representation of a HistStruct
-        info = ''
+        info = '=== HistStruct === \n'
         # histogram names:
         info += '- histogram types ({}): \n'.format(len(self.histnames))
         for histname in self.histnames:
@@ -96,21 +97,6 @@ class HistStruct(object):
         # masks:
         info += '- masks ({}): \n'.format(len(self.get_masknames()))
         for maskname in self.get_masknames(): info += '  -- {}\n'.format(maskname)
-        # classifiers:
-        info += '- classifiers: \n'
-        if len(self.classifiers.keys())==0: info += '    not initialized \n'
-        else:
-            for histname in self.histnames: info += '  -- {}: {}\n'.format(histname,type(self.classifiers[histname]))
-        # scores:
-        info += '- scores: \n'
-        if len(self.scores.keys())==0: info += '    not initialized \n'
-        else:
-            for histname in self.histnames: 
-                txt = 'initialized' if histname in self.scores.keys() else 'not initialized'
-                info += '  -- {}: {}\n'.format(histname,txt)
-        info += '- global scores: \n'
-        if len(self.globalscores)==0: info += '    not initialized \n'
-        else: info += '    initialized \n'
         # extra histograms sets
         info += '- extra histogram sets: {}\n'.format(len(self.exthistograms.keys()))
         for extname in self.exthistograms.keys(): 
@@ -118,76 +104,57 @@ class HistStruct(object):
             info += '     --- histogram types ({})\n'.format(len(self.exthistograms[extname].keys()))
             for histname in self.exthistograms[extname].keys():
                 info += '         ---- {} (shape: {})\n'.format(histname, self.exthistograms[extname][histname].shape)
-            info += '     --- scores: \n'
-            if extname not in self.extscores.keys(): info += '           not initialized \n'
-            else:
-                for histname in self.exthistograms[extname].keys(): 
-                    txt = 'initialized' if histname in self.extscores[extname].keys() else 'not initialized'
-                    info += '         ---- {}: {}\n'.format(histname,txt)
-            info += '     --- global scores: \n'
-            if extname not in self.extglobalscores.keys(): info += '           not initialized \n'
-            else: info += '           initialized \n'
+        # models:
+        info += '- models: \n'
+        for model in self.models.values():
+            info += str(model)
         return info
         
-    def save( self, path, save_classifiers=True ):
+    def save( self, path, save_models=False, save_classifiers=True, save_fitter=True ):
         ### save a HistStruct object to a pkl file
         # input arguments:
         # - path where to store the file (appendix .zip is automatically appended)
-        # - save_classifiers: a boolean whether to include the classifiers if present in the HistStruct
+        # - save_models: a boolean whether to include the models if present in the HistStruct
+        # - save_classifiers: a boolean whether to include the classifiers if present in the ModelInterfaces
+        # - save_fitter: a boolean whether to include the fitter if present in the ModelInterfaces
         pklpath = os.path.splitext(path)[0]+'.pkl'
         zippath = os.path.splitext(path)[0]+'.zip'
-        cpath = os.path.splitext(path)[0]+'_classifiers_storage'
         rootpath = os.path.dirname(path)
         zipcontents = {}
-        # case where classifiers should not be stored
-        if( len(self.classifiers.keys())==0 or not save_classifiers ):
-            classifiers = dict(self.classifiers)
-            self.classifiers = {}
-            with open(pklpath,'wb') as f:
-                pickle.dump(self,f)
-            self.classifiers = classifiers
-            zipcontents[pklpath] = os.path.relpath(pklpath, start=rootpath)
-        # case where classifiers should be stored
-        else:
-            # save the classifiers and store the types in the HistStruct
-            self.classifier_types = {}
-            self.classifier_histnames = []
-            for histname,classifier in self.classifiers.items():
-                classifier.save( os.path.join(cpath,histname) )
-                self.classifier_types[histname] = type(classifier)
-                self.classifier_histnames.append(histname)
-            # get all files to store in the zip file
-            for root, dirs, files in os.walk(cpath):
-                for name in files:
-                    thispath = os.path.join(root, name)
-                    zipcontents[thispath] = os.path.relpath(thispath, start=rootpath)
-            # remove the classifiers and pickle the rest
-            self.classifiers = {}
-            with open(pklpath,'wb') as f:
-                pickle.dump(self,f)
-            zipcontents[pklpath] = os.path.relpath(pklpath, start=rootpath)
-            # restore the classifiers
-            for histname in self.classifier_histnames:
-                self.classifiers[histname] = self.classifier_types[histname].load( os.path.join(cpath,histname) )
+        # remove the models from the object
+        models = copy.deepcopy(self.models)
+        self.models = {}
+        # pickle the rest
+        with open(pklpath,'wb') as f:
+            pickle.dump(self,f)
+        zipcontents[pklpath] = os.path.relpath(pklpath, start=rootpath)
+        # restore the models
+        self.models = models
+        # case where the models should be stored
+        if( len(list(self.models.keys()))>0 and save_models ):
+            for model in self.models.values():
+                mpath = os.path.splitext(path)[0]+'_model_{}.zip'.format(model.name)
+                model.save( mpath, save_classifiers=save_classifiers, save_fitter=save_fitter )
+                zipcontents[mpath] = os.path.relpath(mpath, start=rootpath)
         # put everything in a zip file
         with zipfile.ZipFile( zippath, 'w' ) as zipf:
             for f, fname in zipcontents.items(): zipf.write(f, fname)
         # remove individual files
         for f in zipcontents: os.system('rm {}'.format(f))
-        if os.path.exists(cpath): os.system('rm -r {}'.format(cpath))
             
     @classmethod
-    def load( self, path, load_classifiers=True, verbose=False ):
-        ### load a HistStruct object from a pkl file
+    def load( self, path, load_models=True, load_classifiers=True, load_fitter=True, verbose=False ):
+        ### load a HistStruct object
         # input arguments:
         # - path to a zip file containing a HistStruct object
+        # - load_models: a boolean whether to load the models if present
         # - load_classifiers: a boolean whether to load the classifiers if present
+        # - load_fitter: a boolean whether to load the fitter if present
         # - verbose: boolean whether to print some information
         zippath = os.path.splitext(path)[0]+'.zip'
         unzippath = os.path.splitext(path)[0]+'_unzipped'
         basename = os.path.splitext(os.path.basename(zippath))[0]
         pklbasename = basename+'.pkl'
-        cbasename = basename+'_classifiers_storage'
         zipcontents = []
         # extract the zip file
         with zipfile.ZipFile( zippath, 'r' ) as zipf:
@@ -195,12 +162,15 @@ class HistStruct(object):
             zipf.extractall( path=unzippath )
         with open(os.path.join(unzippath,pklbasename),'rb') as f:
             obj = pickle.load(f)
-        if( load_classifiers ):
+        if( load_models ):
             if len(zipcontents)==1:
-                print('WARNING: requested to load classifiers, but this stored HistStruct object does not seem to contain any.')
+                print('WARNING: requested to load models, '
+                      +'but this stored HistStruct object does not seem to contain any.')
             else:
-                for histname in obj.classifier_histnames:
-                    obj.classifiers[histname] = obj.classifier_types[histname].load( os.path.join(unzippath,cbasename,histname) )
+                for modelname in obj.modelnames:
+                    mpath = os.path.splitext(path)[0]+'_model_{}.zip'.format(modelname)
+                    obj.models[modelname] = ModelInterface.load( mpath, load_classifiers=load_classifiers,
+                                                                 load_fitter=load_fitter )
         # remove individual files
         if os.path.exists(unzippath): os.system('rm -r {}'.format(unzippath))
         if verbose:
@@ -334,26 +304,29 @@ class HistStruct(object):
         
     def add_globalscores( self, globalscores ):
         ### add an array of global scores (one per lumisection)
+        # DEPRECATED, DO NOT USE ANYMORE
         # input arguments:
         # - globalscores: 1D numpy array of scores (must have same length as lumisection and run numbers)
-        
-        if( len(globalscores)!=len(self.lsnbs) ):
+        raise Exception('ERROR: HistStruct.add_globalscores is deprecated!')
+        '''if( len(globalscores)!=len(self.lsnbs) ):
             raise Exception('ERROR in HistStruct.add_globalscores: length of globalscores ({})'.format(len(globalscores))
                            +' does not match length of list of lumisections ({})'.format(len(self.lsnbs)))
         if( len(self.globalscores)>0 ):
-            print('WARNING in HistStruct.add_globalscores: array of global scores appears to be already initialized; overwriting...')
-        self.globalscores = globalscores
+            print('WARNING in HistStruct.add_globalscores: array of global scores appears to be already initialized; '
+                    +'overwriting...')
+        self.globalscores = globalscores'''
         
     def add_extglobalscores( self, extname, globalscores ):
         ### add an array of global scores (one per lumisection) for a specified extra set of histograms in the HistStruct
+        # DEPRECATED, DO NOT USE ANYMORE
         # input arguments:
         # - extname: name of extra histogram set
         # - globalscores: 1D numpy array of scores
         # note: this function checks if all histogram types in this set contain the same number of histograms,
         #       (and that this number corresponds to the length of globalscores)
         #       else adding globalscores is meaningless
-        
-        if not extname in self.exthistograms.keys():
+        raise Exception('ERROR: HistStruct.add_extglobalscores is deprecated!')
+        '''if not extname in self.exthistograms.keys():
             raise Exception('ERROR in HistStruct.add_extglobalscores: requested to add scores for set {}'.format(extname)
                            +' but this is not present in the current HistStruct.')
         histnames = list(self.exthistograms[extname].keys())
@@ -369,27 +342,7 @@ class HistStruct(object):
         if( extname in self.extglobalscores.keys() ):
             print('WARNING in HistStruct.add_extglobalscores: array of global scores for set {}'.format(extname)
                   +' appears to be already initialized; overwriting...')
-        self.extglobalscores[extname] = globalscores
-
-    def get_globalscores_jsonformat( self, working_point=None ):
-        ### make a json format listing all lumisections in this histstruct
-        # the output list has entries for global score, pass/fail given working point, and masks
-        # input arguments:
-        # - working_point: if present, an entry will be made for each lumisection whether it passes this working point
-        res = []
-        for (runnb,lsnb) in zip(self.runnbs,self.lsnbs):
-            res.append({'run':int(runnb), 'ls':int(lsnb)})
-            # (note: need explicit conversion to int since numpy data types are not understood by json serializer)
-        if( len(self.globalscores)==0 ):
-            print('WARNING in HistStruct.get_globalscores_json: array of global scores seems to be uninitialized.')
-        else:
-            for idx in range(len(res)): 
-                if working_point is not None: res[idx]['pass'] = bool(self.globalscores[idx]>working_point)
-                res[idx]['score'] = float(self.globalscores[idx])
-        for maskname in self.masks.keys():
-            for idx in range(len(res)):
-                res[idx][maskname] = bool(self.masks[maskname][idx])
-        return res
+        self.extglobalscores[extname] = globalscores'''
         
     def add_exthistograms( self, extname, histname, histograms, overwrite=False ):
         ### add a set of extra histograms to a HistStruct
@@ -400,14 +353,16 @@ class HistStruct(object):
         # - histname: name of the histogram type
         # - histograms: a numpy array of shape (nhistograms,nbins)
         # - overwrite: boolean whether to overwrite a set of histograms of the same name if present (default: raise exception)
-        if extname in self.exthistograms.keys():
+        if extname in self.extnames:
             if histname in self.exthistograms[extname].keys():
                 if not overwrite:
                     raise Exception('ERROR in HistStruct.add_exthistograms: histogram name is {}'.format(histname)
                                    +' but this is already present in the set of extra histogram with name {}'.format(extname))
         else: 
             self.exthistograms[extname] = {}
-            self.extscores[extname] = {}
+            for modelname in self.modelnames:
+                self.models[modelname].add_setname( extname )
+            self.extnames.append(extname)
         self.exthistograms[extname][histname] = histograms
     
     def add_mask( self, name, mask ):
@@ -476,7 +431,8 @@ class HistStruct(object):
         ### add a mask corresponding to lumisections where all histograms have statistics within given bounds
         # input arguments:
         # - histnames: list of histogram names to take into account for making the mask (default: all in the HistStruct)
-        # - min_entries_to_bins_ratio: number of entries divided by number of bins, lower boundary for statistics (default: no lower boundary)
+        # - min_entries_to_bins_ratio: number of entries divided by number of bins, lower boundary for statistics 
+        #   (default: no lower boundary)
         # - max_entries_to_bins_ratio: same but upper boundary instead of lower boundary (default: no upper boundary)
         if histnames is None:
             histnames = self.histnames
@@ -567,44 +523,49 @@ class HistStruct(object):
         # - runnb and lsnb: run and lumisection number respectively
         index = (set(list(np.where(self.runnbs==runnb)[0])) & set(list(np.where(self.lsnbs==lsnb)[0])))
         if len(index)!=1: 
-            raise Exception('ERROR in HistStruct.get_index: unexpected index of requested run/lumisection: found {}.'.format(index)
-                           +' Is the requested run/lumisection in the HistStruct?')
+            raise Exception('ERROR in HistStruct.get_index: unexpected index of requested run/lumisection: '
+                            +'found {}.'.format(index)
+                            +' Is the requested run/lumisection in the HistStruct?')
         (index,) = index
         return index
     
-    def get_scores( self, histname=None, masknames=None ):
-        ### get the array of scores for a given histogram type, optionally after masking
+    def get_scores( self, modelname, setname=None, histname=None, masknames=None ):
+        ### get the array of scores for a given model and for a given histogram type, optionally after masking
         # input arguments:
+        # - modelname: name of the model for which to retrieve the scores
+        # - setname: name of the histogram set (use None for standard set)
         # - histname: name of the histogram type for which to retrieve the score. 
         #   if None, return a dict matching histnames to arrays of scores
         # - masknames: list of names of masks (default: no masking, return full array)
+        #   warning: masks are only defined for the standard set; do not use with other setnames!
         # notes:
-        # - this method takes the scores from the HistStruct.scores attribute;
-        #   make sure to have evaluated the classifiers before calling this method,
-        #   else an exception will be thrown.
+        # - the classifiers in the appropriate model must have been evaluated before calling this method!
+        if modelname not in self.models.keys():
+            raise Exception('ERROR in HistStruct.get_scores: requested model {}'.format(modelname)
+                           +' but it does not seem to be present in the current HistStruct.')
         histnames = self.histnames[:]
+        # check if histname is valid
         if histname is not None:
-            # check if histname is valid
             if histname not in self.histnames:
                 raise Exception('ERROR in HistStruct.get_scores: requested histogram name {}'.format(histname)
                                +' but this is not present in the current HistStruct.')
-            if histname not in self.scores.keys():
-                raise Exception('ERROR in HistStruct.get_scores: requested histogram name {}'.format(histname)
-                               +' but the scores for this histogram type were not yet initialized.')
             histnames = [histname]
-        mask = np.ones(len(self.lsnbs)).astype(bool)
+        # make the mask
         if masknames is not None:
             mask = self.get_combined_mask(masknames)
+        # make the result
         res = {}
         for hname in histnames:
-            res[hname] = self.scores[hname][mask]
+            scores = self.models[modelname].get_scores( setname=setname, histname=hname )
+            if masknames is not None: scores = scores[mask]
+            res[hname] = scores
         if histname is None: return res
         return res[histname]
     
-    def get_scores_array( self, masknames=None ):
+    def get_scores_array( self, modelname, setname=None, masknames=None ):
         ### similar to get_scores, but with different return type:
         # np array of shape (nhistograms, nhistogramtypes)
-        scores = self.get_scores( masknames=masknames )
+        scores = self.get_scores( modelname, setname=setname, masknames=masknames )
         scores_array = []
         for histname in self.histnames:
             scores_array.append(scores[histname])
@@ -613,6 +574,7 @@ class HistStruct(object):
     
     def get_extscores( self, extname, histname=None ):
         ### get the array of scores for a given histogram type in a given extra set.
+        # DEPRECATED, DO NOT USE ANYMORE
         # input arguments:
         # - extname: name of the extra set (see also add_exthistograms)
         # - histname: name of the histogram type for which to retrieve the score. 
@@ -621,7 +583,8 @@ class HistStruct(object):
         # - this method takes the scores from the HistStruct.extscores attribute;
         #   make sure to have evaluated the classifiers before calling this method,
         #   else an exception will be thrown.
-        if not extname in self.exthistograms.keys():
+        raise Exception('ERROR: HistStruct.get_extscores is deprecated!')
+        '''if not extname in self.exthistograms.keys():
             raise Exception('ERROR in HistStruct.get_extscores: requested to retrieve scores for set {}'.format(extname)
                            +' but this is not present in the current HistStruct.')
         histnames = self.histnames[:]
@@ -639,30 +602,29 @@ class HistStruct(object):
         for hname in histnames:
             res[hname] = self.extscores[extname][hname]
         if histname is None: return res
-        return res[histname]
+        return res[histname]'''
     
     def get_extscores_array( self, extname ):
         ### similar to get_extscores, but with different return type:
         # np array of shape (nhistograms, nhistogramtypes)
-        scores = self.get_extscores( extname )
+        # DEPRECATED, DO NOT USE ANYMORE
+        raise Exception('ERROR: HistStruct.get_extscores_array is deprecated!')
+        '''scores = self.get_extscores( extname )
         scores_array = []
         for histname in self.histnames:
             scores_array.append(scores[histname])
         scores_array = np.transpose(np.array(scores_array))
-        return scores_array
+        return scores_array'''
     
-    def get_scores_ls( self, runnb, lsnb, histnames=None, suppresswarnings=False ):
+    def get_scores_ls( self, modelname, runnb, lsnb, histnames=None ):
         ### get the scores for a given run/lumisection number and for given histogram names
         # input arguments:
+        # - modelname: name of the model for which to retrieve the score
         # - runnb: run number
         # - lsnb: lumisection number
         # - histnames: names of the histogram types for which to retrieve the score. 
         # returns:
         # - a dict matching each name in histnames to a score (or None if no valid score)
-        # notes:
-        # - this method takes the scores from the HistStruct.scores attribute;
-        #   make sure to have evaluated the classifiers before calling this method,
-        #   else the returned scores will be None.
         if histnames is None: histnames = self.histnames
         scores = {}
         index = self.get_index(runnb,lsnb)
@@ -671,60 +633,76 @@ class HistStruct(object):
             if histname not in self.histnames:
                 raise Exception('ERROR in HistStruct.get_scores_ls: requested histogram name {}'.format(histname)
                                +' but this is not present in the current HistStruct.')
-            if histname not in self.scores.keys():
-                if not suppresswarnings: 
-                    print('WARNING in HistStruct.get_scores_ls: requested histogram name {}'.format(histname)
-                         +' but no score for this type is present, setting score to None')
-                scores[histname] = None
-            # retrieve score
-            else:
-                scores[histname] = self.scores[histname][index]
+            scores[histname] = self.models[modelname].get_scores( histname=histname )[index]
         return scores
     
-    def get_globalscores( self, masknames=None ):
+    def get_globalscores( self, modelname, setname=None, masknames=None ):
         ### get the array of global scores, optionally after masking
         # input arguments:
+        # - modelname: name of the model for which to retrieve the global score
+        # - setname: name of the histogram set (use None for standard set)
         # - masknames: list of names of masks (default: no masking, return full array)
+        #   warning: masks are only defined for the standard set; do not use with other setnames!
         # notes:
-        # - this method takes the scores from the HistStruct.globalscores attribute;
-        #   make sure to have set this attribute with add_globalscores,
-        #   else an exception will be thrown.
-        if( len(self.globalscores)==0 ):
-            raise Exception('ERROR in HistStruct.get_globalscores: array of global scores seems to be uninitialized.')
-        mask = np.ones(len(self.lsnbs)).astype(bool)
+        # - the classifiers in the appropriate model must have been evaluated before calling this method!
+        scores = self.models[modelname].get_globalscores( setname=setname )
         if masknames is not None:
             mask = self.get_combined_mask(masknames)
-        return self.globalscores[mask]
+            scores = scores[mask]
+        return scores
     
-    def get_globalscore_ls( self, runnb, lsnb ):
+    def get_globalscores_jsonformat( self, modelname, working_point=None ):
+        ### make a json format listing all lumisections in this histstruct
+        # the output list has entries for global score, pass/fail given working point, and masks
+        # input arguments:
+        # - modelname: name of the model for wich to retrieve the global score
+        #   TO DO: extend this function to simply include all available models
+        # - working_point: if present, an entry will be made for each lumisection whether it passes this working point
+        res = []
+        for (runnb,lsnb) in zip(self.runnbs,self.lsnbs):
+            res.append({'run':int(runnb), 'ls':int(lsnb)})
+            # (note: need explicit conversion to int since numpy data types are not understood by json serializer)
+        if( modelname not in self.models.keys() ):
+            raise Exception('iHistStruct.get_globalscores_json: requested model {}'.format(modelname)
+                 +' but it is not present in the current HistStruct')
+        globalscores = self.models[modelname].get_globalscores()
+        for idx in range(len(res)): 
+            if working_point is not None: res[idx]['pass'] = bool(globalscores[idx]>working_point)
+            res[idx]['score'] = float(self.globalscores[idx])
+        for maskname in self.masks.keys():
+            for idx in range(len(res)):
+                res[idx][maskname] = bool(self.masks[maskname][idx])
+        return res
+    
+    def get_globalscore_ls( self, modelname, runnb, lsnb ):
         ### get the global score for a given run/lumisection number
         # input arguments:
+        # - modelname: name of the model for which to retrieve the global score
         # - runnb: run number
         # - lsnb: lumisection number
         # - histnames: names of the histogram types for which to retrieve the score. 
         # returns:
         # - a dict matching each name in histnames to a score (or None if no valid score)
-        # notes:
-        # - this method takes the scores from the HistStruct.scores attribute;
-        #   make sure to have evaluated the classifiers before calling this method,
-        #   else the returned scores will be None.
         index = self.get_index(runnb,lsnb)
-        if( len(self.globalscores)==0 ):
+        globalscores = self.models[modelname].get_globalscores()
+        if( len(globalscores)==0 ):
             raise Exception('ERROR in HistStruct.get_globalscore_ls: array of global scores seems to be uninitialized.')
-        return self.globalscores[index]
+        return globalscores[index]
     
     def get_extglobalscores( self, extname ):
         ### get the array of global scores for one of the extra histogram sets
+        # DEPRECATED, DO NOT USE ANYMORE
         # input arguments:
         # - extname: name of the extra histogram set
         # notes:
         # - this method takes the scores from the HistStruct.extglobalscores attribute;
         #   make sure to have set this attribute with add_extglobalscores,
         #   else an exception will be thrown.
-        if extname not in self.extglobalscores.keys():
+        raise Exception('ERROR: HistStruct.get_extglobalscores is deprecated!')
+        '''if extname not in self.extglobalscores.keys():
             raise Exception('ERROR in HistStruct.get_extglobalscores: requested to retrieve global scores for set {}'.format(extname)
                            +' but they are not present in the current HistStruct.')
-        return self.extglobalscores[extname]
+        return self.extglobalscores[extname]'''
     
     def get_histograms( self, histname=None, masknames=None ):
         ### get the array of histograms for a given type, optionally after masking
@@ -770,7 +748,7 @@ class HistStruct(object):
         if histname is None: return res
         return res[histname]
 
-    def get_histogramsandscores( self, extname=None, masknames=None, nrandoms=-1, nfirst=-1 ):
+    def get_histogramsandscores( self, modelname, extname=None, masknames=None, nrandoms=-1, nfirst=-1 ):
         ### combination of get_histograms, get_scores and get_globalscores with additional options
         # - extname: use an extended histogram set
         # - nrandoms: if > 0, number of random instances to draw
@@ -786,18 +764,13 @@ class HistStruct(object):
         # case of non-extended
         if extname is None:
             histograms = self.get_histograms(masknames=masknames)
-            if len(self.scores.keys())>0:
-                scores = self.get_scores(masknames=masknames)
-            if len(self.globalscores)>0: 
-                globalscores = self.get_globalscores(masknames=masknames)
+            scores = self.get_scores(modelname, masknames=masknames)
+            globalscores = self.get_globalscores(modelname, masknames=masknames)
         # case of extended
         else:
             histograms = self.get_exthistograms(extname)
-            if( extname in self.extscores.keys()
-                and len(self.extscores[extname].keys())>0 ):
-                scores = self.get_extscores(extname)
-            if extname in self.extglobalscores.keys():
-                globalscores = self.histstruct.get_extglobalscores(extname)
+            scores = self.get_scores(modelname, setname=extname)
+            globalscores = self.histstruct.get_globalscores(modelname, setname=extname)
         # rest of the processing is similar
         nhists = len(histograms[self.histnames[0]])
         if(nrandoms>0 and nfirst>0):
@@ -825,52 +798,100 @@ class HistStruct(object):
             if globalscores is not None: globalscores = globalscores[ids]
         return {'histograms': histograms, 'scores': scores, 'globalscores': globalscores}
     
-    def add_classifier( self, histname, classifier, evaluate=False ):
-        ### add a histogram classifier for a given histogram name to the HistStruct
+    def add_model( self, modelname, model, evaluate=False ):
+        ### add a model to the HistStruct
         # input arguments:
-        # - histname: a valid histogram name present in the HistStruct to which this classifier applies
-        # - classifier: an object of type HistogramClassifier (i.e. of any class that derives from it)
-        # - evaluate: a bool whether to evaluate the classifier (and store the result in the 'scores' attribute)
-        #   if set to True, the result is both returned and stored in the 'scores' attribute.
-        if not histname in self.histnames:
-            raise Exception('ERROR in HistStruct.add_classifier: requested to add classifier for {}'.format(histname)
-                           +' but there is n entry in the HistStruct with that name.')
-        if not isinstance(classifier,HistogramClassifier):
-            raise Exception('ERROR in HistStruct.add_classifier: classifier is of type {}'.format(type(classifier))
-                           +' while a HistogramClassifier object is expected.')
-        self.classifiers[histname] = classifier
+        # - modelname: a name for the model
+        # - model: an instance of ModelInterface class with histnames corresponding to the ones for this HistStruct
+        # - evaluate: a bool whether to evaluate the classifiers
+        
+        #if not isinstance(model, ModelInterface):
+        #    raise Exception('ERROR in HistStruct.add_model: model is of type {}'.format(type(model))
+        #                   +' while a ModelInterface is expected.')
+        print('adding model "{}" to the HistStruct'.format(modelname))
+        if( sorted(self.histnames)!=sorted(model.histnames) ):
+            raise Exception('ERROR in HistStruct.add_model: histogran names of HistStruct and ModelInterface do not match.')
+        if modelname in self.modelnames:
+            print('WARNING in HistStruct.add_model: modelname "{}" is already present; overwriting...'.format(modelname))
+        # add the model
+        self.models[modelname] = model
+        self.modelnames.append(modelname)
         if evaluate:
-            return self.evaluate_classifier( histname )
-        
-    def evaluate_classifier( self, histname, extname=None ):
-        ### evaluate a histogram classifier for a given histogram name in the HistStruct
+            return model.evaluate_classifiers( self.get_histograms() )
+        # add the correct additional sets
+        for extname in self.extnames:
+            if extname not in model.setnames:
+                model.add_setname( extname )
+            
+    def remove_model( self, modelname ):
+        ### remove a model
         # input arguments:
-        # - histname: a valid histogram name present in the HistStruct for which to evaluate the classifier
-        # - extname: name of a set of extra histograms (see add_exthistograms)
-        #            if None, will evaluate the classifer for the main set of histograms
-        # notes:
-        # - the result is both returned and stored in the 'scores' attribute
+        # - modelname: name of the model to remove
+        if modelname not in self.modelnames:
+            print('WARNING in HistStruct.remove_model: modelname "{}" is not present.'.format(modelname))
+        # remove the model
+        self.models.pop(modelname)
+        self.modelnames.remove(modelname)
         
-        if not histname in self.classifiers.keys():
-                raise Exception('ERROR in HistStruct.evaluate_classifier: requested to evaluate classifier for {}'.format(histname)
-                           +' but no classifier was set for this histogram type.')
-        if extname is None:
-            if histname not in self.histnames:
-                raise Exception('ERROR in HistStruct.evaluate_classifier: requested histogram name {}'.format(histname)
-                            +' but this is not present in the current HistStruct.')
-            scores = self.classifiers[histname].evaluate(self.histograms[histname])
-            self.scores[histname] = scores
-        else:
-            if not extname in self.exthistograms.keys():
-                raise Exception('ERROR in HistStruct.get_evaluate_classifier: requested to retrieve histograms in set {}'.format(extname)
-                           +' but this is not present in the current HistStruct.')
-            if histname not in self.exthistograms[extname].keys():
-                raise Exception('ERROR in HistStruct.get_evaluate_classifier: requested histogram name {}'.format(histname)
-                               +' but this is not present in the extra set with name {}.'.format(extname))
-            scores = self.classifiers[histname].evaluate(self.exthistograms[extname][histname])
-            self.extscores[extname][histname] = scores
-        return scores
-
+    def evaluate_classifier( self, modelname, histname, extname=None ):
+        ### evaluate a histogram classifiers
+        # input arguments:
+        # - modelname: name of the model for wich to evaluate the classifiers
+        # - histname: a valid histogram name present in the HistStruct for which to evaluate the classifier
+        # - extname: name of a set of extra histograms
+        histograms = None
+        if extname is None: histograms = self.get_histograms( histname=histname )
+        else: histograms = self.get_exthistograms( histname=histname, extname=extname )
+        self.models[modelname].evaluate_store_classifier( histname, histograms, setname=extname )
+        
+    def evaluate_classifiers( self, modelname, extname=None ):
+        ### evaluate a histogram classifiers for all histogram types
+        # input arguments:
+        # - modelname: name of the model for wich to evaluate the classifiers
+        # - extname: name of a set of extra histograms
+        histograms = None
+        if extname is None: histograms = self.get_histograms()
+        else: histograms = self.get_exthistograms( extname=extname )
+        self.models[modelname].evaluate_store_classifiers( histograms, setname=extname )
+        
+    def set_fitter( self, modelname, fitter ):
+        ### set the fitter for a given model
+        self.models[modelname].set_fitter(fitter)
+        
+    def train_fitter( self, modelname, masknames=None, setname=None, verbose=False ):
+        ### train the fitter for a given model
+        # input arguments:
+        # - modelname: name of the model to train
+        # - masknames: masks for training set
+        # - setname: name of training set
+        # note: use either masksnames or setname, not both!
+        points = self.get_scores( modelname, masknames=masknames, setname=setname )
+        self.models[modelname].train_fitter( points, verbose=verbose )
+        
+    def evaluate_fitter( self, modelname, setname=None, verbose=False ):
+        ### evaluate the fitter for a given model
+        points = self.get_scores( modelname, setname=setname )
+        self.models[modelname].evaluate_store_fitter( points, setname=setname )
+        
+    def evaluate_fitter_on_point( self, modelname, point ):
+        ### evaluate the fitter on a given points
+        # input arguments:
+        # - modelname: name of the model for which to evaluate the fitter
+        # - points: dict matching histnames to scores (one float per histogram type)
+        #   (e.g. as returned by get_scores_ls)
+        # returns:
+        # - the global score for the provided point (a float)
+        for histname, score in point.items(): point[histname] = np.array([score])
+        return self.models[modelname].evaluate_fitter( point )
+        
+    def evaluate_fitter_on_points( self, modelname, points ):
+        ### evaluate the fitter on a given set of points
+        # input arguments:
+        # - modelname: name of the model for which to evaluate the fitter
+        # - points: dict matching histnames to scores (np array of shape (nhistograms))
+        # returns:
+        # - the global scores for the provided points
+        return self.models[modelname].evaluate_fitter( points )
 
     def plot_histograms( self, histnames=None, masknames=None, histograms=None, ncols=4,
                             colorlist=[], labellist=[], transparencylist=[], 
@@ -903,7 +924,7 @@ class HistStruct(object):
         if histograms is not None: histnames = list(histograms[0].keys())
         for histname in histnames:
             if not histname in self.histnames:
-                raise Exception('ERROR in HistStruct.plot_ls:'
+                raise Exception('ERROR in HistStruct.plot_histograms:'
                         +' requested to plot histogram type {}'.format(histname)
                         +' but it is not present in the current HistStruct.')
             if len(self.histograms[histname].shape)==2: histnames1d.append(histname)
@@ -1071,7 +1092,7 @@ class HistStruct(object):
         if histograms is not None: histnames = list(histograms[0].keys())
         for histname in histnames:
             if not histname in self.histnames:
-                raise Exception('ERROR in HistStruct.plot_ls:'
+                raise Exception('ERROR in HistStruct.plot_histograms_run:'
                         +' requested to plot histogram type {}'.format(histname)
                         +' but it is not present in the current HistStruct.')
             if len(self.histograms[histname].shape)==2: histnames1d.append(histname)
@@ -1145,7 +1166,8 @@ class HistStruct(object):
         #   notes: - 'reconstructed histograms' refers to e.g. autoencoder or NMF reconstructions;
         #            some models (e.g. simply looking at histogram moments) might not have this kind of reconstruction
         #          - in principle one histogram per key is expected, but still the the shape must be 2D (i.e. (1,nbins))
-        #          - in case recohist is set to 'auto', the reconstruction is calculated on the fly for the input histograms
+        #          - in case recohist is set to a valid model name present in the current HistStruct, 
+        #            the reconstruction is calculated on the fly for the input histograms
         # - recohistlabel: legend entry for the reco histograms
         # - refhists: dict matching histogram names to reference histograms
         #   notes: - multiple histograms (i.e. a 2D array) per key are expected;
@@ -1165,8 +1187,8 @@ class HistStruct(object):
             if not histname in self.histnames:
                 raise Exception('ERROR in HistStruct.plot_ls: requested to plot histogram type {}'.format(histname)
                                +' but it is not present in the current HistStruct.')
-            if( recohist=='auto' ):
-                if( histname not in self.classifiers.keys() ): 
+            if( isinstance(recohist,str) ):
+                if( histname not in self.models[recohist].classifiers.keys() ): 
                     raise Exception('ERROR in HistStruct.plot_ls: auto reco requested, but histogram type {}'.format(histname)
                                     +' does not seem to have a classifier yet.')
             elif( recohist is not None ):
@@ -1242,7 +1264,7 @@ class HistStruct(object):
         ncols = min(ncols,len(histnames))
         nrows = int(math.ceil(len(histnames)/ncols))
         fig,axs = plt.subplots(nrows,ncols,figsize=(5*ncols,5*nrows),squeeze=False)
-        if histlabel is None: histlabel = 'Run: '+str(int(runnb))+', LS: '+str(int(lsnb))+')'
+        if histlabel is None: histlabel = 'Run: '+str(int(runnb))+', LS: '+str(int(lsnb))
         # loop over all histograms belonging to this lumisection and make the plots
         for j,name in enumerate(histnames):
             histlist = []
@@ -1263,12 +1285,16 @@ class HistStruct(object):
             labellist.append(histlabel)
             transparencylist.append(1.)
             # then plot the automatically reconstructed histogram
-            if recohist=='auto':
-                if not hasattr(self.classifiers[name],'reconstruct'):
+            if isinstance(recohist,str):
+                if not recohist in self.modelnames:
+                    raise Exception('ERROR in HistStruct.plot_ls: no valid model provided.')
+                classifier = self.models[recohist].classifiers[name]
+                if not hasattr(classifier,'reconstruct'):
                     raise Exception('ERROR in HistStruct.plot_ls: automatic calculation of reco hist requires the classifiers '
-                                   +'to have a method called "reconstruct", but this does not seem to be the case for histogram type {}, '.format(name)
-                                   +' whose classifier is of type {}'.format(type(self.classifiers[name])))
-                reco = self.classifiers[name].reconstruct(hist)
+                                   +'to have a method called "reconstruct", '
+                                    +'but this does not seem to be the case for histogram type {}, '.format(name)
+                                   +' whose classifier is of type {}'.format(type(classifier)))
+                reco = classifier.reconstruct(hist)
                 histlist.append(reco)
                 colorlist.append('red')
                 labellist.append(recohistlabel)
@@ -1327,12 +1353,16 @@ class HistStruct(object):
             hist = self.histograms[name][index:index+1]
             reco = None
             # get the automatically reconstructed histogram
-            if recohist=='auto':
-                if not hasattr(self.classifiers[name],'reconstruct'):
+            if isinstance(recohist,str):
+                if not recohist in self.modelnames:
+                    raise Exception('ERROR in HistStruct.plot_ls: no valid model provided.')
+                classifier = self.models[recohist].classifiers[name]
+                if not hasattr(classifier,'reconstruct'):
                     raise Exception('ERROR in HistStruct.plot_ls: automatic calculation of reco hist requires the classifiers '
-                                   +'to have a method called "reconstruct", but this does not seem to be the case for histogram type {}, '.format(name)
-                                   +' whose classifier is of type {}'.format(type(self.classifiers[name])))
-                reco = self.classifiers[name].reconstruct(hist)
+                                   +'to have a method called "reconstruct", '
+                                   +'but this does not seem to be the case for histogram type {}, '.format(name)
+                                   +' whose classifier is of type {}'.format(classifier))
+                reco = classifier.reconstruct(hist)
             # get the provided reconstructed histogram
             elif recohist is not None:
                 reco = recohist[name]
