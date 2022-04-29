@@ -26,11 +26,18 @@ class ExponentialFitter(CloudFitter):
     # parameters
     # - l: multidimensional lambda parameter of exponential
     
-    def __init__(self, points):
-        ### constructor
+    def __init__(self):
+        ### empty constructor
         # input arguments:
         # - points: a np array of shape (npoints,ndims)
-        super( ExponentialFitter, self ).__init__(points)
+        super( ExponentialFitter, self ).__init__()
+        self.l = np.zeros(0)
+        
+    def fit(self, points):
+        ### fit to a set of points
+        # input arguments:
+        # - points: a np array of shape (npoints,ndims)
+        super( ExponentialFitter, self ).fit(points)
         # for now use mean for beta, maybe change later!
         self.l = np.reciprocal(np.mean(points,axis=0))
         

@@ -31,14 +31,20 @@ class GaussianKdeFitter(CloudFitter):
     # - cov: covariance matrix 
     # (use np.cov for now, maybe later replace by internal kernel.covariance)
     
-    def __init__(self, points, bw_method='scott', bw_scott_factor=None):
-        ### constructor
+    def __init__(self):
+        ### empty constructor
+        super( GaussianKdeFitter, self ).__init__()
+        self.cov = np.zeros(0)
+        self.kernel = None
+        
+    def fit(self, points, bw_method='scott', bw_scott_factor=None):
+        ### fit to a set of points
         # input arguments:
         # - points: a np array of shape (npoints,ndims)
         # - bw_method: method to calculate the bandwidth of the gaussians,
         #   see https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.gaussian_kde.html
         # - bw_scott_factor: additional multiplication factor applied to bandwidth in case it is set to 'scott'
-        super( GaussianKdeFitter, self ).__init__(points)
+        super( GaussianKdeFitter, self ).fit(points)
         self.cov = np.cov(points,rowvar=False)
         if( bw_method=='scott' and bw_scott_factor is not None ):
             scott_bw = self.npoints**(-1./(self.ndims+4))
@@ -49,8 +55,3 @@ class GaussianKdeFitter(CloudFitter):
         ### get pdf at points
         super( GaussianKdeFitter, self ).pdf(points)
         return self.kernel.pdf(np.transpose(points))
-
-
-
-
-

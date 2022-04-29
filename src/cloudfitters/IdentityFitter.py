@@ -24,18 +24,22 @@ from CloudFitter import CloudFitter
 class IdentityFitter(CloudFitter):
     ### class for propagating classifier output scores (e.g. MSE) to global lumisection score
     
-    def __init__(self, points):
-        ### constructor
+    def __init__(self):
+        ### empty constructor
+        super( IdentityFitter, self ).__init__()
+        self.nanthreshold = 1e-12
+        
+    def fit(self, points):
+        ### fit to a set of points
         # input arguments:
         # - points: a numpy array of shape (npoints,ndims) 
         #           note that ndims is supposed to be 1, 
         #           else this type of classifier is not well defined.
-        super( IdentityFitter, self ).__init__(points)
+        super( IdentityFitter, self ).fit(points)
         if( self.ndims!=1 ):
             raise Exception('ERROR in IdentityFitter.__init__:'
                     +' dimension is found to be {}'.format(self.ndims)
                     +' while 1 is expected.')
-        self.nanthreshold = 1e-12
         
     def pdf(self, points):
         ### get pdf at points

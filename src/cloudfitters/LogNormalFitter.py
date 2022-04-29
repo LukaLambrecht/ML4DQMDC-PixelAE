@@ -29,11 +29,18 @@ class LogNormalFitter(CloudFitter):
     # - cov: multidim covariance matrix of underlying normal
     # - mvn: scipy.stats multivariate_normal object built from the mean and cov
     
-    def __init__(self,points):
-        ### constructor
+    def __init__(self):
+        ### empty constructor
+        super( LogNormalFitter, self ).__init__()
+        self.mean = np.zeros(0)
+        self.cov = np.zeros(0)
+        self.mvn = None
+        
+    def fit(self, points):
+        ### fit to a set of points
         # input arguments:
         # - points: a np array of shape (npoints,ndims)
-        super( LogNormalFitter, self ).__init__(points)
+        super( LogNormalFitter, self ).fit(points)
         # transform the data from assumed log-normal to normal
         points_log = np.log(points)
         # fit a total multivariate normal distribution
@@ -45,8 +52,3 @@ class LogNormalFitter(CloudFitter):
         ### get pdf at points
         super( LogNormalFitter, self ).pdf(points)
         return self.mvn.pdf(np.log(points))
-
-
-
-
-

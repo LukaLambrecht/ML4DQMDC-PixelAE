@@ -33,15 +33,24 @@ class PCAGaussianKdeFitter(CloudFitter):
     # - cov: covariance matrix 
     # (use np.cov for now, maybe later replace by internal kernel.covariance)
     
-    def __init__(self, points, npcadims=2, bw_method='scott', bw_scott_factor=None):
-        ### constructor
+    def __init__(self):
+        ### empty constructor
+        super( PCAGaussianKdeFitter, self ).__init__()
+        # first apply PCA
+        self.npcadims = 0
+        self.pca = None
+        self.cov = np.zeros(0)
+        self.kernel = None
+        
+    def fit(self, points, npcadims=2, bw_method='scott', bw_scott_factor=None):
+        ### fit to a set of points
         # input arguments:
         # - points: a np array of shape (npoints,ndims)
         # - npcadims: number of PCA compoments to keep
         # - bw_method: method to calculate the bandwidth of the gaussians,
         #   see https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.gaussian_kde.html
         # - bw_scott_factor: additional multiplication factor applied to bandwidth in case it is set to 'scott'
-        super( PCAGaussianKdeFitter, self ).__init__(points)
+        super( PCAGaussianKdeFitter, self ).fit(points)
         # first apply PCA
         self.npcadims = npcadims # extension to self.ndims (dimension of non-transformed points)
         self.pca = PCA(n_components=npcadims)
