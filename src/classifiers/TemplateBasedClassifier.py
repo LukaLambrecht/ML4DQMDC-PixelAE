@@ -10,7 +10,7 @@
 # external modules
 import sys
 import numpy as np
-import tensorflow
+import pickle
 import importlib
 
 # local modules
@@ -107,12 +107,16 @@ class TemplateBasedClassifier(HistogramClassifier):
         super(TemplateBasedClassifier,self).evaluate( histograms )
         return self.methods[self.comparemethod]( histograms, self.templates )
 
+    def save( self, path ):
+        ### save the classifier
+        super( TemplateBasedClassifier,self ).save( path )
+        with open( path, 'wb' ) as f:
+            pickle.dump( self, f )
 
-
-
-
-
-
-
-
-
+    @classmethod
+    def load( self, path, **kwargs ):
+        ### get a TemplateBasedClassifier instance from a pkl file
+        super( TemplateBasedClassifier, self ).load( path )
+        with open( path, 'rb' ) as f:
+            obj = pickle.load( f )
+        return obj
