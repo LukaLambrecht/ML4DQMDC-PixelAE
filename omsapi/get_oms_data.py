@@ -20,7 +20,6 @@
 # See the notebook example.ipynb in this directory for some examples!
 
 
-
 ### imports
 
 # external modules
@@ -34,15 +33,11 @@ from clientid import API_CLIENT_ID, API_CLIENT_SECRET
 sys.path.append(os.path.abspath('../utils/notebook_utils'))
 
 
-
-
 ### set names of filter attributes
 
 attribute_name = 'attribute_name'
 value = 'value'
 operator = 'operator'
-
-
 
 
 def get_oms_api():
@@ -55,9 +50,7 @@ def get_oms_api():
     return omsapi
 
 
-
-
-def get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[], limit_entries=1000):
+def get_oms_data( omsapi, api_endpoint, runnb=None, fillnb=None, extrafilters=[], extraargs={}, sort=None, attributes=[], limit_entries=1000):
     ### query some data from OMS
     # input arguments:
     # - omsapi: an OMSAPI instance, e.g. created by get_oms_api()
@@ -66,6 +59,7 @@ def get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, so
     # - runnb: run number(s) to retrieve the info for,
     #   either integer (for single run) or tuple or list of two elements (first run and last run)
     #   (can also be None to not filter on run number but this is not recommended)
+    # - fillnb: runnb but for fill number instead of run number
     # - extrafilters: list of extra filters (apart from run number),
     #   each filter is supposed to be a dict of the form {'attribute_name':<name>,'value':<value>,'operator':<operator>}
     #   where <name> must be a valid field name in the OMS data, <value> its value, and <operator> chosen from "EQ", "NEQ", "LT", "GT", "LE", "GE" or "LIKE"
@@ -94,6 +88,18 @@ def get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, so
         print('WARNING in get_oms_data.py/get_oms_data:'
              +' run number {} not recognized'.format(runnb)
              +' (supposed to be an int, a tuple or list of 2 elements, or None).')
+    # check fillnb argument
+    if fillnb is None:
+        pass # do not apply fill number filter
+    elif isinstance(fillnb,int):
+        filters.append({attribute_name:'fill_number',value:str(fillnb),operator:'EQ'})
+    elif isinstance(fillnb,tuple) or isinstance(fillnb,list):
+        filters.append({attribute_name:'fill_number',value:str(fillnb[0]),operator:'GE'})
+        filters.append({attribute_name:'fill_number',value:str(fillnb[1]),operator:'LE'})
+    else:
+        print('WARNING in get_oms_data.py/get_oms_data:'
+             +' fill number {} not recognized'.format(fillnb)
+             +' (supposed to be an int, a tuple or list of 2 elements, or None).')
     # check extrafilters argument
     expected_keys = sorted([attribute_name,value,operator])
     for extrafilter in extrafilters:
@@ -113,9 +119,10 @@ def get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, so
     q.paginate(1, limit_entries)
     print(q.data_query())
     response = q.data()
-    return response.json()
-
-
+    try: return response.json()
+    except: 
+        print('ERROR in get_oms_data: could not convert response to json, returning raw response instead.')
+        return response
 
 
 def get_oms_response_attribute( omsresponse, attribute ):
@@ -125,8 +132,3 @@ def get_oms_response_attribute( omsresponse, attribute ):
     # - attribute: name of one of the attributes present in omsresponse
     
     return [omsresponse['data'][i]['attributes'][attribute] for i in range(len(omsresponse['data']))]
-
-
-
-
-
