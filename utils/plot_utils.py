@@ -91,7 +91,8 @@ def make_text_latex_safe( text ):
 ########################################
       
 def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1),
-              title=None, xaxtitle=None, yaxtitle=None, 
+              title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
+              ymaxfactor=None, legendsize=None, opaque_legend=False, ticksize=None,
               bkgcolor=None, bkgcmap='spring', bkgrange=None, bkgtitle=None):
     ### plot some histograms (in histlist) in one figure using specified colors and/or labels
     # - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))
@@ -135,10 +136,16 @@ def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transpar
         cobject.set_array([]) # ad-hoc bug fix
         cbar = fig.colorbar(cobject, ax=ax, alpha=0.1)
         if bkgtitle is not None: cbar.ax.set_ylabel(bkgtitle, rotation=270, labelpad=20.)
-    if dolabel: ax.legend()
-    if title is not None: ax.set_title(title)
-    if xaxtitle is not None: ax.set_xlabel(xaxtitle)
-    if yaxtitle is not None: ax.set_ylabel(yaxtitle)
+    if ymaxfactor is not None:
+        ymin,ymax = ax.get_ylim()
+        ax.set_ylim( (ymin, ymax*ymaxfactor) )
+    if dolabel: 
+        leg = ax.legend(loc='upper right', fontsize=legendsize)
+        if opaque_legend: make_legend_opaque(leg)
+    if ticksize is not None: ax.tick_params(axis='both', labelsize=ticksize)
+    if title is not None: ax.set_title(title, fontsize=titlesize)
+    if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
+    if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
     return (fig,ax)
 
 def plot_hists_from_df(df, histtype, nhists):
@@ -156,7 +163,8 @@ def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], tr
                      title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
                      caxtitle=None, caxtitlesize=None, caxtitleoffset=None,
                      remove_underflow=False, remove_overflow=False,
-                     ylims=None, ymaxfactor=None, legendsize=None, opaque_legend=False):
+                     ylims=None, ymaxfactor=None, legendsize=None, opaque_legend=False,
+                     ticksize=None ):
     ### plot many histograms (in histlist) in one figure using specified colors and/or labels
     # - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))
     # - colorlist is a list or array containing numbers to be mapped to colors
@@ -201,6 +209,7 @@ def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], tr
     if dolabel: 
         leg = ax.legend(loc='upper right', fontsize=legendsize)
         if opaque_legend: make_legend_opaque(leg)
+    if ticksize is not None: ax.tick_params(axis='both', labelsize=ticksize)
     if title is not None: ax.set_title(title, fontsize=titlesize)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)      
@@ -579,6 +588,54 @@ def plot_score_dist( scores, labels, fig=None, ax=None,
     if doshow: plt.show(block=False)
     return (fig,ax)
 
+def plot_score_dist_multi( scores, labels=None, colors=None, fig=None, ax=None,
+                           nbins=20, normalize=False,
+                           linestyle=None, linewidth=1,
+                           title=None, titlesize=12,
+                           xaxtitle=None, xaxtitlesize=12, 
+                           yaxtitle=None, yaxtitlesize=12,
+                           legendsize=None, legendloc='best',
+                           ticksize=None, dolegend=True ):
+    ### plot the distribution of output scores for arbitrarily many sets (not limited to 'signal' and 'background')
+    # input arguments:
+    # - scores: list of numpy arrays of scores
+    # - labels: list of legend entries for the scores, must have same length as scores or be None (no legend)
+    # - colors: list of colors for the different score arrays, must have same length as scores or be None (default colors)
+    
+    # default settings
+    if labels is None: 
+        labels = ['']*len(scores)
+        dolegend = False
+    if colors is None:
+        colors = ['b']*len(scores)
+    # make the x-axis
+    minscore = min( *[np.amin(score_array) for score_array in scores] )
+    maxscore = max( *[np.amax(score_array) for score_array in scores] )
+    scorebins = np.linspace(minscore,maxscore,num=nbins+1)
+    scoreax = (scorebins[1:] + scorebins[:-1])/2
+    # make the histograms
+    hists = []
+    for score_array in scores:
+        hist = np.histogram(score_array,bins=scorebins)[0]
+        if normalize: hist = hist/np.sum(hist)
+        hists.append(hist)
+    # make the figure and do initial plot
+    if( fig is None or ax is None): (fig,ax) = plt.subplots()
+    for i,hist in enumerate(hists):
+        ax.step(scoreax, hist, 
+                color=colors[i],label=labels[i], where='mid',
+                linestyle=linestyle, linewidth=linewidth)
+    # plot aesthetics
+    plt.xticks(fontsize=ticksize)
+    plt.yticks(fontsize=ticksize)
+    ax.ticklabel_format(axis='x', style='scientific', scilimits=(0,0))
+    ax.xaxis.get_offset_text().set_fontsize(ticksize)
+    ax.yaxis.get_offset_text().set_fontsize(ticksize)
+    if title is not None: ax.set_title(title, fontsize=titlesize)
+    if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
+    if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
+    if dolegend: ax.legend( loc=legendloc, fontsize=legendsize )
+    return (fig,ax)
 
 def plot_score_ls( thisscore, refscores, fig=None, ax=None, 
                     thislabel='This LS', thiscolor='black',
