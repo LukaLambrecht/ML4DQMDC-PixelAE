@@ -85,6 +85,10 @@ class HistStruct(object):
         self.models = {}
         self.modelnames = []
         
+    ##############################
+    # functions for input/output #
+    ##############################
+        
     def __str__( self ):
         ### get a printable representation of a HistStruct
         info = '=== HistStruct === \n'
@@ -177,6 +181,10 @@ class HistStruct(object):
             print('Loaded a HistStruct object with following properties:')
             print(obj)
         return obj
+    
+    ###################################
+    # functions for adding histograms #
+    ###################################
         
     def add_dataframe( self, df, cropslices=None, rebinningfactor=None, 
                         smoothinghalfwindow=None, smoothingweights=None,
@@ -364,6 +372,11 @@ class HistStruct(object):
                 self.models[modelname].add_setname( extname )
             self.extnames.append(extname)
         self.exthistograms[extname][histname] = histograms
+        
+        
+    ###################################
+    # functions for mask manipulation #
+    ###################################
     
     def add_mask( self, name, mask ):
         ### add a mask to a HistStruct
@@ -402,6 +415,15 @@ class HistStruct(object):
         # - name: a name for the mask
         # - runnb: run number
         json = {str(runnb):[[-1]]}
+        self.add_json_mask( name, json )
+        
+    def add_multirun_mask( self, name, runnbs ):
+        ### add a mask corresponding to a given list of run numbers
+        # input arguments:
+        # - name: a name for the mask
+        # - runnbs: a list of run numbers
+        json = {}
+        for runnb in runnbs: json[str(runnb)] = [[-1]]
         self.add_json_mask( name, json )
       
     def add_json_mask( self, name, jsondict ):
@@ -459,19 +481,9 @@ class HistStruct(object):
         # - entries_to_bins_ratio: number of entries divided by number of bins, lower boundary for statistics
         # others: see add_stat_mask
         self.add_stat_mask( name, histnames=histnames, min_entries_to_bins_ratio=entries_to_bins_ratio )
-        
-    def get_combined_mask( self, names ):
-        ### get a combined mask given multiple mask names
-        # mostly for internal use; externally you can use get_histograms( histname, <list of mask names>) directly
-        mask = np.ones(len(self.runnbs)).astype(bool)
-        for name in names:
-            if name not in self.masks.keys():
-                raise Exception('ERROR in HistStruct.get_combined_mask: mask {} requested but not found.'.format(name))
-            mask = mask & self.masks[name]
-        return mask
     
     def pass_masks( self, masknames, runnbs=None, lsnbs=None ):
-        ### get a list of booleans
+        ### get a list of booleans of lumisections whether they pass a given set of masks
         # input arguments:
         # - masknames: list of mask names
         # - runnbs: list of run numbers (default: all in histstruct)
@@ -493,9 +505,27 @@ class HistStruct(object):
         return res
     
     def get_masknames( self ):
-        ### return a simple list of all mask names in the current HistStruct
+        ### return a list of all mask names in the current HistStruct
         return list( self.masks.keys() )
-        
+    
+    def get_mask( self, name ):
+        ### return a mask in the current HistStruct
+        return self.masks[name][:]
+    
+    def get_combined_mask( self, names ):
+        ### get a combined mask given multiple mask names
+        # mostly for internal use; externally you can use get_histograms( histname, <list of mask names>) directly
+        mask = np.ones(len(self.runnbs)).astype(bool)
+        for name in names:
+            if name not in self.masks.keys():
+                raise Exception('ERROR in HistStruct.get_combined_mask: mask {} requested but not found.'.format(name))
+            mask = mask & self.masks[name]
+        return mask
+    
+    ########################################################
+    # functions for retrieving run and lumisection numbers #
+    ########################################################
+    
     def get_runnbs( self, masknames=None ):
         ### get the array of run numbers, optionally after masking
         # input arguments:
@@ -503,10 +533,10 @@ class HistStruct(object):
         if masknames is None: return self.runnbs[:]
         return self.runnbs[ self.get_combined_mask(masknames) ]
 
-    def get_runnbs_unique( self ):
+    def get_runnbs_unique( self, masknames=None ):
         ### get a list of unique run numbers
         res = []
-        for runnb in self.runnbs:
+        for runnb in self.get_runnbs( masknames=masknames ):
             if runnb not in res: res.append(runnb)
         return res
     
@@ -798,6 +828,10 @@ class HistStruct(object):
             if globalscores is not None: globalscores = globalscores[ids]
         return {'histograms': histograms, 'scores': scores, 'globalscores': globalscores}
     
+    ################################################
+    # functions for adding and manipulating models #
+    ################################################
+    
     def add_model( self, modelname, model, evaluate=False ):
         ### add a model to the HistStruct
         # input arguments:
@@ -833,26 +867,48 @@ class HistStruct(object):
         self.models.pop(modelname)
         self.modelnames.remove(modelname)
         
-    def evaluate_classifier( self, modelname, histname, extname=None ):
+    def evaluate_classifier( self, modelname, histname, masknames=None, extname=None ):
         ### evaluate a histogram classifiers
         # input arguments:
         # - modelname: name of the model for wich to evaluate the classifiers
         # - histname: a valid histogram name present in the HistStruct for which to evaluate the classifier
-        # - extname: name of a set of extra histograms
+        # - masknames: list of masks if the classifiers should be evaluated on a subset only (e.g. for speed)
+        # - extname: name of a set of extra histograms for which the classifiers should be evaluated
+        if( masknames is not None and extname is not None ):
+            raise Exception('ERROR in HistStruct.evaluate_classifier:'
+                            +' you cannot specify both masknames and extname.')
         histograms = None
-        if extname is None: histograms = self.get_histograms( histname=histname )
-        else: histograms = self.get_exthistograms( histname=histname, extname=extname )
-        self.models[modelname].evaluate_store_classifier( histname, histograms, setname=extname )
+        mask = None
+        # definitions in case of default set with optional masking
+        if extname is None:
+            histograms = self.get_histograms( histname=histname )
+            mask = self.get_combined_mask( masknames )
+        # definitions in case of extended set
+        else:
+            histograms = self.get_exthistograms( histname=histname, extname=extname )
+        # call the evaluation of the ModelInterface
+        self.models[modelname].evaluate_store_classifier( histname, histograms, mask=mask, setname=extname )
         
-    def evaluate_classifiers( self, modelname, extname=None ):
+    def evaluate_classifiers( self, modelname, masknames=None, extname=None ):
         ### evaluate a histogram classifiers for all histogram types
         # input arguments:
         # - modelname: name of the model for wich to evaluate the classifiers
-        # - extname: name of a set of extra histograms
+        # - masknames: list of masks if the classifiers should be evaluated on a subset only (e.g. for speed)
+        # - extname: name of a set of extra histograms for which the classifiers should be evaluated
+        if( masknames is not None and extname is not None ):
+            raise Exception('ERROR in HistStruct.evaluate_classifiers:'
+                            +' you cannot specify both masknames and extname.')
         histograms = None
-        if extname is None: histograms = self.get_histograms()
-        else: histograms = self.get_exthistograms( extname=extname )
-        self.models[modelname].evaluate_store_classifiers( histograms, setname=extname )
+        mask = None
+        # definitions in case of default set with optional masking
+        if extname is None:
+            histograms = self.get_histograms()
+            mask = self.get_combined_mask( masknames )
+        # definitions in case of extended set
+        else: 
+            histograms = self.get_exthistograms( extname=extname )
+        # call the evaluation of the ModelInterface
+        self.models[modelname].evaluate_store_classifiers( histograms, mask=mask, setname=extname )
         
     def set_fitter( self, modelname, fitter ):
         ### set the fitter for a given model
@@ -868,10 +924,20 @@ class HistStruct(object):
         points = self.get_scores( modelname, masknames=masknames, setname=setname )
         self.models[modelname].train_fitter( points, verbose=verbose )
         
-    def evaluate_fitter( self, modelname, setname=None, verbose=False ):
+    def evaluate_fitter( self, modelname, masknames=None, setname=None, verbose=False ):
         ### evaluate the fitter for a given model
+        # input arguments:
+        # - modelname: name of the model for which to evaluate the fitter
+        # - masknames: list of mask names if the fitter should be evaluated on a subset only (e.g. for speed)
+        # - setname: name of a set of extra histograms for which the fitter should be evaluated
+        if( masknames is not None and setname is not None ):
+            raise Exception('ERROR in HistStruct.evaluate_fitter:'
+                            +' you cannot specify both masknames and setname.')
         points = self.get_scores( modelname, setname=setname )
-        self.models[modelname].evaluate_store_fitter( points, setname=setname )
+        mask = None
+        if masknames is not None:
+            mask = self.get_combined_mask( masknames )
+        self.models[modelname].evaluate_store_fitter( points, mask=mask, setname=setname )
         
     def evaluate_fitter_on_point( self, modelname, point ):
         ### evaluate the fitter on a given points
@@ -892,6 +958,10 @@ class HistStruct(object):
         # returns:
         # - the global scores for the provided points
         return self.models[modelname].evaluate_fitter( points )
+    
+    ##########################
+    # functions for plotting #
+    ##########################
 
     def plot_histograms( self, histnames=None, masknames=None, histograms=None, ncols=4,
                             colorlist=[], labellist=[], transparencylist=[], 

@@ -12,14 +12,7 @@
 import os
 import sys
 import pickle
-#import zipfile
-#import glob
-#import shutil
-#import copy
-#import math
-#import pandas as pd
 import numpy as np
-#import matplotlib.pyplot as plt
 import importlib
 
 # local modules
@@ -94,20 +87,33 @@ class Model(object):
                            +' Found {} and {} respectively'.format(checknames,self.histnames))
         for histname in self.histnames: self.train_classifier( histograms[histname], **kwargs )
             
-    def evaluate_classifier( self, histname, histograms ):
+    def evaluate_classifier( self, histname, histograms, mask=None ):
         ### evaluate a classifier and return the score
         # input arguments:
         # - histname: histogram name for which to evaluate the classifier
         # - histograms: the histograms for evaluation, np array of shape (nhistograms,nbins)
-        res = self.classifiers[histname].evaluate( histograms )
+        # - mask: a np boolean array masking the histograms to be evaluated
+        # returns:
+        # - a np array of shape (nhistograms) with the scores
+        # note: masked-out indices are set to np.nan!
+        if mask is None: res = self.classifiers[histname].evaluate( histograms )
+        else:
+            res = np.empty(len(histograms))
+            res[:] = np.nan
+            mask_inds = np.nonzero(mask)[0]
+            histograms = histograms[mask_inds]
+            scores = self.classifiers[histname].evaluate( histograms )
+            res[mask_inds] = scores
         return res
         
-    def evaluate_classifiers( self, histograms ):
+    def evaluate_classifiers( self, histograms, mask=None ):
         ### evaluate the classifiers and return the scores
         # input arguments:
         # - histograms: dict of histnames to histogram arrays (shape (nhistograms,nbins))
+        # - mask: a np boolean array masking the histograms to be evaluated
         # returns:
         # - dict of histnames to scores (shape (nhistograms))
+        # note: masked-out indices are set to np.nan!
         scores = {}
         checknames = sorted(list(histograms.keys()))
         if not checknames==sorted(self.histnames):
@@ -115,7 +121,7 @@ class Model(object):
                            +' the ones used to initialize the Model.'
                            +' Found {} and {} respectively'.format(checknames,self.histnames))
         for histname in self.histnames: 
-            res = self.evaluate_classifier( histname, histograms[histname] )
+            res = self.evaluate_classifier( histname, histograms[histname], mask=mask )
             scores[histname] = res
         return scores
     
@@ -142,10 +148,23 @@ class Model(object):
         self.fitter.fit(pointsnp)
         if verbose: print('INFO: trained fitter on a training set of shape {}'.format(pointsnp.shape))
         
-    def evaluate_fitter( self, points, verbose=False ):
+    def evaluate_fitter( self, points, mask=None, verbose=False ):
         ### evaluate the fitter and return the scores
         # input arguments:
         # - points: dict matching histnames to scores (np array of shape (nhistograms))
+        # - mask: a np boolean array masking the histograms to be evaluated
+        # returns:
+        # - a np array of shape (nhistograms) with the scores
+        # note: masked-out indices are set to np.nan!
         pointsnp = self.get_point_array( points )
-        return self.fitter.pdf(pointsnp)
+        
+        if mask is None: res = self.fitter.pdf(pointsnp)
+        else:
+            res = np.empty(len(pointsnp))
+            res[:] = np.nan
+            mask_inds = np.nonzero(mask)[0]
+            pointsnp = pointsnp[mask_inds]
+            scores = self.fitter.pdf(pointsnp)
+            res[mask_inds] = scores
         if verbose: print('INFO: evaluated fitter on a testing set of shape {}'.format(pointsnp.shape))
+        return res

@@ -23,6 +23,8 @@ import numpy as np
 import importlib
 
 # local modules
+import Model
+importlib.reload(Model)
 from Model import Model
 sys.path.append('classifiers')
 from HistogramClassifier import HistogramClassifier
@@ -80,31 +82,36 @@ class ModelInterface(Model):
         self.scores[setname] = {}
         self.globalscores[setname] = []
     
-    def evaluate_store_classifier( self, histname, histograms, setname=None ):
+    def evaluate_store_classifier( self, histname, histograms, mask=None, setname=None ):
         ### same as Model.evaluate_classifier but store the result internally
         # input arguments:
         # - histname: histogram name for which to evaluate the classifier
         # - histograms: the histograms for evaluation, np array of shape (nhistograms,nbins)
+        # - mask: a np boolean array masking the histograms to be evaluated
         # - setname: name of extended set (default: standard set)
         if setname is None: setname = self.default_set_name
-        scores = super( ModelInterface, self ).evaluate_classifier(histname, histograms)
+        scores = super( ModelInterface, self ).evaluate_classifier(histname, histograms, mask=mask)
         self.scores[setname][histname] = scores
         
-    def evaluate_store_classifiers( self, histograms, setname=None ):
+    def evaluate_store_classifiers( self, histograms, mask=None, setname=None ):
         ### same as Model.evaluate_classifiers but store the result internally
         # input arguments:
         # - histograms: dict of histnames to histogram arrays (shape (nhistograms,nbins))
+        # - mask: a np boolean array masking the histograms to be evaluated
         # - setname: name of extended set (default: standard set)
         if setname is None: setname = self.default_set_name
-        scores = super( ModelInterface, self ).evaluate_classifiers(histograms)
+        scores = super( ModelInterface, self ).evaluate_classifiers(histograms, mask=mask)
         self.scores[setname] = scores
         
-    def evaluate_store_fitter( self, points, setname=None, verbose=False ):
+    def evaluate_store_fitter( self, points, mask=None, setname=None, verbose=False ):
         ### same as Model.evaluate_fitter but store the result internally
         # input arguments:
         # - points: dict matching histnames to scores (np array of shape (nhistograms))
+        # - mask: a np boolean array masking the histograms to be evaluated
+        # - setname: name of extended set (default: standard set)
         if setname is None: setname = self.default_set_name
-        self.globalscores[setname] = super( ModelInterface, self ).evaluate_fitter(points, verbose=verbose)
+        scores = super( ModelInterface, self ).evaluate_fitter(points, mask=mask, verbose=verbose)
+        self.globalscores[setname] = scores
         
     def get_scores( self, setname=None, histname=None ):
         if setname is None: setname = self.default_set_name
