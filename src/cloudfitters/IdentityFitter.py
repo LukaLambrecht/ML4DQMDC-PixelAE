@@ -16,6 +16,7 @@
 
 # external modules
 import numpy as np
+import os
 
 # local modules
 from CloudFitter import CloudFitter
@@ -48,3 +49,21 @@ class IdentityFitter(CloudFitter):
         scores = np.reciprocal(points[:,0])
         scores = np.where( scores>=1./self.nanthreshold, np.nan, scores )
         return scores
+    
+    def save(self, path):
+        ### save this fitter (dummy for now since nothing to be saved)
+        txtpath = os.path.splitext(path)[0]+'.txt'
+        dirname = os.path.dirname(txtpath)
+        if not os.path.exists(dirname): os.makedirs(dirname)
+        with open(txtpath, 'w') as f:
+            f.write('dummy')
+        return txtpath
+    
+    @classmethod
+    def load(self, path):
+        ### load this fitter (dummy for now since nothing to be loaded)
+        obj = IdentityFitter()
+        dummy_array = np.array([1,2,3])
+        dummy_array = np.expand_dims(dummy_array,1)
+        obj.fit(dummy_array)
+        return obj

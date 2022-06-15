@@ -3,8 +3,9 @@
 
 # **ModelInterface: extension of Model class interfaced by HistStruct**  
 # 
-# To do: more detailed documentation (currently under a little time pressure...)
-# To do: more argument and exception checking throughout the whole class
+# This class is the interface between a Model (holding classifiers and fitters)  
+# and a HistStruct (holding histogram data).  
+# It stores the classifier and model scores for the histograms in a HistStruct.  
 
 ### imports
 
@@ -14,12 +15,8 @@ import sys
 import pickle
 import zipfile
 import glob
-#import shutil
 import copy
-#import math
-#import pandas as pd
 import numpy as np
-#import matplotlib.pyplot as plt
 import importlib
 
 # local modules
@@ -33,6 +30,9 @@ from HistogramClassifier import HistogramClassifier
 class ModelInterface(Model):
     
     def __init__( self, histnames ):
+        ### initializer
+        # input arguments:
+        # - histnames: list of the histogram names for this Model(Interface).
         super( ModelInterface, self ).__init__(histnames)
         # (setting attributes histnames, ndims, classifiers, and fitter)
         self.scores = {}
@@ -40,6 +40,9 @@ class ModelInterface(Model):
         self.setnames = []
         self.default_set_name = 'default'
         self.add_setname( self.default_set_name )
+        # extra properties for plotting purposes
+        self.partial_fitters = {}
+        self.fitscores_array = None
         
     def __str__( self ):
         ### get a printable representation of a ModelInterface
@@ -63,10 +66,10 @@ class ModelInterface(Model):
                 info += '- set "{}" \n'.format(setname)
                 for histname in self.histnames:
                     info += '  -- scores for {}: '.format(histname)
-                    if histname in self.scores[setname].keys(): info += 'initialized \n'
+                    if self.check_scores( setname=setname, histnames=[histname] ): info += 'initialized \n'
                     else: info += '(not initialized) \n'
                 info += '  -- global scores: '
-                if len(self.globalscores[setname])>0: info += 'initialized \n'
+                if self.check_globalscores( setname=setname ): info += 'initialized \n'
                 else: info += '(not initialized) \n'
         return info
         
@@ -81,6 +84,34 @@ class ModelInterface(Model):
         self.setnames.append( setname )
         self.scores[setname] = {}
         self.globalscores[setname] = []
+        
+    def check_setname( self, setname ):
+        ### check if a setname is present
+        # input arguments:
+        # - setname: name of the set to check
+        if setname in self.setnames: return True
+        return False
+    
+    def check_scores( self, histnames=None, setname=None ):
+        ### check if scores are present for a given set name
+        # input arguments:
+        # - histnames: list of histogram names for which to check the scores (default: all)
+        # - setname: name of the set for which to check the scores (default: standard set)
+        if histnames = None: histnames = self.histnames
+        if setname is None: setname = self.default_set_name
+        if not self.check_setname( setname ): return False
+        for histname in histnames:
+            if not histname in self.scores[setname].keys(): return False
+        return True
+    
+    def check_globalscores( self, setname=None ):
+        ### check if global scores are present for a given set name
+        # input arguments:
+        # - setname: name of the set for which to check the scores (default: standard set)
+        if setname is None: setname = self.default_set_name
+        if not self.check_setname( setname ): return False
+        if len(self.globalscores[setname])==0: return False
+        return True
     
     def evaluate_store_classifier( self, histname, histograms, mask=None, setname=None ):
         ### same as Model.evaluate_classifier but store the result internally
@@ -90,6 +121,10 @@ class ModelInterface(Model):
         # - mask: a np boolean array masking the histograms to be evaluated
         # - setname: name of extended set (default: standard set)
         if setname is None: setname = self.default_set_name
+        if not self.check_setname( setname ):
+            raise Exception('ERROR in ModelInterface.evaluate_store_classifier:'
+                           +' requested to store the classifier results in set {}'.format(setname)
+                           +' but it was not yet initialized.')
         scores = super( ModelInterface, self ).evaluate_classifier(histname, histograms, mask=mask)
         self.scores[setname][histname] = scores
         
@@ -100,6 +135,10 @@ class ModelInterface(Model):
         # - mask: a np boolean array masking the histograms to be evaluated
         # - setname: name of extended set (default: standard set)
         if setname is None: setname = self.default_set_name
+        if not self.check_setname( setname ):
+            raise Exception('ERROR in ModelInterface.evaluate_store_classifiers:'
+                           +' requested to store the classifier results in set {}'.format(setname)
+                           +' but it was not yet initialized.')
         scores = super( ModelInterface, self ).evaluate_classifiers(histograms, mask=mask)
         self.scores[setname] = scores
         
@@ -110,15 +149,25 @@ class ModelInterface(Model):
         # - mask: a np boolean array masking the histograms to be evaluated
         # - setname: name of extended set (default: standard set)
         if setname is None: setname = self.default_set_name
+        if not self.check_setname( setname ):
+            raise Exception('ERROR in ModelInterface.evaluate_store_fitter:'
+                           +' requested to store the fitter results in set {}'.format(setname)
+                           +' but it was not yet initialized.')
         scores = super( ModelInterface, self ).evaluate_fitter(points, mask=mask, verbose=verbose)
         self.globalscores[setname] = scores
         
     def get_scores( self, setname=None, histname=None ):
+        ### get the scores stored internally
+        # input arguments:
+        # - setname: name of extended set (default: standard set)
+        # - histname: name of histogram type for which to get the scores
+        #   if specified, an array of scores is returned.
+        #   if not, a dict matching histnames to arrays of scores is returned.
         if setname is None: setname = self.default_set_name
-        if not setname in self.setnames:
+        if not self.check_setname( setname ):
             raise Exception('ERROR in ModelInterface.get_scores: requested setname {}'.format(setname)
                            +' but it is not in the current ModelInterface.')
-        if( (histname is not None) and (histname not in self.histnames) ):
+        if not self.check_scores( histnames=[histname], setname=setname ):
             raise Exception('ERROR in ModelInterface.get_scores: requested histname {}'.format(histname)
                            +' but it is not in the current ModelInterface.')
         if histname is None:
@@ -126,11 +175,31 @@ class ModelInterface(Model):
         else: return self.scores[setname][histname]
         
     def get_globalscores( self, setname=None ):
+        ### get the global scores stored internally
+        # input arguments:
+        # - setname: name of extended set (default: standard set)
         if setname is None: setname = self.default_set_name
-        if not setname in self.setnames:
-            raise Exception('ERROR in ModelInterface.get_scores: requested setname {}'.format(setname)
+        if not self.check_setname( setname ):
+            raise Exception('ERROR in ModelInterface.get_globalscores: requested setname {}'.format(setname)
                            +' but it is not in the current ModelInterface.')
         return self.globalscores[setname]
+        
+    def train_partial_fitters( self, dimslist, points, **kwargs ):
+        ### train partial fitters on a given set of dimensions
+        # input arguments:
+        # - dimslist: list of tuples with integer dimension numbers
+        # - points: dict matching histnames to scores (np array of shape (nhistograms))
+        # - kwargs: additional keyword arguments for fitting
+        self.partial_fitters = {}
+        self.fitscores_array = self.get_point_array(points)
+        # loop over all combinations of dimensions
+        for dims in dimslist:
+            # make the partial fit and store it
+            scores = self.fitscores_array[:,dims]
+            if len(scores.shape)==1: scores = np.expand_dims(scores, 1)
+            fitter = self.fitter_type()
+            fitter.fit( scores, **kwargs )
+            self.partial_fitters[dims] = fitter
         
     def save( self, path, save_classifiers=True, save_fitter=True ):
         ### save a ModelInterface object to a pkl file
@@ -149,6 +218,8 @@ class ModelInterface(Model):
         self.classifiers = {}
         fitter = copy.deepcopy(self.fitter)
         self.fitter = None
+        partial_fitters = dict(self.partial_fitters)
+        self.partial_fitters = {}
         # pickle the rest
         with open(pklpath,'wb') as f:
             pickle.dump(self,f)
@@ -156,6 +227,7 @@ class ModelInterface(Model):
         # restore the classifiers and fitter
         self.classifiers = classifiers
         self.fitter = fitter
+        self.partial_fitters = partial_fitters
         # case where classifiers should be stored
         if( len(self.classifiers.keys())!=0 and save_classifiers ):
             # save the classifiers

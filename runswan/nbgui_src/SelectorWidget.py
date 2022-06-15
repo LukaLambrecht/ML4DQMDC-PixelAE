@@ -1,20 +1,30 @@
+import sys
+import os
+import numpy as np
 import ipywidgets as ipw
-import OptionsBox
 import importlib
+
+import OptionsBox
 importlib.reload(OptionsBox)
 from OptionsBox import OptionsBox
+
+sys.path.append('../../utils')
+import hist_utils as hu
 
 
 class SelectorWidget:
 
-    def __init__(self, histstruct, title=None,
+    def __init__(self, histstruct, 
+                 title=None,
                  mask_selection=True,
                  set_selection=True,
                  post_selection=True,
                  allow_multi_mask=True,
-                 allow_multi_set=False):
+                 allow_multi_set=False,
+                 model_selection=True):
         self.histstruct = histstruct
         self.histograms = None
+        self.modelname = None
         self.masks = None
         self.sets = None
         self.scores = None
@@ -50,6 +60,10 @@ class SelectorWidget:
         self.other_options_obj = OptionsBox(labels=list(options.keys()),
                                             values=list(options.values()))
         self.other_options_box = self.other_options_obj.get_widget()
+        
+        # add widgets for choice of model
+        self.model_label = ipw.Label(value='Model')
+        self.model_box = ipw.Dropdown(description='Model', options=['None']+histstruct.modelnames)
 
         # add widget for selection
         self.select_button = ipw.Button(description='Select')
@@ -64,6 +78,7 @@ class SelectorWidget:
         if mask_selection: children += [self.masks_label, self.masks_listbox]
         if set_selection: children += [self.sets_label, self.sets_listbox]
         if post_selection: children += [self.other_options_label, self.other_options_box]
+        if model_selection: children += [self.model_label, self.model_box]
         children += [buttonbox]
         
         self.grid = ipw.GridBox(children=children,
@@ -118,6 +133,18 @@ class SelectorWidget:
             print('WARNING: the current histogram selection does not contain scores.'
                     +' Did you properly evaluate a model on the selected set?')
         return self.scores
+    
+    def get_scores_array(self):
+        ### get scores of currently selected histograms in array format
+        if self.scores is None:
+            print('WARNING: the current histogram selection does not contain scores.'
+                    +' Did you properly evaluate a model on the selected set?')
+            return None
+        scores_array = []
+        for histname in self.histstruct.histnames:
+            scores_array.append(self.scores[histname])
+        scores_array = np.transpose(np.array(scores_array))
+        return scores_array
 
     def get_globalscores(self):
         ### get global scores of currently selected lumisections
@@ -152,14 +179,23 @@ class SelectorWidget:
         first = options['first']
         partitions = options['partitions']
         
+        # get model name
+        modelname = self.model_box.value
+        if modelname=='None': modelname = None
+        
         # get all numbers
         extname = None
         if do_sets: extname = sets[0]
-        res = self.histstruct.get_histogramsandscores( extname=extname, masknames=masks, 
-                                nrandoms=randoms, nfirst=first)
+        
+        res = self.histstruct.get_histogramsandscores( modelname=modelname,
+                                                       extname=extname, 
+                                                       masknames=masks, 
+                                                       nrandoms=randoms, 
+                                                       nfirst=first )
         self.histograms = res['histograms']
         self.scores = res['scores']
         self.globalscores = res['globalscores']
+        self.modelname = modelname
         self.masks = masks
         self.sets = sets
         self.randoms = randoms
