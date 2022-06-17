@@ -185,10 +185,10 @@ class SelectorWidget:
         
         # get all numbers
         extname = None
-        if do_sets: extname = sets[0]
+        if do_sets: extname = sets
         
         res = self.histstruct.get_histogramsandscores( modelname=modelname,
-                                                       extname=extname, 
+                                                       setnames=extname, 
                                                        masknames=masks, 
                                                        nrandoms=randoms, 
                                                        nfirst=first )

@@ -66,10 +66,10 @@ class ModelInterface(Model):
                 info += '- set "{}" \n'.format(setname)
                 for histname in self.histnames:
                     info += '  -- scores for {}: '.format(histname)
-                    if self.check_scores( setname=setname, histnames=[histname] ): info += 'initialized \n'
+                    if self.check_scores( setnames=[setname], histnames=[histname] ): info += 'initialized \n'
                     else: info += '(not initialized) \n'
                 info += '  -- global scores: '
-                if self.check_globalscores( setname=setname ): info += 'initialized \n'
+                if self.check_globalscores( setnames=[setname] ): info += 'initialized \n'
                 else: info += '(not initialized) \n'
         return info
         

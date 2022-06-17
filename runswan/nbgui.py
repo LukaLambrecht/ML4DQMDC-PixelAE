@@ -1235,7 +1235,7 @@ class ApplyClassifiersTab:
             for histname in self.histstruct.histnames:
                 with self.tab: print('  now processing histogram type {}'.format(histname))
                 # do the evaluation
-                self.histstruct.evaluate_classifier( modelname, histname, extname=extname )
+                self.histstruct.evaluate_classifier( modelname, histname, setnames=[extname] )
         with self.tab: print('done')
             
             
@@ -1377,13 +1377,12 @@ class FitTab:
             if len(setname)>1:
                 msg = 'ERROR: found multiple sets ({}), while only one is expected.'.format(setname)
                 raise Exception(msg)
-            setname = setname[0]
         
         # do the global fit
         self.histstruct.set_fitter( modelname, fitter_class() )
         self.histstruct.train_fitter( modelname, 
                                       masknames=masknames,
-                                      setname=setname,
+                                      setnames=setname,
                                       **fitter_options )
         
         # evaluate the fitted function on the non-extended histstruct
@@ -1406,7 +1405,7 @@ class FitTab:
         self.histstruct.train_partial_fitters( modelname, 
                                                dimslist, 
                                                masknames=masknames, 
-                                               setname=setname, 
+                                               setnames=setname, 
                                                **fitter_options )
         
         # make the plots
@@ -1424,7 +1423,7 @@ class FitTab:
                 # get fitter
                 fitter = self.histstruct.models[modelname].partial_fitters[dims]
                 # get points
-                points = self.histstruct.get_scores_array(modelname, setname=setname, masknames=masknames)[:,dims]
+                points = self.histstruct.get_scores_array(modelname, setnames=setname, masknames=masknames)[:,dims]
                 if len(points.shape)==1: points = np.expand_dims(points,1)
                 # make the plot
                 (fig,ax) = self.plotfunction(points, 
@@ -1498,7 +1497,7 @@ class ApplyFitTab:
         # loop over sets
         for extname in extnames:
             with self.tab: print('evaluating fitter on set {}'.format(extname))
-            self.histstruct.evaluate_fitter( modelname, setname=extname )
+            self.histstruct.evaluate_fitter( modelname, setnames=[extname] )
         with self.tab: print('done')
             
             
