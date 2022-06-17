@@ -93,7 +93,8 @@ def chiSquaredTopNRaw(y_true, y_pred, n=10):
     # output:
     # numpy array of shape (nhists)
     sqdiff = np.power(y_true-y_pred,2)
-    chi2 = np.where(y_true==0,0,sqdiff/y_true)
+    y_true_safe = np.where(y_true==0, 1, y_true)
+    chi2 = np.where(y_true==0, 0, sqdiff/y_true_safe)
     if len(chi2.shape)==3:
         chi2 = chi2.reshape(len(chi2),-1)
     chi2 = np.partition( chi2, -n, axis=-1 )[:,-n:]

@@ -92,25 +92,33 @@ class ModelInterface(Model):
         if setname in self.setnames: return True
         return False
     
-    def check_scores( self, histnames=None, setname=None ):
+    def check_setnames( self, setnames ):
+        ### check if all names in a list of set names are present
+        for setname in setnames: 
+            if not self.check_setname(setname): return False
+        return True
+    
+    def check_scores( self, histnames=None, setnames=None ):
         ### check if scores are present for a given set name
         # input arguments:
         # - histnames: list of histogram names for which to check the scores (default: all)
-        # - setname: name of the set for which to check the scores (default: standard set)
-        if histnames = None: histnames = self.histnames
-        if setname is None: setname = self.default_set_name
-        if not self.check_setname( setname ): return False
-        for histname in histnames:
-            if not histname in self.scores[setname].keys(): return False
+        # - setname: list of set names for which to check the scores (default: standard set)
+        if histnames is None: histnames = self.histnames
+        if setnames is None: setnames = [self.default_set_name]
+        for setname in setnames: 
+            if not self.check_setname( setname ): return False
+            for histname in histnames:
+                if not histname in self.scores[setname].keys(): return False
         return True
     
-    def check_globalscores( self, setname=None ):
+    def check_globalscores( self, setnames=None ):
         ### check if global scores are present for a given set name
         # input arguments:
-        # - setname: name of the set for which to check the scores (default: standard set)
-        if setname is None: setname = self.default_set_name
-        if not self.check_setname( setname ): return False
-        if len(self.globalscores[setname])==0: return False
+        # - setname: list of set names for which to check the scores (default: standard set)
+        if setnames is None: setnames = [self.default_set_name]
+        for setname in setnames:
+            if not self.check_setname( setname ): return False
+            if len(self.globalscores[setname])==0: return False
         return True
     
     def evaluate_store_classifier( self, histname, histograms, mask=None, setname=None ):
@@ -156,33 +164,70 @@ class ModelInterface(Model):
         scores = super( ModelInterface, self ).evaluate_fitter(points, mask=mask, verbose=verbose)
         self.globalscores[setname] = scores
         
-    def get_scores( self, setname=None, histname=None ):
+    def get_scores( self, setnames=None, histname=None ):
         ### get the scores stored internally
         # input arguments:
-        # - setname: name of extended set (default: standard set)
+        # - setnames: list of names of extended sets (default: standard set)
         # - histname: name of histogram type for which to get the scores
         #   if specified, an array of scores is returned.
         #   if not, a dict matching histnames to arrays of scores is returned.
-        if setname is None: setname = self.default_set_name
-        if not self.check_setname( setname ):
-            raise Exception('ERROR in ModelInterface.get_scores: requested setname {}'.format(setname)
-                           +' but it is not in the current ModelInterface.')
-        if not self.check_scores( histnames=[histname], setname=setname ):
-            raise Exception('ERROR in ModelInterface.get_scores: requested histname {}'.format(histname)
-                           +' but it is not in the current ModelInterface.')
-        if histname is None:
-            return self.scores[setname]
-        else: return self.scores[setname][histname]
+        if setnames is None: setnames = [self.default_set_name]
+        histnames = self.histnames[:]
+        if histname is not None: histnames = [histname]
+        if not self.check_setnames( setnames ):
+            raise Exception('ERROR in ModelInterface.get_scores: requested scores for setnames {}'.format(setnames)
+                           +' but not all of them are in the current ModelInterface.')
+        if not self.check_scores( histnames=histnames, setnames=setnames ):
+            raise Exception('ERROR in ModelInterface.get_scores: requested scores for histname {}'.format(histname)
+                           +' but it is not defined for all of the requested sets.')
+        res = {}
+        for hname in histnames:
+            scores = []
+            for setname in setnames: scores.append(self.scores[setname][hname])
+            res[hname] = np.concatenate( tuple(scores), axis=0 )
+        # return the result in correct format
+        if histname is None: return res
+        return res[histname]
         
-    def get_globalscores( self, setname=None ):
+    def get_globalscores( self, setnames=None ):
         ### get the global scores stored internally
         # input arguments:
-        # - setname: name of extended set (default: standard set)
-        if setname is None: setname = self.default_set_name
-        if not self.check_setname( setname ):
-            raise Exception('ERROR in ModelInterface.get_globalscores: requested setname {}'.format(setname)
-                           +' but it is not in the current ModelInterface.')
-        return self.globalscores[setname]
+        # - setnames: list of name of extended sets (default: standard set)
+        if setnames is None: setnames = [self.default_set_name]
+        if not self.check_setnames( setnames ):
+            raise Exception('ERROR in ModelInterface.get_globalscores: requested setnames {}'.format(setnames)
+                           +' but not all of them are in the current ModelInterface.')
+        globalscores = []
+        for setname in setnames: globalscores.append(self.globalscores[setname])
+        globalscores = np.concatenate( tuple(globalscores), axis=0 )
+        return globalscores
+    
+    def get_globalscores_mask( self, setnames=None, score_up=None, score_down=None ):
+        ### get a mask of global scores within boundaries
+        # input arguments:
+        # - setnames: list of name of extended sets (default: standard set)
+        # - score_up and score_down are upper and lower thresholds
+        #     if both are not None, the mask for global scores between the boundaries are returned
+        #     if score_up is None, the mask for global score > score_down are returned
+        #     if score_down is None, the mask for global score < score_up are returned
+        if( score_up is None and score_down is None ):
+            raise Exception('ERROR in ModelInterface.get_globalscores_mask:'
+                           +' you must specify either score_up or score_down.')
+        scores = self.get_globalscores( setnames=setnames )
+        if score_down is None: return (scores < score_up).astype(bool)
+        elif score_up is None: return (scores > score_down).astype(bool)
+        else: return ((scores>score_down) & (scores<score_up)).astype(bool)
+    
+    def get_globalscores_indices( self, setnames=None, score_up=None, score_down=None ):
+        ### get the indices of global scores within boundaries
+        # input arguments:
+        # - setnames: list of name of extended sets (default: standard set)
+        # - score_up and score_down are upper and lower thresholds
+        #     if both are not None, the indices with global scores between the boundaries are returned
+        #     if score_up is None, the indices with global score > score_down are returned
+        #     if score_down is None, the indices with global score < score_up are returned
+        mask = self.get_globalscores_mask( setnames=setnames, score_up=score_up, score_down=score_down )
+        return np.nonzero( mask )[0]
         
     def train_partial_fitters( self, dimslist, points, **kwargs ):
         ### train partial fitters on a given set of dimensions
