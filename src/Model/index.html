@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Model - Documentation for the ML4DQM/DC code</title>
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC code</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="../..">Home</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">dqmio <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../dqmio/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/DQMIOReader/">DQMIOReader</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/copy_das_to_local_file/">copy_das_to_local_file</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/copy_das_to_local_set/">copy_das_to_local_set</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submit/">harvest_nanodqmio_submit</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submitmultiple/">harvest_nanodqmio_submitmultiple</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_csv/">harvest_nanodqmio_to_csv</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_root/">harvest_nanodqmio_to_root</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">omsapi <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../omsapi/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../omsapi/get_oms_data/">get_oms_data</a>
+</li>
+                                    
+<li >
+    <a href="../../omsapi/omsapi/">omsapi</a>
+</li>
+                                    
+<li >
+    <a href="../../omsapi/urls/">urls</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">omsinterface <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../omsinterface/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../omsinterface/cert/">cert</a>
+</li>
+                                    
+<li >
+    <a href="../../omsinterface/connectiontools/">connectiontools</a>
+</li>
+                                    
+<li >
+    <a href="../../omsinterface/get_oms_data/">get_oms_data</a>
+</li>
+                                    
+<li >
+    <a href="../../omsinterface/omstools/">omstools</a>
+</li>
+                                    
+<li >
+    <a href="../../omsinterface/urls/">urls</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">run <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../run/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../run/gui/">gui</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">run <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../run/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../run/gui/">gui</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">runswan <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../runswan/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../runswan/nbgui/">nbgui</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">src <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../DataLoader/">DataLoader</a>
+</li>
+                                    
+<li >
+    <a href="../HistStruct/">HistStruct</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">Model</a>
+</li>
+                                    
+<li >
+    <a href="../ModelInterface/">ModelInterface</a>
+</li>
+                                    
+<li >
+    <a href="../PlotStyleParser/">PlotStyleParser</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">classifiers</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../classifiers/AutoEncoder/">AutoEncoder</a>
+</li>
+            
+<li >
+    <a href="../classifiers/HistogramClassifier/">HistogramClassifier</a>
+</li>
+            
+<li >
+    <a href="../classifiers/LandauClassifier/">LandauClassifier</a>
+</li>
+            
+<li >
+    <a href="../classifiers/MaxPullClassifier/">MaxPullClassifier</a>
+</li>
+            
+<li >
+    <a href="../classifiers/MomentClassifier/">MomentClassifier</a>
+</li>
+            
+<li >
+    <a href="../classifiers/NMFClassifier/">NMFClassifier</a>
+</li>
+            
+<li >
+    <a href="../classifiers/PCAClassifier/">PCAClassifier</a>
+</li>
+            
+<li >
+    <a href="../classifiers/TemplateBasedClassifier/">TemplateBasedClassifier</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">cloudfitters</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../cloudfitters/CloudFitter/">CloudFitter</a>
+</li>
+            
+<li >
+    <a href="../cloudfitters/ExponentialFitter/">ExponentialFitter</a>
+</li>
+            
+<li >
+    <a href="../cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../cloudfitters/HyperRectangleFitter/">HyperRectangleFitter</a>
+</li>
+            
+<li >
+    <a href="../cloudfitters/IdentityFitter/">IdentityFitter</a>
+</li>
+            
+<li >
+    <a href="../cloudfitters/LogNormalFitter/">LogNormalFitter</a>
+</li>
+            
+<li >
+    <a href="../cloudfitters/PCAGaussianFitter/">PCAGaussianFitter</a>
+</li>
+            
+<li >
+    <a href="../cloudfitters/PCAGaussianKdeFitter/">PCAGaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../cloudfitters/SeminormalFitter/">SeminormalFitter</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">utils <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../utils/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/autoencoder_utils/">autoencoder_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/clustering_utils/">clustering_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/csv_utils/">csv_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/dataframe_utils/">dataframe_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/generate_data_2d_utils/">generate_data_2d_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/generate_data_utils/">generate_data_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/hist_utils/">hist_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/json_utils/">json_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/mask_utils/">mask_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/plot_utils/">plot_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/refruns_utils/">refruns_utils</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../HistStruct/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../ModelInterface/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#model">Model</a></li>
+            <li><a href="#class-model">[class] Model</a></li>
+            <li><a href="#class-classifier-classifiershistname">[class] classifier = classifiers[histname]</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="model">Model</h1>
+<p><strong>Model: grouping classifiers for different histogram types</strong>  </p>
+<p>This class represents a general model for assigning a score to a lumisection.<br />
+It consists of two distinct parts:<br />
+- a collection of classifiers acting on individual histogramgs (one for each type).<br />
+- a fitter to assign a probability density to the output scores obtained in the previous step.<br />
+The types of histograms, classifiers, and fitter can be freely chosen.  </p>
+<p>This class does not contain the histograms or other data; it only contains the classifiers and fitter.<br />
+Use the derived class ModelInterface to make the bridge between a HistStruct (holding the data)<br />
+and a Model (holding the classifiers and fitter).  </p>
+<hr />
+<hr />
+<h2 id="class-model">[class] Model</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__( self, histnames )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+input arguments:  
+- histnames: list of the histogram names for this Model.  
+  this is the only argument needed for initialization,  
+  use the functions set_classifiers and set_fitter   
+  to set the classifiers and fitter respectively.  
+</code></pre>
+
+<h3 id="set95classifiers">&#10551; set_classifiers</h3>
+<p>full signature:  </p>
+<pre><code class="text">def set_classifiers( self, classifiers )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">set the classifiers for this Model  
+input arguments:  
+- classifiers: dict of histnames to classifiers.  
+  the histnames must match the ones used to initialize this Model,  
+  the classifiers must be a subtype of HistogramClassifier.  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-classifier-classifiershistname">[class] classifier = classifiers[histname]</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="set95fitter">&#10551; set_fitter</h3>
+<p>full signature:  </p>
+<pre><code class="text">def set_fitter( self, fitter )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">set the fitter for this Model  
+input arguments:  
+- fitter: an (untrained) object of type CloudFitter  
+</code></pre>
+
+<h3 id="check95classifier">&#10551; check_classifier</h3>
+<p>full signature:  </p>
+<pre><code class="text">def check_classifier( self, histname )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">check if a classifier was initialized  
+input arguments:  
+- histname: type of histogram for which to check the classifier  
+</code></pre>
+
+<h3 id="check95fitter">&#10551; check_fitter</h3>
+<p>full signature:  </p>
+<pre><code class="text">def check_fitter( self )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">check if a fitter was initialized  
+</code></pre>
+
+<h3 id="train95classifier">&#10551; train_classifier</h3>
+<p>full signature:  </p>
+<pre><code class="text">def train_classifier( self, histname, histograms, **kwargs )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">train a classifier  
+input arguments:  
+- histname: histogram name for which to train the classifier  
+- histograms: the histograms for training, np array of shape (nhistograms,nbins)  
+- kwargs: additional keyword arguments for training  
+</code></pre>
+
+<h3 id="train95classifiers">&#10551; train_classifiers</h3>
+<p>full signature:  </p>
+<pre><code class="text">def train_classifiers( self, histograms, **kwargs )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">train classifiers for all histograms in this Model  
+input arguments:  
+- histograms: the histograms for training, dict of histnames to np arrays of shape (nhistograms,nbins)  
+- kwargs: additional keyword arguments for training  
+</code></pre>
+
+<h3 id="evaluate95classifier">&#10551; evaluate_classifier</h3>
+<p>full signature:  </p>
+<pre><code class="text">def evaluate_classifier( self, histname, histograms, mask=None )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">evaluate a classifier and return the score  
+input arguments:  
+- histname: histogram name for which to evaluate the classifier  
+- histograms: the histograms for evaluation, np array of shape (nhistograms,nbins)  
+- mask: a np boolean array masking the histograms to be evaluated  
+returns:  
+- a np array of shape (nhistograms) with the scores  
+note: masked-out indices are set to np.nan!  
+</code></pre>
+
+<h3 id="evaluate95classifiers">&#10551; evaluate_classifiers</h3>
+<p>full signature:  </p>
+<pre><code class="text">def evaluate_classifiers( self, histograms, mask=None )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">evaluate the classifiers and return the scores  
+input arguments:  
+- histograms: dict of histnames to histogram arrays (shape (nhistograms,nbins))  
+- mask: a np boolean array masking the histograms to be evaluated  
+returns:  
+- dict of histnames to scores (shape (nhistograms))  
+note: masked-out indices are set to np.nan!  
+</code></pre>
+
+<h3 id="get95point95array">&#10551; get_point_array</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_point_array( self, points )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">for internal use in train_fitter and evaluate_fitter  
+input arguments:  
+- points: dict matching histnames to scores (np array of shape (nhistograms))  
+</code></pre>
+
+<h3 id="train95fitter">&#10551; train_fitter</h3>
+<p>full signature:  </p>
+<pre><code class="text">def train_fitter( self, points, verbose=False, **kwargs )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">train the fitter  
+input arguments:  
+- points: dict matching histnames to scores (np array of shape (nhistograms))  
+- kwargs: additional keyword arguments for fitting  
+</code></pre>
+
+<h3 id="evaluate95fitter">&#10551; evaluate_fitter</h3>
+<p>full signature:  </p>
+<pre><code class="text">def evaluate_fitter( self, points, mask=None, verbose=False )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">evaluate the fitter and return the scores  
+input arguments:  
+- points: dict matching histnames to scores (np array of shape (nhistograms))  
+- mask: a np boolean array masking the histograms to be evaluated  
+returns:  
+- a np array of shape (nhistograms) with the scores  
+note: masked-out indices are set to np.nan!  
+</code></pre>
+
+<hr /></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

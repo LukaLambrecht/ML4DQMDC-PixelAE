@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>README - Documentation for the ML4DQM/DC code</title>
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="..">Documentation for the ML4DQM/DC code</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="..">Home</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">dqmio <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../dqmio/">README</a>
+</li>
+                                    
+<li >
+    <a href="../dqmio/DQMIOReader/">DQMIOReader</a>
+</li>
+                                    
+<li >
+    <a href="../dqmio/copy_das_to_local_file/">copy_das_to_local_file</a>
+</li>
+                                    
+<li >
+    <a href="../dqmio/copy_das_to_local_set/">copy_das_to_local_set</a>
+</li>
+                                    
+<li >
+    <a href="../dqmio/harvest_nanodqmio_submit/">harvest_nanodqmio_submit</a>
+</li>
+                                    
+<li >
+    <a href="../dqmio/harvest_nanodqmio_submitmultiple/">harvest_nanodqmio_submitmultiple</a>
+</li>
+                                    
+<li >
+    <a href="../dqmio/harvest_nanodqmio_to_csv/">harvest_nanodqmio_to_csv</a>
+</li>
+                                    
+<li >
+    <a href="../dqmio/harvest_nanodqmio_to_root/">harvest_nanodqmio_to_root</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">omsapi <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../omsapi/">README</a>
+</li>
+                                    
+<li >
+    <a href="../omsapi/get_oms_data/">get_oms_data</a>
+</li>
+                                    
+<li >
+    <a href="../omsapi/omsapi/">omsapi</a>
+</li>
+                                    
+<li >
+    <a href="../omsapi/urls/">urls</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">omsinterface <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../omsinterface/">README</a>
+</li>
+                                    
+<li >
+    <a href="../omsinterface/cert/">cert</a>
+</li>
+                                    
+<li >
+    <a href="../omsinterface/connectiontools/">connectiontools</a>
+</li>
+                                    
+<li >
+    <a href="../omsinterface/get_oms_data/">get_oms_data</a>
+</li>
+                                    
+<li >
+    <a href="../omsinterface/omstools/">omstools</a>
+</li>
+                                    
+<li >
+    <a href="../omsinterface/urls/">urls</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">run <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../run/">README</a>
+</li>
+                                    
+<li >
+    <a href="../run/gui/">gui</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">run <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../run/">README</a>
+</li>
+                                    
+<li >
+    <a href="../run/gui/">gui</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">runswan <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li class="active">
+    <a href="./">README</a>
+</li>
+                                    
+<li >
+    <a href="nbgui/">nbgui</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">src <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../src/DataLoader/">DataLoader</a>
+</li>
+                                    
+<li >
+    <a href="../src/HistStruct/">HistStruct</a>
+</li>
+                                    
+<li >
+    <a href="../src/Model/">Model</a>
+</li>
+                                    
+<li >
+    <a href="../src/ModelInterface/">ModelInterface</a>
+</li>
+                                    
+<li >
+    <a href="../src/PlotStyleParser/">PlotStyleParser</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">classifiers</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../src/classifiers/AutoEncoder/">AutoEncoder</a>
+</li>
+            
+<li >
+    <a href="../src/classifiers/HistogramClassifier/">HistogramClassifier</a>
+</li>
+            
+<li >
+    <a href="../src/classifiers/LandauClassifier/">LandauClassifier</a>
+</li>
+            
+<li >
+    <a href="../src/classifiers/MaxPullClassifier/">MaxPullClassifier</a>
+</li>
+            
+<li >
+    <a href="../src/classifiers/MomentClassifier/">MomentClassifier</a>
+</li>
+            
+<li >
+    <a href="../src/classifiers/NMFClassifier/">NMFClassifier</a>
+</li>
+            
+<li >
+    <a href="../src/classifiers/PCAClassifier/">PCAClassifier</a>
+</li>
+            
+<li >
+    <a href="../src/classifiers/TemplateBasedClassifier/">TemplateBasedClassifier</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">cloudfitters</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../src/cloudfitters/CloudFitter/">CloudFitter</a>
+</li>
+            
+<li >
+    <a href="../src/cloudfitters/ExponentialFitter/">ExponentialFitter</a>
+</li>
+            
+<li >
+    <a href="../src/cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../src/cloudfitters/HyperRectangleFitter/">HyperRectangleFitter</a>
+</li>
+            
+<li >
+    <a href="../src/cloudfitters/IdentityFitter/">IdentityFitter</a>
+</li>
+            
+<li >
+    <a href="../src/cloudfitters/LogNormalFitter/">LogNormalFitter</a>
+</li>
+            
+<li >
+    <a href="../src/cloudfitters/PCAGaussianFitter/">PCAGaussianFitter</a>
+</li>
+            
+<li >
+    <a href="../src/cloudfitters/PCAGaussianKdeFitter/">PCAGaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../src/cloudfitters/SeminormalFitter/">SeminormalFitter</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">utils <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../utils/">README</a>
+</li>
+                                    
+<li >
+    <a href="../utils/autoencoder_utils/">autoencoder_utils</a>
+</li>
+                                    
+<li >
+    <a href="../utils/clustering_utils/">clustering_utils</a>
+</li>
+                                    
+<li >
+    <a href="../utils/csv_utils/">csv_utils</a>
+</li>
+                                    
+<li >
+    <a href="../utils/dataframe_utils/">dataframe_utils</a>
+</li>
+                                    
+<li >
+    <a href="../utils/generate_data_2d_utils/">generate_data_2d_utils</a>
+</li>
+                                    
+<li >
+    <a href="../utils/generate_data_utils/">generate_data_utils</a>
+</li>
+                                    
+<li >
+    <a href="../utils/hist_utils/">hist_utils</a>
+</li>
+                                    
+<li >
+    <a href="../utils/json_utils/">json_utils</a>
+</li>
+                                    
+<li >
+    <a href="../utils/mask_utils/">mask_utils</a>
+</li>
+                                    
+<li >
+    <a href="../utils/plot_utils/">plot_utils</a>
+</li>
+                                    
+<li >
+    <a href="../utils/refruns_utils/">refruns_utils</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../run/gui/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="nbgui/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#run-the-ml4dqm-functionality-using-the-gui-on-swan">Run the ML4DQM functionality using the GUI on SWAN</a></li>
+            <li><a href="#how-to-start-the-program">How to start the program</a></li>
+            <li><a href="#where-to-start">Where to start?</a></li>
+            <li><a href="#input-files">Input files</a></li>
+            <li><a href="#the-histstruct-object">The HistStruct object</a></li>
+            <li><a href="#typical-workflow">Typical workflow</a></li>
+            <li><a href="#example-usage">Example usage</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h2 id="run-the-ml4dqm-functionality-using-the-gui-on-swan">Run the ML4DQM functionality using the GUI on SWAN</h2>
+<h3 id="how-to-start-the-program">How to start the program</h3>
+<p>Simply download the repository and open the notebook nbgui.ipynb in SWAN. </p>
+<h4 id="downloading-the-repository">Downloading the repository</h4>
+<p>Go to the <a href="https://github.com/LukaLambrecht/ML4DQM-DC">GitHub page</a> and clone or download the repository via git.<br />
+Dependencies:<br />
+- All of the required dependencies are installed by default on SWAN!<br />
+To do: make list of optional dependencies that are not installed by default (e.g. imageio?)</p>
+<h3 id="where-to-start">Where to start?</h3>
+<p>The starting screen of the GUI shows a number of tabs for several actions one can perform.<br />
+Usually one would start by loading a previously stored HistStruct (a structure containing all relevant histograms and classifiers) via the 'Load' tab, or create a new one via the 'New' tab. Many of the other tabs will not work if you have not loaded or created a valid HistStruct first. To create a HistStruct, the GUI expects input files in a specific format, see below.</p>
+<h3 id="input-files">Input files</h3>
+<p>Some example input files are provided on this <a href="https://cernbox.cern.ch/index.php/s/E9GzJ4WMZs3jbPd">CERNBox location</a>.<br />
+They are skimmed versions of the centrally provided csv files with monintoring elements (both 1D and 2D histograms) with a per-lumisection granularity. The central files are available on EOS: <code>/eos/project/c/cmsml4dc/ML_2020</code>.<br />
+How to produce your own skimmed input files from the centrally provided csv files is still under discussion. The code to do so is available in this repository (if run on SWAN, which has direct access to EOS). To do: update to nanoDQMIO input.</p>
+<h3 id="the-histstruct-object">The HistStruct object</h3>
+<p>The 'HistStruct' is the central object used in this program. It contains all relevant histograms (depending on the target run, training runs and histogram types) and their respective classifiers in a structured way.  </p>
+<p>Selecting subsets of histograms, e.g. for classifier training or evaluation, is managed by using masks, which you can initialize when creating the HistStruct. There are three types of masks:<br />
+- run masks: select lumisections belonging to a given run number.<br />
+- statistics masks: select lumisections with high or low statistics. Currently the criterion is simply based on the number of histogram entries divided by the number of bins. Might be extended in the future.<br />
+- json masks: select lumisections with a custom json file in the same format as the typical so-called golden json file. Any json file in the correct format can be uploaded, which allows full flexibility in selecting lumisections.  </p>
+<h3 id="typical-workflow">Typical workflow</h3>
+<p>After having loaded or created a new HistStruct object, you can start the training and evaluation of histogram classifiers. A typical workflow would consist of (most of) the following steps:<br />
+- preprocessing the histograms (i.e. rebinning, normalizing and/or cropping). See the 'Preprocessing' button.<br />
+- make plots of the training set, target set and other histograms that might be relevant. See the 'Plotting' button.<br />
+- resample the training set to increase statistics (might not be needed for some types of classifiers). See the 'Resampling' button.<br />
+- adding classifiers for each histogram type. See the 'Add classifiers' button.<br />
+- train all classifiers. See the 'Train classifiers' button.
+- fit a probability density function to the resulting classifier scores in order to get from a per-histogram score to a per-lumisection score. See the 'Fit' button.
+- evaluate the model. See 'Evaluate model' button.<br />
+- take a closer look at some lumisections. For example in the case of an autoencoder one might be interested to compare the original histogram to its autoencoder reconstruction. Or more generally one could be interested to see what histogram types are causing the high lumisection score. See 'Plot lumisection' button.  </p>
+<h3 id="example-usage">Example usage</h3>
+<p>Some examples on how to use the GUI are put in slides and collected on this <a href="https://cernbox.cern.ch/index.php/s/QEUAG7eKmgSeRns">CERNBox location</a>. To do: update!  </p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

@@ -45,6 +45,43 @@
                                 <a href="../..">Home</a>
                             </li>
                             <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">dqmio <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../dqmio/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/DQMIOReader/">DQMIOReader</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/copy_das_to_local_file/">copy_das_to_local_file</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/copy_das_to_local_set/">copy_das_to_local_set</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submit/">harvest_nanodqmio_submit</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submitmultiple/">harvest_nanodqmio_submitmultiple</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_csv/">harvest_nanodqmio_to_csv</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_root/">harvest_nanodqmio_to_root</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">omsapi <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
@@ -101,6 +138,36 @@
 <li >
     <a href="../../run/">README</a>
 </li>
+                                    
+<li >
+    <a href="../../run/gui/">gui</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">run <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../run/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../run/gui/">gui</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">runswan <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../runswan/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../runswan/nbgui/">nbgui</a>
+</li>
                                 </ul>
                             </li>
                             <li class="dropdown">
@@ -113,6 +180,14 @@
                                     
 <li >
     <a href="../../src/HistStruct/">HistStruct</a>
+</li>
+                                    
+<li >
+    <a href="../../src/Model/">Model</a>
+</li>
+                                    
+<li >
+    <a href="../../src/ModelInterface/">ModelInterface</a>
 </li>
                                     
 <li >
@@ -132,7 +207,15 @@
 </li>
             
 <li >
+    <a href="../../src/classifiers/LandauClassifier/">LandauClassifier</a>
+</li>
+            
+<li >
     <a href="../../src/classifiers/MaxPullClassifier/">MaxPullClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/MomentClassifier/">MomentClassifier</a>
 </li>
             
 <li >
@@ -289,9 +372,13 @@
             <li><a href="#plot95loss">plot_loss</a></li>
             <li><a href="#plot95mse">plot_mse</a></li>
             <li><a href="#plot95score95dist">plot_score_dist</a></li>
+            <li><a href="#plot95score95dist95multi">plot_score_dist_multi</a></li>
             <li><a href="#plot95score95ls">plot_score_ls</a></li>
             <li><a href="#plot95metric">plot_metric</a></li>
             <li><a href="#plot95roc">plot_roc</a></li>
+            <li><a href="#plot95confusion95matrix">plot_confusion_matrix</a></li>
+            <li><a href="#color">color</a></li>
+            <li><a href="#valstr">valstr</a></li>
             <li><a href="#clip95scores">clip_scores</a></li>
             <li><a href="#plot95fit952d">plot_fit_2d</a></li>
             <li><a href="#plot95fit952d95clusters">plot_fit_2d_clusters</a></li>
@@ -349,7 +436,7 @@ to be extended when the need arises!
 
 <h3 id="plot95hists">plot_hists</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None,  bkgcolor=None, bkgcmap='spring', bkgrange=None, bkgtitle=None)  
+<pre><code class="text">def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, ymaxfactor=None, legendsize=None, opaque_legend=False, ticksize=None, bkgcolor=None, bkgcmap='spring', bkgrange=None, bkgtitle=None)  
 </code></pre>
 
 <p>comments:  </p>
@@ -382,7 +469,7 @@ output: tuple of figure and axis objects, that can be used to further tune the l
 
 <h3 id="plot95hists95multi">plot_hists_multi</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, caxtitle=None, caxtitlesize=None, caxtitleoffset=None, remove_underflow=False, remove_overflow=False, ylims=None, ymaxfactor=None, legendsize=None, opaque_legend=False)  
+<pre><code class="text">def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, caxtitle=None, caxtitlesize=None, caxtitleoffset=None, remove_underflow=False, remove_overflow=False, ylims=None, ymaxfactor=None, legendsize=None, opaque_legend=False, ticksize=None )  
 </code></pre>
 
 <p>comments:  </p>
@@ -395,7 +482,7 @@ output: tuple of figure and axis objects, that can be used to further tune the l
 
 <h3 id="plot95sets">plot_sets</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], title=None, titlesize=None,  xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1),  remove_underflow=False, remove_overflow=False, yaxtitle=None, yaxtitlesize=None, ylims=None, ymaxfactor=None,  legendsize=None, opaque_legend=False)  
+<pre><code class="text">def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], title=None, titlesize=None,  xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1),  remove_underflow=False, remove_overflow=False, yaxtitle=None, yaxtitlesize=None, ylims=None, ymaxfactor=None,  legendsize=None, opaque_legend=False, ticksize=None)  
 </code></pre>
 
 <p>comments:  </p>
@@ -421,7 +508,7 @@ input arguments:
 
 <h3 id="plot95hist952d">plot_hist_2d</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, caxrange=None)  
+<pre><code class="text">def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, ticklabelsize=None, colorticklabelsize=None, extent=None, caxrange=None)  
 </code></pre>
 
 <p>comments:  </p>
@@ -508,11 +595,24 @@ input args:
 
 <h3 id="plot95score95dist">plot_score_dist</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='Signal', sigcolor='g', bcklabel='Background', bckcolor='r', title=None, titlesize=12, xaxtitle=None, xaxtitlesize=12,  yaxtitle=None, yaxtitlesize=12, legendsize=None, legendloc='best', doshow=True)  
+<pre><code class="text">def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='Signal', sigcolor='g', bcklabel='Background', bckcolor='r', title=None, titlesize=12, xaxtitle=None, xaxtitlesize=12,  yaxtitle=None, yaxtitlesize=12, legendsize=None, legendloc='best', ticksize=None, doshow=True)  
 </code></pre>
 
 <p>comments:  </p>
 <pre><code class="text">make a plot showing the distributions of the output scores for signal and background  
+</code></pre>
+
+<h3 id="plot95score95dist95multi">plot_score_dist_multi</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_score_dist_multi( scores, labels=None, colors=None, fig=None, ax=None, nbins=20, normalize=False, linestyle=None, linewidth=1, title=None, titlesize=12, xaxtitle=None, xaxtitlesize=12,  yaxtitle=None, yaxtitlesize=12, legendsize=None, legendloc='best', ticksize=None, dolegend=True )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">plot the distribution of output scores for arbitrarily many sets (not limited to 'signal' and 'background')  
+input arguments:  
+- scores: list of numpy arrays of scores  
+- labels: list of legend entries for the scores, must have same length as scores or be None (no legend)  
+- colors: list of colors for the different score arrays, must have same length as scores or be None (default colors)  
 </code></pre>
 
 <h3 id="plot95score95ls">plot_score_ls</h3>
@@ -547,12 +647,39 @@ input arguments:
 
 <h3 id="plot95roc">plot_roc</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_roc( sig_eff, bkg_eff, auc=None, color='b', title=None, titlesize=None, xaxtitle='Background efficiency', xaxtitlesize=None, yaxtitle='Signal efficiency', yaxtitlesize=None, xaxlog=True, yaxlog=False, xlims='auto', ylims='auto', dogrid=True, doshow=True )  
+<pre><code class="text">def plot_roc( sig_eff, bkg_eff, auc=None, color='b', title=None, titlesize=None, xaxtitle='Background efficiency', xaxtitlesize=None, yaxtitle='Signal efficiency', yaxtitlesize=None, xaxlog=True, yaxlog=False, xlims='auto', ylims='auto', dogrid=True, ticksize=None, doshow=True )  
 </code></pre>
 
 <p>comments:  </p>
 <pre><code class="text">note: automatic determination of xlims and ylims assumes log scale for x-axis and lin scale for y-axis;  
       might not work properly in other cases and ranges should be provided manually.  
+</code></pre>
+
+<h3 id="plot95confusion95matrix">plot_confusion_matrix</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_confusion_matrix( tp, tn, fp, fn,  true_positive_label='Good', true_negative_label='Anomalous', pred_positive_label='Predicted good', pred_negative_label='Predicted anomalous', xaxlabelsize=None, yaxlabelsize=None, textsize=None, colormap='Blues', colortitle=None )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="color">color</h3>
+<p>full signature:  </p>
+<pre><code class="text">def color(value)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="valstr">valstr</h3>
+<p>full signature:  </p>
+<pre><code class="text">def valstr(value)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
 </code></pre>
 
 <h3 id="clip95scores">clip_scores</h3>
@@ -568,7 +695,7 @@ local copy of the same functions in autoencoder_utils.py
 
 <h3 id="plot95fit952d">plot_fit_2d</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,  onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,  title=None, titlesize=None, caxtitle=None, caxtitlesize=None, transparency=1 )  
+<pre><code class="text">def plot_fit_2d( points, fitfunc=None, figsize=(10,8), logprob=False, clipprob=False,  onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,  title=None, titlesize=None, caxtitle=None, caxtitlesize=None, caxrange=None, transparency=1, ticksize=None )  
 </code></pre>
 
 <p>comments:  </p>
@@ -590,7 +717,7 @@ input arguments:
 
 <h3 id="plot95fit952d95clusters">plot_fit_2d_clusters</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_fit_2d_clusters( points, clusters, labels=None, colors=None,  legendsize=10, legendloc='best', legendbbox=None, **kwargs )  
+<pre><code class="text">def plot_fit_2d_clusters( points, clusters, figsize=(12,8), labels=None, colors=None,  legendmarkerscale=1., legendsize=10, legendloc='best', legendbbox=None, **kwargs )  
 </code></pre>
 
 <p>comments:  </p>

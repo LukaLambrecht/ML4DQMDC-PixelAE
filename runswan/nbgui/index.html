@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>nbgui - Documentation for the ML4DQM/DC code</title>
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC code</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="../..">Home</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">dqmio <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../dqmio/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/DQMIOReader/">DQMIOReader</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/copy_das_to_local_file/">copy_das_to_local_file</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/copy_das_to_local_set/">copy_das_to_local_set</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submit/">harvest_nanodqmio_submit</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submitmultiple/">harvest_nanodqmio_submitmultiple</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_csv/">harvest_nanodqmio_to_csv</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_root/">harvest_nanodqmio_to_root</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">omsapi <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../omsapi/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../omsapi/get_oms_data/">get_oms_data</a>
+</li>
+                                    
+<li >
+    <a href="../../omsapi/omsapi/">omsapi</a>
+</li>
+                                    
+<li >
+    <a href="../../omsapi/urls/">urls</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">omsinterface <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../omsinterface/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../omsinterface/cert/">cert</a>
+</li>
+                                    
+<li >
+    <a href="../../omsinterface/connectiontools/">connectiontools</a>
+</li>
+                                    
+<li >
+    <a href="../../omsinterface/get_oms_data/">get_oms_data</a>
+</li>
+                                    
+<li >
+    <a href="../../omsinterface/omstools/">omstools</a>
+</li>
+                                    
+<li >
+    <a href="../../omsinterface/urls/">urls</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">run <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../run/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../run/gui/">gui</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">run <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../run/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../run/gui/">gui</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">runswan <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../">README</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">nbgui</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">src <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../src/DataLoader/">DataLoader</a>
+</li>
+                                    
+<li >
+    <a href="../../src/HistStruct/">HistStruct</a>
+</li>
+                                    
+<li >
+    <a href="../../src/Model/">Model</a>
+</li>
+                                    
+<li >
+    <a href="../../src/ModelInterface/">ModelInterface</a>
+</li>
+                                    
+<li >
+    <a href="../../src/PlotStyleParser/">PlotStyleParser</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">classifiers</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../src/classifiers/AutoEncoder/">AutoEncoder</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/HistogramClassifier/">HistogramClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/LandauClassifier/">LandauClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/MaxPullClassifier/">MaxPullClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/MomentClassifier/">MomentClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/NMFClassifier/">NMFClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/PCAClassifier/">PCAClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/TemplateBasedClassifier/">TemplateBasedClassifier</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">cloudfitters</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../src/cloudfitters/CloudFitter/">CloudFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/ExponentialFitter/">ExponentialFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/HyperRectangleFitter/">HyperRectangleFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/IdentityFitter/">IdentityFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/LogNormalFitter/">LogNormalFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/PCAGaussianFitter/">PCAGaussianFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/PCAGaussianKdeFitter/">PCAGaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/SeminormalFitter/">SeminormalFitter</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">utils <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../utils/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/autoencoder_utils/">autoencoder_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/clustering_utils/">clustering_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/csv_utils/">csv_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/dataframe_utils/">dataframe_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/generate_data_2d_utils/">generate_data_2d_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/generate_data_utils/">generate_data_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/hist_utils/">hist_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/json_utils/">json_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/mask_utils/">mask_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/plot_utils/">plot_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/refruns_utils/">refruns_utils</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../../src/DataLoader/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#nbgui">nbgui</a></li>
+            <li><a href="#set95box95default95style">set_box_default_style</a></li>
+            <li><a href="#class-newhiststructtab">[class] NewHistStructTab</a></li>
+            <li><a href="#class-addrunmaskstab">[class] AddRunMasksTab</a></li>
+            <li><a href="#class-addstatmaskstab">[class] AddStatMasksTab</a></li>
+            <li><a href="#class-addjsonmaskstab">[class] AddJsonMasksTab</a></li>
+            <li><a href="#class-loadhiststructtab">[class] LoadHistStructTab</a></li>
+            <li><a href="#class-savehiststructtab">[class] SaveHistStructTab</a></li>
+            <li><a href="#class-displayhiststructtab">[class] DisplayHistStructTab</a></li>
+            <li><a href="#class-displayhiststructnewtab">[class] DisplayHistStructNewTab</a></li>
+            <li><a href="#class-preprocessingtab">[class] PreprocessingTab</a></li>
+            <li><a href="#class-loadplotstyletab">[class] LoadPlotStyleTab</a></li>
+            <li><a href="#class-plotsetstab">[class] PlotSetsTab</a></li>
+            <li><a href="#class-resamplingtab">[class] ResamplingTab</a></li>
+            <li><a href="#class-addmodeltab">[class] AddModelTab</a></li>
+            <li><a href="#class-classifier95type95box-ipwdropdown">[class] classifier_type_box = ipw.Dropdown</a></li>
+            <li><a href="#class-classifier95type95boxobserve">[class] classifier_type_box.observe</a></li>
+            <li><a href="#class-classifier95options95box-optionsbox">[class] classifier_options_box = OptionsBox</a></li>
+            <li><a href="#class-classifier95type95box">[class] classifier_type_box,</a></li>
+            <li><a href="#class-classifier95options95boxget95widget">[class] classifier_options_box.get_widget</a></li>
+            <li><a href="#class-classifier95name-selfclassifier95widgetshistnametypevalue">[class] classifier_name = self.classifier_widgets[histname]['type'].value</a></li>
+            <li><a href="#class-classifier95name-selfclassifier95widgetshistnametypevalue_1">[class] classifier_name = self.classifier_widgets[histname]['type'].value</a></li>
+            <li><a href="#class-classifier95options-selfclassifier95widgetshistnameoptionsget95dict">[class] classifier_options = self.classifier_widgets[histname]['options'].get_dict</a></li>
+            <li><a href="#class-classifiers">[class] classifiers = {}</a></li>
+            <li><a href="#class-classifier-classifier">[class] classifier = classifier</a></li>
+            <li><a href="#class-classifiershistname-classifier">[class] classifiers[histname] = classifier</a></li>
+            <li><a href="#class-trainclassifierstab">[class] TrainClassifiersTab</a></li>
+            <li><a href="#class-applyclassifierstab">[class] ApplyClassifiersTab</a></li>
+            <li><a href="#class-fittab">[class] FitTab</a></li>
+            <li><a href="#class-applyfittab">[class] ApplyFitTab</a></li>
+            <li><a href="#class-evaluatetab">[class] EvaluateTab</a></li>
+            <li><a href="#class-plotlumisectiontab">[class] PlotLumisectionTab</a></li>
+            <li><a href="#class-welcometab">[class] WelcomeTab</a></li>
+            <li><a href="#class-ml4dqmgui">[class] ML4DQMGUI</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="nbgui">nbgui</h1>
+<h3 id="set95box95default95style">set_box_default_style</h3>
+<p>full signature:  </p>
+<pre><code class="text">def set_box_default_style( gridbox )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<h2 id="class-newhiststructtab">[class] NewHistStructTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self, emptyhiststruct)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="get95target95run">&#10551; get_target_run</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_target_run(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">get the target run from the corresponding Text widget  
+return None if the widget is empty  
+</code></pre>
+
+<h3 id="get95local95training95runs">&#10551; get_local_training_runs</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_local_training_runs(self, filename)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">get the training runs from the corresponding Text widgets  
+return None if the target run is None  
+</code></pre>
+
+<h3 id="get95needed95runs">&#10551; get_needed_runs</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_needed_runs(self, is_local=False, filename=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="clear95histnames">&#10551; clear_histnames</h3>
+<p>full signature:  </p>
+<pre><code class="text">def clear_histnames(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="add95histnames">&#10551; add_histnames</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_histnames(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="add95histnames95select">&#10551; add_histnames_select</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_histnames_select(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="get95histnames">&#10551; get_histnames</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_histnames(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="make95histstruct">&#10551; make_histstruct</h3>
+<p>full signature:  </p>
+<pre><code class="text">def make_histstruct(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-addrunmaskstab">[class] AddRunMasksTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_1">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, histstruct=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+input arguments:  
+- histstruct: if specified, a list of available runs is extracted from it;  
+              else the text box is left blank and can take any value.  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-addstatmaskstab">[class] AddStatMasksTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_2">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh_1">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, histstruct=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+input arguments:  
+- histstruct: if specified, a list of available histogram names is extracted from it;  
+              else the statistics mask can only be applied on all histograms simultaneously.  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-addjsonmaskstab">[class] AddJsonMasksTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_3">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh_2">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, histstruct=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+input arguments:  
+- histstruct: histstruct on which to apply the json mask  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-loadhiststructtab">[class] LoadHistStructTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_4">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self, external_load_function)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="refresh_3">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, external_load_function)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="load">&#10551; load</h3>
+<p>full signature:  </p>
+<pre><code class="text">def load(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-savehiststructtab">[class] SaveHistStructTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_5">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh_4">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, histstruct=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="filename95is95valid">&#10551; filename_is_valid</h3>
+<p>full signature:  </p>
+<pre><code class="text">def filename_is_valid(self, filename)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="save">&#10551; save</h3>
+<p>full signature:  </p>
+<pre><code class="text">def save(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-displayhiststructtab">[class] DisplayHistStructTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_6">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh_5">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, histstruct=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-displayhiststructnewtab">[class] DisplayHistStructNewTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_7">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh_6">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, histstruct=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-preprocessingtab">[class] PreprocessingTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_8">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh_7">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, histstruct=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="apply">&#10551; apply</h3>
+<p>full signature:  </p>
+<pre><code class="text">def apply(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">get masks  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-loadplotstyletab">[class] LoadPlotStyleTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_9">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh_8">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, plotstyleparser=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="load_1">&#10551; load</h3>
+<p>full signature:  </p>
+<pre><code class="text">def load(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-plotsetstab">[class] PlotSetsTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_10">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh_9">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, histstruct=None, plotstyleparser=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="add95set">&#10551; add_set</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_set(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">add widgets for one more histogram set to plot  
+make widgets  
+</code></pre>
+
+<h3 id="check95all95selected">&#10551; check_all_selected</h3>
+<p>full signature:  </p>
+<pre><code class="text">def check_all_selected(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">check if the 'select' button was pushed for all selectors  
+</code></pre>
+
+<h3 id="make95plot">&#10551; make_plot</h3>
+<p>full signature:  </p>
+<pre><code class="text">def make_plot(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">make the plot with current settings  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-resamplingtab">[class] ResamplingTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_11">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh_10">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, histstruct=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="update95sets95list">&#10551; update_sets_list</h3>
+<p>full signature:  </p>
+<pre><code class="text">def update_sets_list(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="expandcollapse">&#10551; expandcollapse</h3>
+<p>full signature:  </p>
+<pre><code class="text">def expandcollapse(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">check whether need to collapse or expand  
+</code></pre>
+
+<h3 id="set95function95options">&#10551; set_function_options</h3>
+<p>full signature:  </p>
+<pre><code class="text">def set_function_options(self, event, histname)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="check95all95selected_1">&#10551; check_all_selected</h3>
+<p>full signature:  </p>
+<pre><code class="text">def check_all_selected(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">check if the 'select' button was pushed for all selectors  
+</code></pre>
+
+<h3 id="get95function95name">&#10551; get_function_name</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_function_name(self, histname)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="get95function">&#10551; get_function</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_function(self, histname)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="do95resampling">&#10551; do_resampling</h3>
+<p>full signature:  </p>
+<pre><code class="text">def do_resampling(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-addmodeltab">[class] AddModelTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_12">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh_11">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, histstruct=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-classifier95type95box-ipwdropdown">[class] classifier_type_box = ipw.Dropdown</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-classifier95type95boxobserve">[class] classifier_type_box.observe</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-classifier95options95box-optionsbox">[class] classifier_options_box = OptionsBox</h2>
+<p>comments:  </p>
+<pre><code class="text">add everything to a structure   
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-classifier95type95box">[class] classifier_type_box,</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-classifier95options95boxget95widget">[class] classifier_options_box.get_widget</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="set95classifier95options">&#10551; set_classifier_options</h3>
+<p>full signature:  </p>
+<pre><code class="text">def set_classifier_options(self, histname, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-classifier95name-selfclassifier95widgetshistnametypevalue">[class] classifier_name = self.classifier_widgets[histname]['type'].value</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="get95classifier">&#10551; get_classifier</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_classifier(self, histname)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-classifier95name-selfclassifier95widgetshistnametypevalue_1">[class] classifier_name = self.classifier_widgets[histname]['type'].value</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-classifier95options-selfclassifier95widgetshistnameoptionsget95dict">[class] classifier_options = self.classifier_widgets[histname]['options'].get_dict</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="add95model">&#10551; add_model</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_model(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-classifiers">[class] classifiers = {}</h2>
+<p>comments:  </p>
+<pre><code class="text">initialize the classifiers  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-classifier-classifier">[class] classifier = classifier</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-classifiershistname-classifier">[class] classifiers[histname] = classifier</h2>
+<p>comments:  </p>
+<pre><code class="text">add the classifiers to the model and the model to the histstruct  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-trainclassifierstab">[class] TrainClassifiersTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_13">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh_12">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, histstruct=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="refresh95training95options">&#10551; refresh_training_options</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh_training_options(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="expandcollapse_1">&#10551; expandcollapse</h3>
+<p>full signature:  </p>
+<pre><code class="text">def expandcollapse(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="do95training">&#10551; do_training</h3>
+<p>full signature:  </p>
+<pre><code class="text">def do_training(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-applyclassifierstab">[class] ApplyClassifiersTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_14">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh_13">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, histstruct=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="evaluate">&#10551; evaluate</h3>
+<p>full signature:  </p>
+<pre><code class="text">def evaluate(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">get name(s) of sets  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-fittab">[class] FitTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_15">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh_14">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, histstruct=None, plotstyleparser=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="set95fitter95options">&#10551; set_fitter_options</h3>
+<p>full signature:  </p>
+<pre><code class="text">def set_fitter_options(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="get95fitting95scores">&#10551; get_fitting_scores</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_fitting_scores(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="get95fitting95scores95array">&#10551; get_fitting_scores_array</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_fitting_scores_array(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="get95fitter">&#10551; get_fitter</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_fitter(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="do95fit">&#10551; do_fit</h3>
+<p>full signature:  </p>
+<pre><code class="text">def do_fit(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-applyfittab">[class] ApplyFitTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_16">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh_15">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, histstruct=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="evaluate_1">&#10551; evaluate</h3>
+<p>full signature:  </p>
+<pre><code class="text">def evaluate(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">get name(s) of sets  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-evaluatetab">[class] EvaluateTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_17">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh_16">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, histstruct=None, plotstyleparser=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="add95set_1">&#10551; add_set</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_set(self, event, default_type='Good')  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">add one test set  
+initializations  
+</code></pre>
+
+<h3 id="check95all95selected_2">&#10551; check_all_selected</h3>
+<p>full signature:  </p>
+<pre><code class="text">def check_all_selected(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="check95all95valid95and95same95model">&#10551; check_all_valid_and_same_model</h3>
+<p>full signature:  </p>
+<pre><code class="text">def check_all_valid_and_same_model(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="get95scores">&#10551; get_scores</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_scores(self, test_set_type)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="get95globalscores">&#10551; get_globalscores</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_globalscores(self, test_set_type)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="get95labels">&#10551; get_labels</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_labels(self, test_set_type)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="evaluate_2">&#10551; evaluate</h3>
+<p>full signature:  </p>
+<pre><code class="text">def evaluate(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-plotlumisectiontab">[class] PlotLumisectionTab</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="9595init9595_18">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh_17">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, histstruct=None, plotstyleparser=None)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="set95lsnbs">&#10551; set_lsnbs</h3>
+<p>full signature:  </p>
+<pre><code class="text">def set_lsnbs(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="get95reference95histograms">&#10551; get_reference_histograms</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_reference_histograms(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="get95inspect95masks">&#10551; get_inspect_masks</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_inspect_masks(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="get95refscore95masks">&#10551; get_refscore_masks</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_refscore_masks(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="plot">&#10551; plot</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-welcometab">[class] WelcomeTab</h2>
+<p>comments:  </p>
+<pre><code class="text">tab with welcome message, also used for testing new gui properties  
+</code></pre>
+
+<h3 id="9595init9595_19">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-ml4dqmgui">[class] ML4DQMGUI</h2>
+<p>comments:  </p>
+<pre><code class="text">base class initializing and managing all tabs in the gui  
+</code></pre>
+
+<h3 id="9595init9595_20">&#10551; __init__</h3>
+<p>full signature:  </p>
+<pre><code class="text">def __init__(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">initializer  
+</code></pre>
+
+<h3 id="refresh_18">&#10551; refresh</h3>
+<p>full signature:  </p>
+<pre><code class="text">def refresh(self, event)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">the tab that is clicked  
+</code></pre>
+
+<h3 id="load_2">&#10551; load</h3>
+<p>full signature:  </p>
+<pre><code class="text">def load(self, filename)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="display">&#10551; display</h3>
+<p>full signature:  </p>
+<pre><code class="text">def display(self)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">display the gui  
+</code></pre>
+
+<hr /></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

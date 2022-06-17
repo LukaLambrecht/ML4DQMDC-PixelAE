@@ -45,6 +45,43 @@
                                 <a href="../..">Home</a>
                             </li>
                             <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">dqmio <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../dqmio/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/DQMIOReader/">DQMIOReader</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/copy_das_to_local_file/">copy_das_to_local_file</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/copy_das_to_local_set/">copy_das_to_local_set</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submit/">harvest_nanodqmio_submit</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submitmultiple/">harvest_nanodqmio_submitmultiple</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_csv/">harvest_nanodqmio_to_csv</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_root/">harvest_nanodqmio_to_root</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">omsapi <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
@@ -101,6 +138,36 @@
 <li >
     <a href="../../run/">README</a>
 </li>
+                                    
+<li >
+    <a href="../../run/gui/">gui</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">run <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../run/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../run/gui/">gui</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">runswan <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../runswan/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../runswan/nbgui/">nbgui</a>
+</li>
                                 </ul>
                             </li>
                             <li class="dropdown">
@@ -113,6 +180,14 @@
                                     
 <li >
     <a href="../../src/HistStruct/">HistStruct</a>
+</li>
+                                    
+<li >
+    <a href="../../src/Model/">Model</a>
+</li>
+                                    
+<li >
+    <a href="../../src/ModelInterface/">ModelInterface</a>
 </li>
                                     
 <li >
@@ -132,7 +207,15 @@
 </li>
             
 <li >
+    <a href="../../src/classifiers/LandauClassifier/">LandauClassifier</a>
+</li>
+            
+<li >
     <a href="../../src/classifiers/MaxPullClassifier/">MaxPullClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/MomentClassifier/">MomentClassifier</a>
 </li>
             
 <li >
@@ -440,7 +523,7 @@ the output score is the mseTop10Raw between the histograms and their reconstruct
 
 <h3 id="get95confusion95matrix">get_confusion_matrix</h3>
 <p>full signature:  </p>
-<pre><code class="text">def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True)  
+<pre><code class="text">def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True, true_positive_label='Good', true_negative_label='Anomalous', pred_positive_label='Predicted good', pred_negative_label='Predicted anomalous', xaxlabelsize=None, yaxlabelsize=None, textsize=None, colormap='Blues', colortitle=None)  
 </code></pre>
 
 <p>comments:  </p>
@@ -526,7 +609,7 @@ returns
 
 <h3 id="clip95scores">clip_scores</h3>
 <p>full signature:  </p>
-<pre><code class="text">def clip_scores( scores )  
+<pre><code class="text">def clip_scores( scores, margin=1., hard_thresholds=None )  
 </code></pre>
 
 <p>comments:  </p>
@@ -535,6 +618,8 @@ returns
 -inf values in scores will be replaced by the minimim value (exclucing -inf) minus one  
 input arguments:  
 - scores: 1D numpy array  
+- margin: margin between maximum value (excluding inf) and where to put inf.  
+- hard_thresholds: tuple of values for -inf, +inf (in case the min or max cannot be determined)  
 returns  
 - array with same length as scores with elements replaced as explained above  
 </code></pre></div>

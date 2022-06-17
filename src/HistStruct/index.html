@@ -45,6 +45,43 @@
                                 <a href="../..">Home</a>
                             </li>
                             <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">dqmio <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../dqmio/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/DQMIOReader/">DQMIOReader</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/copy_das_to_local_file/">copy_das_to_local_file</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/copy_das_to_local_set/">copy_das_to_local_set</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submit/">harvest_nanodqmio_submit</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submitmultiple/">harvest_nanodqmio_submitmultiple</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_csv/">harvest_nanodqmio_to_csv</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_root/">harvest_nanodqmio_to_root</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">omsapi <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
@@ -101,6 +138,36 @@
 <li >
     <a href="../../run/">README</a>
 </li>
+                                    
+<li >
+    <a href="../../run/gui/">gui</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">run <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../run/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../run/gui/">gui</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">runswan <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../runswan/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../runswan/nbgui/">nbgui</a>
+</li>
                                 </ul>
                             </li>
                             <li class="dropdown active">
@@ -113,6 +180,14 @@
                                     
 <li class="active">
     <a href="./">HistStruct</a>
+</li>
+                                    
+<li >
+    <a href="../Model/">Model</a>
+</li>
+                                    
+<li >
+    <a href="../ModelInterface/">ModelInterface</a>
 </li>
                                     
 <li >
@@ -132,7 +207,15 @@
 </li>
             
 <li >
+    <a href="../classifiers/LandauClassifier/">LandauClassifier</a>
+</li>
+            
+<li >
     <a href="../classifiers/MaxPullClassifier/">MaxPullClassifier</a>
+</li>
+            
+<li >
+    <a href="../classifiers/MomentClassifier/">MomentClassifier</a>
 </li>
             
 <li >
@@ -259,7 +342,7 @@
                                 </a>
                             </li>
                             <li >
-                                <a rel="prev" href="../PlotStyleParser/">
+                                <a rel="prev" href="../Model/">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -273,34 +356,30 @@
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#histstruct">HistStruct</a></li>
             <li><a href="#class-histstruct">[class] HistStruct</a></li>
-            <li><a href="#class-classifiers-dict">[class] classifiers = dict</a></li>
-            <li><a href="#class-classifiersave">[class] classifier.save</a></li>
+            <li><a href="#class-classifier-selfmodelsrecohistclassifiersname">[class] classifier = self.models[recohist].classifiers[name]</a></li>
+            <li><a href="#class-classifier-selfmodelsrecohistclassifiersname_1">[class] classifier = self.models[recohist].classifiers[name]</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
 <h1 id="histstruct">HistStruct</h1>
 <p><strong>HistStruct: consistent treatment of multiple histogram types</strong>  </p>
-<p>The HistStruct class is intended to be the main data structure used within this framework.
-A HistStruct object basically consists of a mutually consistent collection of numpy arrays, where each numpy array corresponds to one histogram type, with dimensions (number of histograms, number of bins). The HistStruct has functions to easily perform the following common tasks (among others):<br />
-- select a subset of runs and/or lumisections (e.g. using a custom or predefined json file formatted selector),
-- prepare the data for machine learning training, with all kinds of preprocessing,
-- evaluate classifiers (machine learning types or other).</p>
-<p>Up to now the HistStruct is not used in many places, the main reason being that most of the tutorials for example were written (or at leasted started) before this class.<br />
-When only processing a single histogram type, the HistStruct might be a bit of an overkill and one could choose to operate on the dataframe directly.<br />
+<p>The HistStruct class is the main data structure used within this framework.<br />
+A HistStruct object basically consists of a mutually consistent collection of numpy arrays,<br />
+where each numpy array corresponds to one histogram type, with dimensions (number of histograms, number of bins).<br />
+The HistStruct has functions to easily perform the following common tasks (among others):<br />
+- select a subset of runs and/or lumisections (e.g. using a custom or predefined json file formatted selector),<br />
+- prepare the data for machine learning training, with all kinds of preprocessing,<br />
+- evaluate classifiers (machine learning types or other),<br />
+- go from per-histogram scores to per-lumisection scores.  </p>
+<p>When only processing a single histogram type, the HistStruct might be a bit of an overkill.<br />
+One could instead choose to operate on the dataframe directly.<br />
 However, especially when using multiple histogram types, the HistStruct is very handy to keep everything consistent.  </p>
-<p>See the tutorial autoencoder_combine.ipynb for an important example!</p>
 <hr />
 <hr />
 <h2 id="class-histstruct">[class] HistStruct</h2>
 <p>comments:  </p>
-<pre><code class="text">main data structure used within this framework  
-a HistStruct object basically consists of a mutually consistent collection of numpy arrays,  
-where each numpy array corresponds to one histogram type, with dimensions (number of histograms, number of bins).  
-the HistStruct has functions to easily perform the following common tasks (among others):  
-- select a subset of runs and/or lumisections (e.g. using a json file formatted selector),  
-- prepare the data for machine learning training  
-- evaluate classifiers (machine learning types or other)  
+<pre><code class="text">(no valid documentation found)  
 </code></pre>
 
 <h3 id="9595init9595">&#10551; __init__</h3>
@@ -317,13 +396,11 @@ nentries: dict mapping histogram name to 1D numpy array of number of entries per
 histranges: dict mapping histogram name to tuple with (xmin, xmax)  
 runnbs: 1D numpy array of run numbers (same length as histograms)  
 lsnbs: 1D numpy array of lumisection numbers (same length as histograms)  
-globalscores: 1D numpy array of global score per lumisection (same length as histograms)  
-classifiers: dict mapping histogram name to object of type HistogramClassifier  
-scores: dict mapping histogram name to 1D numpy array of values associated to the histograms (same length as histograms)  
 masks: dict mapping name to 1D numpy array of booleans (same length as histograms) that can be used for masking  
 exthistograms: dict of dicts similar to histograms for additional (e.g. artificially generated) histograms  
-extscores: dict of dicts similar to scores for additional (e.g. artificially generated) histograms  
-extglobalscores: dict of lists similar to scores for additional (e.g. artificially generated) histograms  
+setnames: list of names of extended sets  
+models: dict mapping model names to ModelInterfaces  
+modelnames: list of model names  
 </code></pre>
 
 <h3 id="9595str9595">&#10551; __str__</h3>
@@ -337,40 +414,30 @@ extglobalscores: dict of lists similar to scores for additional (e.g. artificial
 
 <h3 id="save">&#10551; save</h3>
 <p>full signature:  </p>
-<pre><code class="text">def save( self, path, save_classifiers=True )  
+<pre><code class="text">def save( self, path, save_models=False, save_classifiers=True, save_fitter=True )  
 </code></pre>
 
 <p>comments:  </p>
 <pre><code class="text">save a HistStruct object to a pkl file  
 input arguments:  
 - path where to store the file (appendix .zip is automatically appended)  
-- save_classifiers: a boolean whether to include the classifiers if present in the HistStruct  
-</code></pre>
-
-<hr />
-<hr />
-<h2 id="class-classifiers-dict">[class] classifiers = dict</h2>
-<p>comments:  </p>
-<pre><code class="text">(no valid documentation found)  
-</code></pre>
-
-<hr />
-<hr />
-<h2 id="class-classifiersave">[class] classifier.save</h2>
-<p>comments:  </p>
-<pre><code class="text">(no valid documentation found)  
+- save_models: a boolean whether to include the models if present in the HistStruct  
+- save_classifiers: a boolean whether to include the classifiers if present in the ModelInterfaces  
+- save_fitter: a boolean whether to include the fitter if present in the ModelInterfaces  
 </code></pre>
 
 <h3 id="load">&#10551; load</h3>
 <p>full signature:  </p>
-<pre><code class="text">def load( self, path, load_classifiers=True, verbose=False )  
+<pre><code class="text">def load( self, path, load_models=True, load_classifiers=True, load_fitter=True, verbose=False )  
 </code></pre>
 
 <p>comments:  </p>
-<pre><code class="text">load a HistStruct object from a pkl file  
+<pre><code class="text">load a HistStruct object  
 input arguments:  
 - path to a zip file containing a HistStruct object  
+- load_models: a boolean whether to load the models if present  
 - load_classifiers: a boolean whether to load the classifiers if present  
+- load_fitter: a boolean whether to load the fitter if present  
 - verbose: boolean whether to print some information  
 </code></pre>
 
@@ -447,6 +514,7 @@ note: does not work on extended histograms sets!
 
 <p>comments:  </p>
 <pre><code class="text">add an array of global scores (one per lumisection)  
+DEPRECATED, DO NOT USE ANYMORE  
 input arguments:  
 - globalscores: 1D numpy array of scores (must have same length as lumisection and run numbers)  
 </code></pre>
@@ -458,6 +526,7 @@ input arguments:
 
 <p>comments:  </p>
 <pre><code class="text">add an array of global scores (one per lumisection) for a specified extra set of histograms in the HistStruct  
+DEPRECATED, DO NOT USE ANYMORE  
 input arguments:  
 - extname: name of extra histogram set  
 - globalscores: 1D numpy array of scores  
@@ -466,21 +535,9 @@ note: this function checks if all histogram types in this set contain the same n
       else adding globalscores is meaningless  
 </code></pre>
 
-<h3 id="get95globalscores95jsonformat">&#10551; get_globalscores_jsonformat</h3>
-<p>full signature:  </p>
-<pre><code class="text">def get_globalscores_jsonformat( self, working_point=None )  
-</code></pre>
-
-<p>comments:  </p>
-<pre><code class="text">make a json format listing all lumisections in this histstruct  
-the output list has entries for global score, pass/fail given working point, and masks  
-input arguments:  
-- working_point: if present, an entry will be made for each lumisection whether it passes this working point  
-</code></pre>
-
 <h3 id="add95exthistograms">&#10551; add_exthistograms</h3>
 <p>full signature:  </p>
-<pre><code class="text">def add_exthistograms( self, extname, histname, histograms, overwrite=False )  
+<pre><code class="text">def add_exthistograms( self, setname, histname, histograms, overwrite=False )  
 </code></pre>
 
 <p>comments:  </p>
@@ -488,7 +545,7 @@ input arguments:
 these histograms are not assumed to correspond to physical run/lumisections numbers (e.g. resampled ones),  
 and no consistency checks are done  
 input arguments:  
-- extname: name of the extra histogram set (you can add multiple, e.g. resampled_good, resampled_bad and/or resampled_training)  
+- setname: name of the extra histogram set (you can add multiple, e.g. resampled_good, resampled_bad and/or resampled_training)  
 - histname: name of the histogram type  
 - histograms: a numpy array of shape (nhistograms,nbins)  
 - overwrite: boolean whether to overwrite a set of histograms of the same name if present (default: raise exception)  
@@ -539,6 +596,18 @@ input arguments:
 - runnb: run number  
 </code></pre>
 
+<h3 id="add95multirun95mask">&#10551; add_multirun_mask</h3>
+<p>full signature:  </p>
+<pre><code class="text">def add_multirun_mask( self, name, runnbs )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">add a mask corresponding to a given list of run numbers  
+input arguments:  
+- name: a name for the mask  
+- runnbs: a list of run numbers  
+</code></pre>
+
 <h3 id="add95json95mask">&#10551; add_json_mask</h3>
 <p>full signature:  </p>
 <pre><code class="text">def add_json_mask( self, name, jsondict )  
@@ -583,7 +652,8 @@ input arguments:
 <pre><code class="text">add a mask corresponding to lumisections where all histograms have statistics within given bounds  
 input arguments:  
 - histnames: list of histogram names to take into account for making the mask (default: all in the HistStruct)  
-- min_entries_to_bins_ratio: number of entries divided by number of bins, lower boundary for statistics (default: no lower boundary)  
+- min_entries_to_bins_ratio: number of entries divided by number of bins, lower boundary for statistics   
+  (default: no lower boundary)  
 - max_entries_to_bins_ratio: same but upper boundary instead of lower boundary (default: no upper boundary)  
 </code></pre>
 
@@ -599,14 +669,17 @@ input arguments:
 others: see add_stat_mask  
 </code></pre>
 
-<h3 id="get95combined95mask">&#10551; get_combined_mask</h3>
+<h3 id="pass95masks">&#10551; pass_masks</h3>
 <p>full signature:  </p>
-<pre><code class="text">def get_combined_mask( self, names )  
+<pre><code class="text">def pass_masks( self, masknames, runnbs=None, lsnbs=None )  
 </code></pre>
 
 <p>comments:  </p>
-<pre><code class="text">get a combined mask given multiple mask names  
-mostly for internal use; externally you can use get_histograms( histname, &lt;list of mask names&gt;) directly  
+<pre><code class="text">get a list of booleans of lumisections whether they pass a given set of masks  
+input arguments:  
+- masknames: list of mask names  
+- runnbs: list of run numbers (default: all in histstruct)  
+- lsnbs: list of lumisection numbers (equally long as runnbs) (default: al in histstruct)  
 </code></pre>
 
 <h3 id="get95masknames">&#10551; get_masknames</h3>
@@ -615,7 +688,36 @@ mostly for internal use; externally you can use get_histograms( histname, &lt;li
 </code></pre>
 
 <p>comments:  </p>
-<pre><code class="text">return a simple list of all mask names in the current HistStruct  
+<pre><code class="text">return a list of all mask names in the current HistStruct  
+</code></pre>
+
+<h3 id="get95mask">&#10551; get_mask</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_mask( self, name )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">return a mask in the current HistStruct  
+</code></pre>
+
+<h3 id="get95combined95mask">&#10551; get_combined_mask</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_combined_mask( self, names )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">get a combined (intersection) mask given multiple mask names  
+mostly for internal use; externally you can use get_histograms( histname, &lt;list of mask names&gt;) directly  
+</code></pre>
+
+<h3 id="get95union95mask">&#10551; get_union_mask</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_union_mask( self, names )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">get a combined (union) mask given multiple mask names  
+mostly for internal use  
 </code></pre>
 
 <h3 id="get95runnbs">&#10551; get_runnbs</h3>
@@ -631,7 +733,7 @@ input arguments:
 
 <h3 id="get95runnbs95unique">&#10551; get_runnbs_unique</h3>
 <p>full signature:  </p>
-<pre><code class="text">def get_runnbs_unique( self )  
+<pre><code class="text">def get_runnbs_unique( self, masknames=None )  
 </code></pre>
 
 <p>comments:  </p>
@@ -662,24 +764,27 @@ input arguments:
 
 <h3 id="get95scores">&#10551; get_scores</h3>
 <p>full signature:  </p>
-<pre><code class="text">def get_scores( self, histname=None, masknames=None )  
+<pre><code class="text">def get_scores( self, modelname, histname=None, setnames=None, masknames=None )  
 </code></pre>
 
 <p>comments:  </p>
-<pre><code class="text">get the array of scores for a given histogram type, optionally after masking  
+<pre><code class="text">get the array of scores for a given model and for a given histogram type, optionally after masking  
 input arguments:  
+- modelname: name of the model for which to retrieve the scores  
 - histname: name of the histogram type for which to retrieve the score.   
   if None, return a dict matching histnames to arrays of scores  
+- setnames: list of names of the histogram sets (use None for standard set)  
 - masknames: list of names of masks (default: no masking, return full array)  
 notes:  
-- this method takes the scores from the HistStruct.scores attribute;  
-  make sure to have evaluated the classifiers before calling this method,  
-  else an exception will be thrown.  
+- do not use setnames and masknames simultaneously, this is not defined  
+- if multiple masks are given, the intersection is taken;  
+  if multiple sets are given, the union is taken  
+- the classifiers in the appropriate model must have been evaluated before calling this method!  
 </code></pre>
 
 <h3 id="get95scores95array">&#10551; get_scores_array</h3>
 <p>full signature:  </p>
-<pre><code class="text">def get_scores_array( self, masknames=None )  
+<pre><code class="text">def get_scores_array( self, modelname, setnames=None, masknames=None )  
 </code></pre>
 
 <p>comments:  </p>
@@ -694,6 +799,7 @@ np array of shape (nhistograms, nhistogramtypes)
 
 <p>comments:  </p>
 <pre><code class="text">get the array of scores for a given histogram type in a given extra set.  
+DEPRECATED, DO NOT USE ANYMORE  
 input arguments:  
 - extname: name of the extra set (see also add_exthistograms)  
 - histname: name of the histogram type for which to retrieve the score.   
@@ -712,59 +818,107 @@ notes:
 <p>comments:  </p>
 <pre><code class="text">similar to get_extscores, but with different return type:  
 np array of shape (nhistograms, nhistogramtypes)  
+DEPRECATED, DO NOT USE ANYMORE  
 </code></pre>
 
 <h3 id="get95scores95ls">&#10551; get_scores_ls</h3>
 <p>full signature:  </p>
-<pre><code class="text">def get_scores_ls( self, runnb, lsnb, histnames=None, suppresswarnings=False )  
+<pre><code class="text">def get_scores_ls( self, modelname, runnb, lsnb, histnames=None )  
 </code></pre>
 
 <p>comments:  </p>
 <pre><code class="text">get the scores for a given run/lumisection number and for given histogram names  
 input arguments:  
+- modelname: name of the model for which to retrieve the score  
 - runnb: run number  
 - lsnb: lumisection number  
 - histnames: names of the histogram types for which to retrieve the score.   
 returns:  
 - a dict matching each name in histnames to a score (or None if no valid score)  
-notes:  
-- this method takes the scores from the HistStruct.scores attribute;  
-  make sure to have evaluated the classifiers before calling this method,  
-  else the returned scores will be None.  
 </code></pre>
 
 <h3 id="get95globalscores">&#10551; get_globalscores</h3>
 <p>full signature:  </p>
-<pre><code class="text">def get_globalscores( self, masknames=None )  
+<pre><code class="text">def get_globalscores( self, modelname, setnames=None, masknames=None )  
 </code></pre>
 
 <p>comments:  </p>
 <pre><code class="text">get the array of global scores, optionally after masking  
 input arguments:  
+- modelname: name of the model for which to retrieve the global score  
+- setnames: list of names of the histogram sets (use None for standard set)  
 - masknames: list of names of masks (default: no masking, return full array)  
 notes:  
-- this method takes the scores from the HistStruct.globalscores attribute;  
-  make sure to have set this attribute with add_globalscores,  
-  else an exception will be thrown.  
+- do not use setnames and masknames simultaneously, this is not defined  
+- if multiple masks are given, the intersection is taken;  
+  if multiple sets are given, the union is taken  
+- the classifiers in the appropriate model must have been evaluated before calling this method!  
+</code></pre>
+
+<h3 id="get95globalscores95jsonformat">&#10551; get_globalscores_jsonformat</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_globalscores_jsonformat( self, modelname=None )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">make a json format listing all lumisections in this histstruct  
+the output list has entries for global scores and masks  
+input arguments:  
+- modelname: name of the model for wich to retrieve the global score  
+  if None, all available models will be used  
 </code></pre>
 
 <h3 id="get95globalscore95ls">&#10551; get_globalscore_ls</h3>
 <p>full signature:  </p>
-<pre><code class="text">def get_globalscore_ls( self, runnb, lsnb )  
+<pre><code class="text">def get_globalscore_ls( self, modelname, runnb, lsnb )  
 </code></pre>
 
 <p>comments:  </p>
 <pre><code class="text">get the global score for a given run/lumisection number  
 input arguments:  
+- modelname: name of the model for which to retrieve the global score  
 - runnb: run number  
 - lsnb: lumisection number  
 - histnames: names of the histogram types for which to retrieve the score.   
 returns:  
 - a dict matching each name in histnames to a score (or None if no valid score)  
-notes:  
-- this method takes the scores from the HistStruct.scores attribute;  
-  make sure to have evaluated the classifiers before calling this method,  
-  else the returned scores will be None.  
+</code></pre>
+
+<h3 id="get95globalscores95mask">&#10551; get_globalscores_mask</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_globalscores_mask( self, modelname, masknames=None, setnames=None, score_up=None, score_down=None )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">get the mask for global score between specified boundaries  
+input arguments:  
+- modelname: name of the model for which to consider the global scores  
+- masknames: list of additional masks (on top of score boundaries) to consider  
+- setnames: list of set names for which to retrieve the global scores  
+- score_up and score_down are upper and lower thresholds  
+    if both are not None, the mask for global scores between the boundaries are returned  
+    if score_up is None, the mask for global score &gt; score_down are returned  
+    if score_down is None, the mask for global score &lt; score_up are returned  
+</code></pre>
+
+<h3 id="get95globalscores95indices">&#10551; get_globalscores_indices</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_globalscores_indices( self, modelname, masknames=None, setnames=None, score_up=None, score_down=None )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">get the indices with a global score between specified boundaries  
+input arguments: see get_globalscore_mask  
+</code></pre>
+
+<h3 id="get95globalscores95runsls">&#10551; get_globalscores_runsls</h3>
+<p>full signature:  </p>
+<pre><code class="text">def get_globalscores_runsls( self, modelname, masknames=None, setnames=None, score_up=None, score_down=None )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">get the run and lumisection numbers with a global score between specified boundaries  
+input arguments: see get_globalscore_mask  
 </code></pre>
 
 <h3 id="get95extglobalscores">&#10551; get_extglobalscores</h3>
@@ -774,6 +928,7 @@ notes:
 
 <p>comments:  </p>
 <pre><code class="text">get the array of global scores for one of the extra histogram sets  
+DEPRECATED, DO NOT USE ANYMORE  
 input arguments:  
 - extname: name of the extra histogram set  
 notes:  
@@ -784,7 +939,7 @@ notes:
 
 <h3 id="get95histograms">&#10551; get_histograms</h3>
 <p>full signature:  </p>
-<pre><code class="text">def get_histograms( self, histname=None, masknames=None )  
+<pre><code class="text">def get_histograms( self, histname=None, masknames=None, setnames=None )  
 </code></pre>
 
 <p>comments:  </p>
@@ -793,29 +948,21 @@ input arguments:
 - histname: name of the histogram type to retrieve   
   if None, return a dict matching histnames to arrays of histograms  
 - masknames: list of names of masks (default: no masking, return full array)  
-</code></pre>
-
-<h3 id="get95exthistograms">&#10551; get_exthistograms</h3>
-<p>full signature:  </p>
-<pre><code class="text">def get_exthistograms( self, extname, histname=None )  
-</code></pre>
-
-<p>comments:  </p>
-<pre><code class="text">get the array of extra histograms for a given set name and type name  
-input arguments:  
-- extname: name of the set of extra histograms (see also add_exthistograms)  
-- histname: name of the histogram type to retrieve   
-  if None, return a dict matching histnames to arrays of histograms  
+- setnames: list of names of the sets of extra histograms (see also add_exthistograms)  
+  if multiple setnames are provided, the union/concatenation is returned  
 </code></pre>
 
 <h3 id="get95histogramsandscores">&#10551; get_histogramsandscores</h3>
 <p>full signature:  </p>
-<pre><code class="text">def get_histogramsandscores( self, extname=None, masknames=None, nrandoms=-1, nfirst=-1 )  
+<pre><code class="text">def get_histogramsandscores( self, modelname=None, setnames=None, masknames=None, nrandoms=-1, nfirst=-1 )  
 </code></pre>
 
 <p>comments:  </p>
 <pre><code class="text">combination of get_histograms, get_scores and get_globalscores with additional options  
-- extname: use an extended histogram set  
+- modelname: name of the model for which to retrieve the score  
+  if None, no scores will be retrieved (only histograms)  
+- setnames: list of names of histogram sets (use None for default set)  
+- masknames: list of names of masks  
 - nrandoms: if &gt; 0, number of random instances to draw  
 - nfirst: if &gt; 0, number of first instances to keep  
 return type:  
@@ -823,33 +970,177 @@ dict with keys 'histograms', 'scores' and 'globalscores'
 note that the values of scores and globalscores may be None if not initialized  
 </code></pre>
 
-<h3 id="add95classifier">&#10551; add_classifier</h3>
+<h3 id="add95model">&#10551; add_model</h3>
 <p>full signature:  </p>
-<pre><code class="text">def add_classifier( self, histname, classifier, evaluate=False )  
+<pre><code class="text">def add_model( self, modelname, model )  
 </code></pre>
 
 <p>comments:  </p>
-<pre><code class="text">add a histogram classifier for a given histogram name to the HistStruct  
+<pre><code class="text">add a model to the HistStruct  
 input arguments:  
-- histname: a valid histogram name present in the HistStruct to which this classifier applies  
-- classifier: an object of type HistogramClassifier (i.e. of any class that derives from it)  
-- evaluate: a bool whether to evaluate the classifier (and store the result in the 'scores' attribute)  
-  if set to True, the result is both returned and stored in the 'scores' attribute.  
+- modelname: a name for the model  
+- model: an instance of ModelInterface class with histnames corresponding to the ones for this HistStruct  
+</code></pre>
+
+<h3 id="check95model">&#10551; check_model</h3>
+<p>full signature:  </p>
+<pre><code class="text">def check_model( self, modelname )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">check if a given model name is present in the HistStruct  
+input arguments:  
+- modelname: name of the model to check  
+</code></pre>
+
+<h3 id="remove95model">&#10551; remove_model</h3>
+<p>full signature:  </p>
+<pre><code class="text">def remove_model( self, modelname )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">remove a model  
+input arguments:  
+- modelname: name of the model to remove  
+</code></pre>
+
+<h3 id="train95classifier">&#10551; train_classifier</h3>
+<p>full signature:  </p>
+<pre><code class="text">def train_classifier( self, modelname, histname, masknames=None, setnames=None, **kwargs )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">train a histogram classifier  
+input arguments:  
+- modelname: name of the model for which to train the classifiers  
+- histname: a valid histogram name present in the HistStruct for which to train the classifier  
+- masknames: list of masks the classifiers should be trained on  
+- setnames: list of names of sets of extra histograms on which the classifiers should be trained  
+- kwargs: additional keyword arguments for training  
+</code></pre>
+
+<h3 id="train95classifiers">&#10551; train_classifiers</h3>
+<p>full signature:  </p>
+<pre><code class="text">def train_classifiers( self, modelname, masknames=None, setnames=None, **kwargs )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">train histogram classifiers for all histogram types  
+input arguments:  
+- modelname: name of the model for which to train the classifiers  
+- masknames: list of masks the classifiers should be trained on  
+- setnames: list of names of sets of extra histograms on which the classifiers should be trained  
+- kwargs: additional keyword arguments for training  
 </code></pre>
 
 <h3 id="evaluate95classifier">&#10551; evaluate_classifier</h3>
 <p>full signature:  </p>
-<pre><code class="text">def evaluate_classifier( self, histname, extname=None )  
+<pre><code class="text">def evaluate_classifier( self, modelname, histname, masknames=None, setnames=None )  
 </code></pre>
 
 <p>comments:  </p>
-<pre><code class="text">evaluate a histogram classifier for a given histogram name in the HistStruct  
+<pre><code class="text">evaluate a histogram classifier  
 input arguments:  
+- modelname: name of the model for wich to evaluate the classifiers  
 - histname: a valid histogram name present in the HistStruct for which to evaluate the classifier  
-- extname: name of a set of extra histograms (see add_exthistograms)  
-           if None, will evaluate the classifer for the main set of histograms  
-notes:  
-- the result is both returned and stored in the 'scores' attribute  
+- masknames: list of masks if the classifiers should be evaluated on a subset only (e.g. for speed)  
+- setnames: list of names of sets of extra histograms for which the classifiers should be evaluated  
+</code></pre>
+
+<h3 id="evaluate95classifiers">&#10551; evaluate_classifiers</h3>
+<p>full signature:  </p>
+<pre><code class="text">def evaluate_classifiers( self, modelname, masknames=None, setnames=None )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">evaluate histogram classifiers for all histogram types  
+input arguments:  
+- modelname: name of the model for wich to evaluate the classifiers  
+- masknames: list of masks if the classifiers should be evaluated on a subset only (e.g. for speed)  
+- setnames: list of names of a set of extra histograms for which the classifiers should be evaluated  
+</code></pre>
+
+<h3 id="set95fitter">&#10551; set_fitter</h3>
+<p>full signature:  </p>
+<pre><code class="text">def set_fitter( self, modelname, fitter )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">set the fitter for a given model  
+</code></pre>
+
+<h3 id="train95fitter">&#10551; train_fitter</h3>
+<p>full signature:  </p>
+<pre><code class="text">def train_fitter( self, modelname, masknames=None, setnames=None, verbose=False, **kwargs )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">train the fitter for a given model  
+input arguments:  
+- modelname: name of the model to train  
+- masknames: list of mask names for training set  
+- setnames: list of set names for training set  
+- kwargs: additional keyword arguments for fitting  
+note: use either masksnames or setnames, not both!  
+</code></pre>
+
+<h3 id="train95partial95fitters">&#10551; train_partial_fitters</h3>
+<p>full signature:  </p>
+<pre><code class="text">def train_partial_fitters( self, modelname, dimslist, masknames=None, setnames=None, **kwargs )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">train partial fitters for a given model  
+input arguments:  
+- modelname: name of the model to train  
+- dimslist: list of tuples with integer dimension numbers  
+- masknames: list of mask names for training set  
+- setnames: list of set names for training set  
+- kwargs: additional keyword arguments for fitting  
+note: use either masksnames or setnames, not both!  
+note: see also plot_partial_fit for a convenient plotting method!  
+</code></pre>
+
+<h3 id="evaluate95fitter">&#10551; evaluate_fitter</h3>
+<p>full signature:  </p>
+<pre><code class="text">def evaluate_fitter( self, modelname, masknames=None, setnames=None, verbose=False )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">evaluate the fitter for a given model  
+input arguments:  
+- modelname: name of the model for which to evaluate the fitter  
+- masknames: list of mask names if the fitter should be evaluated on a subset only (e.g. for speed)  
+- setnames: list of set names of extra histograms for which the fitter should be evaluated  
+</code></pre>
+
+<h3 id="evaluate95fitter95on95point">&#10551; evaluate_fitter_on_point</h3>
+<p>full signature:  </p>
+<pre><code class="text">def evaluate_fitter_on_point( self, modelname, point )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">evaluate the fitter on a given points  
+input arguments:  
+- modelname: name of the model for which to evaluate the fitter  
+- points: dict matching histnames to scores (one float per histogram type)  
+  (e.g. as returned by get_scores_ls)  
+returns:  
+- the global score for the provided point (a float)  
+</code></pre>
+
+<h3 id="evaluate95fitter95on95points">&#10551; evaluate_fitter_on_points</h3>
+<p>full signature:  </p>
+<pre><code class="text">def evaluate_fitter_on_points( self, modelname, points )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">evaluate the fitter on a given set of points  
+input arguments:  
+- modelname: name of the model for which to evaluate the fitter  
+- points: dict matching histnames to scores (np array of shape (nhistograms))  
+returns:  
+- the global scores for the provided points  
 </code></pre>
 
 <h3 id="plot95histograms">&#10551; plot_histograms</h3>
@@ -901,7 +1192,7 @@ internal helper function, use only via plot_histograms
 
 <h3 id="plot95histograms95run">&#10551; plot_histograms_run</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_histograms_run( self, histnames=None, masknames=None, histograms=None,   titledict=None, xaxtitledict=None, physicalxax=False,  yaxtitledict=None, **kwargs )  
+<pre><code class="text">def plot_histograms_run( self, histnames=None, masknames=None, histograms=None, ncols=4,  titledict=None, xaxtitledict=None, physicalxax=False,  yaxtitledict=None, **kwargs )  
 </code></pre>
 
 <p>comments:  </p>
@@ -924,7 +1215,7 @@ input arguments:
 
 <h3 id="plot95histograms95run951d">&#10551; plot_histograms_run_1d</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_histograms_run_1d( self, histnames=None, masknames=None, histograms=None,  titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None,  **kwargs )  
+<pre><code class="text">def plot_histograms_run_1d( self, histnames=None, masknames=None, histograms=None, ncols=4, titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None,  **kwargs )  
 </code></pre>
 
 <p>comments:  </p>
@@ -934,14 +1225,11 @@ internal helper function, use only via plot_histograms_run
 
 <h3 id="plot95ls">&#10551; plot_ls</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_ls( self, runnb, lsnb, histnames=None, histlabel=None,  recohist=None, recohistlabel='Reconstruction',  refhists=None, refhistslabel='Reference histograms', refhiststransparency=None, titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs)  
+<pre><code class="text">def plot_ls( self, runnb, lsnb, histnames=None, histlabel=None, ncols=4, recohist=None, recohistlabel='Reconstruction',  refhists=None, refhistslabel='Reference histograms', refhiststransparency=None, titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs)  
 </code></pre>
 
 <p>comments:  </p>
 <pre><code class="text">plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction  
-note: so far only for 1D histograms.  
-      case of 2D histograms requires different plotting method since they cannot be clearly overlaid.  
-      if a HistStruct contains both 1D and 2D histograms, the 1D histograms must be selected with the histnames argument.  
 input arguments:  
 - runnb: run number  
 - lsnb: lumisection number  
@@ -951,7 +1239,8 @@ input arguments:
   notes: - 'reconstructed histograms' refers to e.g. autoencoder or NMF reconstructions;  
            some models (e.g. simply looking at histogram moments) might not have this kind of reconstruction  
          - in principle one histogram per key is expected, but still the the shape must be 2D (i.e. (1,nbins))  
-         - in case recohist is set to 'auto', the reconstruction is calculated on the fly for the input histograms  
+         - in case recohist is set to a valid model name present in the current HistStruct,   
+           the reconstruction is calculated on the fly for the input histograms  
 - recohistlabel: legend entry for the reco histograms  
 - refhists: dict matching histogram names to reference histograms  
   notes: - multiple histograms (i.e. a 2D array) per key are expected;  
@@ -966,7 +1255,7 @@ input arguments:
 
 <h3 id="plot95run">&#10551; plot_run</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_run( self, runnb, masknames=None, recohist=None, recohistlabel='reco', refhists=None, refhistslabel='reference', doprint=False)  
+<pre><code class="text">def plot_run( self, runnb, masknames=None, ncols=4,  recohist=None, recohistlabel='reco',  refhists=None, refhistslabel='reference', doprint=False)  
 </code></pre>
 
 <p>comments:  </p>
@@ -975,12 +1264,19 @@ input arguments:
 
 <h3 id="plot95ls951d">&#10551; plot_ls_1d</h3>
 <p>full signature:  </p>
-<pre><code class="text">def plot_ls_1d( self, runnb, lsnb, histnames=None, histlabel=None, recohist=None, recohistlabel='Reconstruction', refhists=None, refhistslabel='Reference histograms', refhiststransparency=None, titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs)  
+<pre><code class="text">def plot_ls_1d( self, runnb, lsnb, histnames=None, histlabel=None, ncols=4, recohist=None, recohistlabel='Reconstruction', refhists=None, refhistslabel='Reference histograms', refhiststransparency=None, titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs)  
 </code></pre>
 
 <p>comments:  </p>
 <pre><code class="text">plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction  
 internal helper function, use only via plot_ls  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-classifier-selfmodelsrecohistclassifiersname">[class] classifier = self.models[recohist].classifiers[name]</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
 </code></pre>
 
 <h3 id="plot95ls952d">&#10551; plot_ls_2d</h3>
@@ -991,6 +1287,65 @@ internal helper function, use only via plot_ls
 <p>comments:  </p>
 <pre><code class="text">plot the histograms in a HistStruct for a given run/ls number versus their reconstruction  
 internal helper function, use only via plot_ls  
+</code></pre>
+
+<hr />
+<hr />
+<h2 id="class-classifier-selfmodelsrecohistclassifiersname_1">[class] classifier = self.models[recohist].classifiers[name]</h2>
+<p>comments:  </p>
+<pre><code class="text">(no valid documentation found)  
+</code></pre>
+
+<h3 id="plot95ls95score">&#10551; plot_ls_score</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_ls_score( self, modelname, runnb, lsnb, ncols=4, masknames=None, setnames=None, **kwargs )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">plot the score of a given lumisection for each histogram type compared to reference scores  
+input arguments:  
+- modelname: name of the model for which to retrieve the score  
+- runnb: run number  
+- lsnb: lumisection number  
+- masknames: list of mask names for the reference scores  
+- setnames: list of set names for the reference scores  
+- kwargs: additional keyword arguments passed down to pu.plot_score_dist  
+</code></pre>
+
+<h3 id="plot95partial95fit">&#10551; plot_partial_fit</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_partial_fit( self, modelname, dims, clusters, **kwargs)  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">plot a partial fit calculated with train_partial_fitters  
+input arguments:  
+- modelname: name of the model for which to plot the partial fits  
+- dims: a tuple of length 1 or 2 with integer dimension indices  
+  note: the partial fit for this dimension must have been calculated with train_partial_fitters first  
+- clusters: a list of the different point clusters to plot  
+            each element in the list should be a dict of the form   
+            {'masknames': [list of mask names]} or {'setnames': [list of set names]}  
+- kwargs: plot options passed down to pu.plot_fit_1d_clusters or pu.plot_fit_2d_clusters;  
+          some of them have to have the same length as clusters (e.g. colors and labels)  
+</code></pre>
+
+<h3 id="plot95score95dist">&#10551; plot_score_dist</h3>
+<p>full signature:  </p>
+<pre><code class="text">def plot_score_dist( self, modelname, histname=None,  masknames_sig=None, setnames_sig=None,  masknames_bkg=None, setnames_bkg=None, **kwargs )  
+</code></pre>
+
+<p>comments:  </p>
+<pre><code class="text">plot a 1D score distribution  
+input arguments:  
+- modelname: name of the model for which to retrieve the scores  
+- histname: type of histogram for which to retrieve the scores  
+            if None, the global scores will be retrieved  
+- masknames_sig, setnames_sig: lists of mask or set names for signal distribution  
+- masknames_bkg, setnames_bkg: lists of mask or set names for background distribution  
+  note: in case of multiple masks, the intersection is taken (as usual);  
+        in case of multiple sets, the union is taken!  
+- kwargs: additional keyword arguments passed down to pu.plot_score_dist  
 </code></pre>
 
 <hr /></div>
