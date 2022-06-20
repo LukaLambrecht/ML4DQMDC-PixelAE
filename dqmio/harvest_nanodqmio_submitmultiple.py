@@ -1,79 +1,108 @@
 ##########################################
-# submitter for DQMIO conversion scripts #
+# Submitter for DQMIO conversion scripts #
 ##########################################
-# this script wraps conversion scripts (harvest_nanodqmio_to_*.py) in a job.
-# the difference with respect to harvest_nanodqmio_submit.py is that this script
+# This script wraps conversion scripts (harvest_nanodqmio_to_*.py) in a job.
+# The difference with respect to harvest_nanodqmio_submit.py is that this script
 # makes it more easy to harvest multiple monitoring elements in one go
 # (instead of modifying and resubmitting harvest_nanodqmio_submit.py sequentially).
-# the parameters that should be modified according to your needs are explained below.
+#
+# Run "python harvest_nanodqmio_submitmultiple.py -h" for a list of available options.
 
 ### imports
 import sys
 import os
+import json
+import argparse
 sys.path.append('../jobsubmission')
 import condortools as ct
+sys.path.append('src')
+import tools
 
 if __name__=='__main__':
 
-  # definitions
-  filemode = 'das'
-  # (choose from 'das' or 'local';
-  #  in case of 'das', will read all files belonging to the specified dataset from DAS;
-  #  in case of 'local', will read all files in the specified folder on the local filesystem.)
-  datasetname = '/MinimumBias/Commissioning2021-900GeVmkFit-v2/DQMIO'
-  # (name of the data set on DAS (or filemode 'das') 
-  #  OR name of the folder holding input files (for filemode 'local'))
-  redirector = 'root://cms-xrd-global.cern.ch/'
-  # (redirector used to access remote files (ignored in filemode 'local'))
-  menames = ({
-    'PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_1': 'output_chargeInner_PXLayer_1.csv',
-    'PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_2': 'output_chargeInner_PXLayer_2.csv',
-    'PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_3': 'output_chargeInner_PXLayer_3.csv',
-    'PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_4': 'output_chargeInner_PXLayer_4.csv'
-	    })	
-  # (names of the monitoring elements to store matched to output files)
-  exe = 'python harvest_nanodqmio_to_csv.py'
-  # (executable to run, should be a valid conversion script 
-  # similar in structure and command line args to e.g. harvest_nanodqmio_to_csv.py)
-  runmode = 'condor'
-  # (choose from 'condor' or 'local')
-  proxy = os.path.abspath('x509up_u23078')
-  # (set location of a valid proxy created with --voms-proxy-init --voms cms
-  #  (ignored in filemode 'local'))
+  # read arguments
+  parser = argparse.ArgumentParser(description='Harvest nanoDQMIO to CSV')
+  parser.add_argument('--harvester', default='harvest_nanodqmio_to_csv.py',
+                        help='Harvester to run, should be a valid python script'
+                             +' similar in structure and command line args to'
+                             +' e.g. harvest_nanodqmio_to_csv.py.')
+  parser.add_argument('--runmode', choices=['condor','local'], default='condor',
+                        help='Choose from "condor" or "local";'
+                             +' in case of "condor", will submit job to condor cluster;'
+                             +' in case of "local", will run interactively in the terminal.')
+  parser.add_argument('--filemode', choices=['das','local'], default='das',
+                        help='Choose from "das" or "local";'
+                              +' in case of "das", will read all files'
+                              +' belonging to the specified dataset from DAS;'
+                              +' in case of "local", will read all files'
+                              +' in the specified folder on the local filesystem.')
+  parser.add_argument('--datasetname',
+                        default='/MinimumBias/Commissioning2021-900GeVmkFit-v2/DQMIO',
+                        help='Name of the data set on DAS (or filemode "das"'
+                             +' OR name of the folder holding input files (for filemode "local"'
+                             +' OR comma-separated list of file names'
+                             +' (on DAS or locally according to filemode)).'
+                             +' Note: interpreted as list of file names if a comma is present,'
+                             +' directory or dataset otherwise!')
+  parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
+                        help='Redirector used to access remote files'
+                             +' (ignored in filemode "local").')
+  parser.add_argument('--menames', default='jsons/menames_example.json',
+                        help='Json file holding a dict with the name of the monitoring element to store'
+                             +' mapped to their output files.')
+  parser.add_argument('--proxy', default=os.path.abspath('x509up_u116295'),
+                        help='Set the location of a valid proxy created with'
+                             +' "--voms-proxy-init --voms cms";'
+                             +' needed for DAS client;'
+                             +' ignored if filemode is "local".')
+  parser.add_argument('--istest', default=False, action='store_true',
+                        help='If set to true, only one file will be read for speed')
+  args = parser.parse_args()
+  harvester = args.harvester
+  runmode = args.runmode
+  filemode = args.filemode
+  datasetname = args.datasetname
+  redirector = args.redirector
+  menames = args.menames
+  proxy = args.proxy
+  istest = args.istest
+
+  # read the ME names and output files
+  with open(menames, 'r') as f:
+    menames = json.load(f)
+  print('Found following monitoring elements in configuration json file:')
+  for mename,outputfile in menames.items():
+    print('  - {} -> {}'.format(mename,outputfile))
+
+  # export the proxy
+  if( filemode=='das' or runmode=='condor' ): tools.export_proxy( proxy )
 
   # make a list of input files
-  if filemode=='das':
-    # setup proxy
-    os.system('export X509_USER_PROXY={}'.format(proxy))
-    # make and execute the DAS client command
-    print('running DAS client to find files in dataset {}...'.format(datasetname))
-    dascmd = "dasgoclient -query 'file dataset={}' --limit 0".format(datasetname)
-    dasstdout = os.popen(dascmd).read()
-    dasfiles = [el.strip(' \t') for el in dasstdout.strip('\n').split('\n')]
-    print('DAS client ready; found following files ({}):'.format(len(dasfiles)))
-    for f in dasfiles: print('  - {}'.format(f))
-    redirector = redirector.rstrip('/')+'/'
-    inputfiles = [redirector+f for f in dasfiles]
-    if len(inputfiles)==0:
-      raise Exception('ERROR: no files found by the DAS client'
-		      +' for the queried dataset {}'.format(datasetname))
-  elif filemode=='local':
-    # read all root files in the given directory
-    inputfiles = ([os.path.join(datasetname,f) for f in os.listdir(datasetname)
-                      if f[-5:]=='.root'])
-    proxy = None
+  inputfiles = tools.format_input_files( datasetname,
+                                         filemode=filemode,
+                                         redirector=redirector,
+                                         istest=istest )
+
+  # format the list of input files
+  inputfstr = ','.join(inputfiles)
+  if len(inputfiles)==1: inputfstr+=','
 
   # loop over the monitoring elements
   cmds = []
   for mename,outputfile in menames.items():
     # make the command
-    cmd = exe
-    cmd += ' '+','.join(inputfiles)
-    cmd += ' {}'.format(mename)
-    cmd += ' {}'.format(outputfile)
+    cmd = 'python {}'.format(harvester)
+    cmd += ' --filemode {}'.format(filemode)
+    cmd += ' --datasetname {}'.format(inputfstr)
+    cmd += ' --redirector {}'.format(redirector)
+    cmd += ' --mename {}'.format(mename)
+    cmd += ' --outputfile {}'.format(outputfile)
+    cmd += ' --proxy {}'.format(proxy)
+    if istest: cmd += ' --istest'
     cmds.append(cmd)
   
   if runmode=='local':
     for cmd in cmds: os.system(cmd)
   if runmode=='condor':
-    ct.submitCommandsAsCondorCluster('cjob_harvest_nanodqmio_submitmultiple', cmds, proxy=proxy)
+    ct.submitCommandsAsCondorCluster('cjob_harvest_nanodqmio_submitmultiple', cmds, 
+            proxy=proxy, jobflavour='workday')

@@ -49,11 +49,14 @@ def initJobScript(name, docmsenv=False, cmssw_version='CMSSW_10_2_16_patch1'):
     os.system('chmod +x '+fname)
     print('initJobScript created {}'.format(fname))
 
-def makeJobDescription(name, exe, argstring=None, stdout=None, stderr=None, log=None,
-                    cpus=1, mem=1024, disk=10240, proxy=None):
+def makeJobDescription(name, exe, argstring=None, 
+                       stdout=None, stderr=None, log=None,
+                       cpus=1, mem=1024, disk=10240, proxy=None,
+                       jobflavour=None):
     ### create a single job description txt file
     # note: exe can for example be a runnable bash script
     # note: argstring is a single string containing the arguments to exe (space-separated)
+    # note: for job flavour: see here: https://batchdocs.web.cern.ch/local/submit.html
     
     # parse arguments
     name = os.path.splitext(name)[0]
@@ -77,6 +80,8 @@ def makeJobDescription(name, exe, argstring=None, stdout=None, stderr=None, log=
             f.write('use_x509userproxy = True\n\n')
         #f.write('should_transfer_files = yes\n\n') 
         # (not fully sure whether to put 'yes', 'no' or omit it completely)
+        if jobflavour is not None:
+            f.write('+JobFlavour = {}\n\n'.format(jobflavour))
         f.write('queue\n\n')
     print('makeJobDescription created {}'.format(fname))
 
@@ -91,16 +96,19 @@ def submitCondorJob(jobDescription):
 
 def submitCommandAsCondorJob(name, command, stdout=None, stderr=None, log=None,
                         cpus=1, mem=1024, disk=10240, proxy=None, 
-                        docmsenv=False, cmssw_version='CMSSW_10_2_16_patch1'):
+                        docmsenv=False, cmssw_version='CMSSW_10_2_16_patch1',
+                        jobflavour=None):
     ### submit a single command as a single job
     # command is a string representing a single command (executable + args)
     submitCommandsAsCondorJobs(name, [[command]], stdout=stdout, stderr=stderr, log=log,
             cpus=cpus, mem=mem, disk=disk, proxy=proxy,
-            docmsenv=docmsenv, cmssw_version=cmssw_version)
+            docmsenv=docmsenv, cmssw_version=cmssw_version,
+            jobflavour=jobflavour)
 
 def submitCommandsAsCondorCluster(name, commands, stdout=None, stderr=None, log=None,
                         cpus=1, mem=1024, disk=10240, proxy=None,
-                        docmsenv=False, cmssw_version='CMSSW_10_2_16_patch1'):
+                        docmsenv=False, cmssw_version='CMSSW_10_2_16_patch1',
+                        jobflavour=None):
     ### run several similar commands within a single cluster of jobs
     # note: each command must have the same executable and number of args, only args can differ!
     # note: commands can be a list of commands (-> a job will be submitted for each command)
@@ -120,7 +128,8 @@ def submitCommandsAsCondorCluster(name, commands, stdout=None, stderr=None, log=
     # then make the job description
     # first job:
     makeJobDescription(name,shname,argstring=argstring,stdout=stdout,stderr=stderr,log=log,
-                       cpus=cpus,mem=mem,disk=disk,proxy=proxy)
+                       cpus=cpus,mem=mem,disk=disk,proxy=proxy,
+                       jobflavour=jobflavour)
     # add other jobs:
     with open(jdname,'a') as script:
         for command in commands[1:]:
@@ -136,17 +145,20 @@ def submitCommandsAsCondorCluster(name, commands, stdout=None, stderr=None, log=
 
 def submitCommandsAsCondorJob(name, commands, stdout=None, stderr=None, log=None,
                         cpus=1, mem=1024, disk=10240, proxy=None,
-                        docmsenv=False, cmssw_version='CMSSW_10_2_16_patch1'):
+                        docmsenv=False, cmssw_version='CMSSW_10_2_16_patch1',
+                        jobflavour=None):
     ### submit a set of commands as a single job
     # commands is a list of strings, each string represents a single command (executable + args)
     # the commands can be anything and are not necessarily same executable or same number of args.
     submitCommandsAsCondorJobs(name, [commands], stdout=stdout, stderr=stderr, log=log,
                         cpus=cpus, mem=mem, disk=disk, proxy=proxy,
-                        docmsenv=docmsenv, cmssw_version=cmssw_version)
+                        docmsenv=docmsenv, cmssw_version=cmssw_version,
+                        jobflavour=jobflavour)
 
 def submitCommandsAsCondorJobs(name, commands, stdout=None, stderr=None, log=None,
             cpus=1, mem=1024, disk=10240, proxy=None,
-            docmsenv=False, cmssw_version='CMSSW_10_2_16_patch1'):
+            docmsenv=False, cmssw_version='CMSSW_10_2_16_patch1',
+            jobflavour=None):
     ### submit multiple sets of commands as jobs (one job per set)
     # commands is a list of lists of strings, each string represents a single command
     # the commands can be anything and are not necessarily same executable or number of args.
@@ -161,6 +173,7 @@ def submitCommandsAsCondorJobs(name, commands, stdout=None, stderr=None, log=Non
              for cmd in commandset: script.write(cmd+'\n')
         # then make the job description
         makeJobDescription(name,shname,stdout=stdout,stderr=stderr,log=log,
-                            cpus=cpus,mem=mem,disk=disk,proxy=proxy)
+                            cpus=cpus,mem=mem,disk=disk,proxy=proxy,
+                            jobflavour=jobflavour)
         # finally submit the job
         submitCondorJob(jdname)
