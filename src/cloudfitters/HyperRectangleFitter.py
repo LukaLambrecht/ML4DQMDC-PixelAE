@@ -43,10 +43,14 @@ def calculate_cut_values( values, quantile, side='both' ):
         
 class HyperRectangleFitter(CloudFitter):
     ### Simple fitter making a hard cut in each dimension
-    # 
     
-    def __init__(self, points, quantiles=0, side='both', verbose=False ):
-        ### constructor
+    def __init__(self):
+        ### empty constructor
+        super( HyperRectangleFitter, self ).__init__()
+        self.cuts = np.zeros()
+                
+    def fit(self, points, quantiles=0, side='both', verbose=False):
+        ### fit to a set of points
         # input arguments:
         # - points: a np array of shape (npoints,ndims)
         # - quantiles: quantiles of values to discard.
@@ -57,7 +61,7 @@ class HyperRectangleFitter(CloudFitter):
         #   for 'up', the cut will discard the quantile highest values,
         #   for 'down', cut will discard the quantile lowest values,
         #   for 'both', the cut(s) will discard the quantile values both at the high and low end.
-        super( HyperRectangleFitter, self ).__init__(points)
+        super( HyperRectangleFitter, self ).fit(points)
         # parse arguments
         sideoptions = ['both','up','down']
         if not side in sideoptions:
@@ -96,13 +100,3 @@ class HyperRectangleFitter(CloudFitter):
         for i,point in enumerate(points):
             pdf[i] = self.apply_cuts( point )
         return pdf
-
-
-
-
-
-
-
-
-
-

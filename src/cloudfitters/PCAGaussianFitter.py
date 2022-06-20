@@ -32,12 +32,22 @@ class PCAGaussianFitter(CloudFitter):
     # - cov: multidim covariance matrix of normal distribution
     # - mvn: scipy.stats multivariate_normal object built from mean and cov
         
-    def __init__(self, points, npcadims=2):
-        ### constructor
+    def __init__(self):
+        ### empty constructor
+        # input arguments:
+        super( PCAGaussianFitter, self ).__init__()
+        self.npcadims = 0
+        self.pca = None
+        self.mean = np.zeros(0)
+        self.cov = np.zeros(0)
+        self.mvn = None
+        
+    def fit(self, points, npcadims=2):
+        ### fit to a set of points
         # input arguments:
         # - points: a np array of shape (npoints,ndims)
         # - npcadims: number of PCA compoments to keep
-        super( PCAGaussianFitter, self ).__init__(points)
+        super( PCAGaussianFitter, self ).fit(points)
         # first apply PCA
         self.npcadims = npcadims # extension to self.ndims (dimension of non-transformed points)
         self.pca = PCA(n_components=npcadims)

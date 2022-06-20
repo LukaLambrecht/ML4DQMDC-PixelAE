@@ -257,6 +257,18 @@ def running_average_hists(hists, window=None, weights=None):
     return avghists
 
 
+### select random examples
+
+def select_random(hists, nselect=10):
+    ### select nselect random examples from a set of histograms
+    # input arguments:
+    # - hists: a numpy array of shape (nhistograms, nbins) for 1D
+    #          or (nhistograms, nybins, nxbins) for 2D.
+    # - nselect: number of random instances to draw
+    inds = np.random.choice( np.arange(len(hists)), nselect, replace=False )
+    return hists[inds]
+
+
 ### smoothing
 
 def smoothhists(hists, halfwindow=None, weights=None):
@@ -365,7 +377,11 @@ def moment(bins, counts, order):
         counts = np.array([counts])
     if order==0: # return maximum
         return np.nan_to_num(np.max(counts,axis=1))
-    return np.nan_to_num(np.divide(np.sum(np.multiply(counts,np.power(bins,order)),axis=1,dtype=np.float),np.sum(counts,axis=1)))
+    ccsum = np.sum(np.multiply(counts,np.power(bins,order)), axis=1, dtype=np.float)
+    csum = np.sum(counts, axis=1)
+    csumsafe = np.where( csum==0, 1, csum )
+    moment = np.where( csum==0, 0, np.nan_to_num(np.divide(ccsum,csumsafe)) )
+    return moment
 
 def histmean(bins, counts):
     ### special case of moment calculation (with order=1)
@@ -386,8 +402,6 @@ def histmoments(bins, counts, orders):
     for i,order in enumerate(orders):
         moments[:,i] = moment(bins,counts,order)
     return moments
-
-
 
 
 ### higher level function for automatic preprocessing of data

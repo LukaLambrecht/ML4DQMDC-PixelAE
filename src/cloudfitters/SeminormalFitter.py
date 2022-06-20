@@ -11,6 +11,7 @@
 
 # external modules
 import sys
+import os
 import numpy as np
 from scipy.stats import multivariate_normal
 import importlib
@@ -31,40 +32,42 @@ class SeminormalFitter(CloudFitter):
     # - cov: multidim covariance matrix of normal distribution
     # - mvn: scipy.stats multivariate_normal object built from the cov
         
-    def __init__(self,points):
-        ### constructor
+    def __init__(self):
+        ### empty constructor
+        super( SeminormalFitter, self ).__init__()
+        self.cov = np.zeros(0)
+        self.mvn = np.zeros(0)
+        
+    def fit(self,points):
+        ### make the fit
         # input arguments:
         # - points: a np array of shape (npoints,ndims)
-        #   note: points can also be an array or list with length 0,
-        #         in that case the object is initialized empty.
-        #         use this followed by the 'load' method to load a previously saved fit!
-        if len(points)==0: 
-            self.ndims = 0
-            self.npoints = 0
-            self.cov = None
-            self.mvn = None
-            return
-        super( SeminormalFitter, self ).__init__(points)
+        super( SeminormalFitter, self ).fit(points)
         points = np.vstack((points,-points))
         self.cov = np.cov(points,rowvar=False)
         self.mvn = multivariate_normal(np.zeros(self.ndims),self.cov)
         
     def pdf(self,points):
         ### get pdf at points
+        # input arguments:
+        # - points: a np array of shape (npoints,ndims)
         super( SeminormalFitter, self ).pdf(points)
         return self.mvn.pdf(points)
     
     def save(self,path):
         ### save the covariance matrix as a .npy file specified by path
-        np.save(path,self.cov)
-        
+        npypath = os.path.splitext(path)[0]+'.npy'
+        dirname = os.path.dirname(npypath)
+        if not os.path.exists(dirname): os.makedirs(dirname)
+        np.save(npypath,self.cov)
+        return npypath
+    
+    @classmethod
     def load(self,path):
         ### load a covariance matrix from a .npy file specified by path and build the fit from it
-        self.cov = np.load(path)
-        self.ndims = len(self.cov)
-        self.mvn = multivariate_normal(np.zeros(self.ndims),self.cov)
-
-
-
-
-
+        npypath = os.path.splitext(path)[0]+'.npy'
+        obj = SeminormalFitter()
+        obj.cov = np.load(npypath)
+        obj.ndims = len(obj.cov)
+        if obj.ndims>0: obj.mvn = multivariate_normal(np.zeros(obj.ndims),obj.cov)
+        return obj

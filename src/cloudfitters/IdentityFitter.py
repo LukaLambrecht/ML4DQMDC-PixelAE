@@ -16,6 +16,7 @@
 
 # external modules
 import numpy as np
+import os
 
 # local modules
 from CloudFitter import CloudFitter
@@ -24,18 +25,22 @@ from CloudFitter import CloudFitter
 class IdentityFitter(CloudFitter):
     ### class for propagating classifier output scores (e.g. MSE) to global lumisection score
     
-    def __init__(self, points):
-        ### constructor
+    def __init__(self):
+        ### empty constructor
+        super( IdentityFitter, self ).__init__()
+        self.nanthreshold = 1e-12
+        
+    def fit(self, points):
+        ### fit to a set of points
         # input arguments:
         # - points: a numpy array of shape (npoints,ndims) 
         #           note that ndims is supposed to be 1, 
         #           else this type of classifier is not well defined.
-        super( IdentityFitter, self ).__init__(points)
+        super( IdentityFitter, self ).fit(points)
         if( self.ndims!=1 ):
             raise Exception('ERROR in IdentityFitter.__init__:'
                     +' dimension is found to be {}'.format(self.ndims)
                     +' while 1 is expected.')
-        self.nanthreshold = 1e-12
         
     def pdf(self, points):
         ### get pdf at points
@@ -44,3 +49,21 @@ class IdentityFitter(CloudFitter):
         scores = np.reciprocal(points[:,0])
         scores = np.where( scores>=1./self.nanthreshold, np.nan, scores )
         return scores
+    
+    def save(self, path):
+        ### save this fitter (dummy for now since nothing to be saved)
+        txtpath = os.path.splitext(path)[0]+'.txt'
+        dirname = os.path.dirname(txtpath)
+        if not os.path.exists(dirname): os.makedirs(dirname)
+        with open(txtpath, 'w') as f:
+            f.write('dummy')
+        return txtpath
+    
+    @classmethod
+    def load(self, path):
+        ### load this fitter (dummy for now since nothing to be loaded)
+        obj = IdentityFitter()
+        dummy_array = np.array([1,2,3])
+        dummy_array = np.expand_dims(dummy_array,1)
+        obj.fit(dummy_array)
+        return obj

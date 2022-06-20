@@ -91,7 +91,8 @@ def make_text_latex_safe( text ):
 ########################################
       
 def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1),
-              title=None, xaxtitle=None, yaxtitle=None, 
+              title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
+              ymaxfactor=None, legendsize=None, opaque_legend=False, ticksize=None,
               bkgcolor=None, bkgcmap='spring', bkgrange=None, bkgtitle=None):
     ### plot some histograms (in histlist) in one figure using specified colors and/or labels
     # - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))
@@ -135,10 +136,16 @@ def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transpar
         cobject.set_array([]) # ad-hoc bug fix
         cbar = fig.colorbar(cobject, ax=ax, alpha=0.1)
         if bkgtitle is not None: cbar.ax.set_ylabel(bkgtitle, rotation=270, labelpad=20.)
-    if dolabel: ax.legend()
-    if title is not None: ax.set_title(title)
-    if xaxtitle is not None: ax.set_xlabel(xaxtitle)
-    if yaxtitle is not None: ax.set_ylabel(yaxtitle)
+    if ymaxfactor is not None:
+        ymin,ymax = ax.get_ylim()
+        ax.set_ylim( (ymin, ymax*ymaxfactor) )
+    if dolabel: 
+        leg = ax.legend(loc='upper right', fontsize=legendsize)
+        if opaque_legend: make_legend_opaque(leg)
+    if ticksize is not None: ax.tick_params(axis='both', labelsize=ticksize)
+    if title is not None: ax.set_title(title, fontsize=titlesize)
+    if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
+    if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
     return (fig,ax)
 
 def plot_hists_from_df(df, histtype, nhists):
@@ -156,7 +163,8 @@ def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], tr
                      title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
                      caxtitle=None, caxtitlesize=None, caxtitleoffset=None,
                      remove_underflow=False, remove_overflow=False,
-                     ylims=None, ymaxfactor=None, legendsize=None, opaque_legend=False):
+                     ylims=None, ymaxfactor=None, legendsize=None, opaque_legend=False,
+                     ticksize=None ):
     ### plot many histograms (in histlist) in one figure using specified colors and/or labels
     # - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))
     # - colorlist is a list or array containing numbers to be mapped to colors
@@ -201,6 +209,7 @@ def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], tr
     if dolabel: 
         leg = ax.legend(loc='upper right', fontsize=legendsize)
         if opaque_legend: make_legend_opaque(leg)
+    if ticksize is not None: ax.tick_params(axis='both', labelsize=ticksize)
     if title is not None: ax.set_title(title, fontsize=titlesize)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)      
@@ -211,7 +220,7 @@ def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparen
              xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1), 
              remove_underflow=False, remove_overflow=False,
              yaxtitle=None, yaxtitlesize=None, ylims=None, ymaxfactor=None, 
-             legendsize=None, opaque_legend=False):
+             legendsize=None, opaque_legend=False, ticksize=None):
     ### plot multiple sets of 1D histograms to compare the shapes
     # - setlist is a list of 2D numpy arrays containing histograms
     # - fig and ax: a pyplot figure and axis object (if one of both is none a new figure is created)
@@ -261,6 +270,7 @@ def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparen
     if dolabel: 
         leg = ax.legend(loc='upper right', fontsize=legendsize)
         if opaque_legend: make_legend_opaque(leg)
+    if ticksize is not None: ax.tick_params(axis='both', labelsize=ticksize)
     if title is not None: ax.set_title(title, fontsize=titlesize)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
@@ -300,7 +310,7 @@ def plot_anomalous(histlist, ls, highlight=-1, hrange=-1):
 
 def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None,
                 xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
-                caxrange=None):
+                ticklabelsize=None, colorticklabelsize=None, extent=None, caxrange=None):
     ### plot a 2D histogram
     # - hist is a 2D numpy array of shape (nxbins, nybins)
     # notes:
@@ -308,9 +318,16 @@ def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None,
     #   (i.e. they will be shown as white spots in the plot) to discriminate zero from small but nonzero
     # - if the histogram contains negative values, the color axis will be symmetrized around zero
     if fig is None or ax is None: fig,ax = plt.subplots()
+    
+    # settings
     histmin = np.amin(hist)
     histmax = np.amax(hist)
     hasnegative = histmin<-1e-12
+    aspect_ratio = hist.shape[0]/hist.shape[1]
+    aspect = 'equal'
+    if extent is not None: aspect = 'auto'
+        
+    # make color object
     if not hasnegative: my_norm = mpl.colors.Normalize(vmin=1e-12, clip=False)
     else: 
         extremum = max(abs(histmax),abs(histmin))
@@ -321,18 +338,23 @@ def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None,
     my_cmap.set_under('w')
     cobject = mpl.cm.ScalarMappable(norm=my_norm, cmap=my_cmap)
     cobject.set_array([]) # ad-hoc bug fix
-    ax.imshow(hist, interpolation='none', norm=my_norm, cmap=my_cmap)
+    
+    # make the plot
+    ax.imshow(hist, aspect=aspect, interpolation='none', norm=my_norm, cmap=my_cmap, extent=extent)
+    
     # add the colorbar
     # it is not straightforward to position it properly;
     # the 'magic values' are fraction=0.046 and pad=0.04, but have to be modified by aspect ratio;
     # for this, use the fact that imshow uses same scale for both axes, 
     # so can use array aspect ratio as proxy
     fraction = 0.046; pad = 0.04
-    aspect_ratio = hist.shape[0]/hist.shape[1]
     fraction *= aspect_ratio
     pad *= aspect_ratio
-    fig.colorbar(cobject, ax=ax, fraction=fraction, pad=pad)
+    cbar = fig.colorbar(cobject, ax=ax, fraction=fraction, pad=pad)
+    
     # add titles
+    if ticklabelsize is not None: ax.tick_params(labelsize=ticklabelsize)
+    if colorticklabelsize is not None: cbar.ax.tick_params(labelsize=colorticklabelsize)
     if title is not None: ax.set_title(title, fontsize=titlesize)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
@@ -537,6 +559,7 @@ def plot_score_dist( scores, labels, fig=None, ax=None,
                         xaxtitle=None, xaxtitlesize=12, 
                         yaxtitle=None, yaxtitlesize=12,
                         legendsize=None, legendloc='best',
+                        ticksize=None,
                         doshow=True):
     ### make a plot showing the distributions of the output scores for signal and background
     minscore = np.min(scores)
@@ -553,7 +576,11 @@ def plot_score_dist( scores, labels, fig=None, ax=None,
     if( fig is None or ax is None): (fig,ax) = plt.subplots()
     ax.step(scoreax,bckhist,color=bckcolor,label=bcklabel,where='mid')
     ax.step(scoreax,sighist,color=sigcolor,label=siglabel,where='mid')
-    ax.ticklabel_format(axis="x", style="sci", scilimits=(0,0))
+    plt.xticks(fontsize=ticksize)
+    plt.yticks(fontsize=ticksize)
+    ax.ticklabel_format(axis='x', style='scientific', scilimits=(0,0))
+    ax.xaxis.get_offset_text().set_fontsize(ticksize)
+    ax.yaxis.get_offset_text().set_fontsize(ticksize)
     if title is not None: ax.set_title(title, fontsize=titlesize)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
@@ -561,6 +588,54 @@ def plot_score_dist( scores, labels, fig=None, ax=None,
     if doshow: plt.show(block=False)
     return (fig,ax)
 
+def plot_score_dist_multi( scores, labels=None, colors=None, fig=None, ax=None,
+                           nbins=20, normalize=False,
+                           linestyle=None, linewidth=1,
+                           title=None, titlesize=12,
+                           xaxtitle=None, xaxtitlesize=12, 
+                           yaxtitle=None, yaxtitlesize=12,
+                           legendsize=None, legendloc='best',
+                           ticksize=None, dolegend=True ):
+    ### plot the distribution of output scores for arbitrarily many sets (not limited to 'signal' and 'background')
+    # input arguments:
+    # - scores: list of numpy arrays of scores
+    # - labels: list of legend entries for the scores, must have same length as scores or be None (no legend)
+    # - colors: list of colors for the different score arrays, must have same length as scores or be None (default colors)
+    
+    # default settings
+    if labels is None: 
+        labels = ['']*len(scores)
+        dolegend = False
+    if colors is None:
+        colors = ['b']*len(scores)
+    # make the x-axis
+    minscore = min( *[np.amin(score_array) for score_array in scores] )
+    maxscore = max( *[np.amax(score_array) for score_array in scores] )
+    scorebins = np.linspace(minscore,maxscore,num=nbins+1)
+    scoreax = (scorebins[1:] + scorebins[:-1])/2
+    # make the histograms
+    hists = []
+    for score_array in scores:
+        hist = np.histogram(score_array,bins=scorebins)[0]
+        if normalize: hist = hist/np.sum(hist)
+        hists.append(hist)
+    # make the figure and do initial plot
+    if( fig is None or ax is None): (fig,ax) = plt.subplots()
+    for i,hist in enumerate(hists):
+        ax.step(scoreax, hist, 
+                color=colors[i],label=labels[i], where='mid',
+                linestyle=linestyle, linewidth=linewidth)
+    # plot aesthetics
+    plt.xticks(fontsize=ticksize)
+    plt.yticks(fontsize=ticksize)
+    ax.ticklabel_format(axis='x', style='scientific', scilimits=(0,0))
+    ax.xaxis.get_offset_text().set_fontsize(ticksize)
+    ax.yaxis.get_offset_text().set_fontsize(ticksize)
+    if title is not None: ax.set_title(title, fontsize=titlesize)
+    if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
+    if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
+    if dolegend: ax.legend( loc=legendloc, fontsize=legendsize )
+    return (fig,ax)
 
 def plot_score_ls( thisscore, refscores, fig=None, ax=None, 
                     thislabel='This LS', thiscolor='black',
@@ -659,6 +734,7 @@ def plot_roc( sig_eff, bkg_eff, auc=None,
               xaxtitle='Background efficiency', xaxtitlesize=None,
               yaxtitle='Signal efficiency', yaxtitlesize=None,
               xaxlog=True, yaxlog=False, xlims='auto', ylims='auto', dogrid=True,
+              ticksize=None,
               doshow=True ):
     # note: automatic determination of xlims and ylims assumes log scale for x-axis and lin scale for y-axis;
     #       might not work properly in other cases and ranges should be provided manually.
@@ -681,6 +757,12 @@ def plot_roc( sig_eff, bkg_eff, auc=None,
         ylims = (ylowlim,1+(1-ylowlim)/5)
         if ylowlim==1: ylims = (0.95,1.05)
     ax.set_ylim(ylims)
+    # tick formatting
+    plt.xticks(fontsize=ticksize)
+    plt.yticks(fontsize=ticksize)
+    #ax.ticklabel_format(axis='both', style='scientific', scilimits=(0,0))
+    #ax.xaxis.get_offset_text().set_fontsize(ticksize)
+    #ax.yaxis.get_offset_text().set_fontsize(ticksize)
     # enable grid for easier reading
     if dogrid: ax.grid()
     # write AUC value
@@ -690,6 +772,50 @@ def plot_roc( sig_eff, bkg_eff, auc=None,
             auctext = '1 - '+'{:.3e}'.format(1-auc)
         ax.text(0.7,0.1,'AUC: '+auctext,transform=ax.transAxes)
     if doshow: plt.show(block=False)
+    return (fig,ax)
+
+def plot_confusion_matrix( tp, tn, fp, fn, 
+                          true_positive_label='Good', true_negative_label='Anomalous',
+                          pred_positive_label='Predicted good', pred_negative_label='Predicted anomalous',
+                          xaxlabelsize=None, yaxlabelsize=None, textsize=None,
+                          colormap='Blues', colortitle=None ):
+    cmat = np.array([[tp,fn],[fp,tn]])
+    fig,ax = plt.subplots()
+    norm = mpl.colors.Normalize(0,1)
+    alpha = 1
+    # plot the matrix
+    ax.imshow(cmat, cmap=colormap, norm=norm, alpha=alpha)
+    # add axis labels
+    ax.set_xticks((0,1))
+    ax.set_xticklabels((pred_positive_label,pred_negative_label), fontsize=xaxlabelsize)
+    ax.set_yticks((0,1))
+    ax.set_yticklabels((true_positive_label,true_negative_label), fontsize=yaxlabelsize)
+    # add a color bar
+    cobject = mpl.cm.ScalarMappable(norm=norm, cmap=colormap)
+    cobject.set_array([]) # ad-hoc bug fix
+    cbar = fig.colorbar(cobject, ax=ax, alpha=alpha)
+    if colortitle is not None: cbar.ax.set_ylabel(colortitle, rotation=270, labelpad=20.)
+    # add text
+    def color(value):
+        if value>0.5: return 'w'
+        return 'k'
+    def valstr(value):
+        frmt = '{:.3f}'
+        if value<0.01: frmt = '{:.3e}'
+        return frmt.format(value)
+    ax.text(0, 0, valstr(tp), fontsize=textsize, 
+                   horizontalalignment='center', verticalalignment='center',
+                   color=color(tp))
+    ax.text(0, 1, valstr(fn), fontsize=textsize, 
+                   horizontalalignment='center', verticalalignment='center',
+                   color=color(fn))
+    ax.text(1, 0, valstr(fp), fontsize=textsize, 
+                   horizontalalignment='center', verticalalignment='center',
+                   color=color(fp))
+    ax.text(1, 1, valstr(tn), fontsize=textsize, 
+                   horizontalalignment='center', verticalalignment='center',
+                   color=color(tn))
+    
     return (fig,ax)
 
 
@@ -711,11 +837,12 @@ def clip_scores( scores ):
         print('NOTE: scores of -inf were reset to {}'.format(minnoninf))
     return scores
 
-def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False, 
+def plot_fit_2d( points, fitfunc=None, figsize=(10,8), logprob=False, clipprob=False, 
                 onlycontour=False, xlims=5, ylims=5, onlypositive=False,
                 xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, 
-                title=None, titlesize=None, caxtitle=None, caxtitlesize=None,
-                transparency=1 ):
+                title=None, titlesize=None,
+                caxtitle=None, caxtitlesize=None, caxrange=None,
+                transparency=1, ticksize=None ):
     ### make a 2D scatter plot of a point cloud with fitted contour
     # input arguments:
     # - points: a numpy array of shape (npoints,ndims), where ndims is supposed to be 2
@@ -743,10 +870,10 @@ def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,
     if onlypositive:
         xlims = (0,xlims[1])
         ylims = (0,ylims[1])
-    xstep = (xlims[1]-xlims[0])/100.
-    ystep = (ylims[1]-ylims[0])/100.
+    xstep = (xlims[1]-xlims[0])/300.
+    ystep = (ylims[1]-ylims[0])/300.
         
-    (fig,ax) = plt.subplots()
+    (fig,ax) = plt.subplots(figsize=figsize)
     
     if fitfunc is not None:
         
@@ -762,6 +889,8 @@ def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,
         contourplot = ax.contourf(x, y, z, 30, alpha=transparency)
         colorbar = plt.colorbar(contourplot)
         if caxtitle is not None: colorbar.set_label(caxtitle, fontsize=caxtitlesize)
+        if caxrange is not None: contourplot.set_clim(caxrange[0], caxrange[1])
+        colorbar.ax.tick_params(labelsize=ticksize)
         
     if not onlycontour:
         
@@ -773,12 +902,16 @@ def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,
     if title is not None: ax.set_title(title, fontsize=titlesize)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
-    ax.ticklabel_format(axis='both', style='sci', scilimits=(0,0))
+    plt.xticks(fontsize=ticksize)
+    plt.yticks(fontsize=ticksize)
+    ax.ticklabel_format(axis='both', style='scientific', scilimits=(0,0))
+    ax.xaxis.get_offset_text().set_fontsize(ticksize)
+    ax.yaxis.get_offset_text().set_fontsize(ticksize)
     
     return (fig,ax)
 
-def plot_fit_2d_clusters( points, clusters, labels=None, colors=None, 
-                          legendsize=10, legendloc='best', legendbbox=None, **kwargs ):
+def plot_fit_2d_clusters( points, clusters, figsize=(12,8), labels=None, colors=None, 
+                          legendmarkerscale=1., legendsize=10, legendloc='best', legendbbox=None, **kwargs ):
     ### make a 2D scatter plot of a fitted contour with point clouds superimposed
     # input arguments: 
     # - points: numpy arrays of shape (npoints,ndims), where ndims is supposed to be 2,
@@ -792,7 +925,7 @@ def plot_fit_2d_clusters( points, clusters, labels=None, colors=None,
     #           note: onlycontour is set automatically and should not be in kwargs
     
     # first make contour plot
-    fig,ax = plot_fit_2d(points, onlycontour=True, **kwargs )
+    fig,ax = plot_fit_2d(points, figsize=figsize, onlycontour=True, **kwargs )
 
     # other initializations
     dolegend = True
@@ -808,7 +941,8 @@ def plot_fit_2d_clusters( points, clusters, labels=None, colors=None,
         label = labels[j]
         color = colors[j]
         ax.plot( cluster[:,0], cluster[:,1], '.', color=color, markersize=4,label=label )
-    if dolegend: ax.legend(fontsize=legendsize, loc=legendloc, bbox_to_anchor=legendbbox)
+    if dolegend:
+        legend = ax.legend(markerscale=legendmarkerscale, fontsize=legendsize, loc=legendloc, bbox_to_anchor=legendbbox)
     return (fig,ax)
 
 def plot_fit_1d( points, fitfunc=None, logprob=False, clipprob=False,

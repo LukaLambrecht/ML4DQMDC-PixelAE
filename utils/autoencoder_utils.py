@@ -93,7 +93,8 @@ def chiSquaredTopNRaw(y_true, y_pred, n=10):
     # output:
     # numpy array of shape (nhists)
     sqdiff = np.power(y_true-y_pred,2)
-    chi2 = np.where(y_true==0,0,sqdiff/y_true)
+    y_true_safe = np.where(y_true==0, 1, y_true)
+    chi2 = np.where(y_true==0, 0, sqdiff/y_true_safe)
     if len(chi2.shape)==3:
         chi2 = chi2.reshape(len(chi2),-1)
     chi2 = np.partition( chi2, -n, axis=-1 )[:,-n:]
@@ -210,7 +211,11 @@ def get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, 
     # score equals mse, since larger mse = more signal-like (signal=anomalies)
     return get_roc(mse,labels,mode=mode,npoints=npoints,doprint=doprint,doplot=doplot,plotmode=plotmode)
 
-def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True):
+def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True,
+                          true_positive_label='Good', true_negative_label='Anomalous',
+                          pred_positive_label='Predicted good', pred_negative_label='Predicted anomalous',
+                          xaxlabelsize=None, yaxlabelsize=None, textsize=None,
+                          colormap='Blues', colortitle=None):
     ### plot a confusion matrix
     # input arguments:
     # - scores and labels: defined in the same way as for get_roc
@@ -231,14 +236,19 @@ def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True):
     tn = 1-fp
     fn = 1-tp
     cmat = np.array([[tp,fn],[fp,tn]])
-    # general labels:
-    #df_cm = pd.DataFrame(cmat, index = ['signal','background'],
-    #              columns = ['predicted signal','predicted background'])
-    # specific labels:
-    df_cm = pd.DataFrame(cmat, index = ['bad','good'],
-                  columns = ['predicted anomalous','predicted good'])
-    plt.figure()
-    sn.heatmap(df_cm, annot=True, cmap=plt.cm.Blues)
+    
+    # old plotting method with seaborn
+    #df_cm = pd.DataFrame(cmat, index = [true_negative_label,true_positive_label],
+    #              columns = [predicted_negative_label,predicted_positive_label])
+    #fig,ax = plt.subplots()
+    #sn.heatmap(df_cm, annot=True, cmap=plt.cm.Blues)
+    
+    # new plotting method with pyplot
+    fig,ax = plot_utils.plot_confusion_matrix( tp, tn, fp, fn, 
+                          true_positive_label=true_positive_label, true_negative_label=true_negative_label,
+                          pred_positive_label=pred_positive_label, pred_negative_label=pred_negative_label,
+                          xaxlabelsize=xaxlabelsize, yaxlabelsize=yaxlabelsize, textsize=textsize,
+                          colormap=colormap, colortitle=colortitle )
 
     # printouts for testing
     #print('working point: {}'.format(wp))
@@ -248,7 +258,7 @@ def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True):
     #print('false positive / nback: {}'.format(fp))
 
     # return the working point (for later use if it was automatically calculated)
-    return wp
+    return (wp, fig, ax)
     
 def get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp=None):
     ### plot a confusion matrix without manually calculating the scores
@@ -385,16 +395,22 @@ def train_simple_autoencoder(hists, nepochs=-1, modelname='',
 
 ### replacing scores of +-inf with sensible value
 
-def clip_scores( scores ):
+def clip_scores( scores, margin=1., hard_thresholds=None ):
     ### clip +-inf values in scores
     # +inf values in scores will be replaced by the maximum value (exclucing +inf) plus one
     # -inf values in scores will be replaced by the minimim value (exclucing -inf) minus one
     # input arguments:
     # - scores: 1D numpy array
+    # - margin: margin between maximum value (excluding inf) and where to put inf.
+    # - hard_thresholds: tuple of values for -inf, +inf (in case the min or max cannot be determined)
     # returns
     # - array with same length as scores with elements replaced as explained above
-    maxnoninf = np.max(np.where(scores==np.inf,np.min(scores),scores)) + 1
-    minnoninf = np.min(np.where(scores==-np.inf,np.max(scores),scores)) -1
+    maxnoninf = np.max(np.where(scores==np.inf,np.min(scores),scores)) + margin
+    minnoninf = np.min(np.where(scores==-np.inf,np.max(scores),scores)) - margin
+    if( hard_thresholds is not None and hard_thresholds[1] is not None ):
+        maxnoninf = hard_thresholds[1]
+    if( hard_thresholds is not None and hard_thresholds[0] is not None ):
+        minnoninf = hard_thresholds[0]
     if np.max(scores)>maxnoninf: 
         scores = np.where(scores==np.inf,maxnoninf,scores)
         print('NOTE: scores of +inf were reset to {}'.format(maxnoninf))

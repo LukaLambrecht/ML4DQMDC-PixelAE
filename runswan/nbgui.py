@@ -19,6 +19,7 @@ print('  import pickle'); import pickle
 print('  import functools'); import functools
 print('  import webbrowser'); import webbrowser
 print('  import inspect'); import inspect
+print('  import importlib'); import importlib
 
 # local modules
 
@@ -39,7 +40,9 @@ print('importing src...')
 sys.path.append(os.path.abspath('../src'))
 sys.path.append(os.path.abspath('../src/classifiers'))
 sys.path.append(os.path.abspath('../src/cloudfitters'))
-print('  import HistStruct'); import HistStruct
+print('  import HistStruct'); import HistStruct; importlib.reload(HistStruct)
+print('  import Model'); import Model
+print('  import ModelInterface'); import ModelInterface
 print('  import PlotStyleParser'); import PlotStyleParser
 print('  import HistogramClassifier'); import HistogramClassifier
 print('  import AutoEncoder'); import AutoEncoder
@@ -50,10 +53,10 @@ print('  import TemplateBasedClassifier'); import TemplateBasedClassifier
 print('  import SeminormalFitter'); import SeminormalFitter
 print('  import GaussianKdeFitter'); import GaussianKdeFitter
 print('  import HyperRectangleFitter'); import HyperRectangleFitter
-print('  import IdentityFitter'); import IdentityFitter
+print('  import IdentityFitter'); import IdentityFitter; importlib.reload(IdentityFitter)
 
 print('importing local graphical elements')
-import importlib
+sys.path.append('../run')
 import gui
 importlib.reload(gui)
 from gui import get_docurl, get_classifier_class, get_resampling_function, get_training_options, get_fitter_class, get_args_dict
@@ -80,6 +83,9 @@ from SelectorWidget import SelectorWidget
 import OptionsBox
 importlib.reload(OptionsBox)
 from OptionsBox import OptionsBox
+import HistStructViewer
+importlib.reload(HistStructViewer)
+from HistStructViewer import HistStructViewer
 
 print('done')
 
@@ -291,7 +297,6 @@ class NewHistStructTab:
                 len(self.histstruct.runnbs),len(self.histstruct.histnames)))
     
         # add default masks for DCS-bit on and golden json
-        # to do: make this more flexible with user options
         with self.tab: print('adding default DCS-on and golden json masks...')
         try: self.histstruct.add_dcsonjson_mask( 'dcson' )
         except: 
@@ -305,7 +310,6 @@ class NewHistStructTab:
                         +' Check access to golden json file.')
 
         # add training and target mask for local training
-        # to do: make this more flexible (e.g. choosing names)
         if training_mode=='local':
             if self.get_target_run() is not None:
                 with self.tab: print('adding mask for target runs...')
@@ -339,9 +343,13 @@ class AddRunMasksTab:
         # input arguments:
         # - histstruct: if specified, a list of available runs is extracted from it;
         #               else the text box is left blank and can take any value.
+        with self.tab: clear_output()
+        # argument checking
+        if( histstruct is None or len(histstruct.get_runnbs())==0 ):
+            with self.tab: print('[current histstruct is empty]')
+            return
         self.widget = AddRunMasksWidget(histstruct=histstruct, applybutton=True)
         with self.tab:
-            clear_output()
             display(self.widget.get_widget())
             
             
@@ -356,100 +364,36 @@ class AddStatMasksTab:
         # input arguments:
         # - histstruct: if specified, a list of available histogram names is extracted from it;
         #               else the statistics mask can only be applied on all histograms simultaneously.
+        with self.tab: clear_output()
+        # argument checking
+        if( histstruct is None or len(histstruct.get_runnbs())==0 ):
+            with self.tab: print('[current histstruct is empty]')
+            return
         self.widget = AddStatMasksWidget(histstruct=histstruct, applybutton=True)
         with self.tab:
-            clear_output()
             display(self.widget.get_widget())
             
             
-class AddClassifiersTab:
-    
+class AddJsonMasksTab:
     def __init__(self):
         ### initializer
         self.tab = ipw.Output()
-        self.title = 'Add classifiers'
+        self.title = 'Add json masks'
         
     def refresh(self, histstruct=None):
         ### initializer
-        self.histstruct = histstruct
-
-        # add widgets for setting the classifier type and options
-        self.classifier_widgets = {}
-        self.classifier_grids = {}
-        for i,histname in enumerate(self.histstruct.histnames):
-            row = int(i/4)
-            column = int(i%4)
-            histname_label = ipw.Label(value=histname)
-            classifier_type_box = ipw.Dropdown(options=get_classifier_class(), description='Classifier type')
-            classifier_type_box.observe( functools.partial(self.set_classifier_options, histname), names='value')
-            key_label = ipw.Label(value='Parameters')
-            value_label = ipw.Label(value='Values')
-            classifier_options_box = OptionsBox(labels=[], values=[])
-            # add option to evaluate the model after adding it
-            evaluate_box = ipw.Checkbox(value=False, description='Evaluate models after adding')
-            # add everything to a structure 
-            self.classifier_widgets[histname] = {'type':classifier_type_box, 
-                                                 'options':classifier_options_box,
-                                                 'evaluate':evaluate_box}
-            self.set_classifier_options(histname, None)
-            # make the layout
-            self.classifier_grids[histname] = ipw.GridBox(children=[histname_label,
-                                                      classifier_type_box,
-                                                      classifier_options_box.get_widget(),
-                                                      evaluate_box],
-                                                      layout=ipw.Layout(grid_template_rows='auto auto auto'))
-
-        # add a button for adding the classifiers
-        self.add_button = ipw.Button(description='Add classifiers')
-        self.add_button.on_click(self.add_classifiers)
-        
-        # make the layout
-        self.grid = ipw.GridBox(children=list(self.classifier_grids.values()),
-                            layout=ipw.Layout(grid_template_columns='auto '*len(self.classifier_grids.values())))
-        
+        # input arguments:
+        # - histstruct: histstruct on which to apply the json mask
+        with self.tab: clear_output()
+        # argument checking
+        if( histstruct is None or len(histstruct.get_runnbs())==0 ):
+            with self.tab: print('[current histstruct is empty]')
+            return
+        self.widget = AddJsonMasksWidget(histstruct=histstruct, applybutton=True)
         with self.tab:
-            display(self.grid)
-            display(self.add_button)
-        
-
-    def set_classifier_options(self, histname, event):
-        classifier_name = self.classifier_widgets[histname]['type'].value
-        (ctype, coptions) = get_classifier_class(classifier_name)
-        # do special overridings if needed
-        optiontypes = [None]*len(coptions.keys())
-        if ctype is AutoEncoder.AutoEncoder:
-            if 'modelpath' in list(coptions.keys()):
-                idx = list(coptions.keys()).index('modelpath')
-                optiontypes[idx] = FileBrowser
-            if 'model' in list(coptions.keys()):
-                idx = list(coptions.keys()).index('model')
-                coptions.pop('model')
-                optiontypes.pop(idx)
-        # retrieve the docurl
-        docurl = get_docurl(ctype)
-        # now set the options
-        self.classifier_widgets[histname]['options'].set_options(
-                labels=coptions.keys(), types=optiontypes, values=coptions.values(),
-                docurl=docurl)
-
-    def get_classifier(self, histname):
-        classifier_name = self.classifier_widgets[histname]['type'].value
-        (classifier, _) = get_classifier_class(classifier_name)
-        classifier_options = self.classifier_widgets[histname]['options'].get_dict()
-        return (classifier, classifier_options)
-
-    def add_classifiers(self, event):
-        for histname in self.histstruct.histnames:
-            (classifier, classifier_options) = self.get_classifier(histname)
-            classifier = classifier( **classifier_options )
-            self.histstruct.add_classifier( histname, classifier )
-            # check if need to evaluate
-            do_evaluate = (self.classifier_widgets[histname]['evaluate'].value)
-            if do_evaluate:
-                self.histstruct.evaluate_classifier(histname)
-        with self.tab: print('done')
+            display(self.widget.get_widget())
             
-            
+
 class LoadHistStructTab:
     def __init__(self, external_load_function):
         
@@ -523,7 +467,7 @@ class SaveHistStructTab:
         if not valid[0]:
             with self.tab: print(valid[1])
             return
-        self.histstruct.save(filename)
+        self.histstruct.save(filename, save_models=True)
         with self.tab: print('done')
         
             
@@ -544,6 +488,28 @@ class DisplayHistStructTab:
         with self.tab:
             clear_output()
             display(self.grid)
+            
+
+class DisplayHistStructNewTab:
+    def __init__(self):
+        ### initializer
+        self.tab = ipw.Output()
+        self.title = 'Display (new)'
+    
+    def refresh(self, histstruct=None):
+        if histstruct is None:
+            with self.tab: print('[no histstruct found]')
+            return
+        if len(histstruct.get_runnbs())==0:
+            with self.tab: print('[current histstruct is empty]')
+            return
+        self.histstruct = histstruct
+        hsviewer = HistStructViewer(histstruct=self.histstruct)
+        
+        with self.tab:
+            clear_output()
+            print('processing...')
+            display(hsviewer.get_widget())
             
             
 class PreprocessingTab:
@@ -585,7 +551,9 @@ class PreprocessingTab:
         # add widgets for selecting histograms
         self.select_set_obj = SelectorWidget(self.histstruct, 
                                              title='Select set to process (default: all)',
-                                             set_selection=False, post_selection=False)
+                                             set_selection=False,
+                                             post_selection=False,
+                                             model_selection=False)
         self.select_set_box = self.select_set_obj.get_widget()
 
         # add a button to apply the preprocessing
@@ -712,7 +680,8 @@ class PlotSetsTab:
         # make widgets
         newidx = len(self.set_selector_list)
         select_set_obj = SelectorWidget(self.histstruct,
-                                       title='Select set to plot')
+                                        title='Select set to plot',
+                                        model_selection=False)
         select_set_box = select_set_obj.get_widget()
         set_default_options = {'label':None, 'color':None}
         set_options_obj = OptionsBox( labels=set_default_options.keys(),
@@ -878,7 +847,8 @@ class ResamplingTab:
             # add widgets for choosing resampling basis set
             select_set_obj = SelectorWidget(self.histstruct,
                                             title='Select basis set for resampling',
-                                            set_selection=False)
+                                            set_selection=False,
+                                            model_selection=False)
             select_set_box = select_set_obj.get_widget()
             # add dropdown entry for resampling function
             allowed_functions = get_resampling_function()
@@ -965,6 +935,106 @@ class ResamplingTab:
         plt.show(block=False)
         with self.tab: print('done')
             
+
+class AddModelTab:
+    
+    def __init__(self):
+        ### initializer
+        self.tab = ipw.Output()
+        self.title = 'Add a model'
+        
+    def refresh(self, histstruct=None):
+        ### initializer
+        
+        # check histstruct argument
+        self.histstruct = histstruct
+
+        # add widgets for setting the classifier type and options
+        self.classifier_widgets = {}
+        self.classifier_grids = {}
+        for i,histname in enumerate(self.histstruct.histnames):
+            row = int(i/4)
+            column = int(i%4)
+            histname_label = ipw.Label(value=histname)
+            classifier_type_box = ipw.Dropdown(options=get_classifier_class(), description='Classifier type')
+            classifier_type_box.observe( functools.partial(self.set_classifier_options, histname), names='value')
+            key_label = ipw.Label(value='Parameters')
+            value_label = ipw.Label(value='Values')
+            classifier_options_box = OptionsBox(labels=[], values=[])
+            # add everything to a structure 
+            self.classifier_widgets[histname] = {'type':classifier_type_box, 
+                                                 'options':classifier_options_box}
+            self.set_classifier_options(histname, None)
+            # make the layout
+            self.classifier_grids[histname] = ipw.GridBox(children=[histname_label,
+                                                      classifier_type_box,
+                                                      classifier_options_box.get_widget()],
+                                                      layout=ipw.Layout(grid_template_rows='auto auto auto'))
+            
+        # add a widget for setting the name of the model
+        self.model_name_text = ipw.Text(description='Model name')
+
+        # add a button for adding the classifiers
+        self.add_button = ipw.Button(description='Add model')
+        self.add_button.on_click(self.add_model)
+        
+        # make the layout
+        self.grid = ipw.GridBox(children=list(self.classifier_grids.values()),
+                            layout=ipw.Layout(grid_template_columns='auto '*len(self.classifier_grids.values())))
+        
+        with self.tab:
+            clear_output()
+            display(self.grid)
+            display(self.model_name_text)
+            display(self.add_button)
+        
+
+    def set_classifier_options(self, histname, event):
+        classifier_name = self.classifier_widgets[histname]['type'].value
+        (ctype, coptions) = get_classifier_class(classifier_name)
+        # do special overridings if needed
+        optiontypes = [None]*len(coptions.keys())
+        if ctype is AutoEncoder.AutoEncoder:
+            if 'modelpath' in list(coptions.keys()):
+                idx = list(coptions.keys()).index('modelpath')
+                optiontypes[idx] = FileBrowser
+            if 'model' in list(coptions.keys()):
+                idx = list(coptions.keys()).index('model')
+                coptions.pop('model')
+                optiontypes.pop(idx)
+        # retrieve the docurl
+        docurl = get_docurl(ctype)
+        # now set the options
+        self.classifier_widgets[histname]['options'].set_options(
+                labels=coptions.keys(), types=optiontypes, values=coptions.values(),
+                docurl=docurl)
+
+    def get_classifier(self, histname):
+        classifier_name = self.classifier_widgets[histname]['type'].value
+        (classifier, _) = get_classifier_class(classifier_name)
+        classifier_options = self.classifier_widgets[histname]['options'].get_dict()
+        return (classifier, classifier_options)
+
+    def add_model(self, event):
+        
+        # check if a valid model name was given
+        model_name = self.model_name_text.value
+        if( model_name is None or len(model_name)==0 ):
+            raise Exception('ERROR: please provide a valid model name.')
+        # initialize the model
+        histnames = self.histstruct.histnames
+        model = ModelInterface.ModelInterface( histnames )
+        classifiers = {}
+        # initialize the classifiers
+        for histname in self.histstruct.histnames:
+            (classifier, classifier_options) = self.get_classifier(histname)
+            classifier = classifier( **classifier_options )
+            classifiers[histname] = classifier
+        # add the classifiers to the model and the model to the histstruct
+        model.set_classifiers( classifiers )
+        self.histstruct.add_model( model_name, model )
+        with self.tab: print('done')
+            
             
 class TrainClassifiersTab:
     
@@ -982,28 +1052,29 @@ class TrainClassifiersTab:
         if len(histstruct.get_runnbs())==0:
             with self.tab: print('[current histstruct is empty]')
             return
-        if len(histstruct.classifiers.keys())==0:
-            with self.tab: print('[current histstruct does not contain classifiers]')
+        if len(histstruct.modelnames)==0:
+            with self.tab: print('[current histstruct does not contain any models]')
             return
         self.histstruct = histstruct
         self.training_options = {}
 
-        # add widgets for choosing resampling basis set
+        # add widget for choosing model
+        self.model_box = ipw.Dropdown(description='Model', options=histstruct.modelnames)
+        self.model_box.observe( self.refresh_training_options )
+        
+        # add widgets for choosing training set
         self.select_set_obj = SelectorWidget(self.histstruct,
-                                             title='Select training set')
+                                             title='Select training set',
+                                             model_selection=False)
         self.select_set_box = self.select_set_obj.get_widget()
-
+        
         # add widget to expand options for different histograms
         self.expand_options_button = ipw.Button(description='Expand/collapse')
         self.expand_options_button.on_click(self.expandcollapse)
-        # set initial state to single if only one classifier is present, multi otherwise
-        self.expandstate = 'single' # set to single since one automatic expansion
-        if get_training_options( self.histstruct ) is not None:
-            self.expandstate = 'multi' # set to multi since one automatic collapse
-        self.boxes = ipw.GridBox(children=[], layout=ipw.Layout())
-
-        self.expandcollapse()
-
+        
+        # get initial training options
+        self.refresh_training_options()
+        
         # add button to start training
         self.train_button = ipw.Button(description='Start training')
         self.train_button.on_click(self.do_training)
@@ -1011,16 +1082,31 @@ class TrainClassifiersTab:
         # make the layout
         with self.tab:
             clear_output()
+            display(self.model_box)
             display(self.select_set_box)
             display(self.expand_options_button)
             display(self.boxes)
             display(self.train_button)
 
-    def expandcollapse(self):
+    def refresh_training_options(self):
+        
+        # retrieve model name
+        modelname = self.model_box.value
+        # set initial state to single if only one classifier is present, multi otherwise
+        self.expandstate = 'single' # set to single since one automatic expansion
+        if get_training_options( self.histstruct, modelname ) is not None:
+            self.expandstate = 'multi' # set to multi since one automatic collapse
+        self.boxes = ipw.GridBox(children=[], layout=ipw.Layout())
+        self.expandcollapse(None)
+
+    def expandcollapse(self, event):
+        
+        # retrieve model name
+        modelname = self.model_box.value
         # check whether need to collapse or expand
         if self.expandstate=='multi':
             # check if this is allowed
-            if get_training_options( self.histstruct ) is None:
+            if get_training_options( self.histstruct, modelname ) is None:
                 with self.tab: print('WARNING: collapse not allowed'
                                     +' since different types of classifiers are present')
                 return
@@ -1040,7 +1126,7 @@ class TrainClassifiersTab:
             # get the training options
             arghistname = histname
             if histname=='all histogram types': arghistname = None
-            (c,options) = get_training_options( self.histstruct, histname=arghistname )
+            (c,options) = get_training_options( self.histstruct, modelname, histname=arghistname )
             labels = list(options.keys())
             values = list(options.values())
             wtypes = [None]*len(labels)
@@ -1057,15 +1143,21 @@ class TrainClassifiersTab:
         self.boxes.layout = ipw.Layout(grid_template_columns='auto '*len(newboxes))
 
     def do_training(self, event):
+        
+        # retrieve model name
+        modelname = self.model_box.value
+        # get the training set
         if not self.select_set_obj.valid:
             with self.tab: print('ERROR: please select a training set before starting training.')
             return
         training_histograms = self.select_set_obj.get_histograms()
+        # loop over histogram types
         for histname in training_histograms.keys():
             # check if a classifier is initialized for this histogram type
-            if histname not in self.histstruct.classifiers.keys():
-                with self.tab: print('WARNING: no classifier was found in the HistStruct'
-                        +' for histogram type {}; skipping.'.format(histname))
+            if histname not in self.histstruct.models[modelname].classifiers.keys():
+                with self.tab: 
+                    print('WARNING: no classifier was found in the model with name "{}"'.format(modelname)
+                        +' for histogram type {}; skipping this histogram type.'.format(histname))
                 continue
             # get the options for this histogram type
             arghistname = histname
@@ -1077,10 +1169,10 @@ class TrainClassifiersTab:
                 print('training a classifier for {}'.format(histname))
                 print('size of training set: {}'.format(hists.shape))
             # do training
-            self.histstruct.classifiers[histname].train( hists, **training_options )
+            self.histstruct.models[modelname].train_classifier( histname, training_histograms[histname], **training_options )
             # do evaluation
             with self.tab: print('evaluating model for '+histname)
-            self.histstruct.evaluate_classifier( histname )
+            self.histstruct.evaluate_classifier( modelname, histname )
         with self.tab: print('done')
             
             
@@ -1100,13 +1192,21 @@ class ApplyClassifiersTab:
         if len(histstruct.get_runnbs())==0:
             with self.tab: print('[current histstruct is empty]')
             return
+        if len(histstruct.modelnames)==0:
+            with self.tab: print('[current histstruct does not contain any models]')
+            return
         self.histstruct = histstruct
         
-        # add widgets for choosing resampling basis set
+        # add widget for choosing model
+        self.model_box = ipw.Dropdown(description='Model', options=histstruct.modelnames)
+        
+        # add widgets for choosing evaluation set
         self.select_set_obj = SelectorWidget(self.histstruct, 
                                              title='Select application set',
-                                             mask_selection=False, post_selection=False,
-                                             allow_multi_set=True)
+                                             mask_selection=False, 
+                                             post_selection=False,
+                                             allow_multi_set=True,
+                                             model_selection=False)
         self.select_set_box = self.select_set_obj.get_widget()
 
         # add a button to start the evaluation
@@ -1114,22 +1214,28 @@ class ApplyClassifiersTab:
         self.start_evaluation_button.on_click(self.evaluate)
         
         # make the layout
-        self.grid = ipw.GridBox(children=[self.select_set_box,self.start_evaluation_button],
-                                layout=ipw.Layout(grid_template_rows='auto auto'))
+        self.grid = ipw.GridBox(children=[self.model_box, self.select_set_box, self.start_evaluation_button],
+                                layout=ipw.Layout(grid_template_rows='auto auto auto'))
         with self.tab:
             clear_output()
             display(self.grid)
 
     def evaluate(self, event):
+        # get name(s) of sets
         if self.select_set_obj.valid:
             extnames = self.select_set_obj.get_sets()
         else:
             extnames = list(self.histstruct.exthistograms.keys())
+        # get model name for which to do the evaluation
+        modelname = self.model_box.value
+        # loop over sets
         for extname in extnames:
             with self.tab: print('evaluating classifiers on set {}'.format(extname))
+            # loop over histogram types
             for histname in self.histstruct.histnames:
                 with self.tab: print('  now processing histogram type {}'.format(histname))
-                self.histstruct.evaluate_classifier( histname, extname=extname )
+                # do the evaluation
+                self.histstruct.evaluate_classifier( modelname, histname, setnames=[extname] )
         with self.tab: print('done')
             
             
@@ -1149,6 +1255,9 @@ class FitTab:
         if len(histstruct.get_runnbs())==0:
             with self.tab: print('[current histstruct is empty]')
             return
+        if len(histstruct.modelnames)==0:
+            with self.tab: print('[current histstruct does not contain any models]')
+            return
         self.histstruct = histstruct
         self.plotstyleparser = plotstyleparser
         self.fitting_set_selector = None
@@ -1160,7 +1269,7 @@ class FitTab:
         else:
             self.plotfunction = pu.plot_fit_2d
             self.plotdim = 2
-
+        
         # add widgets for choosing fitting set
         self.fitting_set_selector = SelectorWidget(self.histstruct,
                                                    title='Select fitting set')
@@ -1173,6 +1282,9 @@ class FitTab:
     
         # add widgets for plotting options
         plot_options_dict = get_args_dict(self.plotfunction)
+        if 'figsize' in plot_options_dict.keys():
+            plot_options_dict.pop('figsize')
+            # (remove this option since its value is a tuple which is non-trivial to cast from str)
         plot_docurl = get_docurl(self.plotfunction)
         # remove some keys that are not user input
         for key in ['fitfunc','xaxtitle','yaxtitle']:
@@ -1213,16 +1325,20 @@ class FitTab:
         self.grid = ipw.GridBox(children=children,
                                 layout=ipw.Layout(grid_template_rows='auto '*len(children)))
         with self.tab:
+            clear_output()
             display(self.grid)
 
     def set_fitter_options(self, event):
         fitter_name = self.fitter_box.value
         (c, coptions) = get_fitter_class(fitter_name)
         docurl = get_docurl(c)
-        self.fitter_options_frame.set_options(labels=coptions.keys(), values=coptions.values(),
-                                                docurl=docurl)
+        self.fitter_options_frame.set_options(labels=coptions.keys(), 
+                                              values=coptions.values(),
+                                              docurl=docurl)
     
     def get_fitting_scores(self):
+        
+        # check validity of scores to fit
         if not self.fitting_set_selector.valid:
             with self.tab: print('ERROR: please select a set to fit to before doing the fit.')
             return
@@ -1231,15 +1347,16 @@ class FitTab:
             with self.tab: print('ERROR: no valid scores could be found in the HistStruct '
                             +'for the specified fitting set.')
             return
-        scores_fit = []
-        for histname in self.histstruct.histnames:
-            thisscore = scores_fit_dict[histname]
-            scores_fit.append( thisscore )
-        # transform to arrays with correct shape
-        scores_fit = np.array(scores_fit)
-        scores_fit = np.transpose(scores_fit)
-        with self.tab: print('found score array for fitting set of following shape: {}'.format(scores_fit.shape))
-        return scores_fit
+        # return the result
+        return scores_fit_dict
+    
+    def get_fitting_scores_array(self):
+        
+        # check validity of scores to fit
+        if not self.fitting_set_selector.valid:
+            with self.tab: print('ERROR: please select a set to fit to before doing the fit.')
+            return
+        return self.fitting_set_selector.get_scores_array()
 
     def get_fitter(self):
         fitter_name = self.fitter_box.value
@@ -1248,11 +1365,29 @@ class FitTab:
         return (fitter,fitter_options)
 
     def do_fit(self, event):
+        
         # get fitter and plotting options
-        fitting_scores = self.get_fitting_scores()
-        (fitter,fitter_options) = self.get_fitter()
+        (fitter_class, fitter_options) = self.get_fitter()
+        modelname = self.fitting_set_selector.modelname
         plot_options_dict = self.plot_options.get_dict()
         do_plot = plot_options_dict.pop('do_plot')
+        masknames = self.fitting_set_selector.masks
+        setname = self.fitting_set_selector.sets
+        if setname is not None: 
+            if len(setname)>1:
+                msg = 'ERROR: found multiple sets ({}), while only one is expected.'.format(setname)
+                raise Exception(msg)
+        
+        # do the global fit
+        self.histstruct.set_fitter( modelname, fitter_class() )
+        self.histstruct.train_fitter( modelname, 
+                                      masknames=masknames,
+                                      setnames=setname,
+                                      **fitter_options )
+        
+        # evaluate the fitted function on the non-extended histstruct
+        self.histstruct.evaluate_fitter( modelname )
+        
         # determine all combinations of dimensions
         dimslist = []
         fitfunclist = []
@@ -1265,26 +1400,37 @@ class FitTab:
             for i in range(0,nhisttypes-1):
                 for j in range(i+1,nhisttypes):
                     dimslist.append((i,j))
-        plt.close('all')
-        # loop over all combinations of dimensions
-        for dims in dimslist:
-            # make the partial fit and store it
-            thismse = fitting_scores[:,dims]
-            if len(thismse.shape)==1: thismse = np.expand_dims(thismse, 1)
-            fitfunc = fitter( thismse, **fitter_options )
-            fitfunclist.append(fitfunc)
-            # make the plot if requested
-            if do_plot:
+                    
+        # do the partial fits
+        self.histstruct.train_partial_fitters( modelname, 
+                                               dimslist, 
+                                               masknames=masknames, 
+                                               setnames=setname, 
+                                               **fitter_options )
+        
+        # make the plots
+        if do_plot:
+            plt.close('all')        
+            # loop over all combinations of dimensions
+            for dims in dimslist:
+                # determine axis titles
                 if self.plotdim == 1:
                     xaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims])
                     yaxtitle = 'Probability density'
                 elif self.plotdim == 2:
                     xaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims[0]])
                     yaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims[1]])
-                (fig,ax) = self.plotfunction(thismse, fitfunc=fitfunc,
-                                    xaxtitle=xaxtitle,
-                                    yaxtitle=yaxtitle,
-                                    **plot_options_dict)
+                # get fitter
+                fitter = self.histstruct.models[modelname].partial_fitters[dims]
+                # get points
+                points = self.histstruct.get_scores_array(modelname, setnames=setname, masknames=masknames)[:,dims]
+                if len(points.shape)==1: points = np.expand_dims(points,1)
+                # make the plot
+                (fig,ax) = self.plotfunction(points, 
+                                             fitfunc=fitter,
+                                             xaxtitle=xaxtitle,
+                                             yaxtitle=yaxtitle,
+                                             **plot_options_dict)
                 # add extra text to the axes
                 # (might need updates to make it more flexible)
                 pu.add_text( ax, 'Density fit of lumisection scores', 
@@ -1299,21 +1445,6 @@ class FitTab:
                         pu.add_text( ax, condtext, (0.75,1.01),
                                     fontsize=self.plotstyleparser.get_condtextsize() )
                 plt.show(block=False)
-        self.histstruct.fitfunclist = fitfunclist
-        self.histstruct.dimslist = dimslist
-        self.histstruct.fitting_scores = fitting_scores
-        # to do: same comment as below
-        self.histstruct.fitfunc = fitter( fitting_scores, **fitter_options )
-        # to do: extend HistStruct class to contain the fitfunc in a cleaner way!
-        #        (or decide on another way to make this ad-hod attribute assignment more clean)
-        # evaluate the fitted function on the non-extended histstruct
-        scores_all = []
-        for histname in self.histstruct.histnames:
-            thisscore = self.histstruct.get_scores( histname=histname )
-            scores_all.append( thisscore )
-        scores_all = np.array(scores_all)
-        scores_all = np.transpose(scores_all)
-        self.histstruct.add_globalscores( np.log(self.histstruct.fitfunc.pdf(scores_all)) )
             
             
 class ApplyFitTab:
@@ -1332,9 +1463,12 @@ class ApplyFitTab:
         if len(histstruct.get_runnbs())==0:
             with self.tab: print('[current histstruct is empty]')
             return
+        if len(histstruct.modelnames)==0:
+            with self.tab: print('[current histstruct does not contain any models]')
+            return
         self.histstruct = histstruct
         
-        # add widgets for choosing resampling basis set
+        # add widgets for choosing fit application set
         self.select_set_obj = SelectorWidget(self.histstruct, 
                                              title='Select fit application set',
                                              mask_selection=False, post_selection=False,
@@ -1352,20 +1486,18 @@ class ApplyFitTab:
             clear_output()
             display(self.grid)
 
-    def evaluate(self):
+    def evaluate(self, event):
+        # get name(s) of sets
         if self.select_set_obj.valid:
             extnames = self.select_set_obj.get_sets()
         else:
             extnames = list(self.histstruct.exthistograms.keys())
+        # get model name for which to do the evaluation
+        modelname = self.select_set_obj.modelname
+        # loop over sets
         for extname in extnames:
             with self.tab: print('evaluating fitter on set {}'.format(extname))
-            scores_all = []
-            for histname in self.histstruct.histnames:
-                scores_all.append( self.histstruct.get_extscores( extname, histname=histname ) )
-            scores_all = np.array(scores_all)
-            scores_all = np.transpose(scores_all)
-            self.histstruct.add_extglobalscores( extname, 
-                            np.log(self.histstruct.fitfunc.pdf(scores_all)) )
+            self.histstruct.evaluate_fitter( modelname, setnames=[extname] )
         with self.tab: print('done')
             
             
@@ -1384,6 +1516,9 @@ class EvaluateTab:
         if len(histstruct.get_runnbs())==0:
             with self.tab: print('[current histstruct is empty]')
             return
+        if len(histstruct.modelnames)==0:
+            with self.tab: print('[current histstruct does not contain any models]')
+            return
         self.histstruct = histstruct
         self.plotstyleparser = plotstyleparser
         self.test_set_widgets = []
@@ -1399,7 +1534,6 @@ class EvaluateTab:
         self.add_set( None, default_type='Bad' )
 
         # add widgets for score distribution
-        self.score_dist_options_label = ipw.Label(value='Options for score plot')
         # get available options
         score_dist_options_dict = get_args_dict(pu.plot_score_dist)
         score_dist_docurl = get_docurl(pu.plot_score_dist)
@@ -1426,12 +1560,15 @@ class EvaluateTab:
         labels = list(score_dist_options_dict.keys())
         values = list(score_dist_options_dict.values())
         wtypes = None
-        # make the actual OptionsFrame
+        # make the actual OptionsBox
         self.score_dist_options_frame = OptionsBox(labels=labels, types=wtypes, values=values,
                                             docurl=score_dist_docurl, autobool=True)
+        # wrap in an accordion
+        self.score_dist_accordion = ipw.Accordion(children=[self.score_dist_options_frame.get_widget()])
+        self.score_dist_accordion.set_title(0, 'Options for score plot')
+        self.score_dist_accordion.selected_index = None
 
         # add widgets for roc curve
-        self.roc_options_label = ipw.Label(value='Options for ROC curve')
         # get available options
         roc_options_dict = get_args_dict(aeu.get_roc)
         roc_docurl = get_docurl(aeu.get_roc)
@@ -1449,11 +1586,15 @@ class EvaluateTab:
         labels = list(roc_options_dict.keys())
         values = list(roc_options_dict.values())
         wtypes = None
+        # make the actual OptionsBox
         self.roc_options_frame = OptionsBox(labels=labels, types=wtypes, values=values,
                                             docurl=roc_docurl, autobool=True)
+        # wrap in an accordion
+        self.roc_accordion = ipw.Accordion(children=[self.roc_options_frame.get_widget()])
+        self.roc_accordion.set_title(0, 'Options for ROC curve')
+        self.roc_accordion.selected_index = None
 
         # add widgets for confusion matrix
-        self.cm_options_label = ipw.Label(value='Options for confusion matrix')
         # get available options
         cm_options_dict = get_args_dict(aeu.get_confusion_matrix)
         cm_docurl = get_docurl(aeu.get_confusion_matrix)
@@ -1464,22 +1605,30 @@ class EvaluateTab:
         labels = list(cm_options_dict.keys())
         values = list(cm_options_dict.values())
         wtypes = None
+        # make the actual OptionsBox
         self.cm_options_frame = OptionsBox(labels=labels, types=wtypes, values=values,
                                             docurl=cm_docurl, autobool=True)
+        # wrap in an accordion
+        self.cm_accordion = ipw.Accordion(children=[self.cm_options_frame.get_widget()])
+        self.cm_accordion.set_title(0, 'Options for confusion matrix')
+        self.cm_accordion.selected_index = None
 
         # add widgets for output json file
-        self.json_label = ipw.Label(value='Options for output json file')
         json_options_dict = {'make json file': False,
                              'json filename': ''}
         # set the widget types
         labels = list(json_options_dict.keys())
         values = list(json_options_dict.values())
         wtypes = None
+        # make the acutal OptionsBox
         self.json_options_frame = OptionsBox(labels=labels, types=wtypes, values=values, 
                                              docurl='no documentation available at the moment', autobool=True)
+        # wrap in an accordion
+        self.json_accordion = ipw.Accordion(children=[self.json_options_frame.get_widget()])
+        self.json_accordion.set_title(0, 'Options for json generation')
+        self.json_accordion.selected_index = None
         
         # add widgets for 2D contour plots
-        self.contour_options_label = ipw.Label(text='Options for fit plots')
         # add widgets for plotting options
         self.contourfunction = None
         self.contourdim = None
@@ -1490,6 +1639,9 @@ class EvaluateTab:
             self.contourfunction = pu.plot_fit_2d
             self.contourdim = 2
         contour_options_dict = get_args_dict(self.contourfunction)
+        if 'figsize' in contour_options_dict.keys():
+            contour_options_dict.pop('figsize')
+            # (remove this option since its value is a tuple which is non-trivial to cast from str)
         contour_docurl = get_docurl(self.contourfunction)
         # remove some keys that are not user input
         for key in ['fitfunc','xaxtitle','yaxtitle','onlycontour']:
@@ -1516,19 +1668,25 @@ class EvaluateTab:
         # make the actual OptionsFrame
         self.contour_options_frame = OptionsBox(labels=labels, types=wtypes, values=values,
                                             docurl=contour_docurl, autobool=True)
+        # wrap in an accordion
+        self.contour_accordion = ipw.Accordion(children=[self.contour_options_frame.get_widget()])
+        self.contour_accordion.set_title(0, 'Options for fit plots')
+        self.contour_accordion.selected_index = None
 
         # add a button to start the evaluation
         self.evaluate_button = ipw.Button(description='Evaluate')
         self.evaluate_button.on_click(self.evaluate)
         
         # make the layout
-        all_options_children = ([self.score_dist_options_frame.get_widget(),
-                                 self.roc_options_frame.get_widget(),
-                                 self.cm_options_frame.get_widget(),
-                                 self.json_options_frame.get_widget(),
-                                 self.contour_options_frame.get_widget()])
+        all_options_children = ([
+                                 self.score_dist_accordion,
+                                 self.roc_accordion,
+                                 self.cm_accordion,
+                                 self.json_accordion,
+                                 self.contour_accordion
+                                ])
         self.all_options_grid = ipw.GridBox(children=all_options_children,
-                           layout=ipw.Layout(grid_template_columns='auto '*len(all_options_children)))
+                           layout=ipw.Layout(grid_template_rows='auto '*len(all_options_children)))
         self.grid = ipw.GridBox(children=[self.test_set_grid,
                                           self.all_options_grid,
                                           self.evaluate_button],
@@ -1565,6 +1723,13 @@ class EvaluateTab:
         for el in self.test_set_widgets:
             if not el['selector'].valid: return False
         else: return True
+        
+    def check_all_valid_and_same_model(self):
+        modelname = self.test_set_widgets[0]['selector'].modelname
+        if modelname is None: return False
+        for el in self.test_set_widgets[1:]:
+            if not el['selector'].modelname==modelname: return False
+        return True
 
     def get_scores(self, test_set_type):
         scores = []
@@ -1592,9 +1757,18 @@ class EvaluateTab:
         return labels
 
     def evaluate(self, event):
+        
+        # do some checks
         if not self.check_all_selected():
-            with self.tab: print('ERROR: some test sets were declared but not defined')
+            with self.tab: print('ERROR: some test sets were declared but not defined.')
             return
+        if not self.check_all_valid_and_same_model():
+            with self.tab: print('ERROR: not all test sets were selected with the same (valid) model.')
+            return
+        
+        # get the model name
+        modelname = self.test_set_widgets[0]['selector'].modelname
+        
         # load scores for good and bad test set
         scores_good_parts = self.get_scores('Good')
         scores_bad_parts = self.get_scores('Bad')
@@ -1606,7 +1780,6 @@ class EvaluateTab:
         globalscores_bad = np.concatenate(tuple(globalscores_bad_parts))
         labels_good = np.zeros(len(globalscores_good)) # background: label = 0
         labels_bad = np.ones(len(globalscores_bad)) # signal: label = 1
-
         labels = np.concatenate(tuple([labels_good,labels_bad]))
         scores = np.concatenate(tuple([-globalscores_good,-globalscores_bad]))
         scores = aeu.clip_scores( scores )
@@ -1629,37 +1802,47 @@ class EvaluateTab:
 
         # confusion matrix
         if do_cm: 
-            working_point = aeu.get_confusion_matrix(scores, labels, **cm_options)
+            (working_point,_,_) = aeu.get_confusion_matrix(scores, labels, **cm_options)
 
         # write output json
         # to do: make more flexible with user options
         json_options = self.json_options_frame.get_dict()
         do_json = json_options.pop('make json file')
         json_filename = json_options.pop('json filename')
+        # check json filename
         if do_json and len(json_filename)==0:
             with self.tab: print('WARNING: invalid json filename; not writing an output json.')
             do_json = False
+        # check if a working point was set
         if do_json and not do_cm:
             with self.tab: print('WARNING: no working point was set.')
             working_point = None
         if do_json:
+            # format the filename with proper extension
             json_fileext = os.path.splitext(json_filename)[1]
             if(json_fileext not in ['.json','.txt']):
                 print('WARNING: unrecognized extension in json filename ({}),'.format(json_fileext)
                       +' replacing by .json')
                 json_filename = os.path.splitext(json_filename)[0]+'.json'
+            # get the data
+            jsonlist = self.histstruct.get_globalscores_jsonformat( modelname=modelname )
+            jsondata = {'meta': {'working_point': working_point},
+                        'data': jsonlist }
             with open(json_filename,'w') as f:
-                jsonlist = self.histstruct.get_globalscores_jsonformat(working_point=working_point)
-                json.dump( jsonlist, f, indent=2 )
+                json.dump( jsondata, f, indent=2 )
 
         # contour plots
         contour_options = self.contour_options_frame.get_dict()
         do_contour = contour_options.pop('make fit plots')
         if do_contour:
-            if( not hasattr(self.histstruct,'fitfunclist')
-                or not hasattr(self.histstruct,'dimslist') ):
-                raise Exception('ERROR: cannot make contour plots with test data overlaid'
-                        +' as they were not initialized for the training set.')
+            
+            # check if the dict of partial fitters was initialized
+            if( len(self.histstruct.models[modelname].partial_fitters.keys())==0 ):
+                msg = 'ERROR: cannot make contour plots with test data overlaid'
+                msg += ' as they were not initialized for the training set.'
+                raise Exception(msg)
+                
+            # choose colors
             badcolorlist = (['red','lightcoral','firebrick','chocolate',
                              'fuchsia','orange','purple'])
             goodcolorlist = ['blue']
@@ -1670,7 +1853,10 @@ class EvaluateTab:
                 with self.tab: print('WARNING: too many good test sets for available colors, putting all to blue')
                 goodcolorist = ['blue']*len(scores_good_parts)
 
-            for dims,partialfitfunc in zip(self.histstruct.dimslist,self.histstruct.fitfunclist):
+            for dims,partialfitfunc in self.histstruct.models[modelname].partial_fitters.items():
+                # get the scores used to make the fit
+                fitting_scores = self.histstruct.models[modelname].fitscores_array[:,dims]
+                if len(fitting_scores.shape)==1: fitting_scores = np.expand_dims(fitting_scores,1)
                 # settings for 1D plots 
                 if self.contourdim == 1:
                     xaxtitle = pu.make_text_latex_safe(self.histstruct.histnames[dims])
@@ -1705,7 +1891,7 @@ class EvaluateTab:
                     if len(l)>0: dolegend = True
                 if not dolegend: labels = None
                 # make the plot
-                fig,ax = plotfunction( self.histstruct.fitting_scores, 
+                fig,ax = plotfunction( fitting_scores, 
                             clusters, labels=labels, colors=colors,
                             fitfunc=partialfitfunc, xaxtitle=xaxtitle, yaxtitle=yaxtitle,
                             **contour_options )
@@ -1771,6 +1957,9 @@ class PlotLumisectionTab:
             if labels[i]=='lumisection':
                 wtypes[i] = ipw.Dropdown
                 values[i] = [1]
+            if labels[i]=='recomode':
+                wtypes[i] = ipw.Dropdown
+                values[i] = ['None'] + self.histstruct.modelnames
         # make the options frame
         docurl = get_docurl(self.histstruct.plot_ls)
         self.options_frame = OptionsBox(labels=labels, values=values, types=wtypes,
@@ -1792,7 +1981,8 @@ class PlotLumisectionTab:
         self.inspect_set_label = ipw.Label(value=label)
         self.inspect_set_selector = SelectorWidget(self.histstruct, 
                                                    set_selection=False, 
-                                                   post_selection=False)
+                                                   post_selection=False,
+                                                   model_selection=False)
 
         # add widgets for selecting reference score dataset
         label = 'Select masks for reference scores\n(ignored when not plotting score comparison)'
@@ -1804,7 +1994,8 @@ class PlotLumisectionTab:
         # add widgets for selecting reference histogram dataset
         label = 'Select reference histograms\n(ignored when not plotting reference histograms)'
         self.ref_set_label = ipw.Label(value=label)
-        self.ref_set_selector = SelectorWidget(self.histstruct)
+        self.ref_set_selector = SelectorWidget(self.histstruct,
+                                               model_selection=False)
         
         # make the layout
         children = ([self.options_frame.get_widget(), 
@@ -1849,13 +2040,21 @@ class PlotLumisectionTab:
         runnb = options.pop('run')
         lsnbs = [options.pop('lumisection')]
         plotscore = options.pop('plotscore')
+        # get the model name for reconstruction and score plotting
         options['recohist'] = options.pop('recomode')
+        modelname = options['recohist']
+        if modelname is None:
+            if plotscore:
+                msg = 'WARNING: requested to plot scores but no model provided; will not plot scores.'
+                print(msg)
+            plotscore = False
         if mode=='ls': pass
         elif mode=='run':
             # check if masks were defined for this case
             if self.get_inspect_masks() is None:
                 msg = 'WARNING: no masks were defined,'
                 msg += ' will plot all lumisections in run {}...'.format(runnb)
+                print(msg)
             # get the run and lumisection numbers
             runnbs = self.histstruct.get_runnbs( masknames=self.get_inspect_masks() )
             lsnbs = self.histstruct.get_lsnbs( masknames=self.get_inspect_masks() )
@@ -1923,23 +2122,23 @@ class PlotLumisectionTab:
                 pass
             plt.show(block=False)
 
-            # get the score
-            scorepoint = self.histstruct.get_scores_ls( runnb, lsnb )
-            try:
-                logprob = self.histstruct.get_globalscore_ls( runnb, lsnb )
-            except:
-                with self.tab: print('WARNING: could not retrieve the global score'
+            # get and plot the score
+            if plotscore:
+                scorepoint = self.histstruct.get_scores_ls( modelname, runnb, lsnb )
+                try:
+                    logprob = self.histstruct.get_globalscore_ls( modelname, runnb, lsnb )
+                except:
+                    with self.tab: print('WARNING: could not retrieve the global score'
                         +' for run {}, lumisection {};'.format(runnb, lsnb)
                         +' was it initialized?')
-                logprob = None
-            with self.tab:
-                print('--- Run: {}, LS: {} ---'.format(runnb, lsnb))
-                print('Scores:')
-                for histname in self.histstruct.histnames: 
-                    print('{} : {}'.format(histname,scorepoint[histname]))
-                print('Log probability: '+str(logprob))
+                    logprob = None
+                with self.tab:
+                    print('--- Run: {}, LS: {} ---'.format(runnb, lsnb))
+                    print('Scores:')
+                    for histname in self.histstruct.histnames: 
+                        print('{} : {}'.format(histname,scorepoint[histname]))
+                    print('Log probability: '+str(logprob))
 
-            if plotscore:
                 # check if a reference set was defined
                 if self.get_refscore_masks() is None:
                     msg = 'WARNING: requested to plot a reference score distribution,'
@@ -1953,8 +2152,9 @@ class PlotLumisectionTab:
                 # loop over histogram types
                 for dim,histname in enumerate(self.histstruct.histnames):
                     thisscore = scorepoint[histname]
-                    refscores = self.histstruct.get_scores( histname=histname, 
-                                masknames=self.get_refscore_masks() )
+                    refscores = self.histstruct.get_scores( modelname, 
+                                       histname=histname, 
+                                        masknames=self.get_refscore_masks() )
                     _ = pu.plot_score_ls( thisscore, refscores, 
                             fig=fig, ax=axs[int(dim/ncols),dim%ncols],
                             thislabel='This LS', 
@@ -1979,7 +2179,7 @@ class WelcomeTab:
         # add widgets with a welcome message
         self.label = ipw.Label(value='Welcome to the ML4DQM GUI!')
         # add widgets to point to documentation
-        docurl = 'https://lukalambrecht.github.io/ML4DQMDC-PixelAE/run/'
+        docurl = 'https://lukalambrecht.github.io/ML4DQMDC-PixelAE/runswan/'
         self.docurlwidget = UrlWidget(docurl, text='Show link to documentation')
         with self.tab:
             display(self.label)
@@ -2004,13 +2204,13 @@ class ML4DQMGUI:
         self.newhs_tab = NewHistStructTab( self.histstruct )
         self.addrunmasks_tab = AddRunMasksTab()
         self.addstatmasks_tab = AddStatMasksTab()
-        self.addclassifiers_tab = AddClassifiersTab()
+        self.addjsonmasks_tab = AddJsonMasksTab()
         self.newhstabs = []
         self.newhstabs.append( self.welcome_tab )
         self.newhstabs.append( self.newhs_tab )
         self.newhstabs.append( self.addrunmasks_tab )
         self.newhstabs.append( self.addstatmasks_tab )
-        self.newhstabs.append( self.addclassifiers_tab )
+        self.newhstabs.append( self.addjsonmasks_tab )
         self.alltabs.append( self.newhstabs )
         self.newhstabwidget = ipw.Tab(children = [tab.tab for tab in self.newhstabs])
         for i,tab in enumerate(self.newhstabs):
@@ -2021,10 +2221,12 @@ class ML4DQMGUI:
         self.load_tab = LoadHistStructTab( self.load )
         self.save_tab = SaveHistStructTab()
         self.display_tab = DisplayHistStructTab()
+        self.displaynew_tab = DisplayHistStructNewTab()
         self.hsiotabs = []
         self.hsiotabs.append( self.load_tab )
         self.hsiotabs.append( self.save_tab )
         self.hsiotabs.append( self.display_tab )
+        self.hsiotabs.append( self.displaynew_tab )
         self.alltabs.append( self.hsiotabs )
         self.hsiotabwidget = ipw.Tab(children = [tab.tab for tab in self.hsiotabs])
         for i,tab in enumerate(self.hsiotabs):
@@ -2058,12 +2260,14 @@ class ML4DQMGUI:
         self.plottabwidget.observe(self.refresh, names='selected_index')
 
         # define tabs for classifier training, fitting and evaluation
+        self.addmodel_tab = AddModelTab()
         self.train_tab = TrainClassifiersTab()
         self.apply_classifiers_tab = ApplyClassifiersTab()
         self.fit_tab = FitTab()
         self.apply_fit_tab = ApplyFitTab()
         self.evaluate_tab = EvaluateTab()
         self.modeltabs = []
+        self.modeltabs.append( self.addmodel_tab )
         self.modeltabs.append( self.train_tab )
         self.modeltabs.append( self.apply_classifiers_tab )
         self.modeltabs.append( self.fit_tab )
@@ -2083,9 +2287,9 @@ class ML4DQMGUI:
                                              self.modeltabwidget])
         self.tabwidget.set_title(0, 'New HistStruct')
         self.tabwidget.set_title(1, 'HistStruct I/O')
-        self.tabwidget.set_title(2, 'Histogram processing')
+        self.tabwidget.set_title(2, 'Preprocessing')
         self.tabwidget.set_title(3, 'Plotting')
-        self.tabwidget.set_title(4, 'Model training and evaluation')
+        self.tabwidget.set_title(4, 'Models')
         self.tabwidget.observe(self.refresh, names='selected_index')
         
     def refresh(self, event):
@@ -2100,17 +2304,20 @@ class ML4DQMGUI:
             return
         if isinstance(new_tab, AddRunMasksTab): kwargs['histstruct'] = self.histstruct
         if isinstance(new_tab, AddStatMasksTab): kwargs['histstruct'] = self.histstruct
-        if isinstance(new_tab, AddClassifiersTab): kwargs['histstruct'] = self.histstruct
+        if isinstance(new_tab, AddJsonMasksTab): kwargs['histstruct'] = self.histstruct
         if isinstance(new_tab, LoadHistStructTab): kwargs['external_load_function'] = self.load
         if isinstance(new_tab, SaveHistStructTab): kwargs['histstruct'] = self.histstruct
         if isinstance(new_tab, DisplayHistStructTab): kwargs['histstruct'] = self.histstruct
+        if isinstance(new_tab, DisplayHistStructNewTab): kwargs['histstruct'] = self.histstruct
         if isinstance(new_tab, PreprocessingTab): kwargs['histstruct'] = self.histstruct
         if isinstance(new_tab, LoadPlotStyleTab): kwargs['plotstyleparser'] = self.plotstyleparser
         if isinstance(new_tab, PlotSetsTab): 
             kwargs['histstruct'] = self.histstruct
             kwargs['plotstyleparser'] = self.plotstyleparser
         if isinstance(new_tab, ResamplingTab): kwargs['histstruct'] = self.histstruct
+        if isinstance(new_tab, AddModelTab): kwargs['histstruct'] = self.histstruct
         if isinstance(new_tab, TrainClassifiersTab): kwargs['histstruct'] = self.histstruct
+        if isinstance(new_tab, ApplyClassifiersTab): kwargs['histstruct'] = self.histstruct
         if isinstance(new_tab, FitTab):
             kwargs['histstruct'] = self.histstruct
             kwargs['plotstyleparser'] = self.plotstyleparser

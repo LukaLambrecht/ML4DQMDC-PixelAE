@@ -1,4 +1,6 @@
 # to do:
+# - update everything to new paradigm with ModelInterfaces
+#   (for now, update only the parts needed for nbgui)
 # - small bug: when a frame is made inactive and then active again,
 #   non-editable Comboboxes become editable, probably because the state is set to 'normal'.
 # - small bug: when the 'new histstruct' button is pressed, the histstruct is set to a new empty one,
@@ -164,9 +166,12 @@ def get_classifier_class( key=None ):
         raise Exception('ERROR: classifier class {} not recognized'.format(key))
     return (c,get_args_dict(c))
 
-def get_training_options( histstruct, histname=None ):
+def get_training_options( histstruct, modelname, histname=None ):
     ### get options for training classifiers
-    # note: the classifiers are assumed to be already present in the histstruct
+    # input arguments:
+    # - histstruct: an object of type HistStruct
+    # - modelname: name of a model present in the histstruct
+    # - histname: name of a histogram type in the histstruct
     # if histname is specified, the classifier options for that specific classifer are returned;
     # if not, it is checked that all classifiers are of the same type 
     # and a single set of options is returned belonging to that type.
@@ -176,14 +181,20 @@ def get_training_options( histstruct, histname=None ):
     #            maybe add option in classifier to average 'training' histograms)
     ctype = None
     classifier = None
+    # parse histname argument
     if histname is None: histnames = histstruct.histnames
     else: histnames = [histname]
+    # check modelname argument
+    if not modelname in histstruct.modelnames:
+        raise Exception('ERROR: requested a model with name "{}"'.format(modelname)
+                       +' but there seems to be no model with this name in the histstruct.')
+    # check histname argument
     for histname in histnames:
-        if histname not in histstruct.classifiers.keys():
-            print('WARNING: the histstruct seems not to contain a classifier'
-                    +' for {}'.format(histname))
+        if histname not in histstruct.models[modelname].histnames:
+            print('WARNING: the model with name "{}"'.format(modelname)
+                  +' seems not to contain a classifier for histogram type {}'.format(histname))
             continue
-        classifier = histstruct.classifiers[histname]
+        classifier = histstruct.models[modelname].classifiers[histname]
         if( ctype is None ): ctype = type(classifier)
         if( type(classifier)!=ctype ):
             print('WARNING: the histstruct seems to contain different types of classifiers'
