@@ -24,11 +24,11 @@ if __name__=='__main__':
   exe = 'python harvest_nanodqmio_to_csv.py'
   # (executable to run, should be a valid conversion script 
   # similar in structure and command line args to e.g. harvest_nanodqmio_to_csv.py)
-  istest = False 
+  istest = True 
   # (if set to true, only one file will be read for speed)
-  runmode = 'condor'
+  runmode = 'local'
   # (choose from 'condor' or 'local')
-  proxy = os.path.abspath('x509up_u23078')
+  proxy = os.path.abspath('x509up_u116295')
   # (set the location of a valid proxy created with --voms-proxy-init --voms cms)
 
   # make and execute the DAS client command
