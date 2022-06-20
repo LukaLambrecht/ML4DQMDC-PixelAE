@@ -1,13 +1,14 @@
 # A script for reading (nano)DQMIO files from DAS 
 # and harvesting a selected monitoring element.
 #
-# The output is stored in a plain ROOT file, containing only the raw histograms.
-# Run and lumisection information is written to the name of the histogram within the ROOT file.
+# Very similar to harvest_nanodqmio_to_csv.py,
+# but store the dataframe as a parquet file instead of a csv file.
 
 ### imports
 import sys
 import os
-import ROOT
+import json
+import numpy as np
 sys.path.append('src')
 from DQMIOReader import DQMIOReader
 
@@ -25,9 +26,9 @@ if __name__=='__main__':
   # (redirector used to access remote files (ignored in filemode 'local'))
   mename = 'PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_1'
   # (name of the monitoring element to store)
-  outputfile = 'test.csv'
+  outputfile = 'test.parquet'
   # (path to output file)
-  istest = False
+  istest = False 
   # (if set to true, only one file will be read for speed)
 
   # overwrite the above default arguments with command line args
@@ -48,8 +49,8 @@ if __name__=='__main__':
       dascmd = "dasgoclient -query 'file dataset={}' --limit 0".format(datasetname)
       dasstdout = os.popen(dascmd).read()
       dasfiles = [el.strip(' \t') for el in dasstdout.strip('\n').split('\n')]
-      if istest:
-        dasfiles = [dasfiles[0]]
+      if istest: 
+        dasfiles = [dasfiles[0]] 
       print('DAS client ready; found following files ({}):'.format(len(dasfiles)))
       for f in dasfiles: print('  - {}'.format(f))
       redirector = redirector.rstrip('/')+'/'
@@ -69,24 +70,16 @@ if __name__=='__main__':
 
   # make a DQMIOReader instance and initialize it with the DAS files
   print('initializing DQMIOReader...')
-  reader = DQMIOReader(*inputfiles)
   sys.stdout.flush()
   sys.stderr.flush()
+  reader = DQMIOReader(*inputfiles)
   reader.sortIndex()
   print('initialized DQMIOReader with following properties')
   print('number of lumisections: {}'.format(len(reader.listLumis())))
   print('number of monitoring elements per lumisection: {}'.format(len(reader.listMEs())))
 
-  # select the monitoring element
-  print('selecting monitoring element {}...'.format(mename))
-  mes = reader.getSingleMEs(mename)
-    
-  # write selected monitoring elements to output file
-  print('writing output file...')
-  f = ROOT.TFile.Open(outputfile, 'recreate')
-  for me in mes:
-    name = 'run{}_ls{}_{}'.format(me.run, me.lumi, me.name.replace('/','_'))
-    me.data.SetName(name)
-    me.data.SetTitle(name)
-    me.data.Write()
-  f.Close()
+  # select the monitoring element and make a pandas dataframe
+  df = reader.getSingleMEsToDataFrame(mename)
+  
+  # write to a csv file
+  df.to_parquet(outputfile)

@@ -24,14 +24,14 @@ if __name__=='__main__':
   # (redirector used to access remote files (ignored in filemode 'local'))
   mename = 'PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_1'
   # (name of the monitoring element to store)
-  outputfile = 'test.csv'
+  outputfile = 'testroot.root'
   # (path to output file)
-  exe = 'python harvest_nanodqmio_to_csv.py'
+  exe = 'python harvest_nanodqmio_to_root.py'
   # (executable to run, should be a valid conversion script 
   # similar in structure and command line args to e.g. harvest_nanodqmio_to_csv.py)
-  istest = True 
+  istest = False
   # (if set to true, only one file will be read for speed)
-  runmode = 'local'
+  runmode = 'condor'
   # (choose from 'condor' or 'local')
   proxy = os.path.abspath('x509up_u116295')
   # (set the location of a valid proxy created with --voms-proxy-init --voms cms)
@@ -39,6 +39,8 @@ if __name__=='__main__':
 
   # make a list of input files
   if filemode=='das':
+    # setup proxy
+    os.system('export X509_USER_PROXY={}'.format(proxy))
     # make and execute the DAS client command
     print('running DAS client to find files in dataset {}...'.format(datasetname))
     dascmd = "dasgoclient -query 'file dataset={}' --limit 0".format(datasetname)

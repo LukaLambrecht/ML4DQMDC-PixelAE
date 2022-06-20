@@ -43,6 +43,8 @@ if __name__=='__main__':
 
   # make a list of input files
   if filemode=='das':
+    # setup proxy
+    os.system('export X509_USER_PROXY={}'.format(proxy))
     # make and execute the DAS client command
     print('running DAS client to find files in dataset {}...'.format(datasetname))
     dascmd = "dasgoclient -query 'file dataset={}' --limit 0".format(datasetname)

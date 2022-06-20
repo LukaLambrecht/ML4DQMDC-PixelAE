@@ -24,6 +24,7 @@ import sys
 import os
 import json
 import numpy as np
+sys.path.append('src')
 from DQMIOReader import DQMIOReader
 
 if __name__=='__main__':
@@ -92,61 +93,8 @@ if __name__=='__main__':
   print('number of lumisections: {}'.format(len(reader.listLumis())))
   print('number of monitoring elements per lumisection: {}'.format(len(reader.listMEs())))
 
-  # select the monitoring element
-  print('selecting monitoring element {}...'.format(mename))
-  mes = reader.getSingleMEs(mename)
-    
-  # write selected monitoring elements to output file
-  print('writing output file...')
-  with open(outputfile, 'w') as f:
-    # write header
-    header = ',fromrun,fromlumi,hname,metype,histo,entries,Xmax,Xmin,Xbins,Ymax,Ymin,Ybins'
-    f.write(header+'\n')
-    # extract bin edges (assume the same for all monitoring elements!)
-    metype = mes[0].type
-    if metype in [3,4,5]:
-      nxbins = mes[0].data.GetNbinsX()
-      xmin = mes[0].data.GetBinLowEdge(1)
-      xmax = mes[0].data.GetBinLowEdge(nxbins)+mes[0].data.GetBinWidth(nxbins)
-      nybins = 1
-      ymin = 0
-      ymax = 1
-    elif metype in [6,7,8]:
-      nxbins = mes[0].data.GetNbinsX()
-      xmin = mes[0].data.GetXaxis().GetBinLowEdge(1)
-      xmax = (mes[0].data.GetXaxis().GetBinLowEdge(nxbins)
-		    +mes[0].data.GetXaxis().GetBinWidth(nxbins))
-      nybins = mes[0].data.GetNbinsY()
-      ymin = mes[0].data.GetYaxis().GetBinLowEdge(1)
-      ymax = (mes[0].data.GetYaxis().GetBinLowEdge(nybins)
-		    +mes[0].data.GetYaxis().GetBinWidth(nybins))
-    else:
-      raise Exception('ERROR: monitoring element type not recognized: {}'.format(metype))
-    # loop over monitoring elements
-    for idx,me in enumerate(mes):
-      # extract the histogram
-      if metype in [3,4,5]:
-        histo = np.zeros(nxbins+2, dtype=int)
-        for i in range(nxbins+2):
-          histo[i] = int(me.data.GetBinContent(i))
-      elif metype in [6,7,8]:
-        histo = np.zeros((nxbins+2)*(nybins+2), dtype=int)
-        for i in range(nybins+2):
-          for j in range(nxbins+2):
-            histo[i*(nxbins+2)+j] = int(me.data.GetBinContent(j,i))
-      # format info
-      meinfo = ''
-      meinfo += '{}'.format(idx)
-      meinfo += ',{}'.format(int(me.run))
-      meinfo += ',{}'.format(int(me.lumi))
-      meinfo += ',{}'.format(me.name.split('/')[-1])
-      meinfo += ',{}'.format(me.type)
-      meinfo += ',"{}"'.format(json.dumps(list(histo)))
-      meinfo += ',{}'.format(int(np.sum(histo)))
-      meinfo += ',{}'.format(xmax)
-      meinfo += ',{}'.format(xmin)
-      meinfo += ',{}'.format(nxbins)
-      meinfo += ',{}'.format(ymax)
-      meinfo += ',{}'.format(ymin)
-      meinfo += ',{}'.format(nybins)
-      f.write(meinfo+'\n')
+  # select the monitoring element and make a pandas dataframe
+  df = reader.getSingleMEsToDataFrame(mename)
+  
+  # write to a csv file
+  df.to_csv(outputfile)

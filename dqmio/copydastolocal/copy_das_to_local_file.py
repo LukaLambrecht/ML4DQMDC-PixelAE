@@ -1,12 +1,14 @@
 ########################################
-# copy a file from DAS to a local area #
+# Copy a file from DAS to a local area #
 ########################################
-# check the file size first, not suitable for large files.
+# This script copies a file from DAS to a local area.
+# The parameters that need to be modified for your needs are explained below.
+# Note: check the file size first, not suitable for extremely large files.
 
 ### imports
 import sys
 import os
-sys.path.append('../jobsubmission')
+sys.path.append('../../jobsubmission')
 import condortools as ct
 
 if __name__=='__main__':
@@ -19,6 +21,8 @@ if __name__=='__main__':
   # (redirector used to access remote files)
   outputdir = '.'
   # (path to output directory)
+  runmode = 'condor'
+  # (choose from 'condor' or 'local')
   proxy = os.path.abspath('x509up_u23078')
   # (set the location of a valid proxy created with --voms-proxy-init --voms cms)
 
@@ -31,4 +35,9 @@ if __name__=='__main__':
 
   # make and submit the command
   cmd = 'xrdcp {} {}'.format(filename,outputdir)
-  ct.submitCommandAsCondorJob('cjob_copy_das_to_local_file', cmd, proxy=proxy)
+  if runmode=='local':
+    os.system(cmd)
+  elif runmode=='condor:':
+    ct.submitCommandAsCondorJob('cjob_copy_das_to_local_file', cmd, proxy=proxy)
+  else:
+    raise Exception('ERROR: run mode not recognized: "{}"'.format(runmode))

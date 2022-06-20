@@ -72,9 +72,9 @@ def makeJobDescription(name, exe, argstring=None, stdout=None, stderr=None, log=
         f.write('request_cpus = {}\n'.format(cpus))
         f.write('request_memory = {}\n'.format(mem))
         f.write('request_disk = {}\n'.format(disk))
-    if proxy is not None: 
-        f.write('x509userproxy = {}\n'.format(proxy))
-        f.write('use_x509userproxy = True\n\n')
+        if proxy is not None: 
+            f.write('x509userproxy = {}\n'.format(proxy))
+            f.write('use_x509userproxy = True\n\n')
         #f.write('should_transfer_files = yes\n\n') 
         # (not fully sure whether to put 'yes', 'no' or omit it completely)
         f.write('queue\n\n')

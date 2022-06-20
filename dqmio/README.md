@@ -7,6 +7,7 @@ The tools in this folder can be used to:
 
 Things to keep in mind when trying to read files from DAS:  
 - You will need a valid grid certificate. Create one using `voms-proxy-init --voms cms`.  
+- The scripts in this folder should contain the correct export command. If you still get an error concerning X509\_USER\_PROXY, you can run the command `export X509_USER_PROXY=path` (where `path` should be replaced by the path to where you stored the proxy created in the previous step) and try again.
 
 Special instructions for job submission:  
 - You will need a valid grid certificate if accessing DAS files (see above).  
