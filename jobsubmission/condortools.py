@@ -81,7 +81,7 @@ def makeJobDescription(name, exe, argstring=None,
         #f.write('should_transfer_files = yes\n\n') 
         # (not fully sure whether to put 'yes', 'no' or omit it completely)
         if jobflavour is not None:
-            f.write('+JobFlavour = {}\n\n'.format(jobflavour))
+            f.write('+JobFlavour = "{}"\n\n'.format(jobflavour))
         f.write('queue\n\n')
     print('makeJobDescription created {}'.format(fname))
 
