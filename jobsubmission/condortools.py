@@ -29,8 +29,12 @@ def makeUnique(fname):
     msg += ' consider choosing more specific names, splitting in folders, etc.'
     raise Exception(msg)
 
-def initJobScript(name, docmsenv=False, cmssw_version='CMSSW_10_2_16_patch1'):
-    ### initialize an executable bash script by setting correct cms env
+def initJobScript(name, docmsenv=False, cmssw_version='CMSSW_10_2_16_patch1',
+                  proxy=None):
+    ### initialize an executable bash script with:
+    # - sourcing the shared cms software
+    # - setting correct cmssw release
+    # - exporting proxy
     
     # parse filename
     name = os.path.splitext(name)[0]
@@ -44,6 +48,8 @@ def initJobScript(name, docmsenv=False, cmssw_version='CMSSW_10_2_16_patch1'):
         if docmsenv:
             script.write('cd {}/src\n'.format( cmssw_version ) )
             script.write('eval `scram runtime -sh`\n')
+        if proxy is not None:
+            script.write('export X509_USER_PROXY={}\n'.format( proxy ))
         script.write('cd {}\n'.format( cwd ) )
     # make executable
     os.system('chmod +x '+fname)
@@ -51,8 +57,8 @@ def initJobScript(name, docmsenv=False, cmssw_version='CMSSW_10_2_16_patch1'):
 
 def makeJobDescription(name, exe, argstring=None, 
                        stdout=None, stderr=None, log=None,
-                       cpus=1, mem=1024, disk=10240, proxy=None,
-                       jobflavour=None):
+                       cpus=1, mem=1024, disk=10240, 
+                       proxy=None, jobflavour=None):
     ### create a single job description txt file
     # note: exe can for example be a runnable bash script
     # note: argstring is a single string containing the arguments to exe (space-separated)
@@ -77,7 +83,7 @@ def makeJobDescription(name, exe, argstring=None,
         f.write('request_disk = {}\n'.format(disk))
         if proxy is not None: 
             f.write('x509userproxy = {}\n'.format(proxy))
-            f.write('use_x509userproxy = True\n\n')
+            f.write('use_x509userproxy = true\n\n')
         #f.write('should_transfer_files = yes\n\n') 
         # (not fully sure whether to put 'yes', 'no' or omit it completely)
         if jobflavour is not None:
@@ -120,7 +126,7 @@ def submitCommandsAsCondorCluster(name, commands, stdout=None, stderr=None, log=
     [exe,argstring] = commands[0].split(' ',1) # exe must be the same for all commands
     nargs = len(argstring.split(' ')) # nargs must be the same for all commands
     # first make the executable
-    initJobScript(shname, docmsenv=docmsenv, cmssw_version=cmssw_version)
+    initJobScript(shname, docmsenv=docmsenv, cmssw_version=cmssw_version, proxy=proxy)
     with open(shname,'a') as script:
         script.write(exe)
         for i in range(nargs): script.write(' ${}'.format(i+1))
@@ -168,7 +174,7 @@ def submitCommandsAsCondorJobs(name, commands, stdout=None, stderr=None, log=Non
         shname = makeUnique(name+'.sh')
         jdname = name+'.txt'
         # first make the executable
-        initJobScript(shname, docmsenv=docmsenv, cmssw_version=cmssw_version)
+        initJobScript(shname, docmsenv=docmsenv, cmssw_version=cmssw_version, proxy=proxy)
         with open(shname,'a') as script:
              for cmd in commandset: script.write(cmd+'\n')
         # then make the job description
