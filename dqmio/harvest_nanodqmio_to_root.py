@@ -74,10 +74,9 @@ if __name__=='__main__':
 
   # make a DQMIOReader instance and initialize it with the DAS files
   print('initializing DQMIOReader...')
-  reader = DQMIOReader(*inputfiles)
   sys.stdout.flush()
   sys.stderr.flush()
-  reader.sortIndex()
+  reader = DQMIOReader(*inputfiles, sortindex=True)
   print('initialized DQMIOReader with following properties')
   print('number of lumisections: {}'.format(len(reader.listLumis())))
   print('number of monitoring elements per lumisection: {}'.format(len(reader.listMEs())))

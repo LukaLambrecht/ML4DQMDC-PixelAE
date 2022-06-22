@@ -75,7 +75,9 @@ class DQMIOReader:
     #          for each key of the form (run number, lumisection number), the value is a list of a few IndexEntries,
     #          one for each monitoring element type (so 12 at maximum).
     #          and empty list is returned from the dict if a given (run number, lumisection number) is not present.
-    # - melist: dict containing all available monitor element names matched to their type
+    # - indexlist: separate list of index keys for sortability in python2.
+    # - medict: dict containing all available monitor element names matched to their type.
+    # - melist: separate list of medict keys for sortabiltiy in python2.
     
     @staticmethod # (needed in python 2, not in python 3)
     def getMEType(metype):
@@ -98,13 +100,30 @@ class DQMIOReader:
         }
         return treenames[metype]
     
-    def __init__(self, *files):
+    def __init__(self, *files, **kwargs):
         ### initializer
         # open the passed in files and read their index data.
         # input arguments:
         # - files: a filename (or multiple filenames) to open
         #          if stored locally, the filenames should contain the full path.
-        #          if stored on the grid, prefix the file path with "root://cms-xrd-global.cern.ch/" (not yet tested)
+        #          if stored on the grid, prefix the file path with "root://cms-xrd-global.cern.ch/".
+        # - kwargs: may contain:
+        #   -- sortindex: bool (default False) whether or not to sort the index 
+        #                 (by run and lumisection number in ascending order).
+        #   -- sortmes: bool (default False) whether or not to sort the ME names
+        #               (alphabetically)
+
+        # check arguments
+        sortindex = False
+        sortmes = False
+        for key,val in kwargs.items():
+            if( key=='sortindex' and val ): sortindex = True
+            elif( key=='sortmes' and val ): sortmes = True
+            else:
+                raise Exception('ERROR in DQMIOReader.__init__:'
+                               +' unrecognized keyword argument "{}"'.format(key))
+  
+        # do the initialization
         print('DQMIOReader.__init__: opening {} files...'.format(len(files)))
         sys.stdout.flush()
         sys.stderr.flush()
@@ -112,16 +131,17 @@ class DQMIOReader:
         print('all files opened, now making index')
         sys.stdout.flush()
         sys.stderr.flush()
-        self.readindex()
-        print('index made, now making melist')
+        self.readIndex( sort=sortindex )
+        print('index made, now making list of monitoring elements')
         sys.stdout.flush()
         sys.stderr.flush()
-        self.makelist()
+        self.makeMEList( sort=sortmes )
 
-    def readindex(self):
+    def readIndex(self, sort=False):
         ### read index tables
         # note: for internal use in initializer only, do not call.
         self.index = defaultdict(list)
+        self.indexlist = [] # separate list of index keys for sortability
         def readfileidx(f):
             ### read file index from one file
             # note: for internal use in initializer only, do not call.
@@ -150,33 +170,48 @@ class DQMIOReader:
         # (else unwanted behaviour when trying to retrieve lumisections that are not present;
         #  in case of defaultdict they are added to the index as empty lists of IndexEntries)
         self.index = dict(self.index)
+        # store the keys (i.e. run and lumisection numbers) in a separate list;
+        # needed for sortability in python2.
+        self.indexlist = list(self.index.keys())
+        # sort the index
+        if sort: self.sortIndex()
         
     def sortIndex(self):
         ### sort the index by run and lumisection number
-        # note: preliminary implementation, not guaranteed to be optimal
-        # note: might not work in python 2, where dicts have no ordering
-        self.newindex = dict()
-        for key,val in sorted(self.index.items()):
-            self.newindex[key] = val
-        self.index = self.newindex
+        # note: only sort the indexlist; the index itself remains unordered.
+        #       this is because the index is a dict, that has no order in python2.
+        #       if you want to get the runs/lumisections in an ordered way,
+        #       loop over indexlist, not index.keys()!
+        self.indexlist = sorted(self.indexlist)
                 
-    def makelist(self):
+    def makeMEList(self, sort=False):
         ### make a cached list for monitoring elements
         # note: for internal use in initializer only, do not call.
         # note: this function reads one lumisection and assumes all lumisection contains the same monitoring elements!
-        runlumi = next(iter(self.index.keys()))
+        runlumi = self.indexlist[0]
         mes = self.getMEsForLumi(runlumi, "*")
-        self.melist = dict()
+        self.medict = dict()
+        self.melist = [] # separate list of ME names for sortability
         for me in mes:
-            self.melist[me.name] = me.type
-    
+            self.medict[me.name] = me.type
+            self.melist.append(me.name)
+        if sort: self.sortMEList()
+
+    def sortMEList(self):
+        ### sort the list of MEs alphabetically
+        self.melist = sorted(self.melist)   
+ 
     def listMEs(self):
-        ### returns an iterable with the names of the monitoring elements available per lumisection.
-        return self.melist.keys()
+        ### returns a list with the names of the monitoring elements available per lumisection.
+        # warning: copying the list is avoided to for speed and memory;
+        #          only meant for reading; if you want to modify the result, make a copy first!
+        return self.melist
     
     def listLumis(self):
-        ### returns an iterable of (run number, lumisection number) pairs for the lumis available in the files.
-        return self.index.keys()
+        ### returns a list of (run number, lumisection number) pairs for the lumis available in the files.
+        # warning: copying the list is avoided to for speed and memory;
+        #          only meant for reading; if you want to modify the result, make a copy first!
+        return self.indexlist
     
     def getMEsForLumi(self, runlumi, *namepatterns):
         ### get selected monitoring elements for a given lumisection
@@ -266,7 +301,7 @@ class DQMIOReader:
             return 0
         
         # get all entries for the given lumisection and monitoring element name
-        entries = [e for e in self.index.get(runlumi, []) if e.type == self.melist[name]]
+        entries = [e for e in self.index.get(runlumi, []) if e.type == self.medict[name]]
         if len(entries)!=1:
             raise IndexError("ERROR in DQMIOReader.getSingleMEForLumi:"
                              +" requested to read data for lumisection {}".format(runlumi)
