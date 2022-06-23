@@ -55,6 +55,12 @@ if __name__=='__main__':
                              +' "--voms-proxy-init --voms cms";'
                              +' needed for DAS client;'
                              +' ignored if filemode is "local".')
+  parser.add_argument('--cmssw', default=None,
+                        help='Set the location of a CMSSW release;'
+                             +' needed for remote file reading with xrootd.')
+  parser.add_argument('--jobflavour', default='workday',
+                        help='Set the job flavour in lxplus'
+                             +' (see https://batchdocs.web.cern.ch/local/submit.html)')
   parser.add_argument('--istest', default=False, action='store_true',
                         help='If set to true, only one file will be read for speed')
   args = parser.parse_args()
@@ -65,6 +71,8 @@ if __name__=='__main__':
   redirector = args.redirector
   menames = args.menames
   proxy = args.proxy
+  cmssw_version = args.cmssw
+  jobflavour = args.jobflavour
   istest = args.istest
 
   # read the ME names and output files
@@ -104,5 +112,6 @@ if __name__=='__main__':
   if runmode=='local':
     for cmd in cmds: os.system(cmd)
   if runmode=='condor':
-    ct.submitCommandsAsCondorCluster('cjob_harvest_nanodqmio_submitmultiple', cmds, 
-            proxy=proxy, jobflavour='workday')
+    ct.submitCommandsAsCondorCluster('cjob_harvest_nanodqmio_submitmultiple', cmds,
+            cmssw_version=cmssw_version,
+            proxy=proxy, jobflavour=jobflavour)
