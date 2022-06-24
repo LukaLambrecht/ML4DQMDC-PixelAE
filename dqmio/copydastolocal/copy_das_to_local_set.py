@@ -39,13 +39,6 @@ if __name__=='__main__':
   runmode = args.runmode
   proxy = args.proxy
 
-  # temp
-  print(datasetname)
-  print(redirector)
-  print(outputdir)
-  print(runmode)
-  print(proxy)
-
   # make and execute the DAS client command
   print('running DAS client to find files in dataset {}...'.format(datasetname))
   dascmd = "dasgoclient -query 'file dataset={}' --limit 0".format(datasetname)
