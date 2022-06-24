@@ -168,7 +168,7 @@ the output score is the mseTop10Raw between the histograms and their reconstruct
 ### get\_confusion\_matrix  
 full signature:  
 ```text  
-def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True)  
+def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True, true_positive_label='Good', true_negative_label='Anomalous', pred_positive_label='Predicted good', pred_negative_label='Predicted anomalous', xaxlabelsize=None, yaxlabelsize=None, textsize=None, colormap='Blues', colortitle=None)  
 ```  
 comments:  
 ```text  
@@ -266,7 +266,7 @@ returns
 ### clip\_scores  
 full signature:  
 ```text  
-def clip_scores( scores )  
+def clip_scores( scores, margin=1., hard_thresholds=None )  
 ```  
 comments:  
 ```text  
@@ -275,6 +275,8 @@ clip +-inf values in scores
 -inf values in scores will be replaced by the minimim value (exclucing -inf) minus one  
 input arguments:  
 - scores: 1D numpy array  
+- margin: margin between maximum value (excluding inf) and where to put inf.  
+- hard_thresholds: tuple of values for -inf, +inf (in case the min or max cannot be determined)  
 returns  
 - array with same length as scores with elements replaced as explained above  
 ```  

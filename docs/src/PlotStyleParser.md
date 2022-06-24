@@ -15,6 +15,15 @@ comments:
 ```text  
 (no valid documentation found)  
 ```  
+### &#10551; load  
+full signature:  
+```text  
+def load(self, jsonfile)  
+```  
+comments:  
+```text  
+(no valid documentation found)  
+```  
 ### &#10551; get\_general\_plot\_options  
 full signature:  
 ```text  

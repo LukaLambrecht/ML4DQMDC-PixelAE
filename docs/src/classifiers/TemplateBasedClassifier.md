@@ -117,5 +117,23 @@ comments:
 ```text  
 classification of a collection of histograms based on their deviation from templates  
 ```  
+### &#10551; save  
+full signature:  
+```text  
+def save( self, path )  
+```  
+comments:  
+```text  
+save the classifier  
+```  
+### &#10551; load  
+full signature:  
+```text  
+def load( self, path, **kwargs )  
+```  
+comments:  
+```text  
+get a TemplateBasedClassifier instance from a pkl file  
+```  
 - - -  
   

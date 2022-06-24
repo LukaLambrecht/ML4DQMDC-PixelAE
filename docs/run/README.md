@@ -1,4 +1,9 @@
-**Run the ML4DQM functionality using the GUI**
+**Run the ML4DQM functionality using the GUI**  
+
+**!WARNING: superseded by a newer version of the GUI running in SWAN!**  
+See the folder 'runswan' as opposed to here.  
+The GUI here is not maintained (for now) and will not work anymore due to changes in the source code.  
+All information below is kept for reference but is outdated.  
 
 ### How to start the program
 The GUI cannot be run in SWAN, it needs to be run locally on your computer.  

@@ -1,28 +1,33 @@
 site_name: Documentation for the ML4DQM/DC code
 nav:
     - Home: 'index.md'
+    - dqmio:
+        - README: 'dqmio/README.md'
+        - copydastolocal:
+            - README: 'dqmio/copydastolocal/README.md'
+        - utils:
+            - README: 'dqmio/utils/README.md'
     - omsapi:
         - README: 'omsapi/README.md'
         - get_oms_data: 'omsapi/get_oms_data.md'
         - omsapi: 'omsapi/omsapi.md'
         - urls: 'omsapi/urls.md'
-    - omsinterface:
-        - README: 'omsinterface/README.md'
-        - cert: 'omsinterface/cert.md'
-        - connectiontools: 'omsinterface/connectiontools.md'
-        - get_oms_data: 'omsinterface/get_oms_data.md'
-        - omstools: 'omsinterface/omstools.md'
-        - urls: 'omsinterface/urls.md'
     - run:
         - README: 'run/README.md'
+    - runswan:
+        - README: 'runswan/README.md'
     - src:
         - DataLoader: 'src/DataLoader.md'
         - HistStruct: 'src/HistStruct.md'
+        - Model: 'src/Model.md'
+        - ModelInterface: 'src/ModelInterface.md'
         - PlotStyleParser: 'src/PlotStyleParser.md'
         - classifiers:
             - AutoEncoder: 'src/classifiers/AutoEncoder.md'
             - HistogramClassifier: 'src/classifiers/HistogramClassifier.md'
+            - LandauClassifier: 'src/classifiers/LandauClassifier.md'
             - MaxPullClassifier: 'src/classifiers/MaxPullClassifier.md'
+            - MomentClassifier: 'src/classifiers/MomentClassifier.md'
             - NMFClassifier: 'src/classifiers/NMFClassifier.md'
             - PCAClassifier: 'src/classifiers/PCAClassifier.md'
             - TemplateBasedClassifier: 'src/classifiers/TemplateBasedClassifier.md'

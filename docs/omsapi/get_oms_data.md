@@ -36,7 +36,7 @@ if needed, these parameters can be changed in the file urls.py
 ### get\_oms\_data  
 full signature:  
 ```text  
-def get_oms_data( omsapi, api_endpoint, runnb, extrafilters=[], extraargs={}, sort=None, attributes=[], limit_entries=1000)  
+def get_oms_data( omsapi, api_endpoint, runnb=None, fillnb=None, extrafilters=[], extraargs={}, sort=None, attributes=[], limit_entries=1000)  
 ```  
 comments:  
 ```text  
@@ -48,6 +48,7 @@ input arguments:
 - runnb: run number(s) to retrieve the info for,  
   either integer (for single run) or tuple or list of two elements (first run and last run)  
   (can also be None to not filter on run number but this is not recommended)  
+- fillnb: runnb but for fill number instead of run number  
 - extrafilters: list of extra filters (apart from run number),  
   each filter is supposed to be a dict of the form {'attribute_name':<name>,'value':<value>,'operator':<operator>}  
   where <name> must be a valid field name in the OMS data, <value> its value, and <operator> chosen from "EQ", "NEQ", "LT", "GT", "LE", "GE" or "LIKE"  

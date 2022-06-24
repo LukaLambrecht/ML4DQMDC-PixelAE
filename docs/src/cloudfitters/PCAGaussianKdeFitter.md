@@ -25,11 +25,20 @@ parameters
 ### &#10551; \_\_init\_\_  
 full signature:  
 ```text  
-def __init__(self, points, npcadims=2, bw_method='scott', bw_scott_factor=None)  
+def __init__(self)  
 ```  
 comments:  
 ```text  
-constructor  
+empty constructor  
+```  
+### &#10551; fit  
+full signature:  
+```text  
+def fit(self, points, npcadims=2, bw_method='scott', bw_scott_factor=None)  
+```  
+comments:  
+```text  
+fit to a set of points  
 input arguments:  
 - points: a np array of shape (npoints,ndims)  
 - npcadims: number of PCA compoments to keep  

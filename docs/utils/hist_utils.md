@@ -152,6 +152,21 @@ notes:
 ```  
   
   
+### select\_random  
+full signature:  
+```text  
+def select_random(hists, nselect=10)  
+```  
+comments:  
+```text  
+select nselect random examples from a set of histograms  
+input arguments:  
+- hists: a numpy array of shape (nhistograms, nbins) for 1D  
+         or (nhistograms, nybins, nxbins) for 2D.  
+- nselect: number of random instances to draw  
+```  
+  
+  
 ### smoothhists  
 full signature:  
 ```text  

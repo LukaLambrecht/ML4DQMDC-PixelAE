@@ -58,7 +58,7 @@ to be extended when the need arises!
 ### plot\_hists  
 full signature:  
 ```text  
-def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, xaxtitle=None, yaxtitle=None,  bkgcolor=None, bkgcmap='spring', bkgrange=None, bkgtitle=None)  
+def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, ymaxfactor=None, legendsize=None, opaque_legend=False, ticksize=None, bkgcolor=None, bkgcmap='spring', bkgrange=None, bkgtitle=None)  
 ```  
 comments:  
 ```text  
@@ -95,7 +95,7 @@ plot a number of histograms in a dataframe
 ### plot\_hists\_multi  
 full signature:  
 ```text  
-def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, caxtitle=None, caxtitlesize=None, caxtitleoffset=None, remove_underflow=False, remove_overflow=False, ylims=None, ymaxfactor=None, legendsize=None, opaque_legend=False)  
+def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1), title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, caxtitle=None, caxtitlesize=None, caxtitleoffset=None, remove_underflow=False, remove_overflow=False, ylims=None, ymaxfactor=None, legendsize=None, opaque_legend=False, ticksize=None )  
 ```  
 comments:  
 ```text  
@@ -110,7 +110,7 @@ output: tuple of figure and axis objects, that can be used to further tune the l
 ### plot\_sets  
 full signature:  
 ```text  
-def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], title=None, titlesize=None,  xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1),  remove_underflow=False, remove_overflow=False, yaxtitle=None, yaxtitlesize=None, ylims=None, ymaxfactor=None,  legendsize=None, opaque_legend=False)  
+def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[], title=None, titlesize=None,  xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1),  remove_underflow=False, remove_overflow=False, yaxtitle=None, yaxtitlesize=None, ylims=None, ymaxfactor=None,  legendsize=None, opaque_legend=False, ticksize=None)  
 ```  
 comments:  
 ```text  
@@ -140,7 +140,7 @@ input arguments:
 ### plot\_hist\_2d  
 full signature:  
 ```text  
-def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, caxrange=None)  
+def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None, ticklabelsize=None, colorticklabelsize=None, extent=None, caxrange=None)  
 ```  
 comments:  
 ```text  
@@ -241,11 +241,26 @@ input args:
 ### plot\_score\_dist  
 full signature:  
 ```text  
-def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='Signal', sigcolor='g', bcklabel='Background', bckcolor='r', title=None, titlesize=12, xaxtitle=None, xaxtitlesize=12,  yaxtitle=None, yaxtitlesize=12, legendsize=None, legendloc='best', doshow=True)  
+def plot_score_dist( scores, labels, fig=None, ax=None, nbins=20, normalize=False, siglabel='Signal', sigcolor='g', bcklabel='Background', bckcolor='r', title=None, titlesize=12, xaxtitle=None, xaxtitlesize=12,  yaxtitle=None, yaxtitlesize=12, legendsize=None, legendloc='best', ticksize=None, doshow=True)  
 ```  
 comments:  
 ```text  
 make a plot showing the distributions of the output scores for signal and background  
+```  
+  
+  
+### plot\_score\_dist\_multi  
+full signature:  
+```text  
+def plot_score_dist_multi( scores, labels=None, colors=None, fig=None, ax=None, nbins=20, normalize=False, linestyle=None, linewidth=1, title=None, titlesize=12, xaxtitle=None, xaxtitlesize=12,  yaxtitle=None, yaxtitlesize=12, legendsize=None, legendloc='best', ticksize=None, dolegend=True )  
+```  
+comments:  
+```text  
+plot the distribution of output scores for arbitrarily many sets (not limited to 'signal' and 'background')  
+input arguments:  
+- scores: list of numpy arrays of scores  
+- labels: list of legend entries for the scores, must have same length as scores or be None (no legend)  
+- colors: list of colors for the different score arrays, must have same length as scores or be None (default colors)  
 ```  
   
   
@@ -286,12 +301,45 @@ input arguments:
 ### plot\_roc  
 full signature:  
 ```text  
-def plot_roc( sig_eff, bkg_eff, auc=None, color='b', title=None, titlesize=None, xaxtitle='Background efficiency', xaxtitlesize=None, yaxtitle='Signal efficiency', yaxtitlesize=None, xaxlog=True, yaxlog=False, xlims='auto', ylims='auto', dogrid=True, doshow=True )  
+def plot_roc( sig_eff, bkg_eff, auc=None, color='b', title=None, titlesize=None, xaxtitle='Background efficiency', xaxtitlesize=None, yaxtitle='Signal efficiency', yaxtitlesize=None, xaxlog=True, yaxlog=False, xlims='auto', ylims='auto', dogrid=True, ticksize=None, doshow=True )  
 ```  
 comments:  
 ```text  
 note: automatic determination of xlims and ylims assumes log scale for x-axis and lin scale for y-axis;  
       might not work properly in other cases and ranges should be provided manually.  
+```  
+  
+  
+### plot\_confusion\_matrix  
+full signature:  
+```text  
+def plot_confusion_matrix( tp, tn, fp, fn,  true_positive_label='Good', true_negative_label='Anomalous', pred_positive_label='Predicted good', pred_negative_label='Predicted anomalous', xaxlabelsize=None, yaxlabelsize=None, textsize=None, colormap='Blues', colortitle=None )  
+```  
+comments:  
+```text  
+(no valid documentation found)  
+```  
+  
+  
+### color  
+full signature:  
+```text  
+def color(value)  
+```  
+comments:  
+```text  
+(no valid documentation found)  
+```  
+  
+  
+### valstr  
+full signature:  
+```text  
+def valstr(value)  
+```  
+comments:  
+```text  
+(no valid documentation found)  
 ```  
   
   
@@ -311,7 +359,7 @@ local copy of the same functions in autoencoder_utils.py
 ### plot\_fit\_2d  
 full signature:  
 ```text  
-def plot_fit_2d( points, fitfunc=None, logprob=False, clipprob=False,  onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,  title=None, titlesize=None, caxtitle=None, caxtitlesize=None, transparency=1 )  
+def plot_fit_2d( points, fitfunc=None, figsize=(10,8), logprob=False, clipprob=False,  onlycontour=False, xlims=5, ylims=5, onlypositive=False, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,  title=None, titlesize=None, caxtitle=None, caxtitlesize=None, caxrange=None, transparency=1, ticksize=None )  
 ```  
 comments:  
 ```text  
@@ -335,7 +383,7 @@ input arguments:
 ### plot\_fit\_2d\_clusters  
 full signature:  
 ```text  
-def plot_fit_2d_clusters( points, clusters, labels=None, colors=None,  legendsize=10, legendloc='best', legendbbox=None, **kwargs )  
+def plot_fit_2d_clusters( points, clusters, figsize=(12,8), labels=None, colors=None,  legendmarkerscale=1., legendsize=10, legendloc='best', legendbbox=None, **kwargs )  
 ```  
 comments:  
 ```text  

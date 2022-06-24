@@ -32,7 +32,7 @@ TODO: add keyword arguments to pass down to sklearn.decomposition.NMF
 ### &#10551; train  
 full signature:  
 ```text  
-def train( self, histograms, doplot=True )  
+def train( self, histograms, doplot=True, ncols=None, title=None )  
 ```  
 comments:  
 ```text  

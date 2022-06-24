@@ -21,16 +21,22 @@ parameters
 ### &#10551; \_\_init\_\_  
 full signature:  
 ```text  
-def __init__(self,points)  
+def __init__(self)  
 ```  
 comments:  
 ```text  
-constructor  
+empty constructor  
+```  
+### &#10551; fit  
+full signature:  
+```text  
+def fit(self,points)  
+```  
+comments:  
+```text  
+make the fit  
 input arguments:  
 - points: a np array of shape (npoints,ndims)  
-  note: points can also be an array or list with length 0,  
-        in that case the object is initialized empty.  
-        use this followed by the 'load' method to load a previously saved fit!  
 ```  
 ### &#10551; pdf  
 full signature:  
@@ -40,6 +46,8 @@ def pdf(self,points)
 comments:  
 ```text  
 get pdf at points  
+input arguments:  
+- points: a np array of shape (npoints,ndims)  
 ```  
 ### &#10551; save  
 full signature:  

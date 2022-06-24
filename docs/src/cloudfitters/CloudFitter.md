@@ -28,12 +28,20 @@ see also the existing examples!
 ### &#10551; \_\_init\_\_  
 full signature:  
 ```text  
-def __init__( self, points )  
+def __init__( self )  
 ```  
 comments:  
 ```text  
-default intializer  
+empty intializer  
 this is an @abstractmethod and must be overridden in any concrete deriving class!  
+```  
+### &#10551; fit  
+full signature:  
+```text  
+def fit( self, points )  
+```  
+comments:  
+```text  
 input arguments:  
 - points: 2D numpy array of shape (npoints,ndims)  
 ```  
