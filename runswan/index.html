@@ -51,6 +51,26 @@
 <li >
     <a href="../dqmio/">README</a>
 </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">copydastolocal</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../dqmio/copydastolocal/">README</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">utils</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../dqmio/utils/">README</a>
+</li>
+    </ul>
+  </li>
                                 </ul>
                             </li>
                             <li class="dropdown">
@@ -291,17 +311,16 @@
 <h3 id="how-to-start-the-program">How to start the program</h3>
 <p>Simply download the repository and open the notebook nbgui.ipynb in SWAN. </p>
 <h4 id="downloading-the-repository">Downloading the repository</h4>
-<p>Go to the <a href="https://github.com/LukaLambrecht/ML4DQM-DC">GitHub page</a> and clone or download the repository via git.<br />
+<p>See the README in the parent folder for more explanation. <br />
 Dependencies:<br />
 - All of the required dependencies are installed by default on SWAN!<br />
-To do: make list of optional dependencies that are not installed by default (e.g. imageio?)</p>
+- To do: make list of optional dependencies that are not installed by default (e.g. imageio?)</p>
 <h3 id="where-to-start">Where to start?</h3>
 <p>The starting screen of the GUI shows a number of tabs for several actions one can perform.<br />
 Usually one would start by loading a previously stored HistStruct (a structure containing all relevant histograms and classifiers) via the 'Load' tab, or create a new one via the 'New' tab. Many of the other tabs will not work if you have not loaded or created a valid HistStruct first. To create a HistStruct, the GUI expects input files in a specific format, see below.</p>
 <h3 id="input-files">Input files</h3>
 <p>Some example input files are provided on this <a href="https://cernbox.cern.ch/index.php/s/E9GzJ4WMZs3jbPd">CERNBox location</a>.<br />
-They are skimmed versions of the centrally provided csv files with monintoring elements (both 1D and 2D histograms) with a per-lumisection granularity. The central files are available on EOS: <code>/eos/project/c/cmsml4dc/ML_2020</code>.<br />
-How to produce your own skimmed input files from the centrally provided csv files is still under discussion. The code to do so is available in this repository (if run on SWAN, which has direct access to EOS). To do: update to nanoDQMIO input.</p>
+They are skimmed versions of the centrally provided (legacy) csv files with monintoring elements (both 1D and 2D histograms) with a per-lumisection granularity. The central files are available on EOS: <code>/eos/project/c/cmsml4dc/ML_2020</code>. Starting from 2022 data-taking, nanoDQMIO files are supposed to be the main central input. They can however be preprocessed into small csv files fully compatible with the legacy ones. See the main README and the folder <code>dqmio</code> in this repository for more information.  </p>
 <h3 id="the-histstruct-object">The HistStruct object</h3>
 <p>The 'HistStruct' is the central object used in this program. It contains all relevant histograms (depending on the target run, training runs and histogram types) and their respective classifiers in a structured way.  </p>
 <p>Selecting subsets of histograms, e.g. for classifier training or evaluation, is managed by using masks, which you can initialize when creating the HistStruct. There are three types of masks:<br />

@@ -51,6 +51,26 @@
 <li class="active">
     <a href="./">README</a>
 </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">copydastolocal</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="copydastolocal/">README</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">utils</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="utils/">README</a>
+</li>
+    </ul>
+  </li>
                                 </ul>
                             </li>
                             <li class="dropdown">
@@ -264,7 +284,7 @@
                                 </a>
                             </li>
                             <li >
-                                <a rel="prev" href="../omsapi/">
+                                <a rel="prev" href="copydastolocal/">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -284,12 +304,21 @@
 <p>The tools in this folder can be used to:<br />
 - read a DQMIO or nanoDQMIO files and extract the monitoring elements.<br />
 - access CMS DAS and retrieve all files in a given dataset.<br />
-- convert a collection of nanoDQMIO files to other formats, both interactively and in job submission on local T2 cluster or on lxplus (experimental).  </p>
+- convert a collection of nanoDQMIO files to other formats, both interactively and in job submission on lxplus and your local T2 cluster.  </p>
+<p>Where to start:<br />
+- The scripts <code>harvest_nanodqmio_to_*.py</code> read one or more (nano)DQMIO files, select a single monitoring element, and write it to a different format. You can run each of these scripts with the option <code>-h</code> to see the available options.<br />
+- The script <code>harvest_nanodqmio_submit.py</code> is a job submission script that wraps any of the scripts above in a Condor job. Run with the option <code>-h</code> to see the available options. 
+- The script <code>harvest_nanodqmio_submitmultiple.py</code> has similar functionality to <code>harvest_nanodqmio_submit.py</code> but you can specify multiple monitoring elements at once that will each be written to their own output file. Run with the option <code>-h</code> to see the available options.<br />
+- The folder <code>copydastolocal</code> contains a few scripts to copy remote files or even entire datasets to a local directory, to be used as a backup in case the remote file reading does not work. See the <code>README</code> there for more info. 
+- The folder <code>jsons</code> contains an example json file needed as input for <code>harvest_nanodqmio_submitmultiple.py</code>, specifying the monitoring elements to read and their respective output files. You can put your own files with the monitoring elements of your choice in the same directory and specify the file as an input argument to <code>harvest_nanodqmio_submitmultiple.py</code>.<br />
+- The folder <code>src</code> contains the actual (nano)DQMIO reader class and some other tools. You would probably not need to go here unless you found a bug.
+- The folder 'test' contains some testing notebooks that can run e.g. on SWAN. Not needed anymore.  </p>
 <p>Things to keep in mind when trying to read files from DAS:<br />
-- You will need a valid grid certificate. Create one using <code>voms-proxy-init --voms cms</code>.  </p>
+- You will need a valid grid certificate. Create one using <code>voms-proxy-init --voms cms</code>.<br />
+- The scripts in this folder should contain the correct export command. If you still get an error concerning X509_USER_PROXY, you can run the command <code>export X509_USER_PROXY=path</code> (where <code>path</code> should be replaced by the path to where you stored the proxy created in the previous step) and try again.</p>
 <p>Special instructions for job submission:<br />
-- You will need a valid grid certificate if accessing DAS files (see above).<br />
-- Copy the proxy to a location that is accessible from the cluster nodes (e.g. somewhere in you home folder) and make sure to set the path to it correctly in the submission script.</p></div>
+- You will need a valid grid certificate if accessing remote files via DAS (see above). Copy the proxy to a location that is accessible from the cluster nodes (e.g. somewhere in you home folder) and make sure to pass the path to it as the <code>proxy</code> argument to the job submission script.<br />
+- You might also need to set a CMSSW environment, depending on the configuration of your cluster. At least on lxplus this appears to be needed. You can do this using the <code>cmssw</code> argument to the job submission script.  </p></div>
         </div>
 
         <footer class="col-md-12">
