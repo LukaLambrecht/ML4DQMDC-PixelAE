@@ -113,5 +113,5 @@ if __name__=='__main__':
     for cmd in cmds: os.system(cmd)
   if runmode=='condor':
     ct.submitCommandsAsCondorCluster('cjob_harvest_nanodqmio_submitmultiple', cmds,
-            cmssw_version=cmssw_version,
+            home='auto', cmssw_version=cmssw_version,
             proxy=proxy, jobflavour=jobflavour)
