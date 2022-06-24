@@ -8,22 +8,43 @@
 ### imports
 import sys
 import os
+import argparse
 sys.path.append('../../jobsubmission')
 import condortools as ct
 
 if __name__=='__main__':
 
-  # definitions
-  datasetname = '/MinimumBias/Commissioning2021-900GeVmkFit-v2/DQMIO'
-  # (name of the data set on DAS)
-  redirector = 'root://cms-xrd-global.cern.ch/'
-  # (redirector used to access remote files)
-  outputdir = 'auto'
-  # (path to output folder; can use 'auto' to make a name based on datasetname)
-  runmode = 'condor'
-  # (choose from 'condor' or 'local')
-  proxy = os.path.abspath('x509up_u23078')
-  # (set the location of a valid proxy created with --voms-proxy-init --voms cms)
+  # read arguments
+  parser = argparse.ArgumentParser(description='Copy dataset from DAS to local')
+  parser.add_argument('--datasetname',
+                      help='Full name of the dataset, as displayed on DAS')
+  parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
+                      help='Redirector to read remote files')
+  parser.add_argument('--outputdir', default=os.path.abspath('.'),
+                      help='Local directory where to put the copied file;'
+                           ' use "auto" to make a name based on datasetname')
+  parser.add_argument('--runmode', default='condor',
+                      help='Choose from "condor" or "local";'
+                           +' in case of "condor", will submit job to condor cluster;'
+                           +' in case of "local", will run interactively in the terminal.')
+  parser.add_argument('--proxy', default=os.path.abspath('x509up_u116295'),
+                      help='Set the location of a valid proxy created with'
+                           +' "--voms-proxy-init --voms cms";'
+                           +' needed for DAS client;'
+                           +' ignored if filemode is "local".')
+  args = parser.parse_args()
+  datasetname = args.datasetname
+  redirector = args.redirector
+  outputdir = args.outputdir
+  runmode = args.runmode
+  proxy = args.proxy
+
+  # temp
+  print(datasetname)
+  print(redirector)
+  print(outputdir)
+  print(runmode)
+  print(proxy)
 
   # make and execute the DAS client command
   print('running DAS client to find files in dataset {}...'.format(datasetname))
