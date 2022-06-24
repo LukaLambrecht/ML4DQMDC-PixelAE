@@ -4,10 +4,10 @@
 Simply download the repository and open the notebook nbgui.ipynb in SWAN. 
 
 #### Downloading the repository
-Go to the [GitHub page](https://github.com/LukaLambrecht/ML4DQM-DC) and clone or download the repository via git.  
+See the README in the parent folder for more explanation.   
 Dependencies:  
 - All of the required dependencies are installed by default on SWAN!  
-To do: make list of optional dependencies that are not installed by default (e.g. imageio?)
+- To do: make list of optional dependencies that are not installed by default (e.g. imageio?)
 
 ### Where to start?
 The starting screen of the GUI shows a number of tabs for several actions one can perform.  
@@ -15,8 +15,7 @@ Usually one would start by loading a previously stored HistStruct (a structure c
 
 ### Input files
 Some example input files are provided on this [CERNBox location](https://cernbox.cern.ch/index.php/s/E9GzJ4WMZs3jbPd).  
-They are skimmed versions of the centrally provided csv files with monintoring elements (both 1D and 2D histograms) with a per-lumisection granularity. The central files are available on EOS: `/eos/project/c/cmsml4dc/ML_2020`.  
-How to produce your own skimmed input files from the centrally provided csv files is still under discussion. The code to do so is available in this repository (if run on SWAN, which has direct access to EOS). To do: update to nanoDQMIO input.
+They are skimmed versions of the centrally provided (legacy) csv files with monintoring elements (both 1D and 2D histograms) with a per-lumisection granularity. The central files are available on EOS: `/eos/project/c/cmsml4dc/ML_2020`. Starting from 2022 data-taking, nanoDQMIO files are supposed to be the main central input. They can however be preprocessed into small csv files fully compatible with the legacy ones. See the main README and the folder `dqmio` in this repository for more information.  
 
 ### The HistStruct object
 The 'HistStruct' is the central object used in this program. It contains all relevant histograms (depending on the target run, training runs and histogram types) and their respective classifiers in a structured way.  
