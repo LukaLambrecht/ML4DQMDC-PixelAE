@@ -116,6 +116,10 @@ if __name__=='__main__':
   if runmode=='local':
     for cmd in cmds: os.system(cmd)
   if runmode=='condor':
-    ct.submitCommandsAsCondorCluster('cjob_harvest_nanodqmio_submitmultiple', cmds,
+    # note: cannot use submitCommandsAsCondorCluster since there too many arguments...
+    # instead, need to create a separate job for each.
+    # to do: see if there is a better workaround.
+    for cmd in cmds:
+        ct.submitCommandAsCondorJob('cjob_harvest_nanodqmio_submitmultiple', cmd,
             home='auto', cmssw_version=cmssw_version,
             proxy=proxy, jobflavour=jobflavour)
