@@ -8,6 +8,7 @@ import sys
 import os
 import json
 import argparse
+from fnmatch import fnmatch
 sys.path.append('../src')
 from DQMIOReader import DQMIOReader
 import tools
@@ -29,10 +30,15 @@ if __name__=='__main__':
                              +' "--voms-proxy-init --voms cms";'
                              +' needed for DAS client;'
                              +' ignored if filemode is "local".')
+  parser.add_argument('--searchkey', default=None,
+                       help='Provide a search key to filter the results;'
+                            +' only results matching the searchkey will be shown;'
+                            +' may contain unix-style wildcards.')
   args = parser.parse_args()
   filemode = args.filemode
   filename = args.filename
   redirector = args.redirector
+  searchkey = args.searchkey
   proxy = None if args.proxy is None else os.path.abspath(args.proxy)
 
   # print arguments
@@ -55,5 +61,11 @@ if __name__=='__main__':
   reader = DQMIOReader(*[filename])
   print('initialized DQMIOReader with following properties')
   print('number of lumisections: {}'.format(len(reader.listLumis())))
-  print('number of monitoring elements per lumisection: {}'.format(len(reader.listMEs())))
-  for el in reader.listMEs(): print('  - {}'.format(el))
+  menames = reader.listMEs()
+  if searchkey is not None:
+    res = []
+    for mename in menames:
+      if fnmatch(mename,searchkey): res.append(mename)
+    menames = res
+  print('number of monitoring elements per lumisection: {}'.format(len(menames)))
+  for el in menames: print('  - {}'.format(el))

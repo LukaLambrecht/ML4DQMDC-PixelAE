@@ -3,10 +3,10 @@
   "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_2": "output_chargeInner_PXLayer_2.csv",
   "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_3": "output_chargeInner_PXLayer_3.csv",
   "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_4": "output_chargeInner_PXLayer_4.csv",
-  "PixelPhase1/Tracks/PXBarrel/charge_PXDisk_+1": "output_charge_PXDisk_+1.csv",
-  "PixelPhase1/Tracks/PXBarrel/charge_PXDisk_+2": "output_charge_PXDisk_+2.csv",
-  "PixelPhase1/Tracks/PXBarrel/charge_PXDisk_+3": "output_charge_PXDisk_+3.csv",
-  "PixelPhase1/Tracks/PXBarrel/charge_PXDisk_-1": "output_charge_PXDisk_-1.csv",
-  "PixelPhase1/Tracks/PXBarrel/charge_PXDisk_-2": "output_charge_PXDisk_-2.csv",
-  "PixelPhase1/Tracks/PXBarrel/charge_PXDisk_-3": "output_charge_PXDisk_-3.csv"
+  "PixelPhase1/Tracks/PXForward/charge_PXDisk_+1": "output_charge_PXDisk_+1.csv",
+  "PixelPhase1/Tracks/PXForward/charge_PXDisk_+2": "output_charge_PXDisk_+2.csv",
+  "PixelPhase1/Tracks/PXForward/charge_PXDisk_+3": "output_charge_PXDisk_+3.csv",
+  "PixelPhase1/Tracks/PXForward/charge_PXDisk_-1": "output_charge_PXDisk_-1.csv",
+  "PixelPhase1/Tracks/PXForward/charge_PXDisk_-2": "output_charge_PXDisk_-2.csv",
+  "PixelPhase1/Tracks/PXForward/charge_PXDisk_-3": "output_charge_PXDisk_-3.csv"
 }
