@@ -46,7 +46,6 @@ MonitorElement = namedtuple('MonitorElement', ['run', 'lumi', 'name', 'type', 'd
 # - the full name of the monitoring element
 # - the type (e.g. TH1F, TH2F, etc., see function getMEType below for all allowed types)
 # - the actual data
-NTHREADS=4 # not sure how high this can be put...
 
 def extractdatafromROOT(x, hist2array=False):
     ### extract ROOT-type data into useful formats, depending on the data type
@@ -78,6 +77,7 @@ class DQMIOReader:
     # - indexlist: separate list of index keys for sortability in python2.
     # - medict: dict containing all available monitor element names matched to their type.
     # - melist: separate list of medict keys for sortabiltiy in python2.
+    # - nthreads: number of threads for multithreaded processing.
     
     @staticmethod # (needed in python 2, not in python 3)
     def getMEType(metype):
@@ -112,13 +112,16 @@ class DQMIOReader:
         #                 (by run and lumisection number in ascending order).
         #   -- sortmes: bool (default False) whether or not to sort the ME names
         #               (alphabetically)
+        #   -- nthreads: int (default 4) for number of threads
 
         # check arguments
         sortindex = False
         sortmes = False
+        self.nthreads = 4
         for key,val in kwargs.items():
             if( key=='sortindex' and val ): sortindex = True
             elif( key=='sortmes' and val ): sortmes = True
+            elif( key=='nthreads' ): self.nthreads = int(val)
             else:
                 raise Exception('ERROR in DQMIOReader.__init__:'
                                +' unrecognized keyword argument "{}"'.format(key))
@@ -163,7 +166,7 @@ class DQMIOReader:
                 firstidx, lastidx = idxtree.FirstIndex, idxtree.LastIndex
                 e = IndexEntry(run, lumi, metype, f, firstidx, lastidx)
                 self.index[(run, lumi)].append(e)
-        p = ThreadPool(NTHREADS)
+        p = ThreadPool(self.nthreads)
         p.map(readfileidx, self.rootfiles)
         p.close()
         # convert the defaultdict to a regular dict
@@ -403,7 +406,7 @@ class DQMIOReader:
             # note: for internal use in getSingleMEs only, do not call.
             return [readlumi(lumi) for lumi in files[f]]
                              
-        p = ThreadPool(NTHREADS)
+        p = ThreadPool(self.nthreads)
         result = p.map(readfile, files.keys())
         p.close()
         return sum(result, [])

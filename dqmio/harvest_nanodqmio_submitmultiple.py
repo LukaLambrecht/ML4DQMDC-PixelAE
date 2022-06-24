@@ -22,7 +22,7 @@ if __name__=='__main__':
 
   # read arguments
   parser = argparse.ArgumentParser(description='Harvest nanoDQMIO to CSV')
-  parser.add_argument('--harvester', default='harvest_nanodqmio_to_csv.py',
+  parser.add_argument('--harvester', required=True,
                         help='Harvester to run, should be a valid python script'
                              +' similar in structure and command line args to'
                              +' e.g. harvest_nanodqmio_to_csv.py.')
@@ -36,8 +36,7 @@ if __name__=='__main__':
                               +' belonging to the specified dataset from DAS;'
                               +' in case of "local", will read all files'
                               +' in the specified folder on the local filesystem.')
-  parser.add_argument('--datasetname',
-                        default='/MinimumBias/Commissioning2021-900GeVmkFit-v2/DQMIO',
+  parser.add_argument('--datasetname', required=True,
                         help='Name of the data set on DAS (or filemode "das"'
                              +' OR name of the folder holding input files (for filemode "local"'
                              +' OR comma-separated list of file names'
@@ -47,10 +46,10 @@ if __name__=='__main__':
   parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
                         help='Redirector used to access remote files'
                              +' (ignored in filemode "local").')
-  parser.add_argument('--menames', default='jsons/menames_example.json',
+  parser.add_argument('--menames', required=True,
                         help='Json file holding a dict with the name of the monitoring element to store'
                              +' mapped to their output files.')
-  parser.add_argument('--proxy', default=os.path.abspath('x509up_u116295'),
+  parser.add_argument('--proxy', default=None,
                         help='Set the location of a valid proxy created with'
                              +' "--voms-proxy-init --voms cms";'
                              +' needed for DAS client;'
@@ -70,10 +69,15 @@ if __name__=='__main__':
   datasetname = args.datasetname
   redirector = args.redirector
   menames = args.menames
-  proxy = args.proxy
-  cmssw_version = args.cmssw
+  proxy = None if args.proxy is None else os.path.abspath(args.proxy)
+  cmssw_version = None if args.cmssw is None else os.path.abspath(args.cmssw)
   jobflavour = args.jobflavour
   istest = args.istest
+
+  # print arguments
+  print('Running with following configuration:')
+  for arg in vars(args):
+    print('  - {}: {}'.format(arg,getattr(args,arg)))
 
   # read the ME names and output files
   with open(menames, 'r') as f:

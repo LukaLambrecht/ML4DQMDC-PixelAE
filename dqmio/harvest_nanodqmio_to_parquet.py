@@ -19,15 +19,14 @@ import tools
 if __name__=='__main__':
 
   # read arguments
-  parser = argparse.ArgumentParser(description='Harvest nanoDQMIO to CSV')
+  parser = argparse.ArgumentParser(description='Harvest nanoDQMIO to parquet')
   parser.add_argument('--filemode', choices=['das','local'], default='das',
                         help='Choose from "das" or "local";'
                               +' in case of "das", will read all files'
                               +' belonging to the specified dataset from DAS;'
                               +' in case of "local", will read all files'
                               +' in the specified folder on the local filesystem.')
-  parser.add_argument('--datasetname',
-                        default='/MinimumBias/Commissioning2021-900GeVmkFit-v2/DQMIO',
+  parser.add_argument('--datasetname', required=True,
                         help='Name of the data set on DAS (or filemode "das"'
                              +' OR name of the folder holding input files (for filemode "local"'
                              +' OR comma-separated list of file names'
@@ -37,11 +36,11 @@ if __name__=='__main__':
   parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
                         help='Redirector used to access remote files'
                              +' (ignored in filemode "local").')
-  parser.add_argument('--mename', default='PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_1',
+  parser.add_argument('--mename', required=True,
                         help='Name of the monitoring element to store.')
   parser.add_argument('--outputfile', default='test.csv',
                         help='Path to output file.')
-  parser.add_argument('--proxy', default=os.path.abspath('x509up_u116295'),
+  parser.add_argument('--proxy', default=None,
                         help='Set the location of a valid proxy created with'
                              +' "--voms-proxy-init --voms cms";'
                              +' needed for DAS client;'
@@ -54,8 +53,13 @@ if __name__=='__main__':
   redirector = args.redirector
   mename = args.mename
   outputfile = args.outputfile
-  proxy = args.proxy
+  proxy = None if args.proxy is None else os.path.abspath(args.proxy)
   istest = args.istest
+
+  # print arguments
+  print('Running with following configuration:')
+  for arg in vars(args):
+    print('  - {}: {}'.format(arg,getattr(args,arg)))
 
   # export the proxy
   if filemode=='das': tools.export_proxy( proxy )
