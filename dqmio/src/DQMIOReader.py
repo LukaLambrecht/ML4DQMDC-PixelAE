@@ -469,7 +469,7 @@ class DQMIOReader:
             dfdict['fromlumi'].append(me.lumi)
             dfdict['hname'].append(me.name)
             dfdict['metype'].append(me.type)
-            dfdict['histo'].append(histo)
+            dfdict['histo'].append(list(histo))
             dfdict['entries'].append(int(np.sum(histo)))
             dfdict['Xmax'].append(xmax)
             dfdict['Xmin'].append(xmin)
