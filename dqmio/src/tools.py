@@ -27,6 +27,9 @@ def format_input_files( datasetname,
   runfilesearch = True
   if ',' in datasetname: runfilesearch = False
 
+  # parse the provided redirector
+  redirector = redirector.rstrip('/')+'/'
+
   # make a list of input files
   if runfilesearch:
     # make a list of input files based on provided directory or dataset name,
@@ -39,7 +42,6 @@ def format_input_files( datasetname,
       dasfiles = [el.strip(' \t') for el in dasstdout.strip('\n').split('\n')]
       print('DAS client ready; found following files ({}):'.format(len(dasfiles)))
       for f in dasfiles: print('  - {}'.format(f))
-      redirector = redirector.rstrip('/')+'/'
       inputfiles = [redirector+f for f in dasfiles]
     elif filemode=='local':
       # read all root files in the given directory
@@ -48,6 +50,12 @@ def format_input_files( datasetname,
   else:
     # parse the provided comma-separated list into a list
     inputfiles = [el for el in datasetname.split(',') if len(el)!=0]
+    if( filemode=='das' and redirector is not None ):
+      for i,inputfile in enumerate(inputfiles):
+        # check if the file name has a redirector already
+        if 'root://cms-xrd' in inputfile: continue
+        # add the redirector
+        inputfiles[i] = redirector+inputfile
 
   # check number of input files
   if len(inputfiles)==0:
