@@ -130,6 +130,7 @@ def calculate_roc(scores, labels, scoreax):
 
 def get_roc(scores, labels, mode='lin', npoints=100, doprint=False, 
             doplot=True, doshow=True,
+            bootstrap_samples=None, bootstrap_size=None,
             returneffs=False ):
     ### make a ROC curve
     # input arguments:
@@ -148,15 +149,26 @@ def get_roc(scores, labels, mode='lin', npoints=100, doprint=False,
     # - doprint: boolean whether to print score thresholds and corresponding signal and background efficiencies
     # - doplot: boolean whether to make a plot
     # - doshow: boolean whether to call plt.show
+    # - bootstrap_samples: number of bootstrap samples to assess uncertainty on ROC curve
+    #                      (default: no bootstrapping)
+    # - bootstrap_size: size of each bootstrap sample (default: same size as scores, i.e. full sample size)
+    #   note: the bootstrapping method can be used to assess the uncertainty on the ROC curve,
+    #         by recalculating it several times on samples drawn from the test set with replacement;
+    #         the resulting uncertainty as calculated here does not include contributions from varying the training set!
     # - returneffs: boolean whether to return the signal and background efficiencies
     # returns:
     # - if returneffs is False, only the AUC value is returned
     # - if returneffs is True, the return type is a tuple of the form (auc,sigeff,bckeff)
     
+    # argument checking and parsing
     mlist = ['lin','geom','full']
     if not mode in mlist:
         raise Exception('ERROR in autoencoder_utils.py / get_roc: mode {} not recognized;'.format(mode)
                        +' options are: {}'.format(mlist))
+    dobootstrap = False
+    if bootstrap_samples is not None:
+        dobootstrap = True
+        bootstrap_samples = int(bootstrap_samples)
     
     if mode=='full':
         scoreax = np.sort(scores)
@@ -175,12 +187,39 @@ def get_roc(scores, labels, mode='lin', npoints=100, doprint=False,
         scoremax = np.amax(scores)+1e-7
         scoreax = np.geomspace(scoremin,scoremax,num=npoints)
     
-    # calculated signal and background efficencies
+    # calculate signal and background efficencies
     (sig_eff,bkg_eff) = calculate_roc( scores, labels, scoreax )
+    sig_eff_unc = None
+    
+    # do bootstrapping if requested
+    if dobootstrap:
+        # parse the provided bootstrap sample size
+        if bootstrap_size is None: bootstrap_size = len(scores)
+        print('calculating ROC curve on {} bootstrap samples of size {}'.format(bootstrap_samples,bootstrap_size))
+        # set the x-axis to which the result for each sample will be interpolated
+        interpolation_axis = bkg_eff
+        # loop over number of bootstrap samples
+        bsigeffs = np.zeros((bootstrap_samples,len(interpolation_axis)))
+        for i in range(bootstrap_samples):
+            # draw a sample
+            inds = np.random.randint(0, len(scores), size=bootstrap_size)
+            bscores = scores[inds]
+            blables = labels[inds]
+            # calculate the roc curve for this sample
+            (bsigeff, bbkgeff) = calculate_roc( bscores, blables, scoreax )
+            # interpolate to common x-axis
+            # note: np.interp requires increasing arrays so need some additional slicing
+            bsigeff = np.interp( interpolation_axis[::-1], bbkgeff[::-1], bsigeff[::-1] )[::-1]
+            # store result
+            bsigeffs[i,:] = bsigeff
+        # average the results
+        sig_eff = np.mean(bsigeffs, axis=0)
+        sig_eff_unc = np.std(bsigeffs, axis=0)
+        bkg_eff = interpolation_axis
     
     # print results if requested
     if doprint:
-        print('calculating roc curve:')
+        print('calculated roc curve:')
         for i in range(len(scoreax)):
             #print('  threshold: {:.4e}, signal: {:.4f}, background: {:.4f}'.format(scoreax[i],sig_eff[i],bkg_eff[i]))
             print('  threshold: {}, signal: {}, background: {}'.format(scoreax[i],sig_eff[i],bkg_eff[i]))
@@ -190,13 +229,13 @@ def get_roc(scores, labels, mode='lin', npoints=100, doprint=False,
   
     # make a plot if requested
     if doplot:
-        plot_utils.plot_roc( sig_eff, bkg_eff, auc=auc,
+        plot_utils.plot_roc( sig_eff, bkg_eff, auc=auc, sig_eff_unc=sig_eff_unc,
                       xaxtitle='Fraction of good histograms flagged as anomalous', xaxtitlesize=12,
                       yaxtitle='Fraction of bad histograms flagged as anomalous', yaxtitlesize=12,
                       doshow=doshow )
         
     # return the result
-    if returneffs: return (auc, sig_eff, bkg_eff)
+    if returneffs: return (auc, sig_eff, bkg_eff, sig_eff_unc)
     else: return auc
 
 def get_roc_from_hists(hists, labels, predicted_hists, mode='lin', npoints=100, doprint=False, doplot=True, plotmode='classic'):

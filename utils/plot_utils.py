@@ -512,10 +512,12 @@ def plot_distance(dists, ls=None, rmlargest=0., doplot=True,
 
 ### plot model loss as a function of training epoch
 # credits to Francesco for this function
-def plot_loss(data, xlims=None,
+def plot_loss(data,
+              loss_key='loss', val_loss_key='val_loss',
               title=None, titlesize=None, 
               xaxtitle='Epoch', xaxtitlesize=None, 
               yaxtitle='Loss', yaxtitlesize=None,
+              xlims=None, yaxlog=True,
               legendsize=None, legendloc='best',
               doshow=True):
     ### plot the training and validation loss of a keras/tensorflow model
@@ -523,10 +525,12 @@ def plot_loss(data, xlims=None,
     # - data: the object returned by the .fit method when called upon a keras model
     # - other: plot layout options
     fig,ax = plt.subplots()
-    ax.plot(data.history['loss'], linestyle=(0,()), color="#1A237E", linewidth=3, label='Training')
-    ax.plot(data.history['val_loss'], linestyle=(0,(3,2)), color="#4DB6AC", linewidth=3, label='Validation')
+    if loss_key is not None: 
+        ax.plot(data.history[loss_key], linestyle=(0,()), color="#1A237E", linewidth=3, label='Training')
+    if val_loss_key is not None:
+        ax.plot(data.history[val_loss_key], linestyle=(0,(3,2)), color="#4DB6AC", linewidth=3, label='Validation')
     ax.legend(loc=legendloc, fontsize=legendsize)
-    ax.set_yscale('log')
+    if yaxlog: ax.set_yscale('log')
     if xlims is not None: ax.set_xlim(xlims)
     if title is not None: ax.set_title(title, fontsize=legendsize)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
@@ -728,7 +732,7 @@ def plot_metric( wprange, metric, label=None, color=None,
     ax2.set_ylim( (ymin, ymax*ymaxfactor) )
     return (fig,ax,ax2)
 
-def plot_roc( sig_eff, bkg_eff, auc=None,
+def plot_roc( sig_eff, bkg_eff, auc=None, sig_eff_unc=None,
               color='b',
               title=None, titlesize=None,
               xaxtitle='Background efficiency', xaxtitlesize=None,
@@ -739,8 +743,24 @@ def plot_roc( sig_eff, bkg_eff, auc=None,
     # note: automatic determination of xlims and ylims assumes log scale for x-axis and lin scale for y-axis;
     #       might not work properly in other cases and ranges should be provided manually.
     fig,ax = plt.subplots()
-    # general
+    # in case of log scale plots, remove problematic points
+    if xaxlog:
+        inds = np.nonzero(bkg_eff)
+        bkg_eff = bkg_eff[inds]
+        sig_eff = sig_eff[inds]
+        if sig_eff_unc is not None: sig_eff_unc = sig_eff_unc[inds]
+    if yaxlog:
+        inds = np.nonzero(sig_eff)
+        bkg_eff = bkg_eff[inds]
+        sig_eff = sig_eff[inds]
+        if sig_eff_unc is not None: sig_eff_unc = sig_eff_unc[inds]
+    # plot the actual curve
     ax.scatter(bkg_eff, sig_eff, color=color)
+    # plot uncertainty bands
+    if sig_eff_unc is not None:
+        ax.fill_between(bkg_eff, sig_eff - sig_eff_unc, sig_eff + sig_eff_unc,
+                        color=color, alpha=0.25)
+    # axis settings
     if title is not None: ax.set_title(title, fontsize=titlesize)
     if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)   
