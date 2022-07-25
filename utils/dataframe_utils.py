@@ -190,7 +190,14 @@ def get_hist_values(df):
     runs = np.zeros(len(df))
     # loop over all entries
     for i in range(len(df)):
-        hist = np.array(json.loads(df.at[i,'histo']))
+        try:
+            # default encoding (with comma separation)
+            jsonstr = json.loads(df.at[i,'histo'])
+        except:
+            # alternative encoding (with space separation)
+            print(df.at[i,'histo'].replace(' ', ','))
+            jsonstr = json.loads(df.at[i,'histo'].replace(' ', ','))
+        hist = np.array(jsonstr)
         if dim==2: hist = hist.reshape((nybins,nxbins))
         vals[i,:] = hist
         ls[i] = int(df.at[i,'fromlumi'])

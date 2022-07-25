@@ -180,24 +180,30 @@ class HistStruct(object):
         
     def add_dataframe( self, df, cropslices=None, rebinningfactor=None, 
                         smoothinghalfwindow=None, smoothingweights=None,
+                        averagewindow=None, averageweights=None,
                         donormalize=True ):
         ### add a dataframe to a HistStruct
         # input arguments:
         # - df: a pandas dataframe as read from the input csv files
         # - cropslices: list of slices (one per dimension) by which to crop the histograms
+        #                see hist_utils.py / crophists for more info.
         # - rebinningfactor: factor by which to group bins together
+        #                    see hist_utils.py / rebinhists for more info.
         # - smoothinghalfwindow: half window (int for 1D, tuple for 2D) for doing smoothing of histograms
         # - smoothingweights: weight array (1D for 1D, 2D for 2D) for smoothing of histograms
+        #                     see hist_utils.py / smoothhists for more info.
+        # - averagewindow: window (int or tuple) for averaging each histogram with its neighbours
+        # - averageweights: weights for averaging each histogram with its neighbours
+        #                   see hist_utils.py / running_average_hists for more info.
         # - donormalize: boolean whether to normalize the histograms
-        # for more details on cropslices, rebinningfactor, smoothingwindow, smoothingweights
-        # and donormalize: see hist_utils.py!
+        #                see hist_utils.py / normalizehists for more info.
         # notes:
         # - the new dataframe can contain one or multiple histogram types
         # - the new dataframe must contain the same run and lumisection numbers (for each histogram type in it)
         #   as already present in the HistStruct, except if it is the first one to be added
-        # - alternative to adding the dataframe with the options cropslices, donormalize and rebinningfactor
-        #   (that will be passed down to preparedatafromdf), one can also call preparedatafromdf manually and add it
-        #   with add_histograms, allowing for more control over complicated preprocessing.
+        # - alternative to adding the dataframe with the preprocessing options, 
+        #   one can also apply the preprocessing at a later stage using the preprocess() function
+        #   with the same arguments.
         
         histnames = dfu.get_histnames(df)
         # loop over all names in the dataframe
@@ -217,6 +223,8 @@ class HistStruct(object):
                                                 rebinningfactor=rebinningfactor,
                                                 smoothinghalfwindow=smoothinghalfwindow,
                                                 smoothingweights=smoothingweights,
+                                                averagewindow=averagewindow,
+                                                averageweights=averageweights,
                                                 donormalize=donormalize)
             runnbs_all = runnbs_all.astype(int)
             lsnbs_all = lsnbs_all.astype(int)
@@ -275,6 +283,7 @@ class HistStruct(object):
 
     def preprocess( self, masknames=None, cropslices=None, rebinningfactor=None,
                     smoothinghalfwindow=None, smoothingweights=None,
+                    averagewindow=None, averageweights=None,
                     donormalize=False ):
         ### do preprocessing
         # input arguments:
@@ -293,6 +302,9 @@ class HistStruct(object):
             if smoothinghalfwindow is not None: hists = hu.smoothhists(hists, 
                                                         halfwindow=smoothinghalfwindow,
                                                         weights=smoothingweights)
+            if averagewindow is not None: hists = hu.running_average_hists(hists,
+                                                     window=averagewindow,
+                                                     weights=averageweights)
             if donormalize: hists = hu.normalizehists(hists)
             # put the histograms back in the histstruct
             if masknames is None:

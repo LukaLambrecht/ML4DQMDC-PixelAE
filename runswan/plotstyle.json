@@ -8,23 +8,31 @@
     "extratextsize": 15,
     "titledict":{
       "chargeInner_PXLayer_2": "",
-      "chargeInner_PXLayer_3": ""
+      "chargeInner_PXLayer_3": "",
+      "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_1": "",
+      "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_2": ""
     },
     "xaxtitledict":{
       "chargeInner_PXLayer_2": "Cluster charge (electrons)",
-      "chargeInner_PXLayer_3": "Cluster charge (electrons)"
+      "chargeInner_PXLayer_3": "Cluster charge (electrons)",
+      "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_1": "Cluster charge (electrons)",
+      "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_2": "Cluster charge (electrons)"
     },
     "yaxtitledict":{
       "chargeInner_PXLayer_2": "Arbitrary units",
-      "chargeInner_PXLayer_3": "Arbitrary units"
+      "chargeInner_PXLayer_3": "Arbitrary units",
+      "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_1": "Arbitrary units",
+      "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_2": "Arbitrary units"
     },
     "extratextdict":{
       "chargeInner_PXLayer_2": "Pixel barrel layer 2",
-      "chargeInner_PXLayer_3": "Pixel barrel layer 3"
+      "chargeInner_PXLayer_3": "Pixel barrel layer 3",
+      "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_1": "Pixel barrel layer 1",
+      "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_2": "Pixel barrel layer 2"
     },
     "extracmstext": "Preliminary",
     "cmstextsize": 14,
-    "conditionstext": "2017 (13 TeV)",
+    "conditionstext": "",
     "conditionstextsize": 12
   }
 }

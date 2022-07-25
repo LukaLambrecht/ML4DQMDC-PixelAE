@@ -222,7 +222,7 @@ def running_average_hists(hists, window=None, weights=None):
     # - a numpy array with same shape as input but where each histogram is replaced by its running average
     # notes:
     # - at the edges, the weights are cropped to match the input array and renormalized
-    # - this function will crash when the length of the set of histograms is smaller than the total window length,
+    # - this function will throw an error when the length of the set of histograms is smaller than the total window length,
     #   maybe extend later (although this is not normally needed)
     
     if window is None: return hists
@@ -241,18 +241,13 @@ def running_average_hists(hists, window=None, weights=None):
     avghists = np.zeros(hists.shape)
     weights = normalize([weights], norm='l1')[0]
     # first low edge
-    for i in range(window[0]):
-        thesehists = hists[0:i+1+window[1]]
-        theseweights = normalize([weights[-len(thesehists):]], norm='l1')[0]
-        avghists[i] = np.average( thesehists, weights=theseweights, axis=0 )
-    # then middle part
-    for i in range(window[0],len(avghists)-window[1]):
-        thesehists = hists[i-window[0]:i+1+window[1]]
-        avghists[i] = np.average( thesehists, weights=weights, axis=0 )
-    # finally high edge
-    for i in range(len(avghists)-window[1],len(avghists)):
-        thesehists = hists[i-window[0]:]
-        theseweights = normalize([weights[:len(thesehists)]], norm='l1')[0]
+    for i in range(len(avghists)):
+        hlower = max(i-window[0],0)
+        hupper = min(i+1+window[1],len(hists))
+        thesehists = hists[hlower:hupper]
+        wlower = max(window[0]-i,0)
+        wupper = min(len(weights)+len(hists)-window[1]-1-i,len(weights))
+        theseweights = normalize([weights[wlower:wupper]], norm='l1')[0]
         avghists[i] = np.average( thesehists, weights=theseweights, axis=0 )
     return avghists
 
@@ -407,7 +402,8 @@ def histmoments(bins, counts, orders):
 ### higher level function for automatic preprocessing of data
 
 def preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None, 
-        smoothinghalfwindow=None, smoothingweights=None, 
+        smoothinghalfwindow=None, smoothingweights=None,
+        averagewindow=None, averageweights=None,
         donormalize=True, doplot=False):
     ### read a .npy file and output the histograms
     # input arguments: 
@@ -422,6 +418,9 @@ def preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None,
     if smoothinghalfwindow is not None: hist = smoothhists(hist,
                                             halfwindow=smoothinghalfwindow,
                                             weights=smoothingweights)
+    if averagewindow is not None: hists = hu.running_average_hists(hists,
+                                                     window=averagewindow,
+                                                     weights=averageweights)
     if donormalize: hist = normalizehists(hist)
         
     if not doplot:
@@ -442,6 +441,7 @@ def preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None,
 
 def preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=None, 
         smoothinghalfwindow=None, smoothingweights=None,
+        averagewindow=None, averageweights=None,
         donormalize=False, doplot=False):
     ### prepare the data contained in a dataframe in the form of a numpy array
     # input arguments:
@@ -464,6 +464,9 @@ def preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=No
     if smoothinghalfwindow is not None: hist = smoothhists(hist,
                                             halfwindow=smoothinghalfwindow,
                                             weights=smoothingweights)
+    if averagewindow is not None: hists = hu.running_average_hists(hists,
+                                                     window=averagewindow,
+                                                     weights=averageweights)
     if donormalize: hist = normalizehists(hist)
         
     if not doplot:
@@ -487,6 +490,7 @@ def preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=No
 
 def preparedatafromcsv(dataname, returnrunls=False, cropslices=None, rebinningfactor=None, 
         smoothinghalfwindow=None, smoothingweights=None,
+        averagewindow=None, averageweights=None,
         donormalize=True, doplot=False):
     ### prepare the data contained in a dataframe csv file in the form of a numpy array
     # input arguments:
@@ -508,4 +512,6 @@ def preparedatafromcsv(dataname, returnrunls=False, cropslices=None, rebinningfa
             rebinningfactor=rebinningfactor, 
             smoothinghalfwindow=smoothinghalfwindow,
             smoothingweights=smoothingweights,
+            averagewindow=averagewindow,
+            averageweights=averageweights,
             donormalize=donormalize,doplot=doplot)
