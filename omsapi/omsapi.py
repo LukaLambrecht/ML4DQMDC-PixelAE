@@ -1,3 +1,8 @@
+# **OMS API class**
+# 
+# Copied from the OMS developers  
+
+
 # pylint: disable=W0702,R0902
 """ CMS OMS Aggregation API python client
 """

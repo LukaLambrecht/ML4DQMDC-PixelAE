@@ -147,7 +147,7 @@ returns:
 - a numpy array with same shape as input but where each histogram is replaced by its running average  
 notes:  
 - at the edges, the weights are cropped to match the input array and renormalized  
-- this function will crash when the length of the set of histograms is smaller than the total window length,  
+- this function will throw an error when the length of the set of histograms is smaller than the total window length,  
   maybe extend later (although this is not normally needed)  
 ```  
   
@@ -272,7 +272,7 @@ returns:
 ### preparedatafromnpy  
 full signature:  
 ```text  
-def preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None,  donormalize=True, doplot=False)  
+def preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None, averagewindow=None, averageweights=None, donormalize=True, doplot=False)  
 ```  
 comments:  
 ```text  
@@ -287,7 +287,7 @@ notes:
 ### preparedatafromdf  
 full signature:  
 ```text  
-def preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None, donormalize=False, doplot=False)  
+def preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None, averagewindow=None, averageweights=None, donormalize=False, doplot=False)  
 ```  
 comments:  
 ```text  
@@ -310,7 +310,7 @@ input arguments:
 ### preparedatafromcsv  
 full signature:  
 ```text  
-def preparedatafromcsv(dataname, returnrunls=False, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None, donormalize=True, doplot=False)  
+def preparedatafromcsv(dataname, returnrunls=False, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None, averagewindow=None, averageweights=None, donormalize=True, doplot=False)  
 ```  
 comments:  
 ```text  

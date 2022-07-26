@@ -1,7 +1,8 @@
-#####################################################
-# Print the available monitoring elements in a file #
-#####################################################
-# Run "python print_mes.py -h" for a list of available options.
+#!/usr/bin/env python
+
+# **Print the available monitoring elements in a file**  
+# 
+# Run with `python print_mes.py -h` for a list of available options.  
 
 ### imports
 import sys

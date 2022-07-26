@@ -1,9 +1,11 @@
-########################################
-# Copy a file from DAS to a local area #
-########################################
-# This script copies a file from DAS to a local area.
-# The parameters that need to be modified for your needs are explained below.
-# Note: check the file size first, not suitable for extremely large files.
+#!/usr/bin/env python
+
+# **Copy a file from DAS to a local area**  
+# 
+# This script copies a file from DAS to a local area.   
+# Note: check the file size first, not suitable for extremely large files.  
+# 
+# Run with `python copy_das_to_local_file.py -h` to get a list of available command line options.  
 
 ### imports
 import sys

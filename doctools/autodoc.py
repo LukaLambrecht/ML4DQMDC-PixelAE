@@ -11,10 +11,13 @@ topdir = os.path.abspath('..')
 # define top directory for the documentation, relative to project top level
 docdir = 'docs'
 # define which code directories to take into account, relative to project top level
-codedirs = sorted(['src','src/cloudfitters','src/classifiers','utils','omsapi'])
+codedirs = sorted(['src', 'src/cloudfitters', 'src/classifiers',
+                   'utils',
+                   'omsapi',
+                   'dqmio','dqmio/copydastolocal','dqmio/utils'])
 # define which other directories to take into account 
 # (copy markdown files but do not convert python files)
-otherdirs = sorted(['run', 'runswan', 'dqmio', 'dqmio/copydastolocal', 'dqmio/utils', 'tutorials'])
+otherdirs = sorted(['run', 'runswan', 'tutorials'])
 # define title for site
 sitetitle = 'Documentation for the ML4DQM/DC code'
 

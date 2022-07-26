@@ -3,10 +3,19 @@ nav:
     - Home: 'index.md'
     - dqmio:
         - README: 'dqmio/README.md'
+        - harvest_nanodqmio_submit: 'dqmio/harvest_nanodqmio_submit.md'
+        - harvest_nanodqmio_submitmultiple: 'dqmio/harvest_nanodqmio_submitmultiple.md'
+        - harvest_nanodqmio_to_csv: 'dqmio/harvest_nanodqmio_to_csv.md'
+        - harvest_nanodqmio_to_parquet: 'dqmio/harvest_nanodqmio_to_parquet.md'
+        - harvest_nanodqmio_to_root: 'dqmio/harvest_nanodqmio_to_root.md'
         - copydastolocal:
             - README: 'dqmio/copydastolocal/README.md'
+            - copy_das_to_local_file: 'dqmio/copydastolocal/copy_das_to_local_file.md'
+            - copy_das_to_local_set: 'dqmio/copydastolocal/copy_das_to_local_set.md'
         - utils:
             - README: 'dqmio/utils/README.md'
+            - print_dataset_files: 'dqmio/utils/print_dataset_files.md'
+            - print_mes: 'dqmio/utils/print_mes.md'
     - omsapi:
         - README: 'omsapi/README.md'
         - get_oms_data: 'omsapi/get_oms_data.md'

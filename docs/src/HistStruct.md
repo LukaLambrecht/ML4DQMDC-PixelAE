@@ -6,6 +6,7 @@ The HistStruct class is the main data structure used within this framework.
 A HistStruct object basically consists of a mutually consistent collection of numpy arrays,  
 where each numpy array corresponds to one histogram type, with dimensions (number of histograms, number of bins).  
 The HistStruct has functions to easily perform the following common tasks (among others):  
+
 - select a subset of runs and/or lumisections (e.g. using a custom or predefined json file formatted selector),  
 - prepare the data for machine learning training, with all kinds of preprocessing,  
 - evaluate classifiers (machine learning types or other),  
@@ -85,7 +86,7 @@ input arguments:
 ### &#10551; add\_dataframe  
 full signature:  
 ```text  
-def add_dataframe( self, df, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None, donormalize=True )  
+def add_dataframe( self, df, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None, averagewindow=None, averageweights=None, donormalize=True )  
 ```  
 comments:  
 ```text  
@@ -93,19 +94,24 @@ add a dataframe to a HistStruct
 input arguments:  
 - df: a pandas dataframe as read from the input csv files  
 - cropslices: list of slices (one per dimension) by which to crop the histograms  
+               see hist_utils.py / crophists for more info.  
 - rebinningfactor: factor by which to group bins together  
+                   see hist_utils.py / rebinhists for more info.  
 - smoothinghalfwindow: half window (int for 1D, tuple for 2D) for doing smoothing of histograms  
 - smoothingweights: weight array (1D for 1D, 2D for 2D) for smoothing of histograms  
+                    see hist_utils.py / smoothhists for more info.  
+- averagewindow: window (int or tuple) for averaging each histogram with its neighbours  
+- averageweights: weights for averaging each histogram with its neighbours  
+                  see hist_utils.py / running_average_hists for more info.  
 - donormalize: boolean whether to normalize the histograms  
-for more details on cropslices, rebinningfactor, smoothingwindow, smoothingweights  
-and donormalize: see hist_utils.py!  
+               see hist_utils.py / normalizehists for more info.  
 notes:  
 - the new dataframe can contain one or multiple histogram types  
 - the new dataframe must contain the same run and lumisection numbers (for each histogram type in it)  
   as already present in the HistStruct, except if it is the first one to be added  
-- alternative to adding the dataframe with the options cropslices, donormalize and rebinningfactor  
-  (that will be passed down to preparedatafromdf), one can also call preparedatafromdf manually and add it  
-  with add_histograms, allowing for more control over complicated preprocessing.  
+- alternative to adding the dataframe with the preprocessing options,   
+  one can also apply the preprocessing at a later stage using the preprocess() function  
+  with the same arguments.  
 ```  
 ### &#10551; add\_histograms  
 full signature:  
@@ -135,7 +141,7 @@ notes:
 ### &#10551; preprocess  
 full signature:  
 ```text  
-def preprocess( self, masknames=None, cropslices=None, rebinningfactor=None, smoothinghalfwindow=None, smoothingweights=None, donormalize=False )  
+def preprocess( self, masknames=None, cropslices=None, rebinningfactor=None, smoothinghalfwindow=None, smoothingweights=None, averagewindow=None, averageweights=None, donormalize=False )  
 ```  
 comments:  
 ```text  

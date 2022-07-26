@@ -4,6 +4,7 @@
 
 This class represents a general model for assigning a score to a lumisection.  
 It consists of two distinct parts:  
+
 - a collection of classifiers acting on individual histogramgs (one for each type).  
 - a fitter to assign a probability density to the output scores obtained in the previous step.  
 The types of histograms, classifiers, and fitter can be freely chosen.  

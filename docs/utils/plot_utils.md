@@ -212,7 +212,7 @@ comments:
 ### plot\_loss  
 full signature:  
 ```text  
-def plot_loss(data, xlims=None, title=None, titlesize=None,  xaxtitle='Epoch', xaxtitlesize=None,  yaxtitle='Loss', yaxtitlesize=None, legendsize=None, legendloc='best', doshow=True)  
+def plot_loss(data, loss_key='loss', val_loss_key='val_loss', title=None, titlesize=None,  xaxtitle='Epoch', xaxtitlesize=None,  yaxtitle='Loss', yaxtitlesize=None, xlims=None, yaxlog=True, legendsize=None, legendloc='best', doshow=True)  
 ```  
 comments:  
 ```text  
@@ -301,7 +301,7 @@ input arguments:
 ### plot\_roc  
 full signature:  
 ```text  
-def plot_roc( sig_eff, bkg_eff, auc=None, color='b', title=None, titlesize=None, xaxtitle='Background efficiency', xaxtitlesize=None, yaxtitle='Signal efficiency', yaxtitlesize=None, xaxlog=True, yaxlog=False, xlims='auto', ylims='auto', dogrid=True, ticksize=None, doshow=True )  
+def plot_roc( sig_eff, bkg_eff, auc=None, sig_eff_unc=None, color='b', title=None, titlesize=None, xaxtitle='Background efficiency', xaxtitlesize=None, yaxtitle='Signal efficiency', yaxtitlesize=None, xaxlog=True, yaxlog=False, xlims='auto', ylims='auto', dogrid=True, ticksize=None, doshow=True )  
 ```  
 comments:  
 ```text  

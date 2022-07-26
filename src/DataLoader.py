@@ -1,33 +1,39 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# **Class for loading histograms from disk into a pandas dataframe.**
+# **Class for loading histograms from disk into a pandas dataframe.**  
+# 
+# Typically, the input consists of a single file per histogram type,  
+# prepared from the nanoDQMIO format (accessed via DAS) and converted into another file format.  
+# see the tools in the 'dqmio' folder for more info on preparing the input files.  
+# Currently supported input file formats:  
+# 
+# - csv  
+# - parquet  
+# 
+# Example usage:  
+# ```  
+# from DataLoader import DataLoader  
+# dl = DataLoader()  
+# df = dl.get_dataframe_from_file( <path to input file> )  
+# ```  
 #
-# Typically, the input consists of a single file per histogram type,
-# prepared from the nanoDQMIO format (accessed via DAS) and converted into another file format.
-# see the tools in the 'dqmio' folder for more info on preparing the input files.
-# Currently supported input file formats:
-# - csv
-# - parquet
-#
-# Example usage:
-#     from DataLoader import DataLoader
-#     dl = DataLoader()
-#     df = dl.get_dataframe_from_file( <path to input file> )
-#
-# Alternatively, support is available to read the legacy per-LS csv files
-# (deprecated approach for run-II data, before nanoDQMIO in run-III).
-# In this case, the needed input consists of:
-# - a set of histogram names to load
-# - a specification in terms of eras or years
-#
-# Example usage:
-#     from DataLoader import DataLoader
-#     dl = DataLoader()
-#     csvfiles = dl.get_default_csv_files( year=<year>, dim=<histogram dimension> )
-#     df = dl.get_dataframe_from_files( csvfiles, histnames=<histogram names> )
-#
-# The output consists of a pandas dataframe containing the requested histograms.
+# Alternatively, support is available to read the legacy per-LS csv files  
+# (deprecated approach for run-II data, before nanoDQMIO in run-III).  
+# In this case, the needed input consists of:  
+# 
+# - a set of histogram names to load  
+# - a specification in terms of eras or years  
+# 
+# Example usage:  
+# ```
+# from DataLoader import DataLoader  
+# dl = DataLoader()  
+# csvfiles = dl.get_default_csv_files( year=<year>, dim=<histogram dimension> )  
+# df = dl.get_dataframe_from_files( csvfiles, histnames=<histogram names> )  
+# ```
+# 
+# The output consists of a pandas dataframe containing the requested histograms.  
 
 
 ### imports

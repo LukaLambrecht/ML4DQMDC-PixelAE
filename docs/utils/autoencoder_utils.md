@@ -122,7 +122,7 @@ output:
 ### get\_roc  
 full signature:  
 ```text  
-def get_roc(scores, labels, mode='lin', npoints=100, doprint=False,  doplot=True, doshow=True, returneffs=False )  
+def get_roc(scores, labels, mode='lin', npoints=100, doprint=False,  doplot=True, doshow=True, bootstrap_samples=None, bootstrap_size=None, returneffs=False )  
 ```  
 comments:  
 ```text  
@@ -143,6 +143,12 @@ input arguments:
 - doprint: boolean whether to print score thresholds and corresponding signal and background efficiencies  
 - doplot: boolean whether to make a plot  
 - doshow: boolean whether to call plt.show  
+- bootstrap_samples: number of bootstrap samples to assess uncertainty on ROC curve  
+                     (default: no bootstrapping)  
+- bootstrap_size: size of each bootstrap sample (default: same size as scores, i.e. full sample size)  
+  note: the bootstrapping method can be used to assess the uncertainty on the ROC curve,  
+        by recalculating it several times on samples drawn from the test set with replacement;  
+        the resulting uncertainty as calculated here does not include contributions from varying the training set!  
 - returneffs: boolean whether to return the signal and background efficiencies  
 returns:  
 - if returneffs is False, only the AUC value is returned  

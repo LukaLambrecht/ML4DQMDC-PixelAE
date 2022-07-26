@@ -7,6 +7,7 @@
 # A HistStruct object basically consists of a mutually consistent collection of numpy arrays,  
 # where each numpy array corresponds to one histogram type, with dimensions (number of histograms, number of bins).  
 # The HistStruct has functions to easily perform the following common tasks (among others):  
+# 
 # - select a subset of runs and/or lumisections (e.g. using a custom or predefined json file formatted selector),  
 # - prepare the data for machine learning training, with all kinds of preprocessing,  
 # - evaluate classifiers (machine learning types or other),  

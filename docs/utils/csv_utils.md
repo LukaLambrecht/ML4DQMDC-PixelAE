@@ -62,18 +62,22 @@ comments:
 ```text  
 read csv file into pandas dataframe  
 csv_file is the path to the csv file to be read  
+DEPRECATED, this function might be removed in the future;  
+            use DataLoader.get_dataframe_from_file instead.  
 ```  
   
   
 ### write\_csv  
 full signature:  
 ```text  
-def write_csv(dataframe,csvfilename)  
+def write_csv(dataframe, csvfilename)  
 ```  
 comments:  
 ```text  
 write a dataframe to a csv file  
 note: just a wrapper for builtin dataframe.to_csv  
+DEPRECATED, this function might be removed in the future;  
+            use DataLoader.write_dataframe_to_file instead.  
 ```  
   
   
@@ -88,6 +92,8 @@ read and merge list of csv files into a single df
 csv_files is a list of paths to files to merge into a df  
 histnames is a list of the types of histograms to keep (default: all)  
 runnbs is a list of run numbers to keep (default: all)  
+DEPRECATED, this function might be removed in the future;  
+            use DataLoader.get_dataframe_from_files instead.  
 ```  
   
   
@@ -99,6 +105,8 @@ def write_skimmed_csv(histnames, year, eras=['all'], dim=1)
 comments:  
 ```text  
 read all available data for a given year/era and make a file per histogram type  
+DEPRECATED, this function might be removed in the future;  
+            see tutorial read_and_write_data.ipynb for equivalent functionality.  
 input arguments:  
 - histnames: list of histogram names for which to make a separate file  
 - year: data-taking year (in string format)  

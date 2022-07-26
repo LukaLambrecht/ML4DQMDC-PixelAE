@@ -1,7 +1,8 @@
-####################################################
-# Get the file names belonging to a dataset on DAS #
-####################################################
-# Run "python print_dataset_files.py -h" for a list of available options.
+#!/usr/bin/env python
+
+# **Get the file names belonging to a dataset on DAS**  
+# 
+# Run with `python print_dataset_files.py -h` for a list of available options.  
 
 ### imports
 import sys

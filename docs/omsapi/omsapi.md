@@ -1,5 +1,11 @@
 # omsapi  
   
+**OMS API class**
+
+Copied from the OMS developers  
+- - -
+  
+  
 - - -
 ## [class] OMSApiException  
 comments:  
