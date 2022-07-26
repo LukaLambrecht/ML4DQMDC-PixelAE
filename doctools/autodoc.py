@@ -21,6 +21,9 @@ codedirs = sorted(['src', 'src/cloudfitters', 'src/classifiers',
 markdowndirs = sorted(['run', 'runswan'])
 # define which directories contain notebooks that should be converted
 notebookdirs = sorted(['tutorials'])
+update_notebooks = False
+# (set to False to avoid overwriting notebooks,
+#  only set to True if intend to rewrite the notebook documentation!)
 # define title for site
 sitetitle = 'Documentation for the ML4DQM/DC code'
 
@@ -42,15 +45,17 @@ if os.path.exists(os.path.join(topdir,'README.md')):
 # loop over code and other directories
 alldirs = sorted(codedirs+markdowndirs+notebookdirs)
 for codedir in alldirs:
-    # check validity of code dir and clean/make doc dir
+    # check validity of code dir
     thiscodedir = os.path.join(topdir,codedir)
     if not os.path.exists(thiscodedir):
         print('WARNING: {} is not a valid directory,'.format(thiscodedir)
                 +' it will be ignored.')
         continue
     thisdocdir = os.path.join(topdir,docdir,codedir)
-    #if not os.path.exists(thisdocdir):
-    #    os.makedirs(thisdocdir)
+    # shortcut if no update needed
+    if( codedir in notebookdirs and not update_notebooks ):
+        continue
+    # clean/create the current doc dir
     if os.path.exists(thisdocdir):
         os.system('rm -r {}'.format(thisdocdir))
     os.makedirs(thisdocdir)
@@ -85,7 +90,8 @@ for codedir in alldirs:
     # loop over notebook files and make the doc files
     if codedir in notebookdirs:
         for nbfile in nbfiles:
-            nbfiletools.ipynb_to_md( nbfile, thiscodedir, nbfile.replace('.ipynb','.md'), thisdocdir)
+            nbfiletools.ipynb_to_md_nbconvert( nbfile, thiscodedir, 
+            nbfile.replace('.ipynb','.md'), thisdocdir)
             # update yml
             ymltext += (level+1)*4*' '+'- '+nbfile.replace('.ipynb','')+': \'{}\'\n'.format(
                 os.path.join(codedir,nbfile.replace('.ipynb','.md')))

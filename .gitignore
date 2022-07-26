@@ -9,3 +9,7 @@ omsapi/clientid.py
 
 # ignore /site folder as it is automatically created with doctools
 site
+
+# ignore documentation for tutorials as it is big
+# (contains notebook output and figures)
+docs/tutorials
