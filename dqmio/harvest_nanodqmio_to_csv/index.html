@@ -337,7 +337,22 @@
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="harvest-nanodqmio-to-csv">harvest nanodqmio to csv</h1></div>
+<h1 id="harvest-nanodqmio-to-csv">harvest nanodqmio to csv</h1>
+<p><strong>A script for reading (nano)DQMIO files and storing a ME in a CSV file format</strong>  </p>
+<p>Run with <code>python harvest_nanodqmio_to_csv.py -h</code> for a list of available options.  </p>
+<p>The output is stored in a CSV file similar to the ones for the RunII legacy campaign.<br />
+The file format is targeted to be as close as possible to the RunII legacy files,<br />
+with the same columns, data types and naming conventions.<br />
+The only difference is that there are no duplicate columns.  </p>
+<p>While this file format may be far from optimal,<br />
+it has the advantage that much of the existing code was developed to run on those files,<br />
+so this is implemented to at least have the option to run on new DQMIO files <br />
+without any code change.<br />
+It was tested that the output files from this script can indeed be read correctly<br />
+by the already existing part of the framework without any code change.<br />
+Note: need to do definitive check (both for 1D and 2D) with collision data<br />
+in order to verify that the shapes are correct (hard to tell with cosmics...)  </p>
+<hr /></div>
         </div>
 
         <footer class="col-md-12">
