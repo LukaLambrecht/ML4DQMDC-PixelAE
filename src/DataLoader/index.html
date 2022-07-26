@@ -343,9 +343,11 @@
 <p>Typically, the input consists of a single file per histogram type,<br />
 prepared from the nanoDQMIO format (accessed via DAS) and converted into another file format.<br />
 see the tools in the 'dqmio' folder for more info on preparing the input files.<br />
-Currently supported input file formats:<br />
-- csv<br />
-- parquet  </p>
+Currently supported input file formats:  </p>
+<ul>
+<li>csv  </li>
+<li>parquet  </li>
+</ul>
 <p>Example usage:  </p>
 <pre><code>from DataLoader import DataLoader  
 dl = DataLoader()  
@@ -354,9 +356,11 @@ df = dl.get_dataframe_from_file( &lt;path to input file&gt; )
 
 <p>Alternatively, support is available to read the legacy per-LS csv files<br />
 (deprecated approach for run-II data, before nanoDQMIO in run-III).<br />
-In this case, the needed input consists of:<br />
-- a set of histogram names to load<br />
-- a specification in terms of eras or years  </p>
+In this case, the needed input consists of:  </p>
+<ul>
+<li>a set of histogram names to load  </li>
+<li>a specification in terms of eras or years  </li>
+</ul>
 <p>Example usage:  </p>
 <pre><code>from DataLoader import DataLoader  
 dl = DataLoader()  
