@@ -348,9 +348,11 @@
 <p>Simply download the repository and open the notebook nbgui.ipynb in SWAN. </p>
 <h4 id="downloading-the-repository">Downloading the repository</h4>
 <p>See the README in the parent folder for more explanation. <br />
-Dependencies:<br />
-- All of the required dependencies are installed by default on SWAN!<br />
-- To do: make list of optional dependencies that are not installed by default (e.g. imageio?)  </p>
+Dependencies:  </p>
+<ul>
+<li>All of the required dependencies are installed by default on SWAN!  </li>
+<li>To do: make list of optional dependencies that are not installed by default (e.g. imageio?)  </li>
+</ul>
 <h3 id="where-to-start">Where to start?</h3>
 <p>The starting screen of the GUI shows a number of tabs for several actions one can perform.<br />
 Usually one would start by loading a previously stored HistStruct (a structure containing all relevant histograms and classifiers) via the 'Load' tab, or create a new one via the 'New' tab. Many of the other tabs will not work if you have not loaded or created a valid HistStruct first. To create a HistStruct, the GUI expects input files in a specific format, see below.</p>
@@ -359,20 +361,24 @@ Usually one would start by loading a previously stored HistStruct (a structure c
 They are skimmed versions of the centrally provided (legacy) csv files with monintoring elements (both 1D and 2D histograms) with a per-lumisection granularity. The central files are available on EOS: <code>/eos/project/c/cmsml4dc/ML_2020</code>. Starting from 2022 data-taking, nanoDQMIO files are supposed to be the main central input. They can however be preprocessed into small csv files fully compatible with the legacy ones. See the main README and the folder <code>dqmio</code> in this repository for more information.  </p>
 <h3 id="the-histstruct-object">The HistStruct object</h3>
 <p>The 'HistStruct' is the central object used in this program. It contains all relevant histograms (depending on the target run, training runs and histogram types) and their respective classifiers in a structured way.  </p>
-<p>Selecting subsets of histograms, e.g. for classifier training or evaluation, is managed by using masks, which you can initialize when creating the HistStruct. There are three types of masks:<br />
-- run masks: select lumisections belonging to a given run number.<br />
-- statistics masks: select lumisections with high or low statistics. Currently the criterion is simply based on the number of histogram entries divided by the number of bins. Might be extended in the future.<br />
-- json masks: select lumisections with a custom json file in the same format as the typical so-called golden json file. Any json file in the correct format can be uploaded, which allows full flexibility in selecting lumisections.  </p>
+<p>Selecting subsets of histograms, e.g. for classifier training or evaluation, is managed by using masks, which you can initialize when creating the HistStruct. There are three types of masks:  </p>
+<ul>
+<li>run masks: select lumisections belonging to a given run number.  </li>
+<li>statistics masks: select lumisections with high or low statistics. Currently the criterion is simply based on the number of histogram entries divided by the number of bins. Might be extended in the future.  </li>
+<li>json masks: select lumisections with a custom json file in the same format as the typical so-called golden json file. Any json file in the correct format can be uploaded, which allows full flexibility in selecting lumisections.  </li>
+</ul>
 <h3 id="typical-workflow">Typical workflow</h3>
-<p>After having loaded or created a new HistStruct object, you can start the training and evaluation of histogram classifiers. A typical workflow would consist of (most of) the following steps:<br />
-- preprocessing the histograms (i.e. rebinning, normalizing and/or cropping). See the 'Preprocessing' button.<br />
-- make plots of the training set, target set and other histograms that might be relevant. See the 'Plotting' button.<br />
-- resample the training set to increase statistics (might not be needed for some types of classifiers). See the 'Resampling' button.<br />
-- adding classifiers for each histogram type. See the 'Add classifiers' button.<br />
-- train all classifiers. See the 'Train classifiers' button.<br />
-- fit a probability density function to the resulting classifier scores in order to get from a per-histogram score to a per-lumisection score. See the 'Fit' button.<br />
-- evaluate the model. See 'Evaluate model' button.<br />
-- take a closer look at some lumisections. For example in the case of an autoencoder one might be interested to compare the original histogram to its autoencoder reconstruction. Or more generally one could be interested to see what histogram types are causing the high lumisection score. See 'Plot lumisection' button.  </p>
+<p>After having loaded or created a new HistStruct object, you can start the training and evaluation of histogram classifiers. A typical workflow would consist of (most of) the following steps:  </p>
+<ul>
+<li>preprocessing the histograms (i.e. rebinning, normalizing and/or cropping). See the 'Preprocessing' button.  </li>
+<li>make plots of the training set, target set and other histograms that might be relevant. See the 'Plotting' button.  </li>
+<li>resample the training set to increase statistics (might not be needed for some types of classifiers). See the 'Resampling' button.  </li>
+<li>adding classifiers for each histogram type. See the 'Add classifiers' button.  </li>
+<li>train all classifiers. See the 'Train classifiers' button.  </li>
+<li>fit a probability density function to the resulting classifier scores in order to get from a per-histogram score to a per-lumisection score. See the 'Fit' button.  </li>
+<li>evaluate the model. See 'Evaluate model' button.  </li>
+<li>take a closer look at some lumisections. For example in the case of an autoencoder one might be interested to compare the original histogram to its autoencoder reconstruction. Or more generally one could be interested to see what histogram types are causing the high lumisection score. See 'Plot lumisection' button.  </li>
+</ul>
 <h3 id="example-usage">Example usage</h3>
 <p>Some examples on how to use the GUI are put in slides and collected on this <a href="https://cernbox.cern.ch/index.php/s/QEUAG7eKmgSeRns">CERNBox location</a>. To do: update!  </p></div>
         </div>

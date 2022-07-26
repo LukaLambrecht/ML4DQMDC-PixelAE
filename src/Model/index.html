@@ -342,10 +342,12 @@
 <h1 id="model">Model</h1>
 <p><strong>Model: grouping classifiers for different histogram types</strong>  </p>
 <p>This class represents a general model for assigning a score to a lumisection.<br />
-It consists of two distinct parts:<br />
-- a collection of classifiers acting on individual histogramgs (one for each type).<br />
-- a fitter to assign a probability density to the output scores obtained in the previous step.<br />
-The types of histograms, classifiers, and fitter can be freely chosen.  </p>
+It consists of two distinct parts:  </p>
+<ul>
+<li>a collection of classifiers acting on individual histogramgs (one for each type).  </li>
+<li>a fitter to assign a probability density to the output scores obtained in the previous step.<br />
+The types of histograms, classifiers, and fitter can be freely chosen.  </li>
+</ul>
 <p>This class does not contain the histograms or other data; it only contains the classifiers and fitter.<br />
 Use the derived class ModelInterface to make the bridge between a HistStruct (holding the data)<br />
 and a Model (holding the classifiers and fitter).  </p>

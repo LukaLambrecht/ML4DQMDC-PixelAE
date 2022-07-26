@@ -345,11 +345,13 @@
 <p>The HistStruct class is the main data structure used within this framework.<br />
 A HistStruct object basically consists of a mutually consistent collection of numpy arrays,<br />
 where each numpy array corresponds to one histogram type, with dimensions (number of histograms, number of bins).<br />
-The HistStruct has functions to easily perform the following common tasks (among others):<br />
-- select a subset of runs and/or lumisections (e.g. using a custom or predefined json file formatted selector),<br />
-- prepare the data for machine learning training, with all kinds of preprocessing,<br />
-- evaluate classifiers (machine learning types or other),<br />
-- go from per-histogram scores to per-lumisection scores.  </p>
+The HistStruct has functions to easily perform the following common tasks (among others):  </p>
+<ul>
+<li>select a subset of runs and/or lumisections (e.g. using a custom or predefined json file formatted selector),  </li>
+<li>prepare the data for machine learning training, with all kinds of preprocessing,  </li>
+<li>evaluate classifiers (machine learning types or other),  </li>
+<li>go from per-histogram scores to per-lumisection scores.  </li>
+</ul>
 <p>When only processing a single histogram type, the HistStruct might be a bit of an overkill.<br />
 One could instead choose to operate on the dataframe directly.<br />
 However, especially when using multiple histogram types, the HistStruct is very handy to keep everything consistent.  </p>

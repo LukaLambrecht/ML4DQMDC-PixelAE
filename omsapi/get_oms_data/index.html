@@ -345,15 +345,17 @@
 <p>How to use?<br />
 Check the readme file in this directory for the required setup!<br />
 In particular, you will need an application ID and client secret to authenticate.  </p>
-<p>Once this is ready, you can do the following:<br />
-- Import this module, for example via <code>from get_oms_data import get_oms_api, get_oms_data, get_oms_response_attribute</code><br />
-- Create an instance of the OMS API class using <code>omsapi = get_oms_api()</code><br />
-  This instance can be re-used for all consecutive calls to OMS, no need to recreate it for every call.<br />
-- Make a call to <code>get_oms_data</code>, where the first argument is the instance you just created.<br />
-  Other arguments: see the function documentation below.<br />
-- The returned object is a complicated dictionary containing all information.<br />
+<p>Once this is ready, you can do the following:  </p>
+<ul>
+<li>Import this module, for example via <code>from get_oms_data import get_oms_api, get_oms_data, get_oms_response_attribute</code>  </li>
+<li>Create an instance of the OMS API class using <code>omsapi = get_oms_api()</code><br />
+  This instance can be re-used for all consecutive calls to OMS, no need to recreate it for every call.  </li>
+<li>Make a call to <code>get_oms_data</code>, where the first argument is the instance you just created.<br />
+  Other arguments: see the function documentation below.  </li>
+<li>The returned object is a complicated dictionary containing all information.<br />
   Simply print it to find out its exact structure and how to access exactly the values you need.<br />
-  The function <code>get_oms_response_attribute</code> is a small helper function to retrieve a specific attribute from this dictionary.  </p>
+  The function <code>get_oms_response_attribute</code> is a small helper function to retrieve a specific attribute from this dictionary.  </li>
+</ul>
 <p>See the notebook example.ipynb in this directory for some examples!  </p>
 <hr />
 <h3 id="get95oms95api">get_oms_api</h3>

@@ -371,20 +371,24 @@ They are skimmed versions of the centrally provided csv files with monintoring e
 How to produce your own skimmed input files from the centrally provided csv files is still under discussion. The code to do so is available in this repository (if run on SWAN, which has direct access to EOS), but not in the executable file (which is run locally). To do: update documentation when other options are available.  </p>
 <h3 id="the-histstruct-object">The HistStruct object</h3>
 <p>The 'HistStruct' is the central object used in this program. It contains all relevant histograms (depending on the target run, training runs and histogram types) and their respective classifiers in a structured way.  </p>
-<p>Selecting subsets of histograms, e.g. for classifier training or evaluation, is managed by using masks, which you can initialize when creating the HistStruct. There are three types of masks:<br />
-- run masks: select lumisections belonging to a given run number.<br />
-- statistics masks: select lumisections with high or low statistics. Currently the criterion is simply based on the number of histogram entries divided by the number of bins. Might be extended in the future.<br />
-- json masks: select lumisections with a custom json file in the same format as the typical so-called golden json file. Any json file in the correct format can be uploaded, which allows full flexibility in selecting lumisections.  </p>
+<p>Selecting subsets of histograms, e.g. for classifier training or evaluation, is managed by using masks, which you can initialize when creating the HistStruct. There are three types of masks:  </p>
+<ul>
+<li>run masks: select lumisections belonging to a given run number.  </li>
+<li>statistics masks: select lumisections with high or low statistics. Currently the criterion is simply based on the number of histogram entries divided by the number of bins. Might be extended in the future.  </li>
+<li>json masks: select lumisections with a custom json file in the same format as the typical so-called golden json file. Any json file in the correct format can be uploaded, which allows full flexibility in selecting lumisections.  </li>
+</ul>
 <h3 id="typical-workflow">Typical workflow</h3>
-<p>After having loaded or created a new HistStruct object, you can start the training and evaluation of histogram classifiers. A typical workflow would consist of (most of) the following steps:<br />
-- preprocessing the histograms (i.e. rebinning, normalizing and/or cropping). See the 'Preprocessing' button.<br />
-- make plots of the training set, target set and other histograms that might be relevant. See the 'Plotting' button.<br />
-- resample the training set to increase statistics (might not be needed for some types of classifiers). See the 'Resampling' button.<br />
-- adding classifiers for each histogram type. See the 'Add classifiers' button.<br />
-- train all classifiers. See the 'Train classifiers' button.
-- fit a probability density function to the resulting classifier scores in order to get from a per-histogram score to a per-lumisection score. See the 'Fit' button.
-- evaluate the model. See 'Evaluate model' button.<br />
-- take a closer look at some lumisections. For example in the case of an autoencoder one might be interested to compare the original histogram to its autoencoder reconstruction. Or more generally one could be interested to see what histogram types are causing the high lumisection score. See 'Plot lumisection' button.  </p>
+<p>After having loaded or created a new HistStruct object, you can start the training and evaluation of histogram classifiers. A typical workflow would consist of (most of) the following steps:  </p>
+<ul>
+<li>preprocessing the histograms (i.e. rebinning, normalizing and/or cropping). See the 'Preprocessing' button.  </li>
+<li>make plots of the training set, target set and other histograms that might be relevant. See the 'Plotting' button.  </li>
+<li>resample the training set to increase statistics (might not be needed for some types of classifiers). See the 'Resampling' button.  </li>
+<li>adding classifiers for each histogram type. See the 'Add classifiers' button.  </li>
+<li>train all classifiers. See the 'Train classifiers' button.  </li>
+<li>fit a probability density function to the resulting classifier scores in order to get from a per-histogram score to a per-lumisection score. See the 'Fit' button.  </li>
+<li>evaluate the model. See 'Evaluate model' button.  </li>
+<li>take a closer look at some lumisections. For example in the case of an autoencoder one might be interested to compare the original histogram to its autoencoder reconstruction. Or more generally one could be interested to see what histogram types are causing the high lumisection score. See 'Plot lumisection' button.  </li>
+</ul>
 <h3 id="example-usage">Example usage</h3>
 <p>Some examples on how to use the GUI are put in slides and collected on this <a href="https://cernbox.cern.ch/index.php/s/QEUAG7eKmgSeRns">CERNBox location</a></p></div>
         </div>
