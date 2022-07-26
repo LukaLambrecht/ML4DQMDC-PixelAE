@@ -332,26 +332,30 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#oms-api-retrieve-information-from-the-oms-database">OMS API: retrieve information from the OMS database</a></li>
+            <li><a href="#references">References</a></li>
+            <li><a href="#how-to-use">How to use</a></li>
+            <li><a href="#how-to-create-a-personal-application-for-authentication">How to create a personal application for authentication</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<p><strong>OMS API: retrieve information from the OMS database</strong></p>
+<h3 id="oms-api-retrieve-information-from-the-oms-database">OMS API: retrieve information from the OMS database</h3>
 <p>Collection of tools for obtaining OMS information in json-like format.<br />
 Note: this functionality supersedes the older version in the omsinterface folder!  </p>
-<p>References:<br />
-The code is based on the oms api repository here: <a href="https://gitlab.cern.ch/cmsoms/oms-api-client">https://gitlab.cern.ch/cmsoms/oms-api-client</a>. The file omsapi.py in this folder is a direct copy of the omsapi/__init__.py file in that repository, as recommended by the developers to get it running on SWAN. See also these <a href="https://indico.cern.ch/event/997758/contributions/4191705/attachments/2173881/3670409/OMS%20CERN%20OpenID%20migration%20-%20update.pdf">slides</a> for further info on the setup of the app and this <a href="https://cmsoms.cern.ch/agg/api/v1/version/endpoints">site</a> for the available endpoints.</p>
-<p>How to use:  </p>
+<h4 id="references">References</h4>
+<p>The code is based on the oms api repository here: <a href="https://gitlab.cern.ch/cmsoms/oms-api-client">https://gitlab.cern.ch/cmsoms/oms-api-client</a>. The file omsapi.py in this folder is a direct copy of the <code>omsapi/__init__.py</code> file in that repository, as recommended by the developers to get it running on SWAN. See also these <a href="https://indico.cern.ch/event/997758/contributions/4191705/attachments/2173881/3670409/OMS%20CERN%20OpenID%20migration%20-%20update.pdf">slides</a> for further info on the setup of the app and this <a href="https://cmsoms.cern.ch/agg/api/v1/version/endpoints">site</a> for the available endpoints.</p>
+<h4 id="how-to-use">How to use</h4>
 <ul>
-<li>You will need to authenticate through an application registered with the OMS developer team. Either contact me on llambrec@cern.ch so I can send you my application ID and client secret, or create your own as explained below.  </li>
-<li>Open example.ipynb for some examples. You need to import get_oms_api.py, then create an OMSAPI instance via get_oms_api() (only once, can be re-used for multiple queries) and then query the information via get_oms_data( \&lt;arguments> ). See example.ipynb or get_oms_data.py for details.</li>
+<li>You will need to authenticate through an application registered with the OMS developer team. Either contact me on <a href="luka.lambrecht@cern.ch">luka.lambrecht@cern.ch</a> so I can send you my application ID and client secret, or create your own as explained below.  </li>
+<li>Open <code>example.ipynb</code> for some examples. You need to import <code>get_oms_api.py</code>, then create an OMSAPI instance via <code>get_oms_api()</code> (only once, can be re-used for multiple queries) and then query the information via <code>get_oms_data( &lt;arguments&gt; )</code>. See <code>example.ipynb</code> or <code>get_oms_data.py</code> for details.</li>
 </ul>
-<p>How to create a personal application for authentication:  </p>
+<h4 id="how-to-create-a-personal-application-for-authentication">How to create a personal application for authentication</h4>
 <ul>
 <li>You will need to register a personal application ID and client secret with the OMS developer team. See the slides linked above on how to do that (only slide 4-6 are relevant, the rest has been taken care of). You will receive an application ID and client secret (both are just string-like variables).   </li>
 <li>Create a new python file in this folder called clientid.py and define two variables in there:<br />
-API_CLIENT_ID = '\&lt;your application ID>'<br />
-API_CLIENT_SECRET = '\&lt;your client secret>'  </li>
+<code>API_CLIENT_ID = &lt;your application ID&gt;</code><br />
+<code>API_CLIENT_SECRET = &lt;your client secret&gt;</code>  </li>
 <li>That should be all!  </li>
 </ul></div>
         </div>

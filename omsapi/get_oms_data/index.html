@@ -346,15 +346,15 @@
 Check the readme file in this directory for the required setup!<br />
 In particular, you will need an application ID and client secret to authenticate.  </p>
 <p>Once this is ready, you can do the following:<br />
-- Import this module, for example via "from get_oms_data import get_oms_api, get_oms_data, get_oms_response_attribute"
-- Create an instance of the OMS API class using "omsapi = get_oms_api()"<br />
-  This instance can be re-used for all consecutive calls to OMS, no need to recreate it for every call.
-- Make a call to "get_oms_data", where the first argument is the instance you just created.<br />
-  Other arguments: see the function documentation below.
+- Import this module, for example via <code>from get_oms_data import get_oms_api, get_oms_data, get_oms_response_attribute</code><br />
+- Create an instance of the OMS API class using <code>omsapi = get_oms_api()</code><br />
+  This instance can be re-used for all consecutive calls to OMS, no need to recreate it for every call.<br />
+- Make a call to <code>get_oms_data</code>, where the first argument is the instance you just created.<br />
+  Other arguments: see the function documentation below.<br />
 - The returned object is a complicated dictionary containing all information.<br />
   Simply print it to find out its exact structure and how to access exactly the values you need.<br />
-  The function "get_oms_response_attribute" is a small helper function to retrieve a specific attribute from this dictionary.</p>
-<p>See the notebook example.ipynb in this directory for some examples!</p>
+  The function <code>get_oms_response_attribute</code> is a small helper function to retrieve a specific attribute from this dictionary.  </p>
+<p>See the notebook example.ipynb in this directory for some examples!  </p>
 <hr />
 <h3 id="get95oms95api">get_oms_api</h3>
 <p>full signature:  </p>
