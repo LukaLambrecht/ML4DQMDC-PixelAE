@@ -89,11 +89,3 @@ get an AutoEncoder instance from a saved tensorflow SavedModel or H5 file
 ```  
 - - -  
   
-- - -
-## [class] classifier = AutoEncoder  
-comments:  
-```text  
-(no valid documentation found)  
-```  
-- - -  
-  

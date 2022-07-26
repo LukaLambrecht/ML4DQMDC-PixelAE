@@ -919,14 +919,6 @@ comments:
 plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction  
 internal helper function, use only via plot_ls  
 ```  
-- - -  
-  
-- - -
-## [class] classifier = self.models[recohist].classifiers[name]  
-comments:  
-```text  
-(no valid documentation found)  
-```  
 ### &#10551; plot\_ls\_2d  
 full signature:  
 ```text  
@@ -936,14 +928,6 @@ comments:
 ```text  
 plot the histograms in a HistStruct for a given run/ls number versus their reconstruction  
 internal helper function, use only via plot_ls  
-```  
-- - -  
-  
-- - -
-## [class] classifier = self.models[recohist].classifiers[name]  
-comments:  
-```text  
-(no valid documentation found)  
 ```  
 ### &#10551; plot\_ls\_score  
 full signature:  

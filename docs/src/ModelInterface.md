@@ -209,22 +209,6 @@ input arguments:
 - save_classifiers: a boolean whether to include the classifiers (alternative: only scores)  
 - save_fitter: a boolean whether to include the fitter (alternative: only scores)  
 ```  
-- - -  
-  
-- - -
-## [class] classifiers = dict  
-comments:  
-```text  
-(no valid documentation found)  
-```  
-- - -  
-  
-- - -
-## [class] classifier.save  
-comments:  
-```text  
-get all files to store in the zip file  
-```  
 ### &#10551; load  
 full signature:  
 ```text  

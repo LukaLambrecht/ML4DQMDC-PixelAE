@@ -48,14 +48,6 @@ input arguments:
   the histnames must match the ones used to initialize this Model,  
   the classifiers must be a subtype of HistogramClassifier.  
 ```  
-- - -  
-  
-- - -
-## [class] classifier = classifiers[histname]  
-comments:  
-```text  
-(no valid documentation found)  
-```  
 ### &#10551; set\_fitter  
 full signature:  
 ```text  

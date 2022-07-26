@@ -166,7 +166,7 @@ class CommentCollection(object):
             lines[i] = line.strip(' ').strip('\t')
         # scan for 'def' or 'class' keywords at the beginning of a line
         for i,line in enumerate(lines):
-            if( line[:3]=='def' or line[:5]=='class' ):
+            if( line[:4]=='def ' or line[:6]=='class ' ):
                 j = i
                 # special treatment for definitions spread over multiple lines
                 while (line.count('(')!=line.count(')')):
@@ -201,7 +201,7 @@ class CommentCollection(object):
         for i,line in enumerate(lines):
 
             # scan for 'class' keyword
-            if( line[:5]=='class' ):
+            if( line[:6]=='class ' ):
                 j = i
                 # get the pure class name from the current line
                 classname = line.split('(')[0]
