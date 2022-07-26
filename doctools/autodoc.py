@@ -5,6 +5,7 @@
 import sys
 import os
 import mdfiletools
+import nbfiletools
 
 # define the top level directory of the project
 topdir = os.path.abspath('..')
@@ -17,7 +18,9 @@ codedirs = sorted(['src', 'src/cloudfitters', 'src/classifiers',
                    'dqmio','dqmio/copydastolocal','dqmio/utils'])
 # define which other directories to take into account 
 # (copy markdown files but do not convert python files)
-otherdirs = sorted(['run', 'runswan', 'tutorials'])
+markdowndirs = sorted(['run', 'runswan'])
+# define which directories contain notebooks that should be converted
+notebookdirs = sorted(['tutorials'])
 # define title for site
 sitetitle = 'Documentation for the ML4DQM/DC code'
 
@@ -37,7 +40,7 @@ if os.path.exists(os.path.join(topdir,'README.md')):
     ymltext += '    - Home: \'index.md\'\n'
 
 # loop over code and other directories
-alldirs = sorted(codedirs+otherdirs)
+alldirs = sorted(codedirs+markdowndirs+notebookdirs)
 for codedir in alldirs:
     # check validity of code dir and clean/make doc dir
     thiscodedir = os.path.join(topdir,codedir)
@@ -57,7 +60,12 @@ for codedir in alldirs:
     # get markdown files
     mdfiles = sorted([f for f in os.listdir(thiscodedir)
                 if os.path.splitext(f)[1]=='.md'])
-    if len(pyfiles)==0 and len(mdfiles)==0: continue
+    # get notebook files
+    nbfiles = sorted([f for f in os.listdir(thiscodedir)
+                if os.path.splitext(f)[1]=='.ipynb'])
+    if( len(pyfiles)==0 
+        and len(mdfiles)==0
+        and len(nbfiles)==0 ): continue
     # update yml
     level = codedir.count('/')+1
     ymltext += level*4*' '+'- '+codedir.split('/')[-1]+':\n'
@@ -74,6 +82,13 @@ for codedir in alldirs:
             # update yml
             ymltext += (level+1)*4*' '+'- '+pyfile.replace('.py','')+': \'{}\'\n'.format(
                 os.path.join(codedir,pyfile.replace('.py','.md')))
+    # loop over notebook files and make the doc files
+    if codedir in notebookdirs:
+        for nbfile in nbfiles:
+            nbfiletools.ipynb_to_md( nbfile, thiscodedir, nbfile.replace('.ipynb','.md'), thisdocdir)
+            # update yml
+            ymltext += (level+1)*4*' '+'- '+nbfile.replace('.ipynb','')+': \'{}\'\n'.format(
+                os.path.join(codedir,nbfile.replace('.ipynb','.md')))
 
 # write the yml file
 ymlfile = os.path.join(topdir,'mkdocs.yml')
