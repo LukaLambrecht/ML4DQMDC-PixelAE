@@ -52,12 +52,40 @@
     <a href="dqmio/">README</a>
 </li>
                                     
+<li >
+    <a href="dqmio/harvest_nanodqmio_submit/">harvest_nanodqmio_submit</a>
+</li>
+                                    
+<li >
+    <a href="dqmio/harvest_nanodqmio_submitmultiple/">harvest_nanodqmio_submitmultiple</a>
+</li>
+                                    
+<li >
+    <a href="dqmio/harvest_nanodqmio_to_csv/">harvest_nanodqmio_to_csv</a>
+</li>
+                                    
+<li >
+    <a href="dqmio/harvest_nanodqmio_to_parquet/">harvest_nanodqmio_to_parquet</a>
+</li>
+                                    
+<li >
+    <a href="dqmio/harvest_nanodqmio_to_root/">harvest_nanodqmio_to_root</a>
+</li>
+                                    
   <li class="dropdown-submenu">
     <a href="#">copydastolocal</a>
     <ul class="dropdown-menu">
             
 <li >
     <a href="dqmio/copydastolocal/">README</a>
+</li>
+            
+<li >
+    <a href="dqmio/copydastolocal/copy_das_to_local_file/">copy_das_to_local_file</a>
+</li>
+            
+<li >
+    <a href="dqmio/copydastolocal/copy_das_to_local_set/">copy_das_to_local_set</a>
 </li>
     </ul>
   </li>
@@ -68,6 +96,14 @@
             
 <li >
     <a href="dqmio/utils/">README</a>
+</li>
+            
+<li >
+    <a href="dqmio/utils/print_dataset_files/">print_dataset_files</a>
+</li>
+            
+<li >
+    <a href="dqmio/utils/print_mes/">print_mes</a>
 </li>
     </ul>
   </li>
@@ -297,12 +333,12 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#some-utilities-and-example-notebooks-for-ml4dqmdc">Some utilities and example notebooks for ML4DQM/DC</a></li>
-            <li><a href="#structure-of-this-repository">Structure of this repository:</a></li>
-            <li><a href="#tutorials">Tutorials:</a></li>
-            <li><a href="#graphical-interface">Graphical interface:</a></li>
-            <li><a href="#other-remarks">Other remarks:</a></li>
+            <li><a href="#structure-of-this-repository">Structure of this repository</a></li>
+            <li><a href="#tutorials">Tutorials</a></li>
+            <li><a href="#graphical-interface">Graphical interface</a></li>
+            <li><a href="#other-remarks">Other remarks</a></li>
             <li><a href="#to-get-the-tutorial-notebooks-running-in-swan">To get the tutorial notebooks running in SWAN</a></li>
-            <li><a href="#further-documentation">Further documentation:</a></li>
+            <li><a href="#further-documentation">Further documentation</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -316,13 +352,13 @@ It was developed with the idea of training autoencoders on the per-lumisection h
 <li>Likewise, most of the development effort went into using an autoencoder as classification algorithm, looking at the mean-squared-difference between a histogram and its reconstruction as a measure for anomality. Support for other algorithms is also present, one just needs to define a class deriving from <code>src/classifiers/HistogramClassifier</code>. Working examples for NMF, PCA and a couple of other classifiers are present in the tutorials.  </li>
 <li>Furthermore, the idea is to train a separate classifier on each histogram type, and then combine the output scores in some way. Using instead only one histogram type is of course also possible (examples are present in the tutorials). Combining histograms in different ways (e.g. appending them together and training an autoencoder on the result) is not explicitly supported yet, though many parts of the code should still be perfectly usable.</li>
 </ul>
-<h3 id="structure-of-this-repository">Structure of this repository:</h3>
+<h3 id="structure-of-this-repository">Structure of this repository</h3>
 <p>There are six important directories: <code>dqmio</code>, <code>tutorials</code>, <code>utils</code>, <code>src</code>, <code>runswan</code> and <code>omsapi</code>.<br />
 The other directories in the repository contain either data or meta-information (e.g. for documentation).<br />
 In more detail (in order of most likely appearance):  </p>
 <ul>
 <li><code>dqmio</code>: contains tools and scripts to read (nano)DQMIO files from DAS and put them in a more useful format. Before starting with further steps, it is recommended to generate small files with only one monitor element per file. See the README in the <code>dqmio</code> folder for more info. Please use the conversion into csv files for now, as this is the expected input for the downstream steps (for historical reasons). This might be made more flexible in the future.<br />
-Note 1: the nanoDQMIO files are intended to be the new starting point for any ML4DQM-DC study, as of 2022 data-taking. Previously, for 2017 and 2018 data, we had large csv files stored on <code>\eos</code> that basically contained the full DQMIO content in csv format. They can also still be used as input, for studies on legacy data. But in that case you also need to run a prepocessing step. See the tutorial <code>read\_and\_write\_data.ipynb</code> (more info below).<br />
+Note 1: the nanoDQMIO files are intended to be the new starting point for any ML4DQM-DC study, as of 2022 data-taking. Previously, for 2017 and 2018 data, we had large csv files stored on <code>\eos</code> that basically contained the full DQMIO content in csv format. They can also still be used as input, for studies on legacy data. But in that case you also need to run a prepocessing step. See the tutorial <code>read_and_write_data.ipynb</code> (more info below).<br />
 Note 2: The difficulties with using the nanoDQMIO files directly are: <ul>
 <li>that they still contain a relatively large number of monitoring elements (even though reduced with respect to the standard DQMIO format). This makes reading and operating on these files rather slow. Furthermore, many of the tools in the downstream steps assume one monitoring element per file as an input (at least for now, might be made more flexible in the future).  </li>
 <li>that the lumisections belonging to a given data-taking period are split (arbitrarily?) over multiple files. It is often more useful to have all lumisections of a data-taking period in one file.  </li>
@@ -341,7 +377,7 @@ Note 2: The difficulties with using the nanoDQMIO files directly are: <ul>
 <li><code>runswan</code>: contains code for a graphical interface (see more info below).  </li>
 <li><code>omsapi</code>: standalone API for retrieving information from OMS.  </li>
 </ul>
-<h3 id="tutorials">Tutorials:</h3>
+<h3 id="tutorials">Tutorials</h3>
 <p>Some tutorials are located in the tutorials folder in this repository, that should help you get started with the code. They can be grouped into different steps:  </p>
 <ul>
 <li>Put the data in a more manageable format. This step is no longer needed if you start from the (nano)DQMIO files and if you have prepared the data with the scripts in the <code>dqmio</code> folder of this repository. If you start from the legacy csv files however, follow these steps. The raw csv files that are (were) our common input are not very easy to work with. Therefore you would probably first want to do something similar to what's done in the notebook <code>read_and_write_data.ipynb</code>. See the code and inline comments in that script and the functions it refers to for more detailed explanation. Its output is one single csv file per histogram type and per year, which is often much more convenient than the original csv files (which contain all histogram types together and are split per number of lines, not per run). All other functions and notebooks presuppose this first step.  </li>
@@ -350,12 +386,12 @@ Note 2: The difficulties with using the nanoDQMIO files directly are: <ul>
 <li>Train an autoencoder (or any other type of classifier). The scripts <code>autoencoder.ipynb</code> and <code>autoencoder_iterative.ipynb</code> are used to train an autoencoder on the whole dataset or a particular subset respectively. <code>maxpull.ipynb</code>, <code>nmf_1d.ipynb</code> and <code>nmf_2.ipynb</code> are showcases of some other classifiers (a maximum pull with respect to a reference histogram, and an NMF model in 1D and in 2D respectively).  </li>
 <li>Finally, <code>global_combined_training.ipynb</code> shows a more complete example of training a model on several histogram types and combine the output.  </li>
 </ul>
-<h3 id="graphical-interface">Graphical interface:</h3>
+<h3 id="graphical-interface">Graphical interface</h3>
 <p>See more info in the dedicated README in the corresponding folder.</p>
-<h3 id="other-remarks">Other remarks:</h3>
+<h3 id="other-remarks">Other remarks</h3>
 <ul>
 <li>The repository contains no data files. I was planning to put some example data files in a data folder, but the files are too big for github. You can produce your own input files starting from the (new) nanoDQMIO or the (legacy) csv files as explained above. Another way to get started is to get some example files from my <a href="https://cernbox.cern.ch/index.php/s/E9GzJ4WMZs3jbPd">CERNBox</a></li>
-<li>Disclaimer: the whole repository is still in development stage. Feel free to contact me in case you found bugs or if you have other suggestions.  </li>
+<li>Disclaimer: the whole repository is still in development stage. Feel free to contact me (at <a href="luka.lambrecht@cern.ch">luka.lambrecht@cern.ch</a>) in case you found bugs or if you have other suggestions.  </li>
 </ul>
 <h3 id="to-get-the-tutorial-notebooks-running-in-swan">To get the tutorial notebooks running in SWAN</h3>
 <h4 id="preferred-method">(preferred method):</h4>
@@ -374,7 +410,7 @@ Note 2: The difficulties with using the nanoDQMIO files directly are: <ul>
 <li>Exit the terminal.  </li>
 <li>The folder should now be where you cloned it, and you can open and run the notebooks in it in SWAN. </li>
 </ul>
-<h3 id="further-documentation">Further documentation:</h3>
+<h3 id="further-documentation">Further documentation</h3>
 <ul>
 <li>Documentation for all the class definitions and functions in the relevant code directories can be found <a href="https://lukalambrecht.github.io/ML4DQMDC-PixelAE/">here</a>. The documentation is generated automatically from annotations in the source code, so the formatting might behave oddly in some cases.  </li>
 <li>Note that the website above does not include documentation for the tutorials (yet?). However, some comments in the tutorial notebooks should provide (enough?) explanation to follow along.  </li>
@@ -461,5 +497,5 @@ Note 2: The difficulties with using the nanoDQMIO files directly are: <ul>
 
 <!--
 MkDocs version : 1.0.4
-Build Date UTC : 2022-06-24 14:27:25
+Build Date UTC : 2022-07-26 12:01:03
 -->

@@ -52,12 +52,40 @@
     <a href="../../dqmio/">README</a>
 </li>
                                     
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submit/">harvest_nanodqmio_submit</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submitmultiple/">harvest_nanodqmio_submitmultiple</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_csv/">harvest_nanodqmio_to_csv</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_parquet/">harvest_nanodqmio_to_parquet</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_root/">harvest_nanodqmio_to_root</a>
+</li>
+                                    
   <li class="dropdown-submenu">
     <a href="#">copydastolocal</a>
     <ul class="dropdown-menu">
             
 <li >
     <a href="../../dqmio/copydastolocal/">README</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/copydastolocal/copy_das_to_local_file/">copy_das_to_local_file</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/copydastolocal/copy_das_to_local_set/">copy_das_to_local_set</a>
 </li>
     </ul>
   </li>
@@ -68,6 +96,14 @@
             
 <li >
     <a href="../../dqmio/utils/">README</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/utils/print_dataset_files/">print_dataset_files</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/utils/print_mes/">print_mes</a>
 </li>
     </ul>
   </li>
@@ -303,15 +339,33 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="dataloader">DataLoader</h1>
+<p><strong>Class for loading histograms from disk into a pandas dataframe.</strong></p>
+<p>Typically, the input consists of a single file per histogram type,
+prepared from the nanoDQMIO format (accessed via DAS) and converted into another file format.
+see the tools in the 'dqmio' folder for more info on preparing the input files.
+Currently supported input file formats:
+- csv
+- parquet</p>
+<p>Example usage:
+    from DataLoader import DataLoader
+    dl = DataLoader()
+    df = dl.get_dataframe_from_file( <path to input file> )</p>
+<p>Alternatively, support is available to read the legacy per-LS csv files
+(deprecated approach for run-II data, before nanoDQMIO in run-III).
+In this case, the needed input consists of:
+- a set of histogram names to load
+- a specification in terms of eras or years</p>
+<p>Example usage:
+    from DataLoader import DataLoader
+    dl = DataLoader()
+    csvfiles = dl.get_default_csv_files( year=<year>, dim=<histogram dimension> )
+    df = dl.get_dataframe_from_files( csvfiles, histnames=<histogram names> )</p>
+<p>The output consists of a pandas dataframe containing the requested histograms.</p>
+<hr />
 <hr />
 <h2 id="class-dataloader">[class] DataLoader</h2>
 <p>comments:  </p>
-<pre><code class="text">class for loading histograms from disk  
-the input usually consists of:  
-- a csv file or a folder containing csv files in the correct format  
-- a set of histogram names to load  
-- a specification in terms of eras or years  
-the output typically consists of pandas dataframes containing the requested histograms.  
+<pre><code class="text">(no valid documentation found)  
 </code></pre>
 
 <h3 id="9595init9595">&#10551; __init__</h3>
@@ -321,6 +375,8 @@ the output typically consists of pandas dataframes containing the requested hist
 
 <p>comments:  </p>
 <pre><code class="text">initializer  
+initialization of valid years and eras for which legacy csv files exist  
+(note: only relevant for legacy csv approach, else empty initializer)  
 </code></pre>
 
 <h3 id="check95year">&#10551; check_year</h3>
@@ -329,7 +385,11 @@ the output typically consists of pandas dataframes containing the requested hist
 </code></pre>
 
 <p>comments:  </p>
-<pre><code class="text">(no valid documentation found)  
+<pre><code class="text">check if a provided year is valid  
+(note: only relevant for legacy csv approach)  
+(note: internal helper function, no need to call)  
+input arguments:  
+- year: year in string format  
 </code></pre>
 
 <h3 id="check95eras">&#10551; check_eras</h3>
@@ -338,7 +398,12 @@ the output typically consists of pandas dataframes containing the requested hist
 </code></pre>
 
 <p>comments:  </p>
-<pre><code class="text">(no valid documentation found)  
+<pre><code class="text">check if a list of provided eras is valid  
+(note: only relevant for legacy csv approach)  
+(note: internal helper function, no need to call)  
+input arguments:  
+- eras: list of eras in string format, e.g. ['B','C']  
+- year: year in string format  
 </code></pre>
 
 <h3 id="check95dim">&#10551; check_dim</h3>
@@ -347,7 +412,9 @@ the output typically consists of pandas dataframes containing the requested hist
 </code></pre>
 
 <p>comments:  </p>
-<pre><code class="text">(no valid documentation found)  
+<pre><code class="text">check if a histogram dimension is valid  
+(note: only 1D and 2D histograms are supported for now)  
+(note: internal helper function, no need to call)  
 </code></pre>
 
 <h3 id="check95eos">&#10551; check_eos</h3>
@@ -356,7 +423,9 @@ the output typically consists of pandas dataframes containing the requested hist
 </code></pre>
 
 <p>comments:  </p>
-<pre><code class="text">(no valid documentation found)  
+<pre><code class="text">check if the /eos directory exists and is accessible  
+(note: only relevant for legacy csv approach)  
+(note: internal helper function, no need to call)  
 </code></pre>
 
 <h3 id="get95default95data95dirs">&#10551; get_default_data_dirs</h3>
@@ -366,15 +435,21 @@ the output typically consists of pandas dataframes containing the requested hist
 
 <p>comments:  </p>
 <pre><code class="text">get the default data directories for the data for this project  
+(note: only relevant for legacy csv approach)  
+(note: internal helper function, no need to call)  
 note: this returns the directories where the data is currently stored;  
       might change in future reprocessings of the data,  
       and should be extended for upcoming Run-III data.  
 note: default directories are on the /eos file system.  
-      this function will throw an exception if it has not access to /eos.  
+      this function will throw an exception if it does not have access to /eos.  
 input arguments:  
 - year: data-taking year, should be '2017' or '2018' so far (default: 2017)  
 - eras: list of valid eras for the given data-taking year (default: all eras)  
 - dim: dimension of requested histograms (1 or 2)  
+  note: need to provide the dimension at this stage since the files for 1D and 2D histograms  
+        are stored in different directories.  
+returns:  
+a list of directories containing the legacy csv files with the requested data.  
 </code></pre>
 
 <h3 id="get95csv95files95in95dir">&#10551; get_csv_files_in_dir</h3>
@@ -383,10 +458,14 @@ input arguments:
 </code></pre>
 
 <p>comments:  </p>
-<pre><code class="text">get a (sorted) list of csv files in a given input directory  
+<pre><code class="text">get a (optionally sorted) list of csv files in a given input directory  
+(note: only relevant for legacy csv approach)  
+(note: internal helper function, no need to call)  
 input arguments:  
 - inputdir: directory to scan for csv files  
 - sort: boolean whether to sort the files  
+returns:  
+a list of csv files in the given directory.  
 </code></pre>
 
 <h3 id="get95csv95files95in95dirs">&#10551; get_csv_files_in_dirs</h3>
@@ -395,10 +474,16 @@ input arguments:
 </code></pre>
 
 <p>comments:  </p>
-<pre><code class="text">find the csv files in a set of input directories and return them in one list  
+<pre><code class="text">find the csv files in a set of input directories and return them in one list.  
+(note: only relevant for legacy csv approach)  
+(note: internal helper function, no need to call)  
+this function simply loops over the directories given in inputdirs,  
+calls get_csv_files_in_dir for each of them, and concatenates the results.  
 input arguments:  
 - list of input directories where to look for csv files  
 - sort: see get_csv_files_in_dir  
+returns:  
+a list of csv files in the given directories.  
 </code></pre>
 
 <h3 id="get95default95csv95files">&#10551; get_default_csv_files</h3>
@@ -408,38 +493,67 @@ input arguments:
 
 <p>comments:  </p>
 <pre><code class="text">read the csv files from the default directories with input data for this project  
+(note: only relevant for legacy csv approach)  
 note: default directories are on the /eos file system.  
       this function will throw an exception if it has not access to /eos.  
 input arguments:   
 - year, eras, dim: see get_default_data_dirs!  
 - sort: see get_csv_files_in_dir!  
+returns:  
+a list of csv files with the data corresponding to the provided year, eras and dimension.  
 </code></pre>
 
 <h3 id="get95dataframe95from95file">&#10551; get_dataframe_from_file</h3>
 <p>full signature:  </p>
-<pre><code class="text">def get_dataframe_from_file( self, csvfile, histnames=[] )  
+<pre><code class="text">def get_dataframe_from_file( self, dfile, histnames=[], sort=True, verbose=True )  
 </code></pre>
 
 <p>comments:  </p>
-<pre><code class="text">load histograms from a given file  
+<pre><code class="text">load histograms from a given file into a dataframe  
+input arguments:  
+- dfile: file containing the data.  
+  currently supported formats: csv, parquet.  
+- histnames: list of histogram names to keep  
+  (default: keep all histograms present in the input file).  
+- sort: whether to sort the dataframe by run and lumisection number  
+  (note: requires keys 'fromrun' and 'fromlumi' to be present in the dataframe).  
+- verbose: whether to print info messages.  
+returns:  
+a pandas dataframe  
 </code></pre>
 
 <h3 id="get95dataframe95from95files">&#10551; get_dataframe_from_files</h3>
 <p>full signature:  </p>
-<pre><code class="text">def get_dataframe_from_files( self, csvfiles, histnames=[] )  
+<pre><code class="text">def get_dataframe_from_files( self, dfiles, histnames=[], sort=True, verbose=True )  
 </code></pre>
 
 <p>comments:  </p>
-<pre><code class="text">load histograms from a given set of files  
+<pre><code class="text">load histograms from a given set of files into a single dataframe  
+input arguments:  
+- dfiles: list of files containing the data.  
+  currently supported formats: csv, parquet.  
+- histnames: list of histogram names to keep  
+  (default: keep all histograms present in the input file).  
+- sort: whether to sort the dataframe by run and lumisection number  
+  (note: requires keys 'fromrun' and 'fromlumi' to be present in the dataframe).  
+- verbose: whether to print info messages.  
+returns:  
+a pandas dataframe  
 </code></pre>
 
 <h3 id="write95dataframe95to95file">&#10551; write_dataframe_to_file</h3>
 <p>full signature:  </p>
-<pre><code class="text">def write_dataframe_to_file( self, df, csvfile )  
+<pre><code class="text">def write_dataframe_to_file( self, df, dfile, overwrite=False, verbose=True )  
 </code></pre>
 
 <p>comments:  </p>
-<pre><code class="text">write a dataframe to a csv file  
+<pre><code class="text">write a dataframe to a file  
+input arguments:  
+- df: a pandas dataframe.  
+- dfile: file name to write.  
+  currently supported formats: csv, parquet.  
+- overwrite: whether to overwrite if a file with the given name already exists.  
+- verbose: whether to print info messages.  
 </code></pre>
 
 <hr /></div>

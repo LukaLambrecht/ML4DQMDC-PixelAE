@@ -52,12 +52,40 @@
     <a href="../../dqmio/">README</a>
 </li>
                                     
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submit/">harvest_nanodqmio_submit</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submitmultiple/">harvest_nanodqmio_submitmultiple</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_csv/">harvest_nanodqmio_to_csv</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_parquet/">harvest_nanodqmio_to_parquet</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_root/">harvest_nanodqmio_to_root</a>
+</li>
+                                    
   <li class="dropdown-submenu">
     <a href="#">copydastolocal</a>
     <ul class="dropdown-menu">
             
 <li >
     <a href="../../dqmio/copydastolocal/">README</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/copydastolocal/copy_das_to_local_file/">copy_das_to_local_file</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/copydastolocal/copy_das_to_local_set/">copy_das_to_local_set</a>
 </li>
     </ul>
   </li>
@@ -68,6 +96,14 @@
             
 <li >
     <a href="../../dqmio/utils/">README</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/utils/print_dataset_files/">print_dataset_files</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/utils/print_mes/">print_mes</a>
 </li>
     </ul>
   </li>
@@ -385,7 +421,7 @@ input arguments:
 
 <h3 id="add95dataframe">&#10551; add_dataframe</h3>
 <p>full signature:  </p>
-<pre><code class="text">def add_dataframe( self, df, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None, donormalize=True )  
+<pre><code class="text">def add_dataframe( self, df, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None, averagewindow=None, averageweights=None, donormalize=True )  
 </code></pre>
 
 <p>comments:  </p>
@@ -393,19 +429,24 @@ input arguments:
 input arguments:  
 - df: a pandas dataframe as read from the input csv files  
 - cropslices: list of slices (one per dimension) by which to crop the histograms  
+               see hist_utils.py / crophists for more info.  
 - rebinningfactor: factor by which to group bins together  
+                   see hist_utils.py / rebinhists for more info.  
 - smoothinghalfwindow: half window (int for 1D, tuple for 2D) for doing smoothing of histograms  
 - smoothingweights: weight array (1D for 1D, 2D for 2D) for smoothing of histograms  
+                    see hist_utils.py / smoothhists for more info.  
+- averagewindow: window (int or tuple) for averaging each histogram with its neighbours  
+- averageweights: weights for averaging each histogram with its neighbours  
+                  see hist_utils.py / running_average_hists for more info.  
 - donormalize: boolean whether to normalize the histograms  
-for more details on cropslices, rebinningfactor, smoothingwindow, smoothingweights  
-and donormalize: see hist_utils.py!  
+               see hist_utils.py / normalizehists for more info.  
 notes:  
 - the new dataframe can contain one or multiple histogram types  
 - the new dataframe must contain the same run and lumisection numbers (for each histogram type in it)  
   as already present in the HistStruct, except if it is the first one to be added  
-- alternative to adding the dataframe with the options cropslices, donormalize and rebinningfactor  
-  (that will be passed down to preparedatafromdf), one can also call preparedatafromdf manually and add it  
-  with add_histograms, allowing for more control over complicated preprocessing.  
+- alternative to adding the dataframe with the preprocessing options,   
+  one can also apply the preprocessing at a later stage using the preprocess() function  
+  with the same arguments.  
 </code></pre>
 
 <h3 id="add95histograms">&#10551; add_histograms</h3>
@@ -435,7 +476,7 @@ notes:
 
 <h3 id="preprocess">&#10551; preprocess</h3>
 <p>full signature:  </p>
-<pre><code class="text">def preprocess( self, masknames=None, cropslices=None, rebinningfactor=None, smoothinghalfwindow=None, smoothingweights=None, donormalize=False )  
+<pre><code class="text">def preprocess( self, masknames=None, cropslices=None, rebinningfactor=None, smoothinghalfwindow=None, smoothingweights=None, averagewindow=None, averageweights=None, donormalize=False )  
 </code></pre>
 
 <p>comments:  </p>

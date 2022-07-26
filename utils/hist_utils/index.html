@@ -52,12 +52,40 @@
     <a href="../../dqmio/">README</a>
 </li>
                                     
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submit/">harvest_nanodqmio_submit</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submitmultiple/">harvest_nanodqmio_submitmultiple</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_csv/">harvest_nanodqmio_to_csv</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_parquet/">harvest_nanodqmio_to_parquet</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_root/">harvest_nanodqmio_to_root</a>
+</li>
+                                    
   <li class="dropdown-submenu">
     <a href="#">copydastolocal</a>
     <ul class="dropdown-menu">
             
 <li >
     <a href="../../dqmio/copydastolocal/">README</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/copydastolocal/copy_das_to_local_file/">copy_das_to_local_file</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/copydastolocal/copy_das_to_local_set/">copy_das_to_local_set</a>
 </li>
     </ul>
   </li>
@@ -68,6 +96,14 @@
             
 <li >
     <a href="../../dqmio/utils/">README</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/utils/print_dataset_files/">print_dataset_files</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/utils/print_mes/">print_mes</a>
 </li>
     </ul>
   </li>
@@ -450,7 +486,7 @@ returns:
 - a numpy array with same shape as input but where each histogram is replaced by its running average  
 notes:  
 - at the edges, the weights are cropped to match the input array and renormalized  
-- this function will crash when the length of the set of histograms is smaller than the total window length,  
+- this function will throw an error when the length of the set of histograms is smaller than the total window length,  
   maybe extend later (although this is not normally needed)  
 </code></pre>
 
@@ -559,7 +595,7 @@ returns:
 
 <h3 id="preparedatafromnpy">preparedatafromnpy</h3>
 <p>full signature:  </p>
-<pre><code class="text">def preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None,  donormalize=True, doplot=False)  
+<pre><code class="text">def preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None, averagewindow=None, averageweights=None, donormalize=True, doplot=False)  
 </code></pre>
 
 <p>comments:  </p>
@@ -572,7 +608,7 @@ notes:
 
 <h3 id="preparedatafromdf">preparedatafromdf</h3>
 <p>full signature:  </p>
-<pre><code class="text">def preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None, donormalize=False, doplot=False)  
+<pre><code class="text">def preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None, averagewindow=None, averageweights=None, donormalize=False, doplot=False)  
 </code></pre>
 
 <p>comments:  </p>
@@ -593,7 +629,7 @@ input arguments:
 
 <h3 id="preparedatafromcsv">preparedatafromcsv</h3>
 <p>full signature:  </p>
-<pre><code class="text">def preparedatafromcsv(dataname, returnrunls=False, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None, donormalize=True, doplot=False)  
+<pre><code class="text">def preparedatafromcsv(dataname, returnrunls=False, cropslices=None, rebinningfactor=None,  smoothinghalfwindow=None, smoothingweights=None, averagewindow=None, averageweights=None, donormalize=True, doplot=False)  
 </code></pre>
 
 <p>comments:  </p>
