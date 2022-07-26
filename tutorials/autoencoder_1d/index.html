@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>autoencoder_1d - Documentation for the ML4DQM/DC code</title>
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC code</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="../..">Home</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">dqmio <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../dqmio/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submit/">harvest_nanodqmio_submit</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submitmultiple/">harvest_nanodqmio_submitmultiple</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_csv/">harvest_nanodqmio_to_csv</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_parquet/">harvest_nanodqmio_to_parquet</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_root/">harvest_nanodqmio_to_root</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">copydastolocal</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../dqmio/copydastolocal/">README</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/copydastolocal/copy_das_to_local_file/">copy_das_to_local_file</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/copydastolocal/copy_das_to_local_set/">copy_das_to_local_set</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">utils</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../dqmio/utils/">README</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/utils/print_dataset_files/">print_dataset_files</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/utils/print_mes/">print_mes</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">omsapi <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../omsapi/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../omsapi/get_oms_data/">get_oms_data</a>
+</li>
+                                    
+<li >
+    <a href="../../omsapi/omsapi/">omsapi</a>
+</li>
+                                    
+<li >
+    <a href="../../omsapi/urls/">urls</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">run <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../run/">README</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">runswan <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../runswan/">README</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">src <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../src/DataLoader/">DataLoader</a>
+</li>
+                                    
+<li >
+    <a href="../../src/HistStruct/">HistStruct</a>
+</li>
+                                    
+<li >
+    <a href="../../src/Model/">Model</a>
+</li>
+                                    
+<li >
+    <a href="../../src/ModelInterface/">ModelInterface</a>
+</li>
+                                    
+<li >
+    <a href="../../src/PlotStyleParser/">PlotStyleParser</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">classifiers</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../src/classifiers/AutoEncoder/">AutoEncoder</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/HistogramClassifier/">HistogramClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/LandauClassifier/">LandauClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/MaxPullClassifier/">MaxPullClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/MomentClassifier/">MomentClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/NMFClassifier/">NMFClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/PCAClassifier/">PCAClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/TemplateBasedClassifier/">TemplateBasedClassifier</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">cloudfitters</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../src/cloudfitters/CloudFitter/">CloudFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/ExponentialFitter/">ExponentialFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/HyperRectangleFitter/">HyperRectangleFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/IdentityFitter/">IdentityFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/LogNormalFitter/">LogNormalFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/PCAGaussianFitter/">PCAGaussianFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/PCAGaussianKdeFitter/">PCAGaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/SeminormalFitter/">SeminormalFitter</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">tutorials <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li class="active">
+    <a href="./">autoencoder_1d</a>
+</li>
+                                    
+<li >
+    <a href="../autoencoder_iterative/">autoencoder_iterative</a>
+</li>
+                                    
+<li >
+    <a href="../generate_data/">generate_data</a>
+</li>
+                                    
+<li >
+    <a href="../global_combined_training/">global_combined_training</a>
+</li>
+                                    
+<li >
+    <a href="../maxpull/">maxpull</a>
+</li>
+                                    
+<li >
+    <a href="../nmf_1d/">nmf_1d</a>
+</li>
+                                    
+<li >
+    <a href="../nmf_2d/">nmf_2d</a>
+</li>
+                                    
+<li >
+    <a href="../plot_histograms/">plot_histograms</a>
+</li>
+                                    
+<li >
+    <a href="../plot_histograms_2d/">plot_histograms_2d</a>
+</li>
+                                    
+<li >
+    <a href="../plot_histograms_loop/">plot_histograms_loop</a>
+</li>
+                                    
+<li >
+    <a href="../read_and_write_data/">read_and_write_data</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">utils <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../utils/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/autoencoder_utils/">autoencoder_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/clustering_utils/">clustering_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/csv_utils/">csv_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/dataframe_utils/">dataframe_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/generate_data_2d_utils/">generate_data_2d_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/generate_data_utils/">generate_data_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/hist_utils/">hist_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/json_utils/">json_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/mask_utils/">mask_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/plot_utils/">plot_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/refruns_utils/">refruns_utils</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../../src/cloudfitters/SeminormalFitter/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../autoencoder_iterative/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#autoencoder-1d">autoencoder 1d</a></li>
+            <li><a href="#train-and-test-an-autoencoder-on-a-set-of-1d-monitoring-elements">Train and test an autoencoder on a set of 1D monitoring elements</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="autoencoder-1d">autoencoder 1d</h1>
+<h2 id="train-and-test-an-autoencoder-on-a-set-of-1d-monitoring-elements">Train and test an autoencoder on a set of 1D monitoring elements</h2>
+<p>This notebook walks you through the basics of the autoencoder approach to detecting anomalies for 1D monitoring elements.<br />
+It consists of the following steps:
+   - Loading the data
+   - Applying selections (e.g. DCS-bit on and sufficient statistics)
+   - Preprocessing (e.g. normalizing)
+   - Building an autoencoder model with keras
+   - Investigate the output</p>
+<pre><code class="python">### imports
+
+# external modules
+import sys
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+from keras import backend as K
+import tensorflow as tf
+from tensorflow.keras.models import load_model
+
+# local modules
+sys.path.append('../utils')
+import dataframe_utils as dfu
+import hist_utils as hu
+import autoencoder_utils as aeu
+import plot_utils as pu
+import generate_data_utils as gdu
+sys.path.append('../src')
+import DataLoader
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### read the data
+# note: this cell assumes you have a csv file stored at the specified location,
+#       containing only histograms of the specified type;
+#       see the tutorial read_and_write_data for examples on how to create such files!
+
+histname = 'chargeInner_PXLayer_2'
+filename = 'DF2017_'+histname+'.csv'
+datadir = '../data'
+
+dloader = DataLoader.DataLoader()
+df = dloader.get_dataframe_from_file( os.path.join(datadir, filename) )
+print('raw input data shape: {}'.format( dfu.get_hist_values(df)[0].shape ))
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### filtering: select only DCS-bit on data and filter out low statistics
+
+df = dfu.select_dcson(df)
+print('number of passing lumisections after DCS selection: {}'.format( len(df) ))
+
+df = dfu.select_highstat(df, entries_to_bins_ratio=100)
+print('number of passing lumisections after high statistics selection: {}'.format( len(df) ))
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### preprocessing of the data: rebinning and normalizing
+
+rebinningfactor = 1
+
+X_train = hu.preparedatafromdf(df, rebinningfactor=rebinningfactor,
+                               donormalize=True, doplot=True)
+(ntrain,nbins) = X_train.shape
+print('size of training set: '+str(X_train.shape))
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### build the model and train it
+
+input_size = X_train.shape[1]
+arch = [int(X_train.shape[1]/2.)]
+act = ['tanh']*len(arch)
+opt = 'adam'
+loss = aeu.mseTop10
+autoencoder = aeu.getautoencoder(input_size,arch,act,opt,loss) 
+history = autoencoder.fit(X_train, X_train, epochs=20, batch_size=500, shuffle=False, verbose=1, validation_split=0.1)
+pu.plot_loss(history, title = 'model loss')
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### evaluate the model on the training set
+
+prediction_train = autoencoder.predict(X_train)
+mse_train = aeu.mseTop10Raw(X_train, prediction_train)
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### plot the global MSE trend
+
+pu.plot_mse(mse_train, rmlargest=0.005)
+(mean,std) = pu.plot_mse(mse_train, doplot=False, rmlargest=0.005)
+print('mean mse: {}'.format(mean))
+print('std mse: {}'.format(std))
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### impose a mse upper boundary and plot random examples of passing and failing histograms
+# note: at this point, only the training set is considered!
+# for a test set: see cell below.
+
+cutvalue = mean + 3*std
+print('The mse threshold is: '+str(cutvalue))
+goodindices = np.arange(0,len(mse_train))[mse_train&lt;cutvalue]
+badindices = np.arange(0,len(mse_train))[mse_train&gt;cutvalue]
+
+print('Number of passing histograms: '+str(len(goodindices)))
+print('Number of failing histograms: '+str(len(badindices)))
+
+nplot = 5
+print('examples of good histograms and reconstruction:')
+randint = np.random.choice(goodindices,size=nplot,replace=False)
+for i in randint: 
+    histlist = [X_train[int(i),:],prediction_train[int(i),:]]
+    labellist = ['data','reconstruction']
+    colorlist = ['black','blue']
+    pu.plot_hists(histlist,colorlist=colorlist,labellist=labellist)
+    plt.show()
+
+print('examples of bad histograms and reconstruction:')
+randint = np.random.choice(badindices,size=nplot,replace=False)
+for i in randint:
+    histlist = [X_train[int(i),:],prediction_train[int(i),:]]
+    labellist = ['data','reconstruction']
+    colorlist = ['black','blue']
+    pu.plot_hists(histlist,colorlist=colorlist,labellist=labellist)
+    plt.show()
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### get a test set and evaluate the model
+
+goodrunsls = { &quot;297056&quot;:[[-1]],
+                &quot;297177&quot;:[[-1]],
+                &quot;301449&quot;:[[-1]] 
+             }
+badrunsls = {
+                &quot;297287&quot;:[[-1]],
+                &quot;297288&quot;:[[-1]],
+                &quot;297289&quot;:[[-1]],
+                &quot;299316&quot;:[[-1]],
+                &quot;299317&quot;:[[-1]],
+                &quot;299318&quot;:[[-1]],
+                &quot;299324&quot;:[[-1]],
+            }
+
+# re-read the dataframe
+# (in case the selections are different than for the training set)
+dloader = DataLoader.DataLoader()
+df = dloader.get_dataframe_from_file( os.path.join(datadir, filename) )
+df = dfu.select_dcson(df)
+df = dfu.select_highstat(df,entries_to_bins_ratio=100)
+
+# good histograms option 1: predefined runs/lumisections
+#X_test_good = hu.preparedatafromdf( dfu.select_runsls(df,goodrunsls),donormalize=True )
+# good histograms option 2: averages of total set
+X_test_good = hu.averagehists( hu.preparedatafromdf(df, donormalize=True), 15 )
+# bad histograms: predefined runs/lumisections
+(X_test_bad, runnbs_bad,lsnbs_bad) = hu.preparedatafromdf( 
+                                    dfu.select_runsls(df,badrunsls),
+                                    donormalize=True,
+                                    returnrunls = True )
+print('shape of good test set: {}'.format(X_test_good.shape))
+print('shape of bad test set: {}'.format(X_test_bad.shape))
+
+pu.plot_sets([X_test_good,X_test_bad],colorlist=['b','r'],
+             labellist=['Histograms in test set labeled &quot;good&quot;','Histograms in test set labeled &quot;bad&quot;'])
+plt.show()
+
+prediction_test_good = autoencoder.predict(X_test_good)
+mse_test_good = aeu.mseTopNRaw(X_test_good, prediction_test_good, n=10 )
+prediction_test_bad = autoencoder.predict(X_test_bad)
+mse_test_bad = aeu.mseTopNRaw(X_test_bad, prediction_test_bad, n=10 )
+
+print('average mse on good set: '+str(np.mean(mse_test_good)))
+print('average mse on bad set: '+str(np.mean(mse_test_bad)))
+
+nplot = 10
+print('examples of good histograms and reconstruction:')
+randint = np.random.choice(np.arange(len(X_test_good)),size=nplot,replace=False)
+for i in randint: 
+    histlist = [X_test_good[int(i),:],prediction_test_good[int(i),:]]
+    labellist = ['data','reconstruction']
+    colorlist = ['black','blue']
+    pu.plot_hists(histlist,colorlist=colorlist,labellist=labellist)
+    plt.show()
+
+print('examples of bad histograms and reconstruction:')
+randint = np.random.choice(np.arange(len(X_test_bad)),size=nplot,replace=False)
+for i in randint:
+    histlist = [X_test_bad[int(i),:],prediction_test_bad[int(i),:]]
+    labellist = ['data','reconstruction']
+    colorlist = ['black','blue']
+    pu.plot_hists(histlist,colorlist=colorlist,labellist=labellist)
+    plt.show()
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### use artificial data to assess the model performance
+
+(goodhists,_,_) = gdu.upsample_hist_set( X_test_good, ntarget=5e3, fourierstdfactor=20., doplot=True )
+(badhists,_,_) = gdu.upsample_hist_set( X_test_bad, ntarget=5e3, fourierstdfactor=20., doplot=True )
+print('number of good histograms: '+str(len(goodhists)))
+print('number of bad histograms: '+str(len(badhists)))
+
+validation_data = np.vstack((goodhists,badhists))
+labels = np.hstack((np.zeros(len(goodhists)),np.ones(len(badhists))))
+prediction = autoencoder.predict(validation_data)
+mse = aeu.mseTopNRaw(validation_data, prediction, n=10 )
+shuffled_indices = np.arange(len(validation_data))
+_ = np.random.shuffle(shuffled_indices)
+validation_data = validation_data[shuffled_indices]
+labels = labels[shuffled_indices]
+prediction = prediction[shuffled_indices]
+mse = mse[shuffled_indices]
+
+# distribution of output scores
+pu.plot_score_dist(mse, labels, 
+                   siglabel='anomalous', sigcolor='r',
+                   bcklabel='good', bckcolor='g',
+                   nbins=200, normalize=True)
+print('minimum mse on bad set: {}'.format(np.amin(mse[np.where(labels==1)])))
+print('maximum mse on good set: {}'.format(np.amax(mse[np.where(labels==0)])))
+# classical ROC curve: signal efficiency (good data marked as good) vs background efficiency (bad data marked as good)
+auc = aeu.get_roc(mse, labels, npoints=500, bootstrap_samples=100)
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### continution of previous cell: choose wp and plot confusion matrix
+
+aeu.get_confusion_matrix_from_hists( validation_data, labels, prediction, msewp='maxauc' )
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### plot some histograms in the bad test set with their reconstruction
+
+inds = np.random.choice( np.arange(len(lsnbs_bad)), 10, replace=False )
+for i in inds:
+    runnb = runnbs_bad[i]
+    lsnb = lsnbs_bad[i]
+    histogram = X_test_bad[i:i+1,:]
+    reco = autoencoder.predict(histogram)
+    mse = aeu.mseTopNRaw(histogram, reco, n=10 )
+    pu.plot_sets([histogram,reco],
+                    labellist=['hist {}/{}'.format(runnb,lsnb),'reco'],
+                    colorlist=['black','red'],
+                    )
+    plt.show()
+    print('MSE: {}'.format(mse))
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### plot some histograms in the good test set with their reconstruction
+# note: depends on whether the good test set was obtained from real lumisections,
+#       or from averages from entire set.
+
+inds = np.random.choice( np.arange(len(X_test_good)), 10, replace=False )
+for i in inds:
+    try:
+        runnb = runnbs_good[i]
+        lsnb = lsnbs_good[i]
+        histlabel = 'hist {}/{}'.format(runnb,lsnb)
+    except:
+        runnb = 0
+        lsnb = 0
+        histlabel = 'hist (artificial)'
+    histogram = X_test_good[i:i+1,:]
+    reco = autoencoder.predict(histogram)
+    mse = aeu.mseTopNRaw(histogram, reco, n=10 )
+    pu.plot_sets([histogram,reco],
+                    labellist=[histlabel,'reco'],
+                    colorlist=['black','red'],
+                    )
+    plt.show()
+    print('MSE: {}'.format(mse))
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

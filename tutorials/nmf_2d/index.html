@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>nmf_2d - Documentation for the ML4DQM/DC code</title>
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="../..">Documentation for the ML4DQM/DC code</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="../..">Home</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">dqmio <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../dqmio/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submit/">harvest_nanodqmio_submit</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_submitmultiple/">harvest_nanodqmio_submitmultiple</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_csv/">harvest_nanodqmio_to_csv</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_parquet/">harvest_nanodqmio_to_parquet</a>
+</li>
+                                    
+<li >
+    <a href="../../dqmio/harvest_nanodqmio_to_root/">harvest_nanodqmio_to_root</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">copydastolocal</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../dqmio/copydastolocal/">README</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/copydastolocal/copy_das_to_local_file/">copy_das_to_local_file</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/copydastolocal/copy_das_to_local_set/">copy_das_to_local_set</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">utils</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../dqmio/utils/">README</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/utils/print_dataset_files/">print_dataset_files</a>
+</li>
+            
+<li >
+    <a href="../../dqmio/utils/print_mes/">print_mes</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">omsapi <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../omsapi/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../omsapi/get_oms_data/">get_oms_data</a>
+</li>
+                                    
+<li >
+    <a href="../../omsapi/omsapi/">omsapi</a>
+</li>
+                                    
+<li >
+    <a href="../../omsapi/urls/">urls</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">run <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../run/">README</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">runswan <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../runswan/">README</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">src <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../src/DataLoader/">DataLoader</a>
+</li>
+                                    
+<li >
+    <a href="../../src/HistStruct/">HistStruct</a>
+</li>
+                                    
+<li >
+    <a href="../../src/Model/">Model</a>
+</li>
+                                    
+<li >
+    <a href="../../src/ModelInterface/">ModelInterface</a>
+</li>
+                                    
+<li >
+    <a href="../../src/PlotStyleParser/">PlotStyleParser</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">classifiers</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../src/classifiers/AutoEncoder/">AutoEncoder</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/HistogramClassifier/">HistogramClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/LandauClassifier/">LandauClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/MaxPullClassifier/">MaxPullClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/MomentClassifier/">MomentClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/NMFClassifier/">NMFClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/PCAClassifier/">PCAClassifier</a>
+</li>
+            
+<li >
+    <a href="../../src/classifiers/TemplateBasedClassifier/">TemplateBasedClassifier</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#">cloudfitters</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../src/cloudfitters/CloudFitter/">CloudFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/ExponentialFitter/">ExponentialFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/GaussianKdeFitter/">GaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/HyperRectangleFitter/">HyperRectangleFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/IdentityFitter/">IdentityFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/LogNormalFitter/">LogNormalFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/PCAGaussianFitter/">PCAGaussianFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/PCAGaussianKdeFitter/">PCAGaussianKdeFitter</a>
+</li>
+            
+<li >
+    <a href="../../src/cloudfitters/SeminormalFitter/">SeminormalFitter</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">tutorials <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../autoencoder_1d/">autoencoder_1d</a>
+</li>
+                                    
+<li >
+    <a href="../autoencoder_iterative/">autoencoder_iterative</a>
+</li>
+                                    
+<li >
+    <a href="../generate_data/">generate_data</a>
+</li>
+                                    
+<li >
+    <a href="../global_combined_training/">global_combined_training</a>
+</li>
+                                    
+<li >
+    <a href="../maxpull/">maxpull</a>
+</li>
+                                    
+<li >
+    <a href="../nmf_1d/">nmf_1d</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">nmf_2d</a>
+</li>
+                                    
+<li >
+    <a href="../plot_histograms/">plot_histograms</a>
+</li>
+                                    
+<li >
+    <a href="../plot_histograms_2d/">plot_histograms_2d</a>
+</li>
+                                    
+<li >
+    <a href="../plot_histograms_loop/">plot_histograms_loop</a>
+</li>
+                                    
+<li >
+    <a href="../read_and_write_data/">read_and_write_data</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">utils <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../utils/">README</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/autoencoder_utils/">autoencoder_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/clustering_utils/">clustering_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/csv_utils/">csv_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/dataframe_utils/">dataframe_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/generate_data_2d_utils/">generate_data_2d_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/generate_data_utils/">generate_data_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/hist_utils/">hist_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/json_utils/">json_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/mask_utils/">mask_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/plot_utils/">plot_utils</a>
+</li>
+                                    
+<li >
+    <a href="../../utils/refruns_utils/">refruns_utils</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../nmf_1d/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../plot_histograms/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#nmf-2d">nmf 2d</a></li>
+            <li><a href="#two-dimensional-histogram-classification-based-on-non-negative-matrix-factorization">Two-dimensional histogram classification based on non-negative matrix factorization</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="nmf-2d">nmf 2d</h1>
+<h2 id="two-dimensional-histogram-classification-based-on-non-negative-matrix-factorization">Two-dimensional histogram classification based on non-negative matrix factorization</h2>
+<p>This notebook shows the proof-of-principle of an NMF model on 2D monitoring elements.<br />
+It also shows how to retrieve and use information from OMS.</p>
+<pre><code class="python">### imports
+
+# external modules
+import sys
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+
+# local modules
+sys.path.append('../utils')
+import dataframe_utils as dfu
+import plot_utils as pu
+import hist_utils as hu
+import generate_data_2d_utils as g2u
+import json_utils as jsonu
+sys.path.append('../src')
+import DataLoader
+sys.path.append('../src/classifiers')
+import NMFClassifier
+sys.path.append('../omsapi')
+from get_oms_data import get_oms_api,get_oms_data,get_oms_response_attribute
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### load the histograms
+# note: this cell assumes you have a csv file stored at the specified location,
+#       containing only histograms of the specified type;
+#       see the tutorial read_and_write_data for examples on how to create such files!
+
+histname = 'clusterposition_zphi_ontrack_PXLayer_1'
+datadir = '../data'
+dloader = DataLoader.DataLoader()
+
+# read training data
+filename = 'DF2017B_'+histname+'_subset.csv'
+histdf = dloader.get_dataframe_from_file( os.path.join(datadir, filename) )
+print('raw input data shape: {}'.format( dfu.get_hist_values(histdf)[0].shape ))
+histdf = dfu.select_dcson(histdf)
+(hists_ref) = hu.preparedatafromdf(histdf, cropslices=[slice(1,-1,None),slice(81,221,None)], rebinningfactor=(2,2), donormalize=True, doplot=False)
+_ = pu.plot_hists_2d(hists_ref[:4], ncols=4, title='some example histograms for NMF model')
+print('number of lumisections: '+str(len(histdf)))
+
+# read good test data
+filename = 'DF2017B_'+histname+'_run297056.csv'
+histdf = dloader.get_dataframe_from_file( os.path.join(datadir, filename) )
+print('raw input data shape: {}'.format( dfu.get_hist_values(histdf)[0].shape ))
+histdf = dfu.select_dcson(histdf)
+(hists_good, runnbs_good, lsnbs_good) = hu.preparedatafromdf(histdf, returnrunls=True, cropslices=[slice(1,-1,None),slice(81,221,None)], rebinningfactor=(2,2), donormalize=True, doplot=False)
+_ = pu.plot_hists_2d(hists_good[:4], ncols=4, title='some example histograms in good test set')
+print('number of lumisections: '+str(len(histdf)))
+
+# read bad test data
+filename = 'DF2017B_'+histname+'_run297289.csv'
+histdf = dloader.get_dataframe_from_file( os.path.join(datadir, filename) )
+print('raw input data shape: {}'.format( dfu.get_hist_values(histdf)[0].shape ))
+histdf = dfu.select_dcson(histdf)
+(hists_bad, runnbs_bad, lsnbs_bad) = hu.preparedatafromdf(histdf, returnrunls=True, cropslices=[slice(1,-1,None),slice(81,221,None)], rebinningfactor=(2,2), donormalize=True, doplot=False)
+_ = pu.plot_hists_2d(hists_bad[:4], ncols=4, title='some example histograms in bad test set')
+print('number of lumisections: '+str(len(histdf)))
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### build an NMF model
+
+classifier = NMFClassifier.NMFClassifier( ncomponents=10, nmax=50 )
+classifier.train( hists_ref )
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### optionally enlarge the test set using resampling
+
+do_resampling = True
+
+if do_resampling:
+    hists_good_ext = g2u.fourier_noise_nd(hists_good, nresamples=4, nonnegative=True, 
+                     stdfactor=10., kmaxscale=0.5, ncomponents=3)
+    print('shape of resampled good test set: {}'.format(hists_good_ext.shape))
+    hists_bad_ext = g2u.fourier_noise_nd(hists_bad, nresamples=40, nonnegative=True, stdfactor=5., kmaxscale=0.5, ncomponents=3)
+    print('shape of resampled bad test set: {}'.format(hists_bad_ext.shape))
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### perform the classification
+
+classifier.set_nmax( 50 )
+
+scores_good = classifier.evaluate( hists_good )
+scores_bad = classifier.evaluate( hists_bad )
+if do_resampling:
+    scores_good_ext = classifier.evaluate( hists_good_ext )
+    scores_bad_ext = classifier.evaluate( hists_bad_ext )
+
+hists_good_appl = hists_good
+hists_bad_appl = hists_bad
+scores_good_appl = scores_good
+scores_bad_appl = scores_bad
+if do_resampling:
+    hists_good_appl = hists_good_ext
+    hists_bad_appl = hists_bad_ext
+    scores_good_appl = scores_good_ext
+    scores_bad_appl = scores_bad_ext
+
+labels_good = np.zeros(len(scores_good_appl))
+labels_bad = np.ones(len(scores_bad_appl))
+scores = np.concatenate((scores_good_appl,scores_bad_appl))
+labels = np.concatenate((labels_good,labels_bad))
+_ = pu.plot_score_dist( scores, labels, nbins=100, normalize=True,
+                        siglabel='Anomalous', sigcolor='r',
+                        bcklabel='Training (mostly good)', bckcolor='g',
+                        title='output score distributions for signal and background',
+                        xaxtitle='output score', yaxtitle=None)
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### check some random examples
+
+nplot = 5
+
+inds_good = np.random.choice(np.array(list(range(len(hists_good)))),size=nplot)
+print('example histograms from good test set:')
+for i in inds_good:
+    histlist = [hists_good[i],classifier.reconstruct(np.array([hists_good[i]]))[0]]
+    subtitles = ['good test histogram','NMF reconstruction']
+    title = 'index: {}, run: {}, lumisection: {}, MSE: {:.2E}'.format(i, runnbs_good[i],lsnbs_good[i],scores_good[i])
+    pu.plot_hists_2d(histlist, ncols=2, title = title, titlesize=20, subtitles=subtitles, subtitlesize=15)
+plt.show()
+
+inds_bad = np.random.choice(np.array(range(len(hists_bad))),size=nplot)
+print('example histograms from bad test set:')
+for i in inds_bad:
+    histlist = [hists_bad[i],classifier.reconstruct(np.array([hists_bad[i]]))[0]]
+    subtitles = ['bad test histogram','NMF reconstruction']
+    title = 'index: {}, run: {}, lumisection: {}, MSE: {:.2E}'.format(i, runnbs_bad[i],lsnbs_bad[i],scores_bad[i])
+    pu.plot_hists_2d(histlist, ncols=2, title = title, titlesize=20, subtitles=subtitles, subtitlesize=15)
+plt.show()
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### check some examples in a given MSE range
+
+mserange = (0.1,0.25)
+test_histograms = hists_good
+test_scores = scores_good
+test_runnbs = runnbs_good
+test_lsnbs = lsnbs_good
+
+inds = np.where( (test_scores&gt;mserange[0]) &amp; (test_scores&lt;mserange[1]) )[0]
+print('{} out of {} histograms fall within this MSE range'.format(len(inds),len(test_scores)))
+
+for indx in inds:
+    hist = test_histograms[indx]
+    title = 'index: {}, run: {}, lumisection: {}, MSE: {:.2E}'.format(indx, test_runnbs[indx], test_lsnbs[indx], test_scores[indx])
+    pu.plot_hist_2d(hist, title = title)
+    plt.show()
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### extra: retrieve information from OMS on pileup, lumi and/or trigger rates
+
+omsapi = get_oms_api()
+# pileup and luminosity in good test set
+oms_target_run_good = 297056
+ls_info_good = get_oms_data( omsapi, 'lumisections', oms_target_run_good, 
+                            attributes=['lumisection_number','pileup','delivered_lumi','recorded_lumi'] )
+# pileup and luminosity in bad test set
+oms_target_run_bad = 297289
+ls_info_bad = get_oms_data( omsapi, 'lumisections', oms_target_run_bad, 
+                          attributes=['lumisection_number','pileup','delivered_lumi','recorded_lumi'])
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### make plots of OMS info
+
+# plots for good run
+ls_good = get_oms_response_attribute(ls_info_good,'lumisection_number')
+pileup_good = get_oms_response_attribute(ls_info_good,'pileup')
+lumi_del_good = get_oms_response_attribute(ls_info_good,'delivered_lumi')
+lumi_rec_good = get_oms_response_attribute(ls_info_good,'recorded_lumi')
+dcson_good = jsonu.isdcson( [oms_target_run_good]*len(ls_good), ls_good )
+pu.plot_hists([pileup_good], colorlist=['b'], labellist=['pileup'], xlims=(ls_good[0],ls_good[-1]),
+              title='pileup for good run', xaxtitle='lumisection number', yaxtitle='pileup',
+              bkgcolor=dcson_good,bkgcmap='cool')
+pu.plot_hists([lumi_rec_good,lumi_del_good], colorlist=['g','b'], labellist=['recorded luminosity','delivered luminosity'], xlims=(ls_good[0],ls_good[-1]),
+              title='luminosity for good run', xaxtitle='lumisection number', yaxtitle='luminosity',
+              bkgcolor=dcson_good,bkgcmap='cool')
+
+ls_bad = get_oms_response_attribute(ls_info_bad,'lumisection_number')
+pileup_bad = get_oms_response_attribute(ls_info_bad,'pileup')
+lumi_del_bad = get_oms_response_attribute(ls_info_bad,'delivered_lumi')
+lumi_rec_bad = get_oms_response_attribute(ls_info_bad,'recorded_lumi')
+dcson_bad = jsonu.isdcson( [oms_target_run_bad]*len(ls_bad), ls_bad )
+pu.plot_hists([pileup_bad], colorlist=['b'], labellist=['pileup'], xlims=(ls_bad[0],ls_bad[-1]),
+              title='pileup for bad run', xaxtitle='lumisection number', yaxtitle='pileup',
+              bkgcolor=dcson_bad,bkgcmap='cool')
+pu.plot_hists([lumi_rec_bad,lumi_del_bad], colorlist=['g','b'], labellist=['recorded luminosity','delivered luminosity'], xlims=(ls_bad[0],ls_bad[-1]),
+              title='luminosity for bad run', xaxtitle='lumisection number', yaxtitle='luminosity',
+              bkgcolor=dcson_bad,bkgcmap='cool')
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">### plot particular lumisections based on the OMS info above
+
+lsnbs_tocheck = list(range(25,40))
+idx_oms = [np.where(np.array(ls_good)==lsnb)[0][0] for lsnb in lsnbs_tocheck]
+idx_hist = [np.where(lsnbs_good==lsnb)[0][0] for lsnb in lsnbs_tocheck]
+histlist = [hists_good[i] for i in idx_hist]
+subtitles = ['lumisection: {}, pileup: {}'.format(lsnbs_tocheck[i],pileup_good[idx_oms[i]]) for i in range(len(lsnbs_tocheck))]
+_ = pu.plot_hists_2d(histlist, subtitles=subtitles)
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre>
+
+<pre><code class="python">
+</code></pre>
+
+<p>Output:</p>
+<pre><code class="text">
+</code></pre></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
