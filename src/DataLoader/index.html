@@ -346,20 +346,24 @@ see the tools in the 'dqmio' folder for more info on preparing the input files.<
 Currently supported input file formats:<br />
 - csv<br />
 - parquet  </p>
-<p>Example usage:<br />
-    from DataLoader import DataLoader<br />
-    dl = DataLoader()<br />
-    df = dl.get_dataframe_from_file( <path to input file> )  </p>
+<p>Example usage:  </p>
+<pre><code>from DataLoader import DataLoader  
+dl = DataLoader()  
+df = dl.get_dataframe_from_file( &lt;path to input file&gt; )  
+</code></pre>
+
 <p>Alternatively, support is available to read the legacy per-LS csv files<br />
 (deprecated approach for run-II data, before nanoDQMIO in run-III).<br />
 In this case, the needed input consists of:<br />
 - a set of histogram names to load<br />
 - a specification in terms of eras or years  </p>
-<p>Example usage:<br />
-    from DataLoader import DataLoader<br />
-    dl = DataLoader()<br />
-    csvfiles = dl.get_default_csv_files( year=<year>, dim=<histogram dimension> )<br />
-    df = dl.get_dataframe_from_files( csvfiles, histnames=<histogram names> )  </p>
+<p>Example usage:  </p>
+<pre><code>from DataLoader import DataLoader  
+dl = DataLoader()  
+csvfiles = dl.get_default_csv_files( year=&lt;year&gt;, dim=&lt;histogram dimension&gt; )  
+df = dl.get_dataframe_from_files( csvfiles, histnames=&lt;histogram names&gt; )  
+</code></pre>
+
 <p>The output consists of a pandas dataframe containing the requested histograms.  </p>
 <hr />
 <hr />
