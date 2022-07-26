@@ -72,14 +72,18 @@ def sort_filenames(filelist):
 def read_csv(csv_file):
     ### read csv file into pandas dataframe
     # csv_file is the path to the csv file to be read
+    # DEPRECATED, this function might be removed in the future;
+    #             use DataLoader.get_dataframe_from_file instead.
     df = pd.read_csv(csv_file)
     df.sort_values(by=['fromrun','fromlumi'],inplace=True)
     df.reset_index(drop=True,inplace=True)
     return df
 
-def write_csv(dataframe,csvfilename):
+def write_csv(dataframe, csvfilename):
     ### write a dataframe to a csv file
     # note: just a wrapper for builtin dataframe.to_csv
+    # DEPRECATED, this function might be removed in the future;
+    #             use DataLoader.write_dataframe_to_file instead.
     dataframe.to_csv(csvfilename)
 
 def read_and_merge_csv(csv_files, histnames=[], runnbs=[]):
@@ -87,6 +91,8 @@ def read_and_merge_csv(csv_files, histnames=[], runnbs=[]):
     # csv_files is a list of paths to files to merge into a df
     # histnames is a list of the types of histograms to keep (default: all)
     # runnbs is a list of run numbers to keep (default: all)
+    # DEPRECATED, this function might be removed in the future;
+    #             use DataLoader.get_dataframe_from_files instead.
     dflist = []
     print('INFO in csv_utils.py / read_and_merge_csv:'
           +' reading and merging {} csv files...'.format(len(csv_files)))
@@ -107,6 +113,8 @@ def read_and_merge_csv(csv_files, histnames=[], runnbs=[]):
 
 def write_skimmed_csv(histnames, year, eras=['all'], dim=1):
     ### read all available data for a given year/era and make a file per histogram type
+    # DEPRECATED, this function might be removed in the future;
+    #             see tutorial read_and_write_data.ipynb for equivalent functionality.
     # input arguments:
     # - histnames: list of histogram names for which to make a separate file
     # - year: data-taking year (in string format)
@@ -134,13 +142,3 @@ def write_skimmed_csv(histnames, year, eras=['all'], dim=1):
             seldf = dfu.select_histnames(temp,[histname])
             histname = histname.replace(' ','_')
             seldf.to_csv('DF'+year+erasuffix+'_'+histname+'.csv')
-
-
-
-
-
-
-
-
-
-
