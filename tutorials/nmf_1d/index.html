@@ -381,21 +381,21 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#nmf-1d">nmf 1d</a></li>
-            <li><a href="#train-and-test-an-nmf-model-for-a-type-of-1d-monitoring-element">Train and test an NMF model for a type of 1D monitoring element</a></li>
+        <li class="main active"><a href="#train-and-test-an-nmf-model-for-a-type-of-1d-monitoring-element">Train and test an NMF model for a type of 1D monitoring element</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="nmf-1d">nmf 1d</h1>
 <h2 id="train-and-test-an-nmf-model-for-a-type-of-1d-monitoring-element">Train and test an NMF model for a type of 1D monitoring element</h2>
 <p>This notebook showcases how to use an NMF model for a 1D monitoring element.<br />
-It consists of the following steps:
-   - Loading the data
-   - Applying selections (e.g. DCS-bit on and sufficient statistics)
-   - Preprocessing (e.g. normalizing)
-   - Building an NMF model
-   - Investigating the output  </p>
+It consists of the following steps:  </p>
+<ul>
+<li>Loading the data  </li>
+<li>Applying selections (e.g. DCS-bit on and sufficient statistics)  </li>
+<li>Preprocessing (e.g. normalizing)  </li>
+<li>Building an NMF model  </li>
+<li>Investigating the output  </li>
+</ul>
 <p>You can use this notebook both for global training (training on a large dataset) and for local training (training on a small number of well-chosen runs).</p>
 <pre><code class="python">### imports
 
@@ -425,10 +425,9 @@ import NMFClassifier
 import IdentityFitter
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>2022-07-26 17:24:20.766349: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /cvmfs/sft.cern.ch/lcg/releases/MCGenerators/thepeg/2.2.1-8d929/x86_64-centos7-gcc8-opt/lib/ThePEG:/cvmfs/sft.cern.ch/lcg/releases/MCGenerators/herwig++/7.2.1-f3599/x86_64-centos7-gcc8-opt/lib/Herwig:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/torch/lib:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow/contrib/tensor_forest:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow/python/framework:/cvmfs/sft.cern.ch/lcg/releases/java/8u222-884d8/x86_64-centos7-gcc8-opt/jre/lib/amd64:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib64:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.3.0-cebb0/x86_64-centos7/lib:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.3.0-cebb0/x86_64-centos7/lib64:/cvmfs/sft.cern.ch/lcg/releases/binutils/2.30-e5b21/x86_64-centos7/lib:/usr/local/lib/:/cvmfs/sft.cern.ch/lcg/releases/R/3.6.3-dfb24/x86_64-centos7-gcc8-opt/lib64/R/library/readr/rcon
+2022-07-26 17:24:20.766409: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
 </code></pre>
-
 <pre><code class="python">### define run properties
 # in this cell all major run properties are going to be set,
 # e.g. what runs to train on and what runs to test on
@@ -493,10 +492,8 @@ elif training_mode == 'local':
     print(runsls_bad)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>selected runs/lumisections for training: all
 </code></pre>
-
 <pre><code class="python">### read the data based on the configuration defined above
 
 readnew = True
@@ -542,10 +539,16 @@ print('- number of lumisections: {}'.format(len(histstruct.lsnbs)))
 print('- masks: {}'.format(list(histstruct.masks.keys())))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>adding chargeInner_PXLayer_2...
+INFO in DataLoader.get_dataframe_from_file: loading dataframe from file ../data/DF2017_chargeInner_PXLayer_2.csv...
+INFO in DataLoader.get_dataframe_from_file: sorting the dataframe...
+INFO in DataLoader.get_dataframe_from_file: loaded a dataframe with 225954 rows and 16 columns.
+found 225954 histograms
+created a histstruct with the following properties:
+- number of histogram types: 1
+- number of lumisections: 225954
+- masks: ['dcson', 'golden', 'highstat', 'bad', 'bad0', 'bad1', 'bad2', 'bad3', 'bad4']
 </code></pre>
-
 <pre><code class="python">skipthiscell = False
 
 if( training_mode=='local' and not skipthiscell ):
@@ -563,10 +566,6 @@ if( training_mode=='local' and not skipthiscell ):
                               )
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
 <pre><code class="python">### extend the training set using artificial data
 
 extendtraining = False
@@ -579,10 +578,6 @@ if extendtraining:
     (exthists,_,_) = gdu.upsample_hist_set(hists, 5e4, doplot=True )
     histstruct.add_exthistograms( 'training', histname, exthists )
     print('  -&gt; generated {} histograms'.format(len(histstruct.exthistograms['training'][histname])))
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
 </code></pre>
 
 <pre><code class="python">### define and train an NMF model
@@ -609,39 +604,34 @@ model.set_classifiers( {histname: classifier} )
 histstruct.add_model( modelname, model )
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/sklearn/decomposition/_nmf.py:312: FutureWarning: The 'init' value, when 'init=None' and n_components is less than n_samples and n_features, will be changed from 'nndsvd' to 'nndsvda' in 1.1 (renaming of 0.26).
+  warnings.warn(("The 'init' value, when 'init=None' and "
+/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/sklearn/decomposition/_nmf.py:1090: ConvergenceWarning: Maximum number of iterations 200 reached. Increase it to improve convergence.
+  warnings.warn("Maximum number of iterations %d reached. Increase it to"
 </code></pre>
-
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_6_1.png" /></p>
+<pre><code>adding model "nmfclassifier" to the HistStruct
+</code></pre>
 <pre><code class="python">### plot the NMF components
 
 components = classifier.get_components()
 _ = pu.plot_hists_multi( components, colorlist=list(range(len(components))), xaxtitle='bin number', yaxtitle='arbitrary units', title='NMF components' )
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_7_0.png" /></p>
 <pre><code class="python">### evaluate the models on all histograms in the (non-extended) histstruct
 
 print('evaluating model for '+histname)
 histstruct.evaluate_classifier( modelname, histname )
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>evaluating model for chargeInner_PXLayer_2
 </code></pre>
-
 <pre><code class="python">### train a density fitter on the scores obtained by the NMF model
 
 histstruct.set_fitter( modelname, IdentityFitter.IdentityFitter() )
 histstruct.train_fitter( modelname, masknames=training_masks )
 histstruct.evaluate_fitter( modelname )
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
 </code></pre>
 
 <pre><code class="python">### extend the test set using artificial data generation and evaluate the model on the extended test set
@@ -674,10 +664,10 @@ for i in range(nbadruns):
     histstruct.evaluate_fitter( modelname, setnames=['bad{}'.format(i)] )
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>generating data for chargeInner_PXLayer_2
+evaluating: chargeInner_PXLayer_2
+evaluating fitter
 </code></pre>
-
 <pre><code class="python">### get the scores
 
 # get the log probability for good set
@@ -686,10 +676,6 @@ logprob_good = np.log(prob_good)
 # get the log probability for bad set
 prob_bad = histstruct.get_globalscores( modelname, setnames=['bad{}'.format(i) for i in range(nbadruns)] )
 logprob_bad = np.log(prob_bad)
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
 </code></pre>
 
 <pre><code class="python">### make a roc curve based on the test results above
@@ -707,10 +693,14 @@ auc = aeu.get_roc(scores, labels, mode='geom', bootstrap_samples=100, doprint=Fa
 aeu.get_confusion_matrix(scores, labels, wp='maxauc')
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_12_0.png" /></p>
+<pre><code>calculating ROC curve on 100 bootstrap samples of size 49958
 </code></pre>
-
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_12_2.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_12_3.png" /></p>
+<pre><code>(-4.156618406017773, &lt;Figure size 432x288 with 2 Axes&gt;, &lt;AxesSubplot:&gt;)
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_12_5.png" /></p>
 <pre><code class="python">### plot some random examples
 
 # define reference histograms
@@ -742,10 +732,30 @@ for i in indices:
     plt.show()
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>example histograms from the good test set:
 </code></pre>
-
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_1.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_2.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_3.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_4.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_5.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_6.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_7.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_8.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_9.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_10.png" /></p>
+<pre><code>example histograms from the bad test set:
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_12.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_13.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_14.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_15.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_16.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_17.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_18.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_19.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_20.png" /></p>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_13_21.png" /></p>
 <pre><code class="python">### investigate particular lumisections
 
 # initialization: general
@@ -816,22 +826,313 @@ if mode=='run':
         print('logprob: '+str(logprob))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>plotting 43 lumisections...
 </code></pre>
-
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_1.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11742876]
+-------------
+logprob: [2.1419234]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_3.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11759748]
+-------------
+logprob: [2.14048768]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_5.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11930701]
+-------------
+logprob: [2.12605523]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_7.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11448997]
+-------------
+logprob: [2.16726804]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_9.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11787179]
+-------------
+logprob: [2.1381578]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_11.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11709544]
+-------------
+logprob: [2.14476592]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_13.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11491754]
+-------------
+logprob: [2.16354048]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_15.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11651301]
+-------------
+logprob: [2.14975236]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_17.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11659569]
+-------------
+logprob: [2.14904299]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_19.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11531861]
+-------------
+logprob: [2.16005649]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_21.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11699337]
+-------------
+logprob: [2.14563803]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_23.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11511875]
+-------------
+logprob: [2.16179106]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_25.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11746122]
+-------------
+logprob: [2.141647]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_27.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11491104]
+-------------
+logprob: [2.16359701]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_29.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11559568]
+-------------
+logprob: [2.15765668]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_31.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11706182]
+-------------
+logprob: [2.14505314]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_33.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11533168]
+-------------
+logprob: [2.15994317]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_35.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11316278]
+-------------
+logprob: [2.178928]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_37.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11744022]
+-------------
+logprob: [2.14182586]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_39.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11295069]
+-------------
+logprob: [2.18080389]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_41.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11432042]
+-------------
+logprob: [2.16875009]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_43.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11577394]
+-------------
+logprob: [2.15611574]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_45.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11596593]
+-------------
+logprob: [2.15445883]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_47.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11252853]
+-------------
+logprob: [2.1845485]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_49.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11418823]
+-------------
+logprob: [2.16990708]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_51.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11592322]
+-------------
+logprob: [2.15482724]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_53.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11453416]
+-------------
+logprob: [2.16688216]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_55.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11061984]
+-------------
+logprob: [2.20165583]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_57.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11639396]
+-------------
+logprob: [2.15077467]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_59.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11509686]
+-------------
+logprob: [2.16198121]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_61.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11489376]
+-------------
+logprob: [2.16374741]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_63.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11569846]
+-------------
+logprob: [2.15676797]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_65.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11598947]
+-------------
+logprob: [2.15425584]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_67.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11440008]
+-------------
+logprob: [2.16805346]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_69.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11418719]
+-------------
+logprob: [2.16991614]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_71.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11207464]
+-------------
+logprob: [2.18859017]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_73.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11372892]
+-------------
+logprob: [2.17393758]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_75.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11627835]
+-------------
+logprob: [2.1517684]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_77.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11539924]
+-------------
+logprob: [2.15935751]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_79.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11177484]
+-------------
+logprob: [2.1912688]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_81.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11515268]
+-------------
+logprob: [2.16149634]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_83.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11584298]
+-------------
+logprob: [2.15551965]
+</code></pre>
+<p><img alt="png" src="../nmf_1d_files/nmf_1d_14_85.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.11319422]
+-------------
+logprob: [2.17865016]
+</code></pre>
 <pre><code class="python">
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
 <pre><code class="python">
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
 </code></pre></div>
         </div>
 

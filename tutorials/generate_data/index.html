@@ -381,13 +381,11 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#generate-data">generate data</a></li>
-            <li><a href="#exploration-of-data-generation-resampling-methods">Exploration of data generation ('resampling') methods</a></li>
+        <li class="main active"><a href="#exploration-of-data-generation-resampling-methods">Exploration of data generation ('resampling') methods</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="generate-data">generate data</h1>
 <h2 id="exploration-of-data-generation-resampling-methods">Exploration of data generation ('resampling') methods</h2>
 <p>This notebook lists and plots some of the implemented methods for resampling histograms in order to artificially increase the statistics of training or testing sets.</p>
 <pre><code class="python">### imports
@@ -405,10 +403,6 @@ import generate_data_utils as gdu
 import plot_utils as pu
 sys.path.append('../src')
 import DataLoader
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
 </code></pre>
 
 <pre><code class="python">### load the data
@@ -450,10 +444,18 @@ badhists = hu.preparedatafromdf(dfu.select_runsls(df,badrunsls['2017']),donormal
 pu.plot_sets([goodhists,badhists],colorlist=['b','r'],labellist=['&quot;good&quot; histograms','&quot;bad&quot; histograms'])
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
+<pre><code>INFO in DataLoader.get_dataframe_from_file: loading dataframe from file ../data/DF2017_chargeInner_PXLayer_2.csv...
+INFO in DataLoader.get_dataframe_from_file: sorting the dataframe...
+INFO in DataLoader.get_dataframe_from_file: loaded a dataframe with 225954 rows and 16 columns.
+raw input data shape: (225954, 102)
 
+
+
+
+
+(&lt;Figure size 432x288 with 1 Axes&gt;, &lt;AxesSubplot:&gt;)
+</code></pre>
+<p><img alt="png" src="../generate_data_files/generate_data_2_2.png" /></p>
 <pre><code class="python">### also select a seed
 
 seed = dfu.select_runsls(df,{&quot;297056&quot;:[[100,100]]})
@@ -465,10 +467,9 @@ runhists = hu.preparedatafromdf(run,donormalize=True)
 pu.plot_sets([runhists,seedhist],colorlist=['lightblue','k'],labellist=['histograms','seed histogram'])
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>(&lt;Figure size 432x288 with 1 Axes&gt;, &lt;AxesSubplot:&gt;)
 </code></pre>
-
+<p><img alt="png" src="../generate_data_files/generate_data_3_1.png" /></p>
 <pre><code class="python">### testing section for fourier_noise_on_mean
 
 (reshists,_,_) = gdu.fourier_noise_on_mean(allhists, nresamples=10, nonnegative=True, doplot=True)
@@ -480,10 +481,17 @@ pu.plot_sets([hu.select_random(allhists, nselect=3), hu.select_random(reshists, 
              transparencylist=[0.5,0.5])
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
+<pre><code>size of original set: (225954, 102)
+size of resampled set: (10, 102)
 
+
+
+
+
+(&lt;Figure size 432x288 with 1 Axes&gt;, &lt;AxesSubplot:&gt;)
+</code></pre>
+<p><img alt="png" src="../generate_data_files/generate_data_4_2.png" /></p>
+<p><img alt="png" src="../generate_data_files/generate_data_4_3.png" /></p>
 <pre><code class="python">### testing section for fourier_noise
 
 (greshists,_,_) = gdu.fourier_noise(goodhists, nresamples=10, nonnegative=True, doplot=True)
@@ -496,10 +504,18 @@ pu.plot_sets([hu.select_random(greshists, nselect=100), hu.select_random(breshis
              transparencylist=[0.5,0.5])
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
+<pre><code>size of resampled good set: (7380, 102)
+size of resampled bad set: (1449, 102)
 
+
+
+
+
+(&lt;Figure size 432x288 with 1 Axes&gt;, &lt;AxesSubplot:&gt;)
+</code></pre>
+<p><img alt="png" src="../generate_data_files/generate_data_5_2.png" /></p>
+<p><img alt="png" src="../generate_data_files/generate_data_5_3.png" /></p>
+<p><img alt="png" src="../generate_data_files/generate_data_5_4.png" /></p>
 <pre><code class="python">### testing section for resample_bin_per_bin
 
 (reshists,_,_) = gdu.resample_bin_per_bin(allhists, nresamples=10, nonnegative=True, smoothinghalfwidth=0, doplot=True)
@@ -511,10 +527,17 @@ pu.plot_sets([hu.select_random(allhists, nselect=3), hu.select_random(reshists, 
              transparencylist=[0.5,0.5])
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
+<pre><code>size of original set: (225954, 102)
+size of resampled set: (10, 102)
 
+
+
+
+
+(&lt;Figure size 432x288 with 1 Axes&gt;, &lt;AxesSubplot:&gt;)
+</code></pre>
+<p><img alt="png" src="../generate_data_files/generate_data_6_2.png" /></p>
+<p><img alt="png" src="../generate_data_files/generate_data_6_3.png" /></p>
 <pre><code class="python">### testing section for resample_similar_bin_per_bin
 
 (greshists,_,_) = gdu.resample_similar_bin_per_bin(allhists, goodhists, nresamples=3, nonnegative=True, keeppercentage=0.005, doplot=True)
@@ -527,10 +550,24 @@ pu.plot_sets([hu.select_random(greshists, nselect=100), hu.select_random(breshis
              transparencylist=[0.5,0.5])
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
+<pre><code>Note: bin-per-bin resampling performed on 12 histograms.
+If this number is too low, existing histograms are drawn with too small variation.
+If this number is too high, systematic shifts of histograms can be averaged out.
+Note: bin-per-bin resampling performed on 7 histograms.
+If this number is too low, existing histograms are drawn with too small variation.
+If this number is too high, systematic shifts of histograms can be averaged out.
+size of resampled good set: (2214, 102)
+size of resampled bad set: (483, 102)
 
+
+
+
+
+(&lt;Figure size 432x288 with 1 Axes&gt;, &lt;AxesSubplot:&gt;)
+</code></pre>
+<p><img alt="png" src="../generate_data_files/generate_data_7_2.png" /></p>
+<p><img alt="png" src="../generate_data_files/generate_data_7_3.png" /></p>
+<p><img alt="png" src="../generate_data_files/generate_data_7_4.png" /></p>
 <pre><code class="python">### testing section for resample_similar_fourier_noise
 
 (greshists,_,_) = gdu.resample_similar_fourier_noise(allhists, goodhists, nresamples=3, nonnegative=True, keeppercentage=0.001, doplot=True)
@@ -543,10 +580,50 @@ pu.plot_sets([hu.select_random(greshists, nselect=100), hu.select_random(breshis
              transparencylist=[0.5,0.5])
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
+<pre><code>/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/numpy/core/fromnumeric.py:3440: RuntimeWarning: Mean of empty slice.
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/numpy/core/_methods.py:181: RuntimeWarning: invalid value encountered in true_divide
+  ret = um.true_divide(
+/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/numpy/core/_methods.py:262: RuntimeWarning: Degrees of freedom &lt;= 0 for slice
+  ret = _var(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/numpy/core/_methods.py:222: RuntimeWarning: invalid value encountered in true_divide
+  arrmean = um.true_divide(arrmean, div, out=arrmean, casting='unsafe',
+/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/numpy/core/_methods.py:251: RuntimeWarning: invalid value encountered in true_divide
+  ret = um.true_divide(
 
+
+Note: mean and std calculation is performed on 3 histograms.
+If this number is too low, histograms might be too similar for averaging to have effect.
+If this number is too high, systematic shifts of histogram shapes are included into the averaging.
+
+
+/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/numpy/core/fromnumeric.py:3440: RuntimeWarning: Mean of empty slice.
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/numpy/core/_methods.py:181: RuntimeWarning: invalid value encountered in true_divide
+  ret = um.true_divide(
+/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/numpy/core/_methods.py:262: RuntimeWarning: Degrees of freedom &lt;= 0 for slice
+  ret = _var(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/numpy/core/_methods.py:222: RuntimeWarning: invalid value encountered in true_divide
+  arrmean = um.true_divide(arrmean, div, out=arrmean, casting='unsafe',
+/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/numpy/core/_methods.py:251: RuntimeWarning: invalid value encountered in true_divide
+  ret = um.true_divide(
+
+
+Note: mean and std calculation is performed on 3 histograms.
+If this number is too low, histograms might be too similar for averaging to have effect.
+If this number is too high, systematic shifts of histogram shapes are included into the averaging.
+size of resampled good set: (2214, 102)
+size of resampled bad set: (483, 102)
+
+
+
+
+
+(&lt;Figure size 432x288 with 1 Axes&gt;, &lt;AxesSubplot:&gt;)
+</code></pre>
+<p><img alt="png" src="../generate_data_files/generate_data_8_5.png" /></p>
+<p><img alt="png" src="../generate_data_files/generate_data_8_6.png" /></p>
+<p><img alt="png" src="../generate_data_files/generate_data_8_7.png" /></p>
 <pre><code class="python">### testing section for resample_similar_lico
 
 (greshists,_,_) = gdu.resample_similar_lico(allhists,goodhists,nresamples=10,nonnegative=True,keeppercentage=0.1, doplot=True)
@@ -559,10 +636,24 @@ pu.plot_sets([hu.select_random(greshists, nselect=100), hu.select_random(breshis
              transparencylist=[0.5,0.5])
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
+<pre><code>Note: linear combination is taken between 226 histograms.
+If this number is too low, histograms might be too similar for combination to have effect.
+If this number is too high, systematic shifts of histogram shapes are included into the combination
+Note: linear combination is taken between 3 histograms.
+If this number is too low, histograms might be too similar for combination to have effect.
+If this number is too high, systematic shifts of histogram shapes are included into the combination
+size of resampled good set: (7380, 102)
+size of resampled bad set: (161, 102)
 
+
+
+
+
+(&lt;Figure size 432x288 with 1 Axes&gt;, &lt;AxesSubplot:&gt;)
+</code></pre>
+<p><img alt="png" src="../generate_data_files/generate_data_9_2.png" /></p>
+<p><img alt="png" src="../generate_data_files/generate_data_9_3.png" /></p>
+<p><img alt="png" src="../generate_data_files/generate_data_9_4.png" /></p>
 <pre><code class="python">### testing section for mc_sampling
 
 (reshists,_,_) = gdu.mc_sampling(seedhist, nresamples=10, nMC=10000, doplot=True)
@@ -573,10 +664,16 @@ pu.plot_sets([seedhist, hu.select_random(reshists, nselect=3)],
              transparencylist=[0.5,0.5])
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
+<pre><code>size of resampled set: (10, 102)
 
+
+
+
+
+(&lt;Figure size 432x288 with 1 Axes&gt;, &lt;AxesSubplot:&gt;)
+</code></pre>
+<p><img alt="png" src="../generate_data_files/generate_data_10_2.png" /></p>
+<p><img alt="png" src="../generate_data_files/generate_data_10_3.png" /></p>
 <pre><code class="python">### testing section for white_noise
 
 (greshists,_,_) = gdu.white_noise(goodhists, stdfactor=15, doplot=True)
@@ -589,22 +686,22 @@ pu.plot_sets([hu.select_random(greshists, nselect=100), hu.select_random(breshis
              transparencylist=[0.5,0.5])
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
+<pre><code>size of resampled good set: (738, 102)
+size of resampled bad set: (161, 102)
 
+
+
+
+
+(&lt;Figure size 432x288 with 1 Axes&gt;, &lt;AxesSubplot:&gt;)
+</code></pre>
+<p><img alt="png" src="../generate_data_files/generate_data_11_2.png" /></p>
+<p><img alt="png" src="../generate_data_files/generate_data_11_3.png" /></p>
+<p><img alt="png" src="../generate_data_files/generate_data_11_4.png" /></p>
 <pre><code class="python">
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
 <pre><code class="python">
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
 </code></pre></div>
         </div>
 

@@ -381,15 +381,13 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#plot-histograms">plot histograms</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="plot-histograms">plot histograms</h1>
 <p><strong>Plot the histograms for general investigation and visual inspection</strong><br />
-Functionality for selecting a single run and plotting all lumisections belonging to that run.
-Functionality for plotting the moments of the distributions as a function of LS number.</p>
+Functionality for selecting a single run and plotting all lumisections belonging to that run.<br />
+Functionality for plotting the moments of the distributions as a function of LS number.  </p>
 <pre><code class="python">### imports
 
 # external modules
@@ -411,10 +409,8 @@ import DataLoader
 importlib.reload(DataLoader)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>&lt;module 'DataLoader' from '/eos/home-l/llambrec/SWAN_projects/ML4DQM-DC/tutorials/../src/DataLoader.py'&gt;
 </code></pre>
-
 <pre><code class="python">### read the data
 # note: this cell assumes you have a csv file stored at the specified location,
 #       containing only histograms of the specified type;
@@ -439,10 +435,12 @@ df = dfu.select_runs(df,runnbs)
 #df = dfu.select_dcson(df)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>INFO in DataLoader.get_dataframe_from_file: loading dataframe from file ../data/DF2017_chargeInner_PXLayer_2.csv...
+INFO in DataLoader.get_dataframe_from_file: sorting the dataframe...
+INFO in DataLoader.get_dataframe_from_file: loaded a dataframe with 225954 rows and 16 columns.
+raw input data shape: (225954, 102)
+number of runs: 599
 </code></pre>
-
 <pre><code class="python"># make a plot of the histograms
 xmin = df.at[0,'Xmin']
 xmax = df.at[0,'Xmax']
@@ -459,19 +457,25 @@ pu.plot_hists_multi(values,colorlist=ls,xlims=(xmin,xmax))
 pu.plot_hists_multi(hu.normalizehists(values),colorlist=ls,xlims=(xmin,xmax))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
+<pre><code>shape of histogram array: (874, 102)
 
+
+
+
+
+(&lt;Figure size 432x288 with 2 Axes&gt;, &lt;AxesSubplot:&gt;)
+</code></pre>
+<p><img alt="png" src="../plot_histograms_files/plot_histograms_3_2.png" /></p>
+<p><img alt="png" src="../plot_histograms_files/plot_histograms_3_3.png" /></p>
+<p><img alt="png" src="../plot_histograms_files/plot_histograms_3_4.png" /></p>
 <pre><code class="python"># select a single lumisection and plot it on top of all the other lumisections
 lsnumber = 869
 pu.plot_anomalous(values,ls,highlight=lsnumber,hrange=10)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>(&lt;Figure size 432x288 with 2 Axes&gt;, &lt;AxesSubplot:&gt;)
 </code></pre>
-
+<p><img alt="png" src="../plot_histograms_files/plot_histograms_4_1.png" /></p>
 <pre><code class="python"># make a plot of the moments of the (normalized) histograms
 # use xmin = 0 and xmax = 1 as a kind of normalization
 hists = values[:,1:-1]
@@ -480,15 +484,8 @@ moments = hu.histmoments(bins,hists,orders=[1,2,3])
 _ = pu.plot_moments(moments,ls,(0,1))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
+<p><img alt="png" src="../plot_histograms_files/plot_histograms_5_0.png" /></p>
 <pre><code class="python">
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
 </code></pre></div>
         </div>
 

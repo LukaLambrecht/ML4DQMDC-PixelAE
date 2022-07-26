@@ -381,21 +381,21 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#autoencoder-1d">autoencoder 1d</a></li>
-            <li><a href="#train-and-test-an-autoencoder-on-a-set-of-1d-monitoring-elements">Train and test an autoencoder on a set of 1D monitoring elements</a></li>
+        <li class="main active"><a href="#train-and-test-an-autoencoder-on-a-set-of-1d-monitoring-elements">Train and test an autoencoder on a set of 1D monitoring elements</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="autoencoder-1d">autoencoder 1d</h1>
 <h2 id="train-and-test-an-autoencoder-on-a-set-of-1d-monitoring-elements">Train and test an autoencoder on a set of 1D monitoring elements</h2>
 <p>This notebook walks you through the basics of the autoencoder approach to detecting anomalies for 1D monitoring elements.<br />
-It consists of the following steps:
-   - Loading the data
-   - Applying selections (e.g. DCS-bit on and sufficient statistics)
-   - Preprocessing (e.g. normalizing)
-   - Building an autoencoder model with keras
-   - Investigate the output</p>
+It consists of the following steps:  </p>
+<ul>
+<li>Loading the data  </li>
+<li>Applying selections (e.g. DCS-bit on and sufficient statistics)  </li>
+<li>Preprocessing (e.g. normalizing)  </li>
+<li>Building an autoencoder model with keras  </li>
+<li>Investigate the output  </li>
+</ul>
 <pre><code class="python">### imports
 
 # external modules
@@ -418,10 +418,9 @@ sys.path.append('../src')
 import DataLoader
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>2022-07-26 17:21:47.396941: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /cvmfs/sft.cern.ch/lcg/releases/MCGenerators/thepeg/2.2.1-8d929/x86_64-centos7-gcc8-opt/lib/ThePEG:/cvmfs/sft.cern.ch/lcg/releases/MCGenerators/herwig++/7.2.1-f3599/x86_64-centos7-gcc8-opt/lib/Herwig:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/torch/lib:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow/contrib/tensor_forest:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow/python/framework:/cvmfs/sft.cern.ch/lcg/releases/java/8u222-884d8/x86_64-centos7-gcc8-opt/jre/lib/amd64:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib64:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.3.0-cebb0/x86_64-centos7/lib:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.3.0-cebb0/x86_64-centos7/lib64:/cvmfs/sft.cern.ch/lcg/releases/binutils/2.30-e5b21/x86_64-centos7/lib:/usr/local/lib/:/cvmfs/sft.cern.ch/lcg/releases/R/3.6.3-dfb24/x86_64-centos7-gcc8-opt/lib64/R/library/readr/rcon
+2022-07-26 17:21:47.397006: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
 </code></pre>
-
 <pre><code class="python">### read the data
 # note: this cell assumes you have a csv file stored at the specified location,
 #       containing only histograms of the specified type;
@@ -436,10 +435,11 @@ df = dloader.get_dataframe_from_file( os.path.join(datadir, filename) )
 print('raw input data shape: {}'.format( dfu.get_hist_values(df)[0].shape ))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>INFO in DataLoader.get_dataframe_from_file: loading dataframe from file ../data/DF2017_chargeInner_PXLayer_2.csv...
+INFO in DataLoader.get_dataframe_from_file: sorting the dataframe...
+INFO in DataLoader.get_dataframe_from_file: loaded a dataframe with 225954 rows and 16 columns.
+raw input data shape: (225954, 102)
 </code></pre>
-
 <pre><code class="python">### filtering: select only DCS-bit on data and filter out low statistics
 
 df = dfu.select_dcson(df)
@@ -449,10 +449,9 @@ df = dfu.select_highstat(df, entries_to_bins_ratio=100)
 print('number of passing lumisections after high statistics selection: {}'.format( len(df) ))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>number of passing lumisections after DCS selection: 215144
+number of passing lumisections after high statistics selection: 211371
 </code></pre>
-
 <pre><code class="python">### preprocessing of the data: rebinning and normalizing
 
 rebinningfactor = 1
@@ -463,10 +462,9 @@ X_train = hu.preparedatafromdf(df, rebinningfactor=rebinningfactor,
 print('size of training set: '+str(X_train.shape))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>size of training set: (211371, 102)
 </code></pre>
-
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_4_1.png" /></p>
 <pre><code class="python">### build the model and train it
 
 input_size = X_train.shape[1]
@@ -479,18 +477,80 @@ history = autoencoder.fit(X_train, X_train, epochs=20, batch_size=500, shuffle=F
 pu.plot_loss(history, title = 'model loss')
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
+<pre><code>2022-07-26 17:22:34.789066: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /cvmfs/sft.cern.ch/lcg/releases/MCGenerators/thepeg/2.2.1-8d929/x86_64-centos7-gcc8-opt/lib/ThePEG:/cvmfs/sft.cern.ch/lcg/releases/MCGenerators/herwig++/7.2.1-f3599/x86_64-centos7-gcc8-opt/lib/Herwig:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/torch/lib:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow/contrib/tensor_forest:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow/python/framework:/cvmfs/sft.cern.ch/lcg/releases/java/8u222-884d8/x86_64-centos7-gcc8-opt/jre/lib/amd64:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib64:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.3.0-cebb0/x86_64-centos7/lib:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.3.0-cebb0/x86_64-centos7/lib64:/cvmfs/sft.cern.ch/lcg/releases/binutils/2.30-e5b21/x86_64-centos7/lib:/usr/local/lib/:/cvmfs/sft.cern.ch/lcg/releases/R/3.6.3-dfb24/x86_64-centos7-gcc8-opt/lib64/R/library/readr/rcon
+2022-07-26 17:22:34.789185: W tensorflow/stream_executor/cuda/cuda_driver.cc:326] failed call to cuInit: UNKNOWN ERROR (303)
+2022-07-26 17:22:34.789326: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (59ec73fb7463): /proc/driver/nvidia/version does not exist
+2022-07-26 17:22:34.791360: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
 
+
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense (Dense)                (None, 51)                5253      
+_________________________________________________________________
+dense_1 (Dense)              (None, 102)               5304      
+=================================================================
+Total params: 10,557
+Trainable params: 10,557
+Non-trainable params: 0
+_________________________________________________________________
+
+
+2022-07-26 17:22:35.219952: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:176] None of the MLIR Optimization Passes are enabled (registered 2)
+2022-07-26 17:22:35.221458: I tensorflow/core/platform/profile_utils/cpu_utils.cc:114] CPU Frequency: 2399845000 Hz
+
+
+Epoch 1/20
+381/381 [==============================] - 4s 7ms/step - loss: 1.3303e-04 - val_loss: 1.8835e-05
+Epoch 2/20
+381/381 [==============================] - 3s 7ms/step - loss: 3.5243e-05 - val_loss: 8.5544e-06
+Epoch 3/20
+381/381 [==============================] - 3s 8ms/step - loss: 1.7558e-05 - val_loss: 4.2058e-06
+Epoch 4/20
+381/381 [==============================] - 3s 9ms/step - loss: 1.0271e-05 - val_loss: 2.6051e-06
+Epoch 5/20
+381/381 [==============================] - 3s 9ms/step - loss: 7.0206e-06 - val_loss: 1.8891e-06
+Epoch 6/20
+381/381 [==============================] - 3s 9ms/step - loss: 5.1686e-06 - val_loss: 1.5451e-06
+Epoch 7/20
+381/381 [==============================] - 3s 9ms/step - loss: 4.0133e-06 - val_loss: 1.4708e-06
+Epoch 8/20
+381/381 [==============================] - 4s 11ms/step - loss: 3.1906e-06 - val_loss: 1.3947e-06
+Epoch 9/20
+381/381 [==============================] - 4s 12ms/step - loss: 2.6316e-06 - val_loss: 1.3483e-06
+Epoch 10/20
+381/381 [==============================] - 4s 12ms/step - loss: 2.1945e-06 - val_loss: 1.2472e-06
+Epoch 11/20
+381/381 [==============================] - 5s 13ms/step - loss: 1.9028e-06 - val_loss: 1.1730e-06
+Epoch 12/20
+381/381 [==============================] - 5s 14ms/step - loss: 1.7457e-06 - val_loss: 1.1381e-06
+Epoch 13/20
+381/381 [==============================] - 5s 13ms/step - loss: 1.5103e-06 - val_loss: 1.1024e-06
+Epoch 14/20
+381/381 [==============================] - 5s 12ms/step - loss: 1.4419e-06 - val_loss: 9.9945e-07
+Epoch 15/20
+381/381 [==============================] - 5s 12ms/step - loss: 1.3293e-06 - val_loss: 9.4934e-07
+Epoch 16/20
+381/381 [==============================] - 6s 17ms/step - loss: 1.3654e-06 - val_loss: 9.3066e-07
+Epoch 17/20
+381/381 [==============================] - 6s 16ms/step - loss: 1.1381e-06 - val_loss: 8.6669e-07
+Epoch 18/20
+381/381 [==============================] - 6s 17ms/step - loss: 1.0834e-06 - val_loss: 7.9371e-07
+Epoch 19/20
+381/381 [==============================] - 7s 17ms/step - loss: 1.0866e-06 - val_loss: 7.6348e-07
+Epoch 20/20
+381/381 [==============================] - 6s 17ms/step - loss: 1.0285e-06 - val_loss: 7.3859e-07
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_5_4.png" /></p>
+<pre><code>(&lt;Figure size 432x288 with 1 Axes&gt;,
+ &lt;AxesSubplot:title={'center':'model loss'}, xlabel='Epoch', ylabel='Loss'&gt;)
+</code></pre>
 <pre><code class="python">### evaluate the model on the training set
 
 prediction_train = autoencoder.predict(X_train)
 mse_train = aeu.mseTop10Raw(X_train, prediction_train)
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
 </code></pre>
 
 <pre><code class="python">### plot the global MSE trend
@@ -501,10 +561,15 @@ print('mean mse: {}'.format(mean))
 print('std mse: {}'.format(std))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/IPython/core/pylabtools.py:134: UserWarning: Creating legend with loc="best" can be slow with large amounts of data.
+  fig.canvas.print_figure(bytes_io, **kw)
+/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/IPython/core/pylabtools.py:134: UserWarning: Creating legend with loc="best" can be slow with large amounts of data.
+  fig.canvas.print_figure(bytes_io, **kw)
 </code></pre>
-
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_7_1.png" /></p>
+<pre><code>mean mse: 1.562267880327337e-06
+std mse: 1.013996116717572e-06
+</code></pre>
 <pre><code class="python">### impose a mse upper boundary and plot random examples of passing and failing histograms
 # note: at this point, only the training set is considered!
 # for a test set: see cell below.
@@ -537,10 +602,23 @@ for i in randint:
     plt.show()
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>The mse threshold is: 4.6042562304800525e-06
+Number of passing histograms: 207175
+Number of failing histograms: 4196
+examples of good histograms and reconstruction:
 </code></pre>
-
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_8_1.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_8_2.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_8_3.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_8_4.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_8_5.png" /></p>
+<pre><code>examples of bad histograms and reconstruction:
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_8_7.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_8_8.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_8_9.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_8_10.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_8_11.png" /></p>
 <pre><code class="python">### get a test set and evaluate the model
 
 goodrunsls = { &quot;297056&quot;:[[-1]],
@@ -608,10 +686,39 @@ for i in randint:
     plt.show()
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>INFO in DataLoader.get_dataframe_from_file: loading dataframe from file ../data/DF2017_chargeInner_PXLayer_2.csv...
+INFO in DataLoader.get_dataframe_from_file: sorting the dataframe...
+INFO in DataLoader.get_dataframe_from_file: loaded a dataframe with 225954 rows and 16 columns.
+shape of good test set: (15, 102)
+shape of bad test set: (178, 102)
 </code></pre>
-
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_1.png" /></p>
+<pre><code>average mse on good set: 9.394014806693854e-07
+average mse on bad set: 2.8245170411831176e-05
+examples of good histograms and reconstruction:
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_3.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_4.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_5.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_6.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_7.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_8.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_9.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_10.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_11.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_12.png" /></p>
+<pre><code>examples of bad histograms and reconstruction:
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_14.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_15.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_16.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_17.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_18.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_19.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_20.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_21.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_22.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_9_23.png" /></p>
 <pre><code class="python">### use artificial data to assess the model performance
 
 (goodhists,_,_) = gdu.upsample_hist_set( X_test_good, ntarget=5e3, fourierstdfactor=20., doplot=True )
@@ -641,19 +748,24 @@ print('maximum mse on good set: {}'.format(np.amax(mse[np.where(labels==0)])))
 auc = aeu.get_roc(mse, labels, npoints=500, bootstrap_samples=100)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>number of good histograms: 4995
+number of bad histograms: 4984
 </code></pre>
-
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_10_1.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_10_2.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_10_3.png" /></p>
+<pre><code>minimum mse on bad set: 2.3218854381344123e-06
+maximum mse on good set: 8.690468927991255e-06
+calculating ROC curve on 100 bootstrap samples of size 9979
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_10_5.png" /></p>
 <pre><code class="python">### continution of previous cell: choose wp and plot confusion matrix
 
 aeu.get_confusion_matrix_from_hists( validation_data, labels, prediction, msewp='maxauc' )
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_11_0.png" /></p>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_11_1.png" /></p>
 <pre><code class="python">### plot some histograms in the bad test set with their reconstruction
 
 inds = np.random.choice( np.arange(len(lsnbs_bad)), 10, replace=False )
@@ -671,10 +783,36 @@ for i in inds:
     print('MSE: {}'.format(mse))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_12_0.png" /></p>
+<pre><code>MSE: [3.0169114e-06]
 </code></pre>
-
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_12_2.png" /></p>
+<pre><code>MSE: [1.96651261e-05]
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_12_4.png" /></p>
+<pre><code>MSE: [3.39562765e-06]
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_12_6.png" /></p>
+<pre><code>MSE: [1.45044959e-05]
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_12_8.png" /></p>
+<pre><code>MSE: [3.05993993e-06]
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_12_10.png" /></p>
+<pre><code>MSE: [3.27946765e-06]
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_12_12.png" /></p>
+<pre><code>MSE: [1.25162146e-05]
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_12_14.png" /></p>
+<pre><code>MSE: [4.071005e-06]
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_12_16.png" /></p>
+<pre><code>MSE: [8.70430108e-05]
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_12_18.png" /></p>
+<pre><code>MSE: [3.24063155e-06]
+</code></pre>
 <pre><code class="python">### plot some histograms in the good test set with their reconstruction
 # note: depends on whether the good test set was obtained from real lumisections,
 #       or from averages from entire set.
@@ -700,15 +838,37 @@ for i in inds:
     print('MSE: {}'.format(mse))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_13_0.png" /></p>
+<pre><code>MSE: [1.26397457e-07]
 </code></pre>
-
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_13_2.png" /></p>
+<pre><code>MSE: [2.5634339e-07]
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_13_4.png" /></p>
+<pre><code>MSE: [1.93309463e-07]
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_13_6.png" /></p>
+<pre><code>MSE: [2.39758838e-06]
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_13_8.png" /></p>
+<pre><code>MSE: [5.69567167e-07]
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_13_10.png" /></p>
+<pre><code>MSE: [9.56595139e-08]
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_13_12.png" /></p>
+<pre><code>MSE: [2.41395981e-06]
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_13_14.png" /></p>
+<pre><code>MSE: [1.68067087e-06]
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_13_16.png" /></p>
+<pre><code>MSE: [1.14024023e-06]
+</code></pre>
+<p><img alt="png" src="../autoencoder_1d_files/autoencoder_1d_13_18.png" /></p>
+<pre><code>MSE: [1.10999989e-06]
+</code></pre>
 <pre><code class="python">
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
 </code></pre></div>
         </div>
 

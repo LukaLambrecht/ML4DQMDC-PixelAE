@@ -381,19 +381,22 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#autoencoder-iterative">autoencoder iterative</a></li>
-            <li><a href="#train-and-test-an-autoencoder-iteratively-on-local-datasets">Train and test an autoencoder iteratively on local datasets</a></li>
+        <li class="main active"><a href="#train-and-test-an-autoencoder-iteratively-on-local-datasets">Train and test an autoencoder iteratively on local datasets</a></li>
+            <li><a href="#part-1-reading-and-preparing-the-data">Part 1: Reading and preparing the data</a></li>
+            <li><a href="#part-2-updating-the-training-set">Part 2: Updating the training set</a></li>
+            <li><a href="#part-3-local-training-on-nearby-runs">Part 3: Local training on nearby runs</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="autoencoder-iterative">autoencoder iterative</h1>
 <h2 id="train-and-test-an-autoencoder-iteratively-on-local-datasets">Train and test an autoencoder iteratively on local datasets</h2>
 <p>This notebook investigates the possibility to perform local autoencoder training, i.e. training on a small number of runs instead of training on a large dataset (e.g. a full year of data taking).<br />
-This notebook consists of three parts:
-   - Reading and preparing the data (common to part 2 and 3) 
-   - Train an autoencoder on the first 5, 10, 15 etc. runs of 2017 data taking.<br />
-   - Choose a random run to test on, use 5 previous runs for training. This is a first step naive attempt towards using dedicated reference runs for training.</p>
+This notebook consists of three parts:  </p>
+<ul>
+<li>Reading and preparing the data (common to part 2 and 3).  </li>
+<li>Train an autoencoder on the first 5, 10, 15 etc. runs of 2017 data taking.  </li>
+<li>Choose a random run to test on, use 5 previous runs for training. This is a first step naive attempt towards using dedicated reference runs for training.  </li>
+</ul>
 <h3 id="part-1-reading-and-preparing-the-data">Part 1: Reading and preparing the data</h3>
 <pre><code class="python">### imports
 
@@ -414,10 +417,9 @@ sys.path.append('../src')
 import DataLoader
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>2022-07-26 17:22:47.287801: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /cvmfs/sft.cern.ch/lcg/releases/MCGenerators/thepeg/2.2.1-8d929/x86_64-centos7-gcc8-opt/lib/ThePEG:/cvmfs/sft.cern.ch/lcg/releases/MCGenerators/herwig++/7.2.1-f3599/x86_64-centos7-gcc8-opt/lib/Herwig:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/torch/lib:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow/contrib/tensor_forest:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow/python/framework:/cvmfs/sft.cern.ch/lcg/releases/java/8u222-884d8/x86_64-centos7-gcc8-opt/jre/lib/amd64:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib64:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.3.0-cebb0/x86_64-centos7/lib:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.3.0-cebb0/x86_64-centos7/lib64:/cvmfs/sft.cern.ch/lcg/releases/binutils/2.30-e5b21/x86_64-centos7/lib:/usr/local/lib/:/cvmfs/sft.cern.ch/lcg/releases/R/3.6.3-dfb24/x86_64-centos7-gcc8-opt/lib64/R/library/readr/rcon
+2022-07-26 17:22:47.287868: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
 </code></pre>
-
 <pre><code class="python">### read the data and perform some selections
 # note: this cell assumes you have a csv file stored at the specified location,
 #       containing only histograms of the specified type;
@@ -438,10 +440,13 @@ runs_all = dfu.get_runs(df)
 print('shape of histogram array: {}'.format(hists_all.shape))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>INFO in DataLoader.get_dataframe_from_file: loading dataframe from file ../data/DF2017_chargeInner_PXLayer_2.csv...
+INFO in DataLoader.get_dataframe_from_file: sorting the dataframe...
+INFO in DataLoader.get_dataframe_from_file: loaded a dataframe with 225954 rows and 16 columns.
+raw input data shape: (225954, 102)
+number of passing lumisections after selection: 211371
+shape of histogram array: (211371, 102)
 </code></pre>
-
 <h3 id="part-2-updating-the-training-set">Part 2: Updating the training set</h3>
 <pre><code class="python">### get a test set
 
@@ -493,10 +498,19 @@ pu.plot_sets([hists_good,hists_bad],
              xlims=(0,-1))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
+<pre><code>shape of good test set (184, 102)
+shape of bad test set (97, 102)
+shape of good test set (1840, 102)
+shape of bad test set (1940, 102)
 
+
+
+
+
+(&lt;Figure size 432x288 with 1 Axes&gt;, &lt;AxesSubplot:&gt;)
+</code></pre>
+<p><img alt="png" src="../autoencoder_iterative_files/autoencoder_iterative_5_2.png" /></p>
+<p><img alt="png" src="../autoencoder_iterative_files/autoencoder_iterative_5_3.png" /></p>
 <pre><code class="python">### function to purify training set by removing a given fraction of high mse histograms
 
 def purify_training_set(hists,model,rmfraction):
@@ -556,10 +570,6 @@ def plot_examples(hists_good,hists_bad,model):
     plt.show()
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
 <pre><code class="python">### iterate over growing amount of data
 
 nruns = [5,10]
@@ -595,10 +605,163 @@ for i in range(1,len(nruns)):
     plot_examples(hists_good,hists_bad,model)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
+<pre><code>size of training set (intial): 1017
 
+
+2022-07-26 17:29:35.167654: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /cvmfs/sft.cern.ch/lcg/releases/MCGenerators/thepeg/2.2.1-8d929/x86_64-centos7-gcc8-opt/lib/ThePEG:/cvmfs/sft.cern.ch/lcg/releases/MCGenerators/herwig++/7.2.1-f3599/x86_64-centos7-gcc8-opt/lib/Herwig:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/torch/lib:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow/contrib/tensor_forest:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow/python/framework:/cvmfs/sft.cern.ch/lcg/releases/java/8u222-884d8/x86_64-centos7-gcc8-opt/jre/lib/amd64:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib64:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.3.0-cebb0/x86_64-centos7/lib:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.3.0-cebb0/x86_64-centos7/lib64:/cvmfs/sft.cern.ch/lcg/releases/binutils/2.30-e5b21/x86_64-centos7/lib:/usr/local/lib/:/cvmfs/sft.cern.ch/lcg/releases/R/3.6.3-dfb24/x86_64-centos7-gcc8-opt/lib64/R/library/readr/rcon
+2022-07-26 17:29:35.167722: W tensorflow/stream_executor/cuda/cuda_driver.cc:326] failed call to cuInit: UNKNOWN ERROR (303)
+2022-07-26 17:29:35.167818: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (59ec73fb7463): /proc/driver/nvidia/version does not exist
+2022-07-26 17:29:35.169168: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+
+
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense (Dense)                (None, 51)                5253      
+_________________________________________________________________
+dense_1 (Dense)              (None, 102)               5304      
+=================================================================
+Total params: 10,557
+Trainable params: 10,557
+Non-trainable params: 0
+_________________________________________________________________
+
+
+2022-07-26 17:29:37.178509: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:176] None of the MLIR Optimization Passes are enabled (registered 2)
+2022-07-26 17:29:37.180016: I tensorflow/core/platform/profile_utils/cpu_utils.cc:114] CPU Frequency: 2399845000 Hz
+
+
+Epoch 1/10
+180/180 [==============================] - 10s 31ms/step - loss: 1.5311e-04 - val_loss: 4.9320e-06
+Epoch 2/10
+180/180 [==============================] - 5s 27ms/step - loss: 4.5635e-06 - val_loss: 4.2272e-06
+Epoch 3/10
+180/180 [==============================] - 5s 26ms/step - loss: 3.9521e-06 - val_loss: 3.6740e-06
+Epoch 4/10
+180/180 [==============================] - 6s 32ms/step - loss: 3.4399e-06 - val_loss: 3.2126e-06
+Epoch 5/10
+180/180 [==============================] - 8s 42ms/step - loss: 3.0351e-06 - val_loss: 2.8201e-06
+Epoch 6/10
+180/180 [==============================] - 6s 32ms/step - loss: 2.6835e-06 - val_loss: 2.4938e-06s - loss: 2.6835e-0
+Epoch 7/10
+180/180 [==============================] - 5s 30ms/step - loss: 2.3665e-06 - val_loss: 2.2352e-06
+Epoch 8/10
+180/180 [==============================] - 5s 30ms/step - loss: 2.1452e-06 - val_loss: 2.0101e-06
+Epoch 9/10
+180/180 [==============================] - 6s 36ms/step - loss: 1.9231e-06 - val_loss: 1.8349e-06
+Epoch 10/10
+180/180 [==============================] - 9s 52ms/step - loss: 1.8513e-06 - val_loss: 1.8462e-06
+evaluating model on test set
+calculating ROC curve on 100 bootstrap samples of size 3780
+</code></pre>
+<p><img alt="png" src="../autoencoder_iterative_files/autoencoder_iterative_7_5.png" /></p>
+<p><img alt="png" src="../autoencoder_iterative_files/autoencoder_iterative_7_6.png" /></p>
+<p><img alt="png" src="../autoencoder_iterative_files/autoencoder_iterative_7_7.png" /></p>
+<pre><code>adding runs 297057 to 297114
+(training on 10 runs in total)
+number of new histograms added to training set: 2657
+size of training set (intial): 3306
+Model: "sequential_1"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense_2 (Dense)              (None, 51)                5253      
+_________________________________________________________________
+dense_3 (Dense)              (None, 102)               5304      
+=================================================================
+Total params: 10,557
+Trainable params: 10,557
+Non-trainable params: 0
+_________________________________________________________________
+Epoch 1/40
+179/179 [==============================] - 7s 25ms/step - loss: 1.1214e-04 - val_loss: 5.1926e-06
+Epoch 2/40
+179/179 [==============================] - 4s 21ms/step - loss: 4.9028e-06 - val_loss: 4.6196e-06
+Epoch 3/40
+179/179 [==============================] - 3s 18ms/step - loss: 4.3412e-06 - val_loss: 4.0848e-06
+Epoch 4/40
+179/179 [==============================] - 3s 17ms/step - loss: 3.8516e-06 - val_loss: 3.6149e-06
+Epoch 5/40
+179/179 [==============================] - 3s 18ms/step - loss: 3.3940e-06 - val_loss: 3.1668e-06
+Epoch 6/40
+179/179 [==============================] - 3s 19ms/step - loss: 2.9781e-06 - val_loss: 2.7924e-06
+Epoch 7/40
+179/179 [==============================] - 3s 19ms/step - loss: 2.6401e-06 - val_loss: 2.4741e-06
+Epoch 8/40
+179/179 [==============================] - 3s 18ms/step - loss: 2.4025e-06 - val_loss: 2.2292e-06
+Epoch 9/40
+179/179 [==============================] - 3s 18ms/step - loss: 2.0766e-06 - val_loss: 1.9773e-06
+Epoch 10/40
+179/179 [==============================] - 3s 17ms/step - loss: 1.8608e-06 - val_loss: 1.7755e-06
+Epoch 11/40
+179/179 [==============================] - 3s 18ms/step - loss: 1.8868e-06 - val_loss: 1.8752e-06
+Epoch 12/40
+179/179 [==============================] - 3s 19ms/step - loss: 1.5737e-06 - val_loss: 1.4608e-06
+Epoch 13/40
+179/179 [==============================] - 3s 18ms/step - loss: 1.3841e-06 - val_loss: 1.3289e-06
+Epoch 14/40
+179/179 [==============================] - 3s 20ms/step - loss: 1.2598e-06 - val_loss: 1.2143e-06
+Epoch 15/40
+179/179 [==============================] - 3s 18ms/step - loss: 1.1874e-06 - val_loss: 1.7827e-06
+Epoch 16/40
+179/179 [==============================] - 3s 15ms/step - loss: 1.4452e-06 - val_loss: 1.0406e-06
+Epoch 17/40
+179/179 [==============================] - 3s 19ms/step - loss: 9.9276e-07 - val_loss: 9.7675e-07
+Epoch 18/40
+179/179 [==============================] - 3s 17ms/step - loss: 9.2855e-07 - val_loss: 9.1790e-07
+Epoch 19/40
+179/179 [==============================] - 3s 18ms/step - loss: 8.7365e-07 - val_loss: 8.6198e-07
+Epoch 20/40
+179/179 [==============================] - 3s 18ms/step - loss: 8.2775e-07 - val_loss: 8.1381e-07
+Epoch 21/40
+179/179 [==============================] - 3s 18ms/step - loss: 7.8679e-07 - val_loss: 7.8189e-07
+Epoch 22/40
+179/179 [==============================] - 4s 20ms/step - loss: 7.5235e-07 - val_loss: 7.4516e-07
+Epoch 23/40
+179/179 [==============================] - 3s 15ms/step - loss: 7.2027e-07 - val_loss: 7.0982e-07
+Epoch 24/40
+179/179 [==============================] - 3s 18ms/step - loss: 6.9286e-07 - val_loss: 6.8907e-07
+Epoch 25/40
+179/179 [==============================] - 3s 16ms/step - loss: 2.5623e-06 - val_loss: 5.6969e-06
+Epoch 26/40
+179/179 [==============================] - 3s 18ms/step - loss: 1.2265e-06 - val_loss: 6.3184e-07
+Epoch 27/40
+179/179 [==============================] - 3s 19ms/step - loss: 6.1497e-07 - val_loss: 6.1188e-07
+Epoch 28/40
+179/179 [==============================] - 3s 19ms/step - loss: 5.9777e-07 - val_loss: 5.9449e-07
+Epoch 29/40
+179/179 [==============================] - 4s 20ms/step - loss: 5.8060e-07 - val_loss: 5.7774e-07
+Epoch 30/40
+179/179 [==============================] - 3s 19ms/step - loss: 5.6749e-07 - val_loss: 5.6069e-07
+Epoch 31/40
+179/179 [==============================] - 3s 18ms/step - loss: 5.4924e-07 - val_loss: 5.4804e-07
+Epoch 32/40
+179/179 [==============================] - 3s 19ms/step - loss: 5.3318e-07 - val_loss: 5.2841e-07
+Epoch 33/40
+179/179 [==============================] - 3s 19ms/step - loss: 5.1866e-07 - val_loss: 5.1238e-07
+Epoch 34/40
+179/179 [==============================] - 3s 16ms/step - loss: 5.1258e-07 - val_loss: 4.9960e-07
+Epoch 35/40
+179/179 [==============================] - 3s 19ms/step - loss: 4.9696e-07 - val_loss: 4.8245e-07
+Epoch 36/40
+179/179 [==============================] - 3s 19ms/step - loss: 4.7906e-07 - val_loss: 4.6904e-07
+Epoch 37/40
+179/179 [==============================] - 3s 19ms/step - loss: 4.7037e-07 - val_loss: 4.5758e-07
+Epoch 38/40
+179/179 [==============================] - 3s 18ms/step - loss: 4.7814e-07 - val_loss: 4.5095e-07
+Epoch 39/40
+179/179 [==============================] - 3s 17ms/step - loss: 4.1904e-06 - val_loss: 1.0307e-06
+Epoch 40/40
+179/179 [==============================] - 3s 17ms/step - loss: 4.8127e-07 - val_loss: 4.1665e-07
+size of training set (after training and purifying): 3306
+evaluating model on test set
+calculating ROC curve on 100 bootstrap samples of size 3780
+</code></pre>
+<p><img alt="png" src="../autoencoder_iterative_files/autoencoder_iterative_7_9.png" /></p>
+<p><img alt="png" src="../autoencoder_iterative_files/autoencoder_iterative_7_10.png" /></p>
+<p><img alt="png" src="../autoencoder_iterative_files/autoencoder_iterative_7_11.png" /></p>
 <h3 id="part-3-local-training-on-nearby-runs">Part 3: Local training on nearby runs</h3>
 <pre><code class="python">### choose random run for testing, train on previous runs
 # (testing: see next cell)
@@ -628,10 +791,107 @@ plt.show()
 model = aeu.train_simple_autoencoder(X_train)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>number of available runs: 564
+chosen run index: 412, corresponding to run: 304209
+runs used for training: [304197, 304198, 304199, 304200, 304204]
+shape of training set (909, 102)
+shape of test set (425, 102)
 </code></pre>
-
+<p><img alt="png" src="../autoencoder_iterative_files/autoencoder_iterative_9_1.png" /></p>
+<pre><code>Model: "sequential_2"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense_4 (Dense)              (None, 51)                5253      
+_________________________________________________________________
+dense_5 (Dense)              (None, 102)               5304      
+=================================================================
+Total params: 10,557
+Trainable params: 10,557
+Non-trainable params: 0
+_________________________________________________________________
+Epoch 1/40
+180/180 [==============================] - 2s 7ms/step - loss: 1.6187e-04 - val_loss: 5.1549e-06
+Epoch 2/40
+180/180 [==============================] - 1s 6ms/step - loss: 4.8933e-06 - val_loss: 4.6664e-06
+Epoch 3/40
+180/180 [==============================] - 1s 6ms/step - loss: 4.4298e-06 - val_loss: 4.2151e-06
+Epoch 4/40
+180/180 [==============================] - 1s 6ms/step - loss: 3.9914e-06 - val_loss: 3.7808e-06
+Epoch 5/40
+180/180 [==============================] - 1s 6ms/step - loss: 3.5813e-06 - val_loss: 3.3762e-06
+Epoch 6/40
+180/180 [==============================] - 1s 6ms/step - loss: 3.2062e-06 - val_loss: 3.0032e-06
+Epoch 7/40
+180/180 [==============================] - 1s 6ms/step - loss: 2.8450e-06 - val_loss: 2.6555e-06
+Epoch 8/40
+180/180 [==============================] - 1s 7ms/step - loss: 2.5000e-06 - val_loss: 2.3279e-06
+Epoch 9/40
+180/180 [==============================] - 1s 7ms/step - loss: 2.1955e-06 - val_loss: 2.0381e-06
+Epoch 10/40
+180/180 [==============================] - 1s 7ms/step - loss: 1.9759e-06 - val_loss: 1.8084e-06
+Epoch 11/40
+180/180 [==============================] - 1s 6ms/step - loss: 1.7138e-06 - val_loss: 1.5692e-06
+Epoch 12/40
+180/180 [==============================] - 1s 6ms/step - loss: 1.6443e-06 - val_loss: 1.3883e-06
+Epoch 13/40
+180/180 [==============================] - 1s 7ms/step - loss: 1.3263e-06 - val_loss: 1.2380e-06
+Epoch 14/40
+180/180 [==============================] - 1s 6ms/step - loss: 1.1858e-06 - val_loss: 1.1198e-06
+Epoch 15/40
+180/180 [==============================] - 1s 7ms/step - loss: 1.0711e-06 - val_loss: 1.0200e-06
+Epoch 16/40
+180/180 [==============================] - 1s 6ms/step - loss: 1.2255e-06 - val_loss: 9.8934e-07
+Epoch 17/40
+180/180 [==============================] - 1s 5ms/step - loss: 9.1090e-07 - val_loss: 8.4949e-07
+Epoch 18/40
+180/180 [==============================] - 1s 7ms/step - loss: 8.5840e-07 - val_loss: 9.2149e-07
+Epoch 19/40
+180/180 [==============================] - 1s 6ms/step - loss: 1.1008e-06 - val_loss: 7.3578e-07
+Epoch 20/40
+180/180 [==============================] - 1s 7ms/step - loss: 7.1226e-07 - val_loss: 6.9035e-07
+Epoch 21/40
+180/180 [==============================] - 1s 6ms/step - loss: 6.6963e-07 - val_loss: 6.5100e-07
+Epoch 22/40
+180/180 [==============================] - 1s 7ms/step - loss: 6.3295e-07 - val_loss: 6.1755e-07
+Epoch 23/40
+180/180 [==============================] - 1s 7ms/step - loss: 6.0135e-07 - val_loss: 5.9092e-07
+Epoch 24/40
+180/180 [==============================] - 1s 6ms/step - loss: 5.7492e-07 - val_loss: 5.6528e-07
+Epoch 25/40
+180/180 [==============================] - 1s 6ms/step - loss: 5.5186e-07 - val_loss: 5.4899e-07
+Epoch 26/40
+180/180 [==============================] - 1s 6ms/step - loss: 5.3143e-07 - val_loss: 5.1981e-07
+Epoch 27/40
+180/180 [==============================] - 1s 6ms/step - loss: 5.1755e-07 - val_loss: 5.0836e-07
+Epoch 28/40
+180/180 [==============================] - 1s 6ms/step - loss: 1.2912e-06 - val_loss: 1.8068e-05
+Epoch 29/40
+180/180 [==============================] - 1s 6ms/step - loss: 4.3261e-06 - val_loss: 4.7346e-07
+Epoch 30/40
+180/180 [==============================] - 1s 6ms/step - loss: 4.6356e-07 - val_loss: 4.5966e-07
+Epoch 31/40
+180/180 [==============================] - 1s 6ms/step - loss: 4.5268e-07 - val_loss: 4.4805e-07
+Epoch 32/40
+180/180 [==============================] - 1s 6ms/step - loss: 4.4301e-07 - val_loss: 4.4015e-07
+Epoch 33/40
+180/180 [==============================] - 1s 6ms/step - loss: 4.3409e-07 - val_loss: 4.3113e-07
+Epoch 34/40
+180/180 [==============================] - 1s 7ms/step - loss: 5.3247e-07 - val_loss: 6.7669e-07
+Epoch 35/40
+180/180 [==============================] - 1s 6ms/step - loss: 5.2115e-07 - val_loss: 4.1663e-07
+Epoch 36/40
+180/180 [==============================] - 1s 6ms/step - loss: 4.0731e-07 - val_loss: 4.0308e-07
+Epoch 37/40
+180/180 [==============================] - 1s 6ms/step - loss: 3.9863e-07 - val_loss: 3.9545e-07
+Epoch 38/40
+180/180 [==============================] - 1s 7ms/step - loss: 3.9706e-07 - val_loss: 3.9387e-07
+Epoch 39/40
+180/180 [==============================] - 1s 6ms/step - loss: 3.8418e-07 - val_loss: 3.9225e-07
+Epoch 40/40
+180/180 [==============================] - 1s 6ms/step - loss: 3.7796e-07 - val_loss: 3.7572e-07
+</code></pre>
+<p><img alt="png" src="../autoencoder_iterative_files/autoencoder_iterative_9_3.png" /></p>
 <pre><code class="python">### test the autoencoder trained in the previous cell
 
 # note: do not simply use hists_good for a good test set, 
@@ -644,15 +904,11 @@ test_autoencoder(hists_test,hists_bad,model)
 plot_examples(hists_test,hists_bad,model)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>calculating ROC curve on 100 bootstrap samples of size 2365
 </code></pre>
-
+<p><img alt="png" src="../autoencoder_iterative_files/autoencoder_iterative_10_1.png" /></p>
+<p><img alt="png" src="../autoencoder_iterative_files/autoencoder_iterative_10_2.png" /></p>
 <pre><code class="python">
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
 </code></pre></div>
         </div>
 

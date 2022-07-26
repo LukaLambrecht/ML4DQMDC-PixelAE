@@ -381,12 +381,10 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#plot-histograms-loop">plot histograms loop</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="plot-histograms-loop">plot histograms loop</h1>
 <p><strong>Plot histograms in a loop, making a plot per run</strong><br />
 This allows to relatively quickly scan all runs or a collection of runs for either general characteristics of the histograms under investigation or spot anomalies by eye</p>
 <pre><code class="python">### imports
@@ -413,10 +411,8 @@ import DataLoader
 importlib.reload(DataLoader)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>&lt;module 'DataLoader' from '/eos/home-l/llambrec/SWAN_projects/ML4DQM-DC/tutorials/../src/DataLoader.py'&gt;
 </code></pre>
-
 <pre><code class="python"># global settings
 plot_type1 = True
 plot_type2 = True
@@ -484,15 +480,74 @@ for run in runs:
         plt.show()
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>INFO in DataLoader.get_dataframe_from_file: loading dataframe from file ../data/DF2017_chargeInner_PXLayer_2.csv...
+INFO in DataLoader.get_dataframe_from_file: sorting the dataframe...
+INFO in DataLoader.get_dataframe_from_file: loaded a dataframe with 225954 rows and 16 columns.
+raw input data shape: (225954, 102)
+filtered number of LS: 215144
+number of runs: 594
+will loop over following runs: [297047, 297048, 297049, 297050, 297056, 297057, 297099, 297100, 297101, 297113]
+run 297047
 </code></pre>
-
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_1.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_2.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_3.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_4.png" /></p>
+<pre><code>run 297048
+</code></pre>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_6.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_7.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_8.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_9.png" /></p>
+<pre><code>run 297049
+</code></pre>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_11.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_12.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_13.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_14.png" /></p>
+<pre><code>run 297050
+</code></pre>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_16.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_17.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_18.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_19.png" /></p>
+<pre><code>run 297056
+</code></pre>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_21.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_22.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_23.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_24.png" /></p>
+<pre><code>run 297057
+</code></pre>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_26.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_27.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_28.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_29.png" /></p>
+<pre><code>run 297099
+</code></pre>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_31.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_32.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_33.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_34.png" /></p>
+<pre><code>run 297100
+</code></pre>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_36.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_37.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_38.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_39.png" /></p>
+<pre><code>run 297101
+</code></pre>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_41.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_42.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_43.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_44.png" /></p>
+<pre><code>run 297113
+</code></pre>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_46.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_47.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_48.png" /></p>
+<p><img alt="png" src="../plot_histograms_loop_files/plot_histograms_loop_2_49.png" /></p>
 <pre><code class="python">
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
 </code></pre></div>
         </div>
 

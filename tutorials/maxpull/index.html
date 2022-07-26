@@ -381,13 +381,14 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#maxpull">maxpull</a></li>
-            <li><a href="#two-dimensional-histogram-classification-based-on-the-max-bin-per-bin-pull-with-respect-to-a-reference-histogram">Two-dimensional histogram classification based on the max bin-per-bin pull with respect to a reference histogram</a></li>
+        <li class="main active"><a href="#two-dimensional-histogram-classification-based-on-the-max-bin-per-bin-pull-with-respect-to-a-reference-histogram">Two-dimensional histogram classification based on the max bin-per-bin pull with respect to a reference histogram</a></li>
+            <li><a href="#part-1-first-exploration-on-a-small-test-file">Part 1: First exploration on a small test file</a></li>
+            <li><a href="#part-2-use-a-locally-changing-reference-histogram">Part 2: Use a locally changing reference histogram</a></li>
+            <li><a href="#part-3-load-a-set-of-histograms-to-define-a-reference-a-good-test-set-and-a-bad-test-set-and-test-the-discrimination">Part 3: Load a set of histograms to define a reference, a good test set and a bad test set, and test the discrimination</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="maxpull">maxpull</h1>
 <h2 id="two-dimensional-histogram-classification-based-on-the-max-bin-per-bin-pull-with-respect-to-a-reference-histogram">Two-dimensional histogram classification based on the max bin-per-bin pull with respect to a reference histogram</h2>
 <p>This notebook investigates a very simple classifier, that just looks at the maximum bin-per-bin value difference with respect to a given reference histogram.</p>
 <pre><code class="python">### imports
@@ -415,10 +416,8 @@ import MaxPullClassifier
 importlib.reload(MaxPullClassifier)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>&lt;module 'MaxPullClassifier' from '/eos/home-l/llambrec/SWAN_projects/ML4DQM-DC/tutorials/../src/classifiers/MaxPullClassifier.py'&gt;
 </code></pre>
-
 <h3 id="part-1-first-exploration-on-a-small-test-file">Part 1: First exploration on a small test file</h3>
 <pre><code class="python">### load the histogram dataframe
 
@@ -435,10 +434,12 @@ df = dfu.select_dcson(df)
 print('number of selected lumisections: '+str(len(df)))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>INFO in DataLoader.get_dataframe_from_file: loading dataframe from file ../data/DF2017B_clusterposition_zphi_ontrack_PXLayer_1_subset.csv...
+INFO in DataLoader.get_dataframe_from_file: sorting the dataframe...
+INFO in DataLoader.get_dataframe_from_file: loaded a dataframe with 627 rows and 13 columns.
+raw input data shape: (627, 202, 302)
+number of selected lumisections: 599
 </code></pre>
-
 <pre><code class="python">### extract the histograms as a numpy array from the dataframe
 
 (histograms,runnbs,lsnbs) = dfu.get_hist_values(df)
@@ -454,10 +455,11 @@ histograms = hu.rebinhists(histograms,(5,5))
 print('shape of histogram array: {}'.format(histograms.shape))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>shape of histogram array: (599, 202, 302)
+shape of run number array: (599,)
+shape of lumisection number array: (599,)
+shape of histogram array: (599, 40, 28)
 </code></pre>
-
 <pre><code class="python">### define a reference histogram as the average of the set
 ### and a max pull classifier based on this reference histogram
 
@@ -467,10 +469,8 @@ classifier = MaxPullClassifier.MaxPullClassifier()
 classifier.train( np.array([refhist]) )
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>shape of averaged histogram: (40, 28)
 </code></pre>
-
 <pre><code class="python">### calculate max pull for each histogram
 
 maxpulls = classifier.evaluate( histograms )
@@ -480,10 +480,10 @@ print(avg)
 print(std)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<p><img alt="png" src="../maxpull_files/maxpull_6_0.png" /></p>
+<pre><code>127.49942708389064
+17.68730286891456
 </code></pre>
-
 <pre><code class="python">### plot examples for histograms with large pulls
 
 threshold = avg+3*std
@@ -495,10 +495,9 @@ for i in range(len(histograms)):
     pu.plot_hists_2d(histlist, ncols=3, title = None, subtitles=subtitles)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
+<p><img alt="png" src="../maxpull_files/maxpull_7_0.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_7_1.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_7_2.png" /></p>
 <pre><code class="python">### plot examples of histograms with small pulls
 
 inds = np.argsort(maxpulls)[:3]
@@ -508,10 +507,9 @@ for i in inds:
     pu.plot_hists_2d(histlist, ncols=3, title = None, subtitles=subtitles)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
+<p><img alt="png" src="../maxpull_files/maxpull_8_0.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_8_1.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_8_2.png" /></p>
 <pre><code class="python">### investigate a particular lumisection in more detail
 
 idx = 0
@@ -522,10 +520,10 @@ subtitles = ['test histogram','reference histogram','pull']
 _ = pu.plot_hists_2d( histlist, ncols=3, title = None, subtitles=subtitles)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>run: 297050, lumisection: 1
+maximum pull for this lumisection: 301.22227457594295
 </code></pre>
-
+<p><img alt="png" src="../maxpull_files/maxpull_9_1.png" /></p>
 <h3 id="part-2-use-a-locally-changing-reference-histogram">Part 2: Use a locally changing reference histogram</h3>
 <pre><code class="python">### local approach
 
@@ -570,10 +568,30 @@ for i in inds:
 plt.show()
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<p><img alt="png" src="../maxpull_files/maxpull_11_0.png" /></p>
+<pre><code>average pull: 60.82421471381158
+std dev of pulls: 100.6325204200988
+histograms with largest pulls:
 </code></pre>
-
+<p><img alt="png" src="../maxpull_files/maxpull_11_2.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_11_3.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_11_4.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_11_5.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_11_6.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_11_7.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_11_8.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_11_9.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_11_10.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_11_11.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_11_12.png" /></p>
+<pre><code>[232 482 233 591 126]
+histograms with smalles pulls:
+</code></pre>
+<p><img alt="png" src="../maxpull_files/maxpull_11_14.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_11_15.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_11_16.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_11_17.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_11_18.png" /></p>
 <pre><code class="python">### investigate a particular lumisection in more detail
 
 idx = 136
@@ -590,10 +608,14 @@ print('histograms that were averaged to make the reference histograms:')
 _ = pu.plot_hists_2d( histograms[idx-nprev:idx], ncols=3 )
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>run: 297056, lumisection: 17
+maximum pull for this lumisection: 660.5883469264701
+test histogram, reference histogram and pulls:
 </code></pre>
-
+<p><img alt="png" src="../maxpull_files/maxpull_12_1.png" /></p>
+<pre><code>histograms that were averaged to make the reference histograms:
+</code></pre>
+<p><img alt="png" src="../maxpull_files/maxpull_12_3.png" /></p>
 <h3 id="part-3-load-a-set-of-histograms-to-define-a-reference-a-good-test-set-and-a-bad-test-set-and-test-the-discrimination">Part 3: Load a set of histograms to define a reference, a good test set and a bad test set, and test the discrimination</h3>
 <pre><code class="python">### load the histograms
 
@@ -625,7 +647,7 @@ _ = pu.plot_hists_2d(hists_good[:4], ncols=4, title='some example histograms in 
 print('number of lumisections in good test set: '+str(len(df)))
 
 # load the bad data
-filename = dffile = 'DF2017B_'+histname+'_run297169.csv'
+filename = dffile = 'DF2017B_'+histname+'_run297289.csv'
 df = dloader.get_dataframe_from_file( os.path.join(datadir, filename) )
 print('raw input data shape: {}'.format( dfu.get_hist_values(df)[0].shape ))
 df = dfu.select_dcson(df)
@@ -634,10 +656,27 @@ _ = pu.plot_hists_2d(hists_bad[:4], ncols=4, title='some example histograms in b
 print('number of lumisections in bad test set: '+str(len(df)))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>INFO in DataLoader.get_dataframe_from_file: loading dataframe from file ../data/DF2017B_clusterposition_zphi_ontrack_PXLayer_1_subset.csv...
+INFO in DataLoader.get_dataframe_from_file: sorting the dataframe...
+INFO in DataLoader.get_dataframe_from_file: loaded a dataframe with 627 rows and 13 columns.
+raw input data shape: (627, 202, 302)
+number of lumisections in histogram set for averaging: 599
+shape of averaged histogram: (100, 70)
+INFO in DataLoader.get_dataframe_from_file: loading dataframe from file ../data/DF2017B_clusterposition_zphi_ontrack_PXLayer_1_run297056.csv...
+INFO in DataLoader.get_dataframe_from_file: sorting the dataframe...
+INFO in DataLoader.get_dataframe_from_file: loaded a dataframe with 196 rows and 14 columns.
+raw input data shape: (196, 202, 302)
+number of lumisections in good test set: 185
+INFO in DataLoader.get_dataframe_from_file: loading dataframe from file ../data/DF2017B_clusterposition_zphi_ontrack_PXLayer_1_run297289.csv...
+INFO in DataLoader.get_dataframe_from_file: sorting the dataframe...
+INFO in DataLoader.get_dataframe_from_file: loaded a dataframe with 15 rows and 14 columns.
+raw input data shape: (15, 202, 302)
+number of lumisections in bad test set: 15
 </code></pre>
-
+<p><img alt="png" src="../maxpull_files/maxpull_14_1.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_14_2.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_14_3.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_14_4.png" /></p>
 <pre><code class="python">### perform the classification
 
 scores_good = classifier.evaluate( hists_good )
@@ -653,10 +692,7 @@ _ = pu.plot_score_dist( scores, labels, nbins=50, normalize=True,
                         xaxtitle='output score', yaxtitle=None)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
+<p><img alt="png" src="../maxpull_files/maxpull_15_0.png" /></p>
 <pre><code class="python">### check some examples
 
 nplot = 5
@@ -680,10 +716,20 @@ for i in inds_bad:
 plt.show()
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>example histograms from good test set:
 </code></pre>
-
+<p><img alt="png" src="../maxpull_files/maxpull_16_1.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_16_2.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_16_3.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_16_4.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_16_5.png" /></p>
+<pre><code>example histograms from bad test set:
+</code></pre>
+<p><img alt="png" src="../maxpull_files/maxpull_16_7.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_16_8.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_16_9.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_16_10.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_16_11.png" /></p>
 <pre><code class="python">### re-define the classifier with a nondefault number of maximum pull bins to consider in a loop to determine the optimal value
 
 ns = [1,10,20,50,100,500]
@@ -704,23 +750,12 @@ for n in ns:
                             xaxtitle='output score', yaxtitle=None)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
-<pre><code class="python">
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
-<pre><code class="python">
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
-</code></pre></div>
+<p><img alt="png" src="../maxpull_files/maxpull_17_0.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_17_1.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_17_2.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_17_3.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_17_4.png" /></p>
+<p><img alt="png" src="../maxpull_files/maxpull_17_5.png" /></p></div>
         </div>
 
         <footer class="col-md-12">

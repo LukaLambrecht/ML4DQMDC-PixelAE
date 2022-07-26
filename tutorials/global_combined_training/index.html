@@ -381,13 +381,11 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#global-combined-training">global combined training</a></li>
-            <li><a href="#train-a-combined-model-with-global-training-and-evaluate-its-predictions">Train a combined model with global training and evaluate its predictions</a></li>
+        <li class="main active"><a href="#train-a-combined-model-with-global-training-and-evaluate-its-predictions">Train a combined model with global training and evaluate its predictions</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="global-combined-training">global combined training</h1>
 <h2 id="train-a-combined-model-with-global-training-and-evaluate-its-predictions">Train a combined model with global training and evaluate its predictions</h2>
 <p>This notebook uses multiple types of histograms, trains a single-histogram classifier for each of them, combines the output and assesses the performance of this combined model.</p>
 <pre><code class="python">### imports
@@ -428,10 +426,9 @@ import MomentClassifier
 import SeminormalFitter
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>2022-07-26 17:23:22.471603: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /cvmfs/sft.cern.ch/lcg/releases/MCGenerators/thepeg/2.2.1-8d929/x86_64-centos7-gcc8-opt/lib/ThePEG:/cvmfs/sft.cern.ch/lcg/releases/MCGenerators/herwig++/7.2.1-f3599/x86_64-centos7-gcc8-opt/lib/Herwig:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/torch/lib:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow/contrib/tensor_forest:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/tensorflow/python/framework:/cvmfs/sft.cern.ch/lcg/releases/java/8u222-884d8/x86_64-centos7-gcc8-opt/jre/lib/amd64:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib64:/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.3.0-cebb0/x86_64-centos7/lib:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.3.0-cebb0/x86_64-centos7/lib64:/cvmfs/sft.cern.ch/lcg/releases/binutils/2.30-e5b21/x86_64-centos7/lib:/usr/local/lib/:/cvmfs/sft.cern.ch/lcg/releases/R/3.6.3-dfb24/x86_64-centos7-gcc8-opt/lib64/R/library/readr/rcon
+2022-07-26 17:23:22.471647: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
 </code></pre>
-
 <pre><code class="python">### define titles and axis properties for figures
 
 plotstyleparser = PlotStyleParser.PlotStyleParser('plotstyle.json')
@@ -440,10 +437,6 @@ xaxtitledict = plotstyleparser.get_xaxtitle()
 yaxtitledict = plotstyleparser.get_yaxtitle()
 for key in yaxtitledict.keys(): yaxtitledict[key] += ' (normalized)' # if normalized
 extratextdict = plotstyleparser.get_extratext()
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
 </code></pre>
 
 <pre><code class="python">### define run properties
@@ -487,10 +480,8 @@ badrunsls = badrunsls[year]
 print('selected runs/lumisections for training: all')
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>selected runs/lumisections for training: all
 </code></pre>
-
 <pre><code class="python">### read the data based on the configuration defined above
 
 readnew = True
@@ -539,10 +530,20 @@ if not readnew:
     print(histstruct)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>adding chargeInner_PXLayer_2...
+INFO in DataLoader.get_dataframe_from_file: loading dataframe from file ../data/DF2017_chargeInner_PXLayer_2.csv...
+INFO in DataLoader.get_dataframe_from_file: sorting the dataframe...
+INFO in DataLoader.get_dataframe_from_file: loaded a dataframe with 225954 rows and 16 columns.
+adding chargeInner_PXLayer_3...
+INFO in DataLoader.get_dataframe_from_file: loading dataframe from file ../data/DF2017_chargeInner_PXLayer_3.csv...
+INFO in DataLoader.get_dataframe_from_file: sorting the dataframe...
+INFO in DataLoader.get_dataframe_from_file: loaded a dataframe with 225954 rows and 16 columns.
+found 225954 histograms
+created a histstruct with the following properties:
+- number of histogram types: 2
+- number of lumisections: 225954
+- masks: ['dcson', 'golden', 'highstat', 'lowstat', 'bad', 'bad297287', 'bad297288', 'bad297289', 'bad299316', 'bad299317', 'bad299318', 'bad299324', 'bad299325', 'bad299326', 'bad300373', 'bad300374', 'bad300397', 'bad300398']
 </code></pre>
-
 <pre><code class="python">### plot the training and/or test sets
 
 doplot = True
@@ -580,10 +581,19 @@ if doplot:
     histstruct.remove_mask('random_plotting')
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_5_0.png" /></p>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_5_1.png" /></p>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_5_2.png" /></p>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_5_3.png" /></p>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_5_4.png" /></p>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_5_5.png" /></p>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_5_6.png" /></p>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_5_7.png" /></p>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_5_8.png" /></p>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_5_9.png" /></p>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_5_10.png" /></p>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_5_11.png" /></p>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_5_12.png" /></p>
 <pre><code class="python">### define a good test set as averages from training set
 
 npartitions = 50
@@ -591,10 +601,6 @@ npartitions = 50
 for histname in histstruct.histnames:
     histograms = hu.averagehists( histstruct.get_histograms( histname=histname, masknames=['dcson','highstat']), npartitions )
     histstruct.add_exthistograms( 'partitions', histname, histograms, overwrite=True )
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
 </code></pre>
 
 <pre><code class="python">### make a plot of the good test set
@@ -629,10 +635,7 @@ if doplot:
     fig.subplots_adjust(wspace=0.3, hspace=0.3)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_7_0.png" /></p>
 <pre><code class="python">### print some numbers
 print(len(histstruct.get_lsnbs()))
 print(len(histstruct.get_lsnbs(masknames=['dcson'])))
@@ -641,10 +644,11 @@ trainingmasks = ['dcson','highstat']
 print(len(histstruct.get_lsnbs(masknames=trainingmasks)))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>225954
+215144
+211171
+211171
 </code></pre>
-
 <pre><code class="python">### define and train an autoencoder for each element
 
 classifymethod = 'nmf'
@@ -724,10 +728,28 @@ model.set_classifiers(classifiers)
 histstruct.add_model( modelname, model )
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
+<pre><code>building NMF model for histogram type chargeInner_PXLayer_2
+size of training set: (50000, 100)
 
+
+/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/sklearn/decomposition/_nmf.py:312: FutureWarning: The 'init' value, when 'init=None' and n_components is less than n_samples and n_features, will be changed from 'nndsvd' to 'nndsvda' in 1.1 (renaming of 0.26).
+  warnings.warn(("The 'init' value, when 'init=None' and "
+/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/sklearn/decomposition/_nmf.py:1090: ConvergenceWarning: Maximum number of iterations 200 reached. Increase it to improve convergence.
+  warnings.warn("Maximum number of iterations %d reached. Increase it to"
+</code></pre>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_9_2.png" /></p>
+<pre><code>building NMF model for histogram type chargeInner_PXLayer_3
+size of training set: (50000, 100)
+
+
+/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/sklearn/decomposition/_nmf.py:312: FutureWarning: The 'init' value, when 'init=None' and n_components is less than n_samples and n_features, will be changed from 'nndsvd' to 'nndsvda' in 1.1 (renaming of 0.26).
+  warnings.warn(("The 'init' value, when 'init=None' and "
+/cvmfs/sft.cern.ch/lcg/views/LCG_101swan/x86_64-centos7-gcc8-opt/lib/python3.9/site-packages/sklearn/decomposition/_nmf.py:1090: ConvergenceWarning: Maximum number of iterations 200 reached. Increase it to improve convergence.
+  warnings.warn("Maximum number of iterations %d reached. Increase it to"
+</code></pre>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_9_5.png" /></p>
+<pre><code>adding model "nmf" to the HistStruct
+</code></pre>
 <pre><code class="python">### evaluate the models on all histograms in the (non-extended) histstruct and on the partitions
 
 # evaluate classifiers
@@ -736,10 +758,8 @@ histstruct.evaluate_classifiers( modelname )
 histstruct.evaluate_classifiers( modelname, setnames=['partitions'] )
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>evaluating classifiers
 </code></pre>
-
 <pre><code class="python">### plot the multidemensional mse and fit a distribution
 
 # set method and other properties
@@ -782,10 +802,13 @@ if doplot:
             #plt.close('all') # release plot memory
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
+<pre><code>/eos/home-l/llambrec/SWAN_projects/ML4DQM-DC/tutorials/../utils/plot_utils.py:904: RuntimeWarning: divide by zero encountered in log
+  if logprob: evalpoints = np.log(evalpoints)
 
+
+NOTE: scores of -inf were reset to -745.4400719213812
+</code></pre>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_11_2.png" /></p>
 <pre><code class="python">### extend the test set using artificial data generation and evaluate the model on the extended test set
 
 # make the extra data
@@ -818,10 +841,11 @@ for badrun in badrunsls.keys():
     histstruct.evaluate_fitter( modelname, setnames=['test_bad{}_ext'.format(badrun)] )
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>generating data for chargeInner_PXLayer_2
+generating data for chargeInner_PXLayer_3
+evaluating classifiers
+evaluating fitter
 </code></pre>
-
 <pre><code class="python">### (re-)define the test set
 
 badrunstokeep = [
@@ -867,10 +891,20 @@ print('length of log prob array: '+str(len(logprob_bad)))
 print('maximum of log prob: '+str(np.max(logprob_bad)))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
+<pre><code>WARNING in HistStruct.remove_mask: name badselected is not in list of masks...
+--- good lumesections ---
+length of log prob array: 211171
+minimum of log prob: -inf
+--- bad lumisections ---
+length of log prob array: 64814
+maximum of log prob: 18.192293308278305
 
+
+/tmp/ipykernel_27081/3315064921.py:33: RuntimeWarning: divide by zero encountered in log
+  logprob_good = np.log(prob_good)
+/tmp/ipykernel_27081/3315064921.py:36: RuntimeWarning: divide by zero encountered in log
+  logprob_bad = np.log(prob_bad)
+</code></pre>
 <pre><code class="python">### make 1D score (MSE) distributions for all histogram types
 
 for i,histname in enumerate(histstruct.histnames):
@@ -933,10 +967,8 @@ for i,histname in enumerate(histstruct.histnames):
     fig.subplots_adjust(wspace=0.3, hspace=0.3)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_14_0.png" /></p>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_14_1.png" /></p>
 <pre><code class="python">### make a new plot of probability contours and overlay data points 
 
 doplot = True
@@ -981,10 +1013,13 @@ if doplot:
         #plt.close('all') # release plot memory
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
+<pre><code>/eos/home-l/llambrec/SWAN_projects/ML4DQM-DC/tutorials/../utils/plot_utils.py:904: RuntimeWarning: divide by zero encountered in log
+  if logprob: evalpoints = np.log(evalpoints)
 
+
+NOTE: scores of -inf were reset to -745.4400719213812
+</code></pre>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_15_2.png" /></p>
 <pre><code class="python">### make a roc curve based on the test results above
 
 labels_good = np.zeros(len(logprob_good)) # background: label = 0
@@ -1031,10 +1066,12 @@ plt.show()
 #print('working point: {}'.format(wp))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>NOTE: scores of +inf were reset to 745.4400719213812
 </code></pre>
-
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_16_1.png" /></p>
+<pre><code>calculating ROC curve on 100 bootstrap samples of size 275985
+</code></pre>
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_16_3.png" /></p>
 <pre><code class="python">### investigate particular lumisections
 
 # initialization: general
@@ -1135,10 +1172,15 @@ if mode=='run':
         print('logprob: '+str(logprob))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_17_0.png" /></p>
+<pre><code>-------------
+MSE values:
+chargeInner_PXLayer_2 : [0.00027372]
+chargeInner_PXLayer_3 : [4.50905996e-07]
+-------------
+logprob: 13.075970512248668
 </code></pre>
-
+<p><img alt="png" src="../global_combined_training_files/global_combined_training_17_2.png" /></p>
 <pre><code class="python">### investigate how the method performs on the golden/custom test set
 
 # choose masks for evaluation set
@@ -1212,22 +1254,12 @@ if doplot:
     if dosave: pdf.close()
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>0 out of 201393 LS are within these boundaries
 </code></pre>
-
 <pre><code class="python">
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
 <pre><code class="python">
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
 </code></pre></div>
         </div>
 

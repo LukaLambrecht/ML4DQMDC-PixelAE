@@ -381,12 +381,10 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#plot-histograms-2d">plot histograms 2d</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="plot-histograms-2d">plot histograms 2d</h1>
 <p><strong>Plot the histograms for general investigation and visual inspection</strong><br />
 For 2D histograms (as opposed to plot_histograms.ipynb which is for 1D histograms only)  </p>
 <pre><code class="python">### imports
@@ -411,10 +409,8 @@ import DataLoader
 importlib.reload(DataLoader)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>&lt;module 'DataLoader' from '/eos/home-l/llambrec/SWAN_projects/ML4DQM-DC/tutorials/../src/DataLoader.py'&gt;
 </code></pre>
-
 <pre><code class="python">### read the data
 # note: this cell assumes you have a csv file stored at the specified location,
 #       containing only histograms of the specified type;
@@ -441,10 +437,12 @@ df = dfu.select_dcson(df)
 print('number of selected lumisections: '+str(len(df)))
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>INFO in DataLoader.get_dataframe_from_file: loading dataframe from file ../data/DF2017B_clusterposition_zphi_ontrack_PXLayer_1_run297289.csv...
+INFO in DataLoader.get_dataframe_from_file: sorting the dataframe...
+INFO in DataLoader.get_dataframe_from_file: loaded a dataframe with 15 rows and 14 columns.
+raw input data shape: (15, 202, 302)
+number of selected lumisections: 15
 </code></pre>
-
 <pre><code class="python"># extract the histograms as a numpy array from the dataframe
 
 (histograms,runnbs,lsnbs) = dfu.get_hist_values(df)
@@ -461,10 +459,10 @@ ymax = df.at[0,'Ymax']
 nybins = df.at[0,'Ybins']
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>shape of histogram array: (15, 202, 302)
+shape of run number array: (15,)
+shape of lumisection number array: (15,)
 </code></pre>
-
 <pre><code class="python"># make a plot of a single histogram
 
 index = 10
@@ -472,19 +470,16 @@ hist = histograms[index]
 pu.plot_hist_2d(hist,title='a histogram title',xaxtitle='x axis title',yaxtitle='y axis title')
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>(&lt;Figure size 432x288 with 2 Axes&gt;,
+ &lt;AxesSubplot:title={'center':'a histogram title'}, xlabel='x axis title', ylabel='y axis title'&gt;)
 </code></pre>
-
+<p><img alt="png" src="../plot_histograms_2d_files/plot_histograms_2d_4_1.png" /></p>
 <pre><code class="python"># make a plot of multiple histograms next to each other
 
 _ = pu.plot_hists_2d(histograms[:9],ncols=3)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
+<p><img alt="png" src="../plot_histograms_2d_files/plot_histograms_2d_5_0.png" /></p>
 <pre><code class="python"># make a gif showing the evolution over time 
 
 figname = 'temp_gif.gif'
@@ -494,10 +489,6 @@ for lsnb,runnb in zip(lsnbs,runnbs):
 pu.plot_hists_2d_gif(histograms,titles=titles,figname=figname)
 # note: to view the result, you can directly open the file saved as figname in swan, it will show the animated gif
 # (or you can download it and view it with whatever gif viewer you normally use)
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
 </code></pre>
 
 <pre><code class="python"># cropping, rebinning, normalization and averaging
@@ -538,10 +529,26 @@ _ = pu.plot_hists_2d(avghists[:min(4,len(avghists))],ncols=4)
 plt.show()
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
+<pre><code>original histograms:
 </code></pre>
-
+<p><img alt="png" src="../plot_histograms_2d_files/plot_histograms_2d_7_1.png" /></p>
+<pre><code>(15, 202, 302)
+(15, 200, 300)
+(15, 200, 140)
+cropped histograms:
+</code></pre>
+<p><img alt="png" src="../plot_histograms_2d_files/plot_histograms_2d_7_3.png" /></p>
+<pre><code>(15, 200, 140)
+(15, 100, 70)
+rebinned histograms:
+</code></pre>
+<p><img alt="png" src="../plot_histograms_2d_files/plot_histograms_2d_7_5.png" /></p>
+<pre><code>normalized histograms:
+</code></pre>
+<p><img alt="png" src="../plot_histograms_2d_files/plot_histograms_2d_7_7.png" /></p>
+<pre><code>average histogram(s):
+</code></pre>
+<p><img alt="png" src="../plot_histograms_2d_files/plot_histograms_2d_7_9.png" /></p>
 <pre><code class="python"># equivalent way to obtain the same histograms but with less typing
 
 (histograms) = hu.preparedatafromdf(df, 
@@ -552,15 +559,8 @@ plt.show()
 _ = pu.plot_hists_2d(histograms[:4],ncols=4)
 </code></pre>
 
-<p>Output:</p>
-<pre><code class="text">
-</code></pre>
-
+<p><img alt="png" src="../plot_histograms_2d_files/plot_histograms_2d_8_0.png" /></p>
 <pre><code class="python">
-</code></pre>
-
-<p>Output:</p>
-<pre><code class="text">
 </code></pre></div>
         </div>
 
