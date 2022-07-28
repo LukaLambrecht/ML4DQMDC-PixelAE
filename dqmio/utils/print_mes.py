@@ -35,12 +35,16 @@ if __name__=='__main__':
                        help='Provide a search key to filter the results;'
                             +' only results matching the searchkey will be shown;'
                             +' may contain unix-style wildcards.')
+  parser.add_argument('--number_only', default=False,
+                       help='Print number of monitoring elements only;'
+                            +' not a full list of their names.')
   args = parser.parse_args()
   filemode = args.filemode
   filename = args.filename
   redirector = args.redirector
   searchkey = args.searchkey
   proxy = None if args.proxy is None else os.path.abspath(args.proxy)
+  number_only = args.number_only
 
   # print arguments
   print('Running with following configuration:')
@@ -69,4 +73,5 @@ if __name__=='__main__':
       if fnmatch(mename,searchkey): res.append(mename)
     menames = res
   print('number of monitoring elements per lumisection: {}'.format(len(menames)))
-  for el in menames: print('  - {}'.format(el))
+  if not number_only:
+    for el in menames: print('  - {}'.format(el))
