@@ -21,6 +21,8 @@ if __name__=='__main__':
                       help='Path to txt file with cmsDriver command.')
   parser.add_argument('--conf', required=True,
                       help='Path to file with configurable nanoDQMIO contents.')
+  parser.add_argument('--nevents', default=None,
+                      help='Set number of events to process in cmsDriver command.')
   parser.add_argument('--outdirname', default='output_check_file_size',
                       help='Results directory to be created in the specified CMSSW area.')
   parser.add_argument('--runmode', choices=['condor','local'], default='condor',
@@ -35,6 +37,7 @@ if __name__=='__main__':
   rawfile = os.path.abspath(args.rawfile)
   cmsdriverfile = os.path.abspath(args.cmsdriver)
   conffile = os.path.abspath(args.conf)
+  nevents = args.nevents
   outdirname = args.outdirname
   runmode = args.runmode
   jobflavour = args.jobflavour

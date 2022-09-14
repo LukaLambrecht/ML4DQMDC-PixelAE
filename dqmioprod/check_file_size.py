@@ -38,6 +38,8 @@ if __name__=='__main__':
                       help='Path to txt file with cmsDriver command.')
   parser.add_argument('--conf', required=True,
                       help='Path to file with configurable nanoDQMIO contents.')
+  parser.add_argument('--nevents', default=None,
+                      help='Set number of events to process in cmsDriver command.')
   parser.add_argument('--outdirname', default='output_check_file_size',
                       help='Results directory to be created in the specified CMSSW area.')
   args = parser.parse_args()
@@ -45,6 +47,7 @@ if __name__=='__main__':
   rawfile = os.path.abspath(args.rawfile)
   cmsdriverfile = os.path.abspath(args.cmsdriver)
   conffile = os.path.abspath(args.conf)
+  nevents = args.nevents
   outdirname = args.outdirname
 
   # print arguments
@@ -81,6 +84,7 @@ if __name__=='__main__':
   cmsdriverargs = cmsdrivercmd.split('--')
   newcmsdriverargs = []
   replaceargs = ['filein', 'fileout', 'python_filename', 'no_exec']
+  if nevents is not None: replaceargs.append('number')
   for arg in cmsdriverargs:
     valid = True
     for argtag in replaceargs:
@@ -91,6 +95,7 @@ if __name__=='__main__':
     if valid: newcmsdriverargs.append(arg)
   cmsdriverargs = newcmsdriverargs
   cmsdrivercmd = '--'.join(cmsdriverargs)
+  if nevents is not None: cmsdrivercmd += ' --number {}'.format(nevents)
 
   # add unconfigurable args to cmsDriver command
   outfile = 'step2.root'
