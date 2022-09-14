@@ -57,6 +57,7 @@ def extractdatafromROOT(x, hist2array=False):
     if isinstance(x, ROOT.string): return unicode(x.data())
     if isinstance(x, int): return x
     if isinstance(x, float): return x
+    if isinstance(x, long): return x
     else: 
         if hist2array:
             raise NotImplementedError('ERROR in extractdatafromROOT: option hist2array is not yet supported.')

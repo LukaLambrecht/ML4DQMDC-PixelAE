@@ -1,0 +1,48 @@
+{
+  "conf1" : [
+             "EcalBarrel/EBOccupancyTask/EBOT digi occupancy",
+             "EcalEndcap/EEOccupancyTask/EEOT digi occupancy EE -",
+             "EcalEndcap/EEOccupancyTask/EEOT digi occupancy EE +"
+           ],
+  "conf2" : [
+             "EcalBarrel/EBOccupancyTask/EBOT digi occupancy",
+             "EcalEndcap/EEOccupancyTask/EEOT digi occupancy EE -",
+             "EcalEndcap/EEOccupancyTask/EEOT digi occupancy EE +",
+             "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_1",
+             "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_2",
+             "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_3",
+             "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_4"
+           ],
+  "conf3" : [
+             "EcalBarrel/EBOccupancyTask/EBOT digi occupancy",
+             "EcalEndcap/EEOccupancyTask/EEOT digi occupancy EE -",
+             "EcalEndcap/EEOccupancyTask/EEOT digi occupancy EE +",
+             "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_1",
+             "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_2",
+             "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_3",
+             "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_4",
+             "PixelPhase1/Tracks/PXForward/charge_PXDisk_+1",
+             "PixelPhase1/Tracks/PXForward/charge_PXDisk_+2",
+             "PixelPhase1/Tracks/PXForward/charge_PXDisk_+3",
+             "PixelPhase1/Tracks/PXForward/charge_PXDisk_-1",
+             "PixelPhase1/Tracks/PXForward/charge_PXDisk_-2",
+             "PixelPhase1/Tracks/PXForward/charge_PXDisk_-3"
+           ],
+  "conf4" : [
+             "EcalBarrel/EBOccupancyTask/EBOT digi occupancy",
+             "EcalEndcap/EEOccupancyTask/EEOT digi occupancy EE -",
+             "EcalEndcap/EEOccupancyTask/EEOT digi occupancy EE +",
+             "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_1",
+             "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_2",
+             "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_3",
+             "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_4",
+             "PixelPhase1/Tracks/PXForward/charge_PXDisk_+1",
+             "PixelPhase1/Tracks/PXForward/charge_PXDisk_+2",
+             "PixelPhase1/Tracks/PXForward/charge_PXDisk_+3",
+             "PixelPhase1/Tracks/PXForward/charge_PXDisk_-1",
+             "PixelPhase1/Tracks/PXForward/charge_PXDisk_-2",
+             "PixelPhase1/Tracks/PXForward/charge_PXDisk_-3",
+             "Hcal/DigiTask/Occupancy/depth",
+             "Hcal/DigiTask/OccupancyCut/depth" 
+           ]
+}

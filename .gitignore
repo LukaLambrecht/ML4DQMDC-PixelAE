@@ -7,6 +7,12 @@ omsapi/clientid.py
 # ignore notebook version files
 **.sys.v#*
 
+# ignore all root files
+**.root
+
+# ignore all temporary job files
+**cjob_**
+
 # ignore /site folder as it is automatically created with doctools
 site
 
