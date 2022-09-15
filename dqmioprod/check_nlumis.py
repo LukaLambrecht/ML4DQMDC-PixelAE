@@ -33,7 +33,7 @@ def none_to_zero(runs, lumis, verbose=True):
 if __name__=='__main__':
 
   # settings
-  eranames = ['2017?']
+  eranames = ['Run2022?']
   endpoint = 'runs'
   attributes = ([
                   'run_number',

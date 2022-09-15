@@ -36,19 +36,22 @@ if __name__=='__main__':
                       help='Raw file as input.')
   parser.add_argument('--cmsdriver', required=True,
                       help='Path to txt file with cmsDriver command.')
-  parser.add_argument('--conf', required=True,
-                      help='Path to file with configurable nanoDQMIO contents.')
+  parser.add_argument('--conf', default=None,
+                      help='Path to file with configurable nanoDQMIO contents.'
+                          +' If not specified, nanoDQMIO config is left unmodified.')
   parser.add_argument('--nevents', default=None,
-                      help='Set number of events to process in cmsDriver command.')
-  parser.add_argument('--outdirname', default='output_check_file_size',
-                      help='Results directory to be created in the specified CMSSW area.')
+                      help='Set number of events to process in cmsDriver command.'
+                          +' If not specified, this argument is not added to cmsDriver.')
+  parser.add_argument('--fileid', default=None,
+                      help='A short file identifier to be used in the naming'
+                          +' of the output directory.')
   args = parser.parse_args()
   cmssw = os.path.join(os.path.abspath(args.cmssw),'src')
   rawfile = os.path.abspath(args.rawfile)
   cmsdriverfile = os.path.abspath(args.cmsdriver)
-  conffile = os.path.abspath(args.conf)
+  conffile = os.path.abspath(args.conf) if args.conf is not None else None
   nevents = args.nevents
-  outdirname = args.outdirname
+  fileid = args.fileid
 
   # print arguments
   print('Running with following configuration:')
@@ -62,10 +65,11 @@ if __name__=='__main__':
     raise Exception('ERROR: input file {} does not exist.'.format(rawfile))
   if not os.path.exists(cmsdriverfile):
     raise Exception('ERROR: cmsDriver file {} does not exist.'.format(cmsdriverfile))
-  if not os.path.exists(conffile):
+  if( conffile is not None and not os.path.exists(conffile) ):
     raise Exception('ERROR: configuration file {} does not exist.'.format(conffile))
 
   # check the output directory
+  outdirname = 'output_f_{}_n_{}'.format(fileid,nevents)
   outdir = os.path.join(cmssw,outdirname)
   if os.path.exists(outdir):
     raise Exception('ERROR: output dir {} already exists.'.format(outdir))
@@ -107,29 +111,32 @@ if __name__=='__main__':
 
   # read the configurations
   confdict = {}
-  with open(conffile,'r') as f:
-    confdict = json.load(f)
-  print('Found following configurations:')
-  for key, val in confdict.items():
-    print('  - {}'.format(key))
-    for el in val:
-      print('    - {}'.format(el))
+  if conffile is None: confdict['default'] = None
+  else:
+    with open(conffile,'r') as f:
+      confdict = json.load(f)
+    print('Found following configurations:')
+    for key, val in confdict.items():
+      print('  - {}'.format(key))
+      for el in val:
+        print('    - {}'.format(el))
 
   # loop over configurations
   print('Looping over configurations...')
   for conf, melist in confdict.items():
-    scriptname = 'temp.sh'
+    scriptname = 'temp_{}_c_{}.sh'.format(outdirname,conf)
     # note: need to work with a script instead of os.system directly,
     #       since else cmsenv has no effect outside of its scope.
     cmds = []
-    # modify the nanoDQM configuration file
-    with open(nanoconffile,'w') as f:
-      f.write('import FWCore.ParameterSet.Config as cms\n')
-      f.write('nanoDQMIO_perLSoutput = cms.PSet(\n')
-      f.write('  MEsToSave = cms.untracked.vstring( *(\n')
-      for me in melist: f.write('    "{}",\n'.format(me))
-      f.write('  ) )\n')
-      f.write(')\n')
+    if conffile is not None:
+      # modify the nanoDQM configuration file
+      with open(nanoconffile,'w') as f:
+        f.write('import FWCore.ParameterSet.Config as cms\n')
+        f.write('nanoDQMIO_perLSoutput = cms.PSet(\n')
+        f.write('  MEsToSave = cms.untracked.vstring( *(\n')
+        for me in melist: f.write('    "{}",\n'.format(me))
+        f.write('  ) )\n')
+        f.write(')\n')
     # set up the working directory
     cmds.append( 'cd {}'.format(cmssw) )
     cmds.append( 'cmsenv' )
@@ -149,7 +156,7 @@ if __name__=='__main__':
   print('Checking size of output files...')
   sizedict = {}
   for conf in confdict.keys():
-    fpath = os.path.join(cmssw,outdirname,conf,outnanofile)
+    fpath = os.path.join(outdir,conf,outnanofile)
     res = get_file_size(fpath)
     sizedict[conf] = '{} ({} bytes)'.format(res[1],res[0])
   print('Summary:')
