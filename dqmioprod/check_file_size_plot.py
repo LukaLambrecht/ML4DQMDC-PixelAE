@@ -26,8 +26,8 @@ def plot( outfile, data, labels=None,
     dolegend = False
   # make colormap
   ncolors = len(data)
-  norm = mpl.colors.Normalize(vmin=0,vmax=ncolors)
-  cobject = mpl.cm.ScalarMappable(norm=norm, cmap=mpl.cm.jet)
+  norm = mpl.colors.Normalize(vmin=0,vmax=ncolors-1)
+  cobject = mpl.cm.ScalarMappable(norm=norm, cmap=mpl.cm.rainbow)
   cobject.set_array([]) # ad-hoc bug fix
   # make the figure
   if( fig is None or ax is None ): fig,ax = plt.subplots()
