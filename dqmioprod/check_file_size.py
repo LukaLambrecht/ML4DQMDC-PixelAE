@@ -85,11 +85,14 @@ if __name__=='__main__':
     cmsdrivercmd = f.readline().strip(' \t\n')
   print('Round following cmsDriver command:')
   print(cmsdrivercmd)
+  # check all arguments and remove if needed
   cmsdriverargs = cmsdrivercmd.split('--')
   newcmsdriverargs = []
   replaceargs = ['filein', 'fileout', 'python_filename', 'no_exec']
   if nevents is not None: replaceargs.append('number')
+  hasreco = False
   for arg in cmsdriverargs:
+    # check if argument is valid and add it if so
     valid = True
     for argtag in replaceargs:
       if argtag in arg:
@@ -97,6 +100,11 @@ if __name__=='__main__':
         valid = False
         continue
     if valid: newcmsdriverargs.append(arg)
+    # check if the cmsDriver command includes RECO data
+    # (has an impact on the output file naming)
+    if( ('datatier' in arg and 'RECO' in arg) 
+        or ('eventcontent' in arg and 'RECO' in arg) ):
+      hasreco = True
   cmsdriverargs = newcmsdriverargs
   cmsdrivercmd = '--'.join(cmsdriverargs)
   if nevents is not None: cmsdrivercmd += ' --number {}'.format(nevents)
@@ -104,7 +112,8 @@ if __name__=='__main__':
   # add unconfigurable args to cmsDriver command
   outfile = 'step2.root'
   pcfile = 'step2_nano_cfg.py'
-  outnanofile = outfile.replace('.root','_inDQM.root')
+  outnanofile = outfile
+  if hasreco: outnanofile = outfile.replace('.root','_inDQM.root')
   cmsdrivercmd += ' --filein file:{}'.format(rawfile)
   cmsdrivercmd += ' --fileout file:{}'.format(outfile)
   cmsdrivercmd += ' --python_filename {}'.format(pcfile)
@@ -157,7 +166,11 @@ if __name__=='__main__':
   sizedict = {}
   for conf in confdict.keys():
     fpath = os.path.join(outdir,conf,outnanofile)
+    print('Checking file {}.'.format(fpath))
     res = get_file_size(fpath)
+    if res is None:
+      print('WARNING: expected output file {} not found.'.format(fpath))
+      continue
     sizedict[conf] = '{} ({} bytes)'.format(res[1],res[0])
   print('Summary:')
   for key,val in sizedict.items(): print('  {}: {}'.format(key,val))
