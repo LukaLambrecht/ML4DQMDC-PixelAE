@@ -38,6 +38,8 @@ if __name__=='__main__':
   parser.add_argument('--number_only', default=False,
                        help='Print number of monitoring elements only;'
                             +' not a full list of their names.')
+  parser.add_argument('--outputfile', default=None,
+                       help='File to write output to (default: print on screen).')
   args = parser.parse_args()
   filemode = args.filemode
   filename = args.filename
@@ -45,6 +47,7 @@ if __name__=='__main__':
   searchkey = args.searchkey
   proxy = None if args.proxy is None else os.path.abspath(args.proxy)
   number_only = args.number_only
+  outputfile = args.outputfile
 
   # print arguments
   print('Running with following configuration:')
@@ -72,6 +75,15 @@ if __name__=='__main__':
     for mename in menames:
       if fnmatch(mename,searchkey): res.append(mename)
     menames = res
-  print('number of monitoring elements per lumisection: {}'.format(len(menames)))
-  if not number_only:
-    for el in menames: print('  - {}'.format(el))
+
+  # write output
+  header = 'number of monitoring elements per lumisection: {}'.format(len(menames))
+  if outputfile is None:
+    print(header)
+    if not number_only:
+      for el in menames: print('  - {}'.format(el))
+  else:
+    with open(outputfile,'w') as f:
+      f.write(header+'\n')
+      if not number_only:
+        for el in menames: f.write(el+'\n')
