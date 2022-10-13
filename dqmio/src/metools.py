@@ -59,6 +59,20 @@ def th3_to_nparray( th3, integer_values=False ):
         res[i,j,k] = val
   return res
 
+def tprofile_to_nparray( tprofile ):
+  ### convert a TProfile to a numpy array
+  # returns:
+  # dict of arrays 'values', 'errors', 'xax'
+  nxbins = tprofile.GetNbinsX()
+  values = np.zeros(nxbins+2)
+  errors = np.zeros(nxbins+2)
+  xax = np.zeros(nxbins+2)
+  for i in range(nxbins+2):
+    values[i] = tprofile.GetBinContent(i)
+    errors[i] = tprofile.GetBinError(i)
+    xax[i] = int(round(tprofile.GetBinLowEdge(i)))
+  return {'values':values, 'errors':errors, 'xax':xax}
+
 def me_to_nparray( me, integer_values=False ):
   ### convert a MonitorElement to a numpy array
   metype = me.type
@@ -68,6 +82,9 @@ def me_to_nparray( me, integer_values=False ):
     return th2_to_nparray( me.data, integer_values=integer_values )
   elif metype in [9]:
     return th3_to_nparray( me.data, integer_values=integer_values )
+  elif metype in [10]:
+    return tprofile_to_nparray( me.data )
   else:
     raise Exception('ERROR in metools.me_to_nparray:'
-                    +' unrecognized me.type: {}'.format(metype))
+                    +' unrecognized me.type {}'.format(metype)
+                    +' for me.name {}.'.format(me.name))

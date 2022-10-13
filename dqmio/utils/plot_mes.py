@@ -26,8 +26,12 @@ def makeplot( me ):
   if me.type in [3,4,5]: return make1dplot(me)
   elif me.type in [6,7,8]: return make2dplot(me)
   elif me.type in [9]: return make3dplot(me)
+  elif me.type in [10]: return makeprofileplot(me)
   else:
-    raise Exception('ERROR in makeplot: me.type {} not recognized.'.format(me.type))
+    msg = 'WARNING in makeplot: me.type {} not recognized'.format(me.type)
+    msg += ' for me.name {}, skipping this plot.'.format(me.name)
+    print(msg)
+    return (None,None)
 
 def make1dplot( me ):
   ### make a plot of a 1D monitoring element
@@ -47,6 +51,19 @@ def make2dplot( me ):
 
 def make3dplot( me ):
   raise Exception('3D plotting not yet implemented.')
+
+def makeprofileplot( me ):
+  ### make a plot of a Profile monitoring element
+  # input arguments:
+  # - me: instance of MonitorElement with type TProfile
+  hinfo = metools.me_to_nparray( me, integer_values=False )
+  values = hinfo['values']
+  errors = hinfo['errors']
+  xax = hinfo['xax']
+  xlims = (xax[0], xax[-1])
+  # todo: implement better plotting (as scatter plot with errors)
+  fig,ax = pu.plot_hists([values], xlims=xlims, title=pu.make_text_latex_safe(me.name))
+  return (fig,ax)
   
 if __name__=='__main__':
 
@@ -132,6 +149,7 @@ if __name__=='__main__':
   for i,mename in enumerate(menames):
     me = reader.getSingleMEForLumi((run,ls), mename)
     fig,ax = makeplot(me)
+    if fig is None: continue
     if outputdir is None:
       block=False
       if i==len(menames)-1: block=True 

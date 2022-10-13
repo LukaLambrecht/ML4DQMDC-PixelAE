@@ -75,6 +75,9 @@ if __name__=='__main__':
     for mename in menames:
       if fnmatch(mename,searchkey): res.append(mename)
     menames = res
+  sorting_threshold = 1000
+  if len(menames)<sorting_threshold: 
+    menames = sorted(menames)
 
   # write output
   header = 'number of monitoring elements per lumisection: {}'.format(len(menames))
