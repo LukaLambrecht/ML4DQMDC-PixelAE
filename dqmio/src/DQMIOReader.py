@@ -54,17 +54,26 @@ def extractdatafromROOT(x, hist2array=False):
     # - hist2array: boolean whether to convert ROOT histograms to numpy arrays
     #               (default: keep as ROOT histogram objects)
     #               note: option True is not yet supported (need to fix root_numpy import in SWAN)
+    
+    # first check for clear-cut data types such as ROOT strings, python ints and floats
     if isinstance(x, ROOT.string): return unicode(x.data())
     if isinstance(x, int): return x
     if isinstance(x, float): return x
-    # additional check for long, which is only defined in python 2!
+    # additional check for python long, which is only defined in python 2!
+    # (gives error in python 3, so need to check version explicitly)
     if sys.version_info[0]<3:
         if isinstance(x, long): return x
-    else: 
-        if hist2array:
-            raise NotImplementedError('ERROR in extractdatafromROOT: option hist2array is not yet supported.')
-            #return root_numpy.hist2array(x)
-        else: return x.Clone()
+    # at this point, if the function reaches to this stage,
+    # the type of x is probably some kind of ROOT histogram
+    # (more exceptions to be added above when encountered).
+    if hist2array:
+        raise NotImplementedError('ERROR in DQMIOReader.extractdatafromROOT:'
+                                  +' option hist2array is not yet supported.')
+        #return root_numpy.hist2array(x)
+    else: return x.Clone()
+    # throw error if the function did not return in any of the above cases
+    raise Exception('ERROR in DQMIOReader.extractdatafromROOT:'
+                    +' type {} not recognized.'.format(type(x)))
     
 
 ### DQMIOReader definition
