@@ -25,6 +25,13 @@ if __name__=='__main__':
   if not os.path.exists(cmsdriverfile):
     raise Exception('ERROR: cmsDriver file {} does not exist.'.format(cmsdriverfile))
 
+  # check if CMSSW environment was set
+  if not 'CMSSW_BASE' in os.environ.keys():
+    msg = 'ERROR: no CMSSW environment was set, please run cmsenv.'
+    raise Exception(msg)
+  else:
+    print('Found CMSSW_BASE = {}'.format(os.environ['CMSSW_BASE']))
+
   # read the cmsDriver command
   cmsdrivercmd = ''
   with open(cmsdriverfile,'r') as f:

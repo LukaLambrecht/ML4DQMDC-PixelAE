@@ -27,6 +27,9 @@ cmssw_base = os.environ['CMSSW_BASE']
 # set work area
 workarea = os.path.join(cmssw_base, 'src/crab', productionlabel, pd)
 
+# format pyCfgParams argument
+pycfgparams = ['outputFile='+outputfile, 'inputFile='+dataset, 'nEvents=-1']
+
 # print all configurable arguments
 print('INFO from crabconf.py')
 print('Found following arguments:')
@@ -54,7 +57,7 @@ config.General.workArea                = workarea
 # job type settings
 config.section_('JobType')
 config.JobType.psetName                = conffile
-config.JobType.pyCfgParams             = []
+config.JobType.pyCfgParams             = pycfgparams
 config.JobType.pluginName              = 'analysis'
 config.JobType.outputFiles             = [outputfile]
 config.JobType.sendExternalFolder      = True
