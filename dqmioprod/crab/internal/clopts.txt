@@ -1,0 +1,13 @@
+import sys
+
+inputFile = ""
+outputFile = ""
+nEvents = 0
+
+def getVal(arg):
+  return arg.split("=")[-1]
+
+for i in range(1,len(sys.argv)):
+  if "outputFile" in sys.argv[i]: outputFile = getVal(sys.argv[i])
+  elif "inputFile" in sys.argv[i]: inputFile = getVal(sys.argv[i])
+  elif "nEvents" in sys.argv[i]: nEvents = int(getVal(sys.argv[i]))
