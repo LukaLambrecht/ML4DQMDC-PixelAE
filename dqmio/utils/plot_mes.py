@@ -8,6 +8,7 @@
 ### imports
 import sys
 import os
+import numpy as np
 import json
 import argparse
 from fnmatch import fnmatch
@@ -33,12 +34,18 @@ def makeplot( me ):
     print(msg)
     return (None,None)
 
+def maketitle( me ):
+  ### get a suitable title
+  title = pu.make_text_latex_safe(me.name)
+  title += '\nRun: {} / LS: {}'.format(me.run, me.lumi)
+  return title
+
 def make1dplot( me ):
   ### make a plot of a 1D monitoring element
   # input arguments:
   # - me: instance of MonitorElement with type TH1F, TH1S or TH1D
   hist = metools.me_to_nparray( me, integer_values=True )
-  fig,ax = pu.plot_hists([hist], title=pu.make_text_latex_safe(me.name))
+  fig,ax = pu.plot_hists([hist], title=maketitle(me))
   return (fig,ax)
 
 def make2dplot( me ):
@@ -46,7 +53,7 @@ def make2dplot( me ):
   # input arguments:
   # - me: instance of MonitorElement with type TH2F, TH2S or TH2D
   hist = metools.me_to_nparray( me, integer_values=True )
-  fig,ax = pu.plot_hist_2d(hist, title=pu.make_text_latex_safe(me.name))
+  fig,ax = pu.plot_hist_2d(hist, title=maketitle(me))
   return (fig,ax)
 
 def make3dplot( me ):
@@ -62,7 +69,7 @@ def makeprofileplot( me ):
   xax = hinfo['xax']
   xlims = (xax[0], xax[-1])
   # todo: implement better plotting (as scatter plot with errors)
-  fig,ax = pu.plot_hists([values], xlims=xlims, title=pu.make_text_latex_safe(me.name))
+  fig,ax = pu.plot_hists([values], xlims=xlims, title=maketitle(me))
   return (fig,ax)
   
 if __name__=='__main__':
@@ -75,9 +82,11 @@ if __name__=='__main__':
                         help='Full name of the file on DAS (for filemode "das")'
                              +' OR path to the local file (for filemode "local")')
   parser.add_argument('--run', default=None,
-                        help='Run number for which to make the plot (default: first in file).')
+                        help='Run number for which to make the plot (default: first in file).'
+                            +' Use "all" to make a plot for all available runs in the file.')
   parser.add_argument('--ls', default=None,
-                        help='Lumisection number for which to make the plot (default: first in file).')
+                        help='Lumisection number for which to make the plot (default: first in file).'
+                            +' Use "all" to make a plot for all available lumisections in the file.')
   parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
                         help='Redirector used to access remote files'
                              +' (ignored in filemode "local").')
@@ -125,35 +134,62 @@ if __name__=='__main__':
   sys.stdout.flush()
   sys.stderr.flush()
   reader = DQMIOReader(*[filename])
-  print('initialized DQMIOReader with following properties')
-  print('number of lumisections: {}'.format(len(reader.listLumis())))
+
+  # filter histogram names
+  print('filtering ME names...')
   menames = reader.listMEs()
   if searchkey is not None:
     res = []
     for mename in menames:
       if fnmatch(mename,searchkey): res.append(mename)
     menames = res
+  nmes = len(menames)
+  print('number of selected ME names: {}'.format(nmes))
+  if nmes==0: raise Exception('ERROR: list of ME names to plot is empty.')
+
+  # filter run and lumisection number
+  print('filtering lumisections...')
+  runsls = sorted(reader.listLumis()[:])
+  if run is None:
+    runsls = [el for el in runsls if el[0]==runsls[0][0]]
+  elif run=='all': pass
+  else:
+    try:
+      run = int(run)
+      runsls = [el for el in runsls if el[0]==run]
+    except:
+      raise Exception('ERROR: unrecognized value for --run: {}'.format(run))
+  if ls is None:
+    runsls = [runsls[0]]
+  elif ls=='all': pass
+  else:
+    try:
+      ls = int(ls)
+      runsls = [el for el in runsls if el[1]==ls]
+    except:
+      raise Exception('ERROR: unrecognized value for --ls: {}'.format(ls))
+  nlumis = len(runsls)
+  print('number of selected lumisections: {}'.format(nlumis))
+  if nlumis==0: raise Exception('ERROR: list of lumisections to plot is empty.')
 
   # check number of selected histograms
-  nmes = len(menames)
-  print('{} histograms were selected; continue with plotting? (y/n)'.format(nmes))
+  nplots = nmes*nlumis
+  print('{} plots will be made; continue with plotting? (y/n)'.format(nplots))
   go = raw_input()
   if go!='y': sys.exit()
 
-  # find run and lumisection number
-  if( run is None or ls is None ):
-    (run,ls) = reader.listLumis()[0]
-  print('making plots for run {}, LS {}'.format(run,ls))
-
   # make plots
-  for i,mename in enumerate(menames):
-    me = reader.getSingleMEForLumi((run,ls), mename)
-    fig,ax = makeplot(me)
-    if fig is None: continue
-    if outputdir is None:
-      block=False
-      if i==len(menames)-1: block=True 
-      plt.show(block=block)
-    else:
-      figname = mename.replace('/','_').replace(' ','_')+'.png'
-      fig.savefig(os.path.join(outputdir,figname))
+  counter = -1
+  for mename in menames:
+    for runls in runsls:
+      counter += 1
+      me = reader.getSingleMEForLumi(runls, mename)
+      fig,ax = makeplot(me)
+      if fig is None: continue
+      if outputdir is None:
+        block=False
+        if counter==nplots-1: block=True 
+        plt.show(block=block)
+      else:
+        figname = mename.replace('/','_').replace(' ','_')+'.png'
+        fig.savefig(os.path.join(outputdir,figname))

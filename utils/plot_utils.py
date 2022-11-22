@@ -328,7 +328,10 @@ def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None,
     if extent is not None: aspect = 'auto'
         
     # make color object
-    if not hasnegative: my_norm = mpl.colors.Normalize(vmin=1e-12, clip=False)
+    if not hasnegative:
+      vmin = 1e-12
+      vmax = max(vmin*2,histmax)
+      my_norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax, clip=False)
     else: 
         extremum = max(abs(histmax),abs(histmin))
         my_norm = mpl.colors.Normalize(vmin=-extremum,vmax=extremum,clip=False)
