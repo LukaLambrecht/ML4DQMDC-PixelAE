@@ -6,6 +6,8 @@ import sys
 import os
 import argparse
 import json
+sys.path.append('../../jobsubmission')
+import condortools as ct
 
 if __name__=='__main__':
 
@@ -24,6 +26,15 @@ if __name__=='__main__':
   parser.add_argument('--nevents', default=None,
                       help='Set number of events to process in cmsDriver command.'
                           +' If not specified, this argument is not added to cmsDriver.')
+  parser.add_argument('--runmode', choices=['condor','local'], default='local',
+                      help='Choose from "condor" or "local";'
+                          +' in case of "condor", will submit job to condor cluster;'
+                          +' in case of "local", will run interactively in the terminal.')
+  parser.add_argument('--cmssw', default=None,
+                      help='Path to CMSSW release for working environment.')
+  parser.add_argument('--jobflavour', default='workday',
+                      help='Set the job flavour in lxplus'
+                          +' (see https://batchdocs.web.cern.ch/local/submit.html)')
   args = parser.parse_args()
   rawfile = os.path.abspath(args.rawfile)
   outputfile = args.outputfile
@@ -31,6 +42,9 @@ if __name__=='__main__':
   conffile = args.conffile
   docmsrun = args.docmsrun
   nevents = args.nevents
+  runmode = args.runmode
+  cmssw = None if args.cmssw is None else os.path.abspath(args.cmssw)
+  jobflavour = args.jobflavour
 
   # print arguments
   print('Running with following configuration:')
@@ -42,6 +56,8 @@ if __name__=='__main__':
     raise Exception('ERROR: input file {} does not exist.'.format(rawfile))
   if not os.path.exists(cmsdriverfile):
     raise Exception('ERROR: cmsDriver file {} does not exist.'.format(cmsdriverfile))
+  if( runmode=='condor' and not docmsrun ):
+    raise Exception('ERROR: to submit a job, please add the argument "--docmsrun" as well.')
 
   # read the cmsDriver command
   cmsdrivercmd = ''
@@ -79,5 +95,23 @@ if __name__=='__main__':
   cmsdrivercmd += ' --fileout file:{}'.format(outputfile)
   cmsdrivercmd += ' --python_filename {}'.format(conffile)
 
-  # run the command
-  os.system(cmsdrivercmd)
+  # make the commands
+  cmds = []
+  cwd = os.path.abspath(os.getcwd())
+  if cmssw is not None:
+    cmds.append( 'cd {}'.format(cmssw) )
+    cmds.append( 'cmsenv' )
+    cmds.append( 'cd {}'.format(cwd) )
+  cmds.append( cmsdrivercmd )
+
+  # submit the job
+  if runmode=='local':
+    scriptname = 'local_run_nanodqmio_temp.sh'
+    ct.initJobScript(scriptname, home='auto')
+    with open(scriptname,'a') as f:
+      for cmd in cmds: f.write('{}\n'.format(cmd))
+    os.system('bash {}'.format(scriptname))
+    os.system('rm {}'.format(scriptname))
+  if runmode=='condor':
+    ct.submitCommandsAsCondorJob('cjob_run_nanodqmio', cmds,
+                      home='auto', jobflavour=jobflavour)
