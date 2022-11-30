@@ -6,7 +6,7 @@ import sys
 import os
 import argparse
 import json
-sys.path.append('../jobsubmission')
+sys.path.append('../../jobsubmission')
 import condortools as ct
 
 if __name__=='__main__':

@@ -7,7 +7,7 @@ import sys
 import os
 import copy
 import fnmatch
-sys.path.append('../omsapi')
+sys.path.append('../../omsapi')
 from get_oms_data import get_oms_api
 from get_oms_data import get_oms_data
 from get_oms_data import get_oms_response_attribute

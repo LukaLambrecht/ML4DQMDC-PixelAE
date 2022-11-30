@@ -10,9 +10,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 from check_file_size import get_file_size
-sys.path.append('../dqmio/src')
+sys.path.append('../../dqmio/src')
 from DQMIOReader import DQMIOReader
-sys.path.append('../utils')
+sys.path.append('../../utils')
 import plot_utils as pu
 
 
@@ -119,9 +119,9 @@ if __name__=='__main__':
                       help='Name of the nanoDQMIO file within each directory.')
   parser.add_argument('--outputdir', default='.',
                       help='Directory where to put the plots.')
-  parser.add_argument('--donls', default=False,
+  parser.add_argument('--donls', default=False, action='store_true',
                       help='Retrieve number of lumisections for each file.')
-  parser.add_argument('--donmes', default=False,
+  parser.add_argument('--donmes', default=False, action='store_true',
                       help='Retrieve number of MEs for each file.')
   args = parser.parse_args()
   inputdir = [os.path.abspath(d) for d in args.inputdir]
