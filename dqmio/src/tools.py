@@ -8,8 +8,10 @@ import os
 
 def format_input_files( datasetname, 
                         filemode='das',
+                        privateprod=False,
                         redirector='root://cms-xrd-global.cern.ch/',
-                        istest=False ):
+                        istest=False,
+                        maxfiles=None ):
   ### get a list of input files from a dataset name
   # input arguments:
   # - datasetname: name of the data set on DAS (for filemode 'das')
@@ -19,7 +21,10 @@ def format_input_files( datasetname,
   # - filemode: choose from 'das' or 'local';
   #   in case of 'das', will read all files belonging to the specified dataset from DAS;
   #   in case of 'local', will read all files in the specified folder on the local filesystem.)
+  # - privateprod: whether the dataset on DAS was privately produced (ignored in filemode 'local')
   # - redirector: redirector used to access remote files (ignored in filemode 'local'))
+  # - istest: return only first file (for testing)
+  # - maxfiles: return only specified number of first files
   # note: the DAS client requires a valid proxy to run,
   #       set it before calling this function with set_proxy() (see below)
 
@@ -37,9 +42,11 @@ def format_input_files( datasetname,
     if filemode=='das':
       # make and execute the DAS client command
       print('running DAS client to find files in dataset {}...'.format(datasetname))
-      dascmd = "dasgoclient -query 'file dataset={}' --limit 0".format(datasetname)
+      instance = ''
+      if privateprod: instance = ' instance=prod/phys03'
+      dascmd = "dasgoclient -query 'file dataset={}{}' --limit 0".format(datasetname,instance)
       dasstdout = os.popen(dascmd).read()
-      dasfiles = [el.strip(' \t') for el in dasstdout.strip('\n').split('\n')]
+      dasfiles = sorted([el.strip(' \t') for el in dasstdout.strip('\n').split('\n')])
       print('DAS client ready; found following files ({}):'.format(len(dasfiles)))
       for f in dasfiles: print('  - {}'.format(f))
       inputfiles = [redirector+f for f in dasfiles]
@@ -63,6 +70,9 @@ def format_input_files( datasetname,
   if istest:
     print('WARNING: running in test mode, only one file will be processed.')
     inputfiles = [inputfiles[0]]
+  if( maxfiles is not None and maxfiles>0 and maxfiles<len(inputfiles) ):
+    print('WARNING: returning only {} out of {} files.'.format(maxfiles,len(inputfiles)))
+    inputfiles = inputfiles[:maxfiles]
 
   return inputfiles
 

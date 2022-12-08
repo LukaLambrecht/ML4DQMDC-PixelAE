@@ -11,6 +11,8 @@
 import sys
 import os
 import argparse
+sys.path.append('../src/')
+from tools import format_input_files, export_proxy
 sys.path.append('../../jobsubmission')
 import condortools as ct
 
@@ -34,22 +36,28 @@ if __name__=='__main__':
                            +' "--voms-proxy-init --voms cms";'
                            +' needed for DAS client;'
                            +' ignored if filemode is "local".')
+  parser.add_argument('--privateprod', default=False, action='store_true',
+                      help='Set to true if the DAS dataset is a private production'
+                           +' rather than central production (impacts the dasgoclient query);'
+                           +' ignored if filemode is "local".')
+  parser.add_argument('--maxfiles', default=None,
+                      help='Maximum number of files to copy.')
   args = parser.parse_args()
   datasetname = args.datasetname
   redirector = args.redirector
   outputdir = args.outputdir
   runmode = args.runmode
   proxy = args.proxy
+  privateprod = args.privateprod
+  maxfiles = int(args.maxfiles) if args.maxfiles is not None else None
 
   # make and execute the DAS client command
-  print('running DAS client to find files in dataset {}...'.format(datasetname))
-  dascmd = "dasgoclient -query 'file dataset={}' --limit 0".format(datasetname)
-  dasstdout = os.popen(dascmd).read()
-  dasfiles = [el.strip(' \t') for el in dasstdout.strip('\n').split('\n')]
-  print('DAS client ready; found following files ({}):'.format(len(dasfiles)))
-  for f in dasfiles: print('  - {}'.format(f))
-  redirector = redirector.rstrip('/')+'/'
-  dasfiles = [redirector+f for f in dasfiles]
+  dasfiles = format_input_files( datasetname,
+                                 filemode='das',
+                                 privateprod=privateprod,
+                                 redirector=redirector,
+                                 istest=False,
+                                 maxfiles=maxfiles )
 
   # make output directory
   if outputdir=='auto':
