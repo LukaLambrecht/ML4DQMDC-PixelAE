@@ -35,7 +35,7 @@ if __name__=='__main__':
                        help='Provide a search key to filter the results;'
                             +' only results matching the searchkey will be shown;'
                             +' may contain unix-style wildcards.')
-  parser.add_argument('--number_only', default=False,
+  parser.add_argument('--number_only', default=False, action='store_true',
                        help='Print number of monitoring elements only;'
                             +' not a full list of their names.')
   parser.add_argument('--outputfile', default=None,
