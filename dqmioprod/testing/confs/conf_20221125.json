@@ -109,7 +109,7 @@
     "SiStrip/MechanicalView/TOB/layer_4/Summary_ClusterStoNCorr__OnTrack__TOB__layer__4",
     "SiStrip/MechanicalView/TOB/layer_5/Summary_ClusterStoNCorr__OnTrack__TOB__layer__5",
     "SiStrip/MechanicalView/TOB/layer_6/Summary_ClusterStoNCorr__OnTrack__TOB__layer__6",
-    "SiStrip/MechanicalView/MainDiagonal Position"
+    "SiStrip/MechanicalView/MainDiagonal Position",
     "SiStrip/MechanicalView/NumberOfClustersInPixel",
     "SiStrip/MechanicalView/NumberOfClustersInStrip",
     "Tracking/TrackParameters/GeneralProperties/Chi2oNDF_lumiFlag_GenTk",
