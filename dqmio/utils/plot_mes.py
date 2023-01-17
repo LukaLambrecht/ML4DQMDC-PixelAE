@@ -28,6 +28,7 @@ def makeplot( me ):
   elif me.type in [6,7,8]: return make2dplot(me)
   elif me.type in [9]: return make3dplot(me)
   elif me.type in [10]: return makeprofileplot(me)
+  elif me.type in [0,1,2]: return make0dplot(me)
   else:
     msg = 'WARNING in makeplot: me.type {} not recognized'.format(me.type)
     msg += ' for me.name {}, skipping this plot.'.format(me.name)
@@ -70,6 +71,17 @@ def makeprofileplot( me ):
   xlims = (xax[0], xax[-1])
   # todo: implement better plotting (as scatter plot with errors)
   fig,ax = pu.plot_hists([values], xlims=xlims, title=maketitle(me))
+  return (fig,ax)
+
+def make0dplot( me ):
+  ### make a plot of a 0D monitoring element (i.e. print a value)
+  fig,ax = plt.subplots()
+  text = str(me.data)
+  pu.add_text(ax, text, (0.5, 0.5), 
+              fontsize=15,
+              horizontalalignment='center',
+              verticalalignment='center')
+  ax.set_title( maketitle(me) )
   return (fig,ax)
   
 if __name__=='__main__':
@@ -174,9 +186,9 @@ if __name__=='__main__':
 
   # check number of selected histograms
   nplots = nmes*nlumis
-  print('{} plots will be made; continue with plotting? (y/n)'.format(nplots))
-  go = raw_input()
-  if go!='y': sys.exit()
+  #print('{} plots will be made; continue with plotting? (y/n)'.format(nplots))
+  #go = raw_input()
+  #if go!='y': sys.exit()
 
   # make plots
   counter = -1

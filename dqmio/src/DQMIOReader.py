@@ -56,7 +56,9 @@ def extractdatafromROOT(x, hist2array=False):
     #               note: option True is not yet supported (need to fix root_numpy import in SWAN)
     
     # first check for clear-cut data types such as ROOT strings, python ints and floats
-    if isinstance(x, ROOT.string): return unicode(x.data())
+    if isinstance(x, ROOT.string):
+        if sys.version_info[0]<3: return unicode(x.data())
+        else: return str(x.data())
     if isinstance(x, int): return x
     if isinstance(x, float): return x
     # additional check for python long, which is only defined in python 2!
@@ -163,7 +165,6 @@ class DQMIOReader:
             idxtree = getattr(f, "Indices")
             # release GIL in long operations. Disable if it causes trouble.
             #idxtree.GetEntry._threaded = True
-            knownlumis = set()
             # loop over all "entries" in the current file
             for i in range(idxtree.GetEntries()):
                 idxtree.GetEntry(i)
