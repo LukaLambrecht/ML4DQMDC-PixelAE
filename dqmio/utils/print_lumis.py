@@ -30,7 +30,7 @@ if __name__=='__main__':
                              +' "--voms-proxy-init --voms cms";'
                              +' needed for DAS client;'
                              +' ignored if filemode is "local".')
-  parser.add_argument('--runonly', default=False,
+  parser.add_argument('--runonly', default=False, action='store_true',
                         help='Print run numbers only, not lumisection numbers.')
   parser.add_argument('--runnb', default=None,
                        help='Print lumisections only for the specified run number.')

@@ -177,7 +177,11 @@ if __name__=='__main__':
       nls = None
       nmes = None
       if( donls or donmes ):
-        reader = DQMIOReader(*[f])
+        try: reader = DQMIOReader(*[f])
+        except:
+          msg = 'WARNING: file {} could not be opened.'.format(f)
+          print(msg)
+          continue
         if donls: nls = len(reader.listLumis())
         if donmes: nmes = len(reader.listMEs())
       infodict[(fileid,nevent,conf)] = {'size':size, 'nls':nls, 'nmes':nmes}
