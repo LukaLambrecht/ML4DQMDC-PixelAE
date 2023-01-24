@@ -49,7 +49,8 @@ def plot( data, labels=None,
   if ytitle is not None: ax.set_ylabel(ytitle, fontsize=15)
   return (fig,ax)
 
-def scatter( data, label=None,
+def scatter( data, label=None, color=None,
+             markersize=None,
              xlog=False, ylog=False,
              xtitle=None, ytitle=None,
              fig=None, ax=None,
@@ -61,11 +62,11 @@ def scatter( data, label=None,
     dolegend = False
   # make the figure
   if( fig is None or ax is None): fig,ax = plt.subplots()
-  ax.scatter(data['x'], data['y'], label=label)
+  ax.scatter(data['x'], data['y'], label=label, s=markersize, color=color)
   # formatting
-  ax.grid()
+  ax.grid(visible=True)
   pu.add_cms_label( ax, extratext='Preliminary', pos=(0.05,0.93),
-                    fontsize=15, background_alpha=1. )
+                    fontsize=12, background_alpha=1. )
   if xlog: ax.set_xscale('log')
   if ylog: ax.set_yscale('log')
   ax.ticklabel_format( axis='y', style='sci', scilimits=(0,0) )
@@ -74,8 +75,11 @@ def scatter( data, label=None,
   if ytitle is not None: ax.set_ylabel(ytitle, fontsize=15)
   return (fig,ax)
 
-def scatter_polyfit( data, fig, ax, 
-                     degree=1, showparams=False, 
+def scatter_polyfit( data, fig, ax, color='red',
+                     linestyle='--',
+                     degree=1, 
+                     showparams=False, paramcolor=None, 
+                     parampos=(0.05,0.8), paramfontsize=15,
                      label=None, legendloc='best' ):
   ### add a fit to a scatter plot
   # argument parsing
@@ -97,9 +101,11 @@ def scatter_polyfit( data, fig, ax,
   fitstr = fitstr.strip(' +')
   fitstr = 'Fit: y = ' + fitstr
   # plot the fit
-  ax.plot(xax, fit, label=label, color='red', linestyle='--')
-  if showparams: pu.add_text( ax, fitstr, (0.05, 0.8), fontsize=15,
-                              background_facecolor='white' )
+  ax.plot(xax, fit, label=label, color=color, linestyle=linestyle)
+  if showparams: pu.add_text( ax, fitstr, parampos, fontsize=paramfontsize,
+                              background_facecolor='white',
+                              background_edgecolor='white',
+                              color=paramcolor )
   # formatting
   if dolegend: ax.legend(loc=legendloc)
   return (fig,ax)

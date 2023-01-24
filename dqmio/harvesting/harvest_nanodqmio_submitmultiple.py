@@ -1,17 +1,22 @@
 #!/usr/bin/env python
 
-# **Submitter for DQMIO conversion scripts**  
+# **Submitter for DQMIO conversion scripts** 
 # 
 # This script wraps conversion scripts (`harvest_nanodqmio_to_*.py`) in a job.  
-# Run with `python harvest_nanodqmio_submit.py -h` for a list of available options.  
+# The difference with respect to `harvest_nanodqmio_submit.py` is that this script  
+# makes it more easy to harvest multiple monitoring elements in one go  
+# (instead of modifying and resubmitting harvest_nanodqmio_submit.py sequentially).  
+# 
+# Run with `python harvest_nanodqmio_submitmultiple.py -h` for a list of available options.  
 
 ### imports
 import sys
 import os
+import json
 import argparse
-sys.path.append('../jobsubmission')
+sys.path.append('../../jobsubmission')
 import condortools as ct
-sys.path.append('src')
+sys.path.append('../src')
 import tools
 
 if __name__=='__main__':
@@ -19,7 +24,7 @@ if __name__=='__main__':
   # read arguments
   parser = argparse.ArgumentParser(description='Harvest nanoDQMIO to CSV')
   parser.add_argument('--harvester', required=True,
-                        help='Harvester to run, should be a valid python script' 
+                        help='Harvester to run, should be a valid python script'
                              +' similar in structure and command line args to'
                              +' e.g. harvest_nanodqmio_to_csv.py.')
   parser.add_argument('--runmode', choices=['condor','local'], default='condor',
@@ -42,10 +47,9 @@ if __name__=='__main__':
   parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
                         help='Redirector used to access remote files'
                              +' (ignored in filemode "local").')
-  parser.add_argument('--mename', required=True,
-                        help='Name of the monitoring element to store.')
-  parser.add_argument('--outputfile', default='test.csv',
-                        help='Path to output file.')
+  parser.add_argument('--menames', required=True,
+                        help='Json file holding a dict with the name of the monitoring element to store'
+                             +' mapped to their output files.')
   parser.add_argument('--proxy', default=None,
                         help='Set the location of a valid proxy created with'
                              +' "--voms-proxy-init --voms cms";'
@@ -65,8 +69,7 @@ if __name__=='__main__':
   filemode = args.filemode
   datasetname = args.datasetname
   redirector = args.redirector
-  mename = args.mename
-  outputfile = args.outputfile
+  menames = args.menames
   proxy = None if args.proxy is None else os.path.abspath(args.proxy)
   cmssw_version = None if args.cmssw is None else os.path.abspath(args.cmssw)
   jobflavour = args.jobflavour
@@ -76,6 +79,13 @@ if __name__=='__main__':
   print('Running with following configuration:')
   for arg in vars(args):
     print('  - {}: {}'.format(arg,getattr(args,arg)))
+
+  # read the ME names and output files
+  with open(menames, 'r') as f:
+    menames = json.load(f)
+  print('Found following monitoring elements in configuration json file:')
+  for mename,outputfile in menames.items():
+    print('  - {} -> {}'.format(mename,outputfile))
 
   # export the proxy
   if( filemode=='das' or runmode=='condor' ): tools.export_proxy( proxy )
@@ -89,20 +99,28 @@ if __name__=='__main__':
   # format the list of input files
   inputfstr = ','.join(inputfiles)
   if len(inputfiles)==1: inputfstr+=','
- 
-  # make the command
-  cmd = 'python {}'.format(harvester)
-  cmd += ' --filemode {}'.format(filemode)
-  cmd += ' --datasetname {}'.format(inputfstr)
-  cmd += ' --redirector {}'.format(redirector)
-  cmd += ' --mename {}'.format(mename)
-  cmd += ' --outputfile {}'.format(outputfile)
-  cmd += ' --proxy {}'.format(proxy)
-  if istest: cmd += ' --istest'
 
+  # loop over the monitoring elements
+  cmds = []
+  for mename,outputfile in menames.items():
+    # make the command
+    cmd = 'python {}'.format(harvester)
+    cmd += ' --filemode {}'.format(filemode)
+    cmd += ' --datasetname {}'.format(inputfstr)
+    cmd += ' --redirector {}'.format(redirector)
+    cmd += ' --mename {}'.format(mename)
+    cmd += ' --outputfile {}'.format(outputfile)
+    cmd += ' --proxy {}'.format(proxy)
+    if istest: cmd += ' --istest'
+    cmds.append(cmd)
+  
   if runmode=='local':
-    os.system(cmd)
+    for cmd in cmds: os.system(cmd)
   if runmode=='condor':
-    ct.submitCommandAsCondorJob('cjob_harvest_nanodqmio_submit', cmd,
-            home='auto', cmssw_version=cmssw_version, 
+    # note: cannot use submitCommandsAsCondorCluster since there too many arguments...
+    # instead, need to create a separate job for each.
+    # to do: see if there is a better workaround.
+    for cmd in cmds:
+        ct.submitCommandAsCondorJob('cjob_harvest_nanodqmio_submitmultiple', cmd,
+            home='auto', cmssw_version=cmssw_version,
             proxy=proxy, jobflavour=jobflavour)

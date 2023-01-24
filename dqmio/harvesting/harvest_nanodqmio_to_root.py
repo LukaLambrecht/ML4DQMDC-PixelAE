@@ -1,30 +1,18 @@
 #!/usr/bin/env python
 
-# **A script for reading (nano)DQMIO files and storing a ME in a CSV file format**  
+# **A script for reading (nano)DQMIO files and storing a ME in a ROOT file format**  
 # 
-# Run with `python harvest_nanodqmio_to_csv.py -h` for a list of available options.  
+# Run with `python harvest_nanodqmio_to_root.py -h` for a list of available options.  
 # 
-# The output is stored in a CSV file similar to the ones for the RunII legacy campaign.  
-# The file format is targeted to be as close as possible to the RunII legacy files,  
-# with the same columns, data types and naming conventions.  
-# The only difference is that there are no duplicate columns.  
-# 
-# While this file format may be far from optimal,  
-# it has the advantage that much of the existing code was developed to run on those files,  
-# so this is implemented to at least have the option to run on new DQMIO files   
-# without any code change.  
-# It was tested that the output files from this script can indeed be read correctly  
-# by the already existing part of the framework without any code change.  
-# Note: need to do definitive check (both for 1D and 2D) with collision data  
-# in order to verify that the shapes are correct (hard to tell with cosmics...)  
+# The output is stored in a plain ROOT file, containing only the raw histograms.  
+# Run and lumisection information is written to the name of the histogram within the ROOT file.  
 
 ### imports
 import sys
 import os
-import json
-import numpy as np
+import ROOT
 import argparse
-sys.path.append('src')
+sys.path.append('../src')
 from DQMIOReader import DQMIOReader
 import tools
 
@@ -77,8 +65,8 @@ if __name__=='__main__':
   if filemode=='das': tools.export_proxy( proxy )
 
   # make a list of input files
-  inputfiles = tools.format_input_files( datasetname, 
-                                         filemode=filemode, 
+  inputfiles = tools.format_input_files( datasetname,
+                                         filemode=filemode,
                                          redirector=redirector,
                                          istest=istest )
 
@@ -98,8 +86,16 @@ if __name__=='__main__':
   print('number of lumisections: {}'.format(len(reader.listLumis())))
   print('number of monitoring elements per lumisection: {}'.format(len(reader.listMEs())))
 
-  # select the monitoring element and make a pandas dataframe
-  df = reader.getSingleMEsToDataFrame(mename)
-  
-  # write to a csv file
-  df.to_csv(outputfile)
+  # select the monitoring element
+  print('selecting monitoring element {}...'.format(mename))
+  mes = reader.getSingleMEs(mename)
+    
+  # write selected monitoring elements to output file
+  print('writing output file...')
+  f = ROOT.TFile.Open(outputfile, 'recreate')
+  for me in mes:
+    name = 'run{}_ls{}_{}'.format(me.run, me.lumi, me.name.replace('/','_'))
+    me.data.SetName(name)
+    me.data.SetTitle(name)
+    me.data.Write()
+  f.Close()

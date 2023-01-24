@@ -13,7 +13,7 @@ import os
 import json
 import numpy as np
 import argparse
-sys.path.append('src')
+sys.path.append('../src')
 from DQMIOReader import DQMIOReader
 import tools
 
