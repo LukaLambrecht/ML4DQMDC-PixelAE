@@ -11,17 +11,7 @@ sys.path.append('../../omsapi')
 from get_oms_data import get_oms_api
 from get_oms_data import get_oms_data
 from get_oms_data import get_oms_response_attribute
-
-def filter_oms_response(response, key, value):
-  newomsdata = []
-  if not isinstance(value,list): value = [value]
-  for i in range(len(response['data'])):
-    thisvalue = str(response['data'][i]['attributes'][key])
-    for item in value:
-      if( fnmatch.fnmatch(thisvalue,str(item)) ):
-        newomsdata.append(response['data'][i])
-        continue
-  return {'data':newomsdata}
+from get_oms_data import filter_oms_response
 
 def none_to_zero(runs, lumis, verbose=True):
   for i in range(len(runs)):

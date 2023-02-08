@@ -13,8 +13,9 @@ omsapi/clientid.py
 # ignore all temporary job files
 **cjob_**
 
-# ingore all plot folders
+# ingore all plot and output folders
 **plots_**
+**output_**
 
 # ignore /site folder as it is automatically created with doctools
 site

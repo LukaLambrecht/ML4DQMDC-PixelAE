@@ -1,0 +1,7 @@
+/ZeroBias/Run2022A-19Jan2023-v2/DQMIO /ZeroBias/Run2022A-v1/RAW
+/ZeroBias/Run2022B-19Jan2023-v2/DQMIO /ZeroBias/Run2022B-v1/RAW
+/ZeroBias/Run2022C-19Jan2023-v2/DQMIO /ZeroBias/Run2022C-v1/RAW
+/ZeroBias/Run2022D-19Jan2023-v2/DQMIO /ZeroBias/Run2022D-v1/RAW
+/ZeroBias/Run2022E-19Jan2023-v2/DQMIO /ZeroBias/Run2022E-v1/RAW
+/ZeroBias/Run2022F-19Jan2023-v2/DQMIO /ZeroBias/Run2022F-v1/RAW
+/ZeroBias/Run2022G-19Jan2023-v2/DQMIO /ZeroBias/Run2022G-v1/RAW

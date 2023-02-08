@@ -76,7 +76,7 @@ if __name__=='__main__':
     label = info[i]['label']
     thisinfo = info[i]['info']
     color = colorlist[i]
-    parampos = (0.05, 0.8-i*0.07)
+    parampos = (0.03, 0.85-i*0.07)
     data = {}
     data['x'] = [el['nls'] for el in thisinfo]
     data['y'] = [el['size_bytes'] for el in thisinfo]
@@ -84,7 +84,8 @@ if __name__=='__main__':
                       color=color,
                       xtitle='Number of processed lumisections',
                       ytitle='nanoDQMIO file size (bytes)',
-                      label=label, legendloc='lower right' )
+                      label=label, legendloc='lower right' 
+                      )
     fig,ax = scatter_polyfit( data, fig, ax,
                       color=color, paramcolor=color,
                       parampos=parampos, paramfontsize=10,
@@ -115,7 +116,7 @@ if __name__=='__main__':
   #ax.ticklabel_format( axis='x', style='sci', scilimits=(0,0) )
   #ax.set_yscale('log')
   #ax.ticklabel_format( axis='y', style='sci', scilimits=(0,0) )
-  ax.set_ylim((None,ax.get_ylim()[1]*1.5))
+  ax.set_ylim((None,ax.get_ylim()[1]*2))
   ax.legend()
   ax.set_xlabel('nanoDQMIO file size (bytes)', fontsize=15)
   ax.set_ylabel('Number of files', fontsize=15)
@@ -143,7 +144,7 @@ if __name__=='__main__':
   #ax.ticklabel_format( axis='x', style='sci', scilimits=(0,0) )
   #ax.set_yscale('log')
   #ax.ticklabel_format( axis='y', style='sci', scilimits=(0,0) )
-  ax.set_ylim((None,ax.get_ylim()[1]*1.5))
+  ax.set_ylim((None,ax.get_ylim()[1]*2))
   ax.legend()
   ax.set_xlabel('Number of lumisections in file', fontsize=15)
   ax.set_ylabel('Number of files', fontsize=15)

@@ -26,6 +26,7 @@
 # external modules
 import sys
 import os
+import fnmatch
 
 # local modules
 from omsapi import OMSAPI
@@ -118,7 +119,7 @@ def get_oms_data( omsapi, api_endpoint, runnb=None, fillnb=None, extrafilters=[]
     if len(attributes) is not None: q.attrs(attributes)
     for key,val in extraargs.items(): q.custom(key,value=val)
     q.paginate(1, limit_entries)
-    print(q.data_query())
+    #print(q.data_query())
     response = q.data()
     try: return response.json()
     except: 
@@ -131,5 +132,20 @@ def get_oms_response_attribute( omsresponse, attribute ):
     # input arguments:
     # - omsresponse: the json-like object returned by get_oms_data
     # - attribute: name of one of the attributes present in omsresponse
-    
     return [omsresponse['data'][i]['attributes'][attribute] for i in range(len(omsresponse['data']))]
+
+def filter_oms_response( omsresponse, key, value ):
+    ### small helper function to post-filter a response object
+    # input arguments:
+    # - omsresponse: the json-like object returned by get_oms_data
+    # - key: name of one of the attributes present in omsresponse
+    # - value: string or list of strings with values to keep
+    newomsdata = []
+    if not isinstance(value,list): value = [value]
+    for i in range(len(omsresponse['data'])):
+        thisvalue = str(omsresponse['data'][i]['attributes'][key])
+        for item in value:
+            if( fnmatch.fnmatch(thisvalue,str(item)) ):
+                newomsdata.append(omsresponse['data'][i])
+                continue
+    return {'data':newomsdata}

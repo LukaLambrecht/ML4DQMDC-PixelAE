@@ -10,6 +10,7 @@ import os
 import json
 import argparse
 import ROOT
+import signal
 sys.path.append('../src')
 from DQMIOReader import DQMIOReader
 import tools
@@ -42,24 +43,45 @@ if __name__=='__main__':
   info = []
 
   # make a list of input files
+  filemode = 'das'
+  if os.path.exists(datasetname): filemode = 'local'
   filenames = tools.format_input_files(
-    datasetname, filemode='das',
+    datasetname, filemode=filemode,
     privateprod=False,
     istest=False, maxfiles=None )
-  filenames = sorted(filenames)  
+  filenames = sorted(filenames)
+
+  # prepare running with timeout options
+  class TimeoutError(Exception): pass
+  def handler(sig,frame): raise TimeoutError
+  signal.signal(signal.SIGALRM, handler)
 
   # loop over files
   for i,filename in enumerate(filenames):
     print('Processing file {}/{}...'.format(i+1,len(filenames)))
-    
+  
+    # open the file to get size
+    signal.alarm(30)
+    try:
+      f = ROOT.TFile.Open(filename,'read')
+    except:
+      msg = 'ERROR: file {} could not be opened.'.format(filename)
+      print(msg)
+      continue
+    signal.alarm(0)
+    size = f.GetSize()
+ 
     # find number of lumisections
-    reader = DQMIOReader(*[filename])
+    signal.alarm(30)
+    try:
+      reader = DQMIOReader(*[filename])
+    except:
+      msg = 'ERROR: file {} could not be opened.'.format(filename)
+      print(msg)
+      continue
+    signal.alarm(0)
     runsls = sorted(reader.listLumis())
     nls = len(runsls)
-
-    # open the file to get size
-    f = ROOT.TFile.Open(filename,'read')
-    size = f.GetSize()
 
     # add to the info
     info.append( {'file':filename, 'nls':nls, 'size_bytes':size} )
