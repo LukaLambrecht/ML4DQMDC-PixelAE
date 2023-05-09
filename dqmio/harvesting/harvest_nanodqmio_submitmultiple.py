@@ -88,7 +88,7 @@ if __name__=='__main__':
     print('  - {} -> {}'.format(mename,outputfile))
 
   # export the proxy
-  if( filemode=='das' or runmode=='condor' ): tools.export_proxy( proxy )
+  if filemode=='das' and proxy is not None: tools.export_proxy( proxy )
 
   # make a list of input files
   inputfiles = tools.format_input_files( datasetname,

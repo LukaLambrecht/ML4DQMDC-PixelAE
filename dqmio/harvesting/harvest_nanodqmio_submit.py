@@ -39,6 +39,10 @@ if __name__=='__main__':
                              +' (on DAS or locally according to filemode)).'
                              +' Note: interpreted as list of file names if a comma is present,'
                              +' directory or dataset otherwise!')
+  parser.add_argument('--run', default=None,
+                        help='Run number for which to do the harvesting'
+                             +' (default: all runs in the dataset)'
+                             +' (only for DAS, ignored for local files)')
   parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
                         help='Redirector used to access remote files'
                              +' (ignored in filemode "local").')
@@ -64,6 +68,7 @@ if __name__=='__main__':
   runmode = args.runmode
   filemode = args.filemode
   datasetname = args.datasetname
+  runnb = args.run
   redirector = args.redirector
   mename = args.mename
   outputfile = args.outputfile
@@ -78,10 +83,11 @@ if __name__=='__main__':
     print('  - {}: {}'.format(arg,getattr(args,arg)))
 
   # export the proxy
-  if( filemode=='das' or runmode=='condor' ): tools.export_proxy( proxy )
+  if filemode=='das' and proxy is not None: tools.export_proxy( proxy )
 
   # make a list of input files
   inputfiles = tools.format_input_files( datasetname,
+                                         runnb=runnb,
                                          filemode=filemode,
                                          redirector=redirector,
                                          istest=istest )
@@ -91,7 +97,7 @@ if __name__=='__main__':
   if len(inputfiles)==1: inputfstr+=','
  
   # make the command
-  cmd = 'python {}'.format(harvester)
+  cmd = 'python3 {}'.format(harvester)
   cmd += ' --filemode {}'.format(filemode)
   cmd += ' --datasetname {}'.format(inputfstr)
   cmd += ' --redirector {}'.format(redirector)

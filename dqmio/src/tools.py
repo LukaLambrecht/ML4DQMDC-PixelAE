@@ -6,8 +6,9 @@ import sys
 import os
 
 
-def format_input_files( datasetname, 
+def format_input_files( datasetname,
                         filemode='das',
+                        runnb=None,
                         privateprod=False,
                         redirector='root://cms-xrd-global.cern.ch/',
                         istest=False,
@@ -21,6 +22,7 @@ def format_input_files( datasetname,
   # - filemode: choose from 'das' or 'local';
   #   in case of 'das', will read all files belonging to the specified dataset from DAS;
   #   in case of 'local', will read all files in the specified folder on the local filesystem.)
+  # - runnb: select only files for the given run number (ignored in filemode 'local')
   # - privateprod: whether the dataset on DAS was privately produced (ignored in filemode 'local')
   # - redirector: redirector used to access remote files (ignored in filemode 'local'))
   # - istest: return only first file (for testing)
@@ -41,10 +43,11 @@ def format_input_files( datasetname,
     # details depend on the chosen filemode
     if filemode=='das':
       # make and execute the DAS client command
-      print('running DAS client to find files in dataset {}...'.format(datasetname))
-      instance = ''
-      if privateprod: instance = ' instance=prod/phys03'
-      dascmd = "dasgoclient -query 'file dataset={}{}' --limit 0".format(datasetname,instance)
+      dasquery = 'file dataset={}'.format(datasetname)
+      if privateprod: dasquery += ' instance=prod/phys03'
+      if runnb is not None: dasquery += ' run={}'.format(runnb)
+      print('running DAS client with following query: {}...'.format(dasquery))
+      dascmd = "dasgoclient -query '{}' --limit 0".format(dasquery)
       dasstdout = os.popen(dascmd).read()
       dasfiles = sorted([el.strip(' \t') for el in dasstdout.strip('\n').split('\n')])
       print('DAS client ready; found following files ({}):'.format(len(dasfiles)))

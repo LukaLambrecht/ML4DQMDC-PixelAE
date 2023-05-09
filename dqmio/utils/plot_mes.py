@@ -186,9 +186,9 @@ if __name__=='__main__':
 
   # check number of selected histograms
   nplots = nmes*nlumis
-  #print('{} plots will be made; continue with plotting? (y/n)'.format(nplots))
-  #go = raw_input()
-  #if go!='y': sys.exit()
+  print('{} plots will be made; continue with plotting? (y/n)'.format(nplots))
+  go = raw_input()
+  if go!='y': sys.exit()
 
   # make plots
   counter = -1

@@ -152,7 +152,7 @@ if __name__=='__main__':
     #print(sorted(list(runsonlyraw)))
     
     # print lumisections in RAW only in common runs
-    #print(selectedonlyraw)
+    print(selectedonlyraw)
 
     # print lumisections in DQMIO only in common runs
     #print(selectedonlydqmio)
