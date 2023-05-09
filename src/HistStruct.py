@@ -699,7 +699,10 @@ class HistStruct(object):
         #   if multiple sets are given, the union is taken
         # - the classifiers in the appropriate model must have been evaluated before calling this method!
         scores = self.models[modelname].get_globalscores( setnames=setnames )
-        if len(scores)==0: return None
+        if len(scores)==0:
+            msg = 'WARNING in HistStruct.get_globalscores: no global scores found for setnames {}.'.format(setnames)
+            print(msg)
+            return None
         if masknames is not None:
             mask = self.get_combined_mask(masknames)
             scores = scores[mask]
@@ -1081,7 +1084,7 @@ class HistStruct(object):
 
     def plot_histograms( self, histnames=None, masknames=None, histograms=None, ncols=4,
                             colorlist=[], labellist=[], transparencylist=[], 
-                            titledict=None, xaxtitledict=None, physicalxax=False, 
+                            titledict=None, extratextdict=None, xaxtitledict=None, physicalxax=False, 
                             yaxtitledict=None, **kwargs ):
         ### plot the histograms in a HistStruct, optionally after masking
         # input arguments:
@@ -1098,6 +1101,7 @@ class HistStruct(object):
         # - labellist: list of labels for the legend, must have same legnth as masknames
         # - transparencylist: list of transparency values, must have same length as masknames
         # - titledict: dict mapping histogram names to titles for the subplots (default: title = histogram name)
+        # - extratextdict: dict mapping histogram names to extra text on subplots (default: no extra text)
         # - xaxtitledict: dict mapping histogram names to x-axis titles for the subplots (default: no x-axis title)
         # - yaxtitledict: dict mapping histogram names to y-axis titles for the subplots (default: no y-axis title)
         # - physicalxax: bool whether to use physical x-axis range or simply use bin number (default)
@@ -1128,7 +1132,8 @@ class HistStruct(object):
                             masknames=masknames, 
                             histograms=histograms,
                             colorlist=colorlist, labellist=labellist, transparencylist=transparencylist,
-                            titledict=titledict, xaxtitledict=xaxtitledict, physicalxax=physicalxax, 
+                            titledict=titledict, extratextdict=extratextdict,
+                            xaxtitledict=xaxtitledict, physicalxax=physicalxax, 
                             yaxtitledict=yaxtitledict,
                             **kwargs )
 
@@ -1151,7 +1156,8 @@ class HistStruct(object):
 
     def plot_histograms_1d( self, histnames=None, masknames=None, histograms=None, ncols=4,
                             colorlist=[], labellist=[], transparencylist=[],
-                            titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, 
+                            titledict=None, extratextdict=None,
+                            xaxtitledict=None, physicalxax=False, yaxtitledict=None, 
                             **kwargs ):
         ### plot the histograms in a histstruct, optionally after masking
         # internal helper function, use only via plot_histograms
@@ -1173,6 +1179,8 @@ class HistStruct(object):
             # get the title and axes
             title = pu.make_text_latex_safe(name)
             if( titledict is not None and name in titledict ): title = titledict[name]
+            extratext = None
+            if( extratextdict is not None and name in extratextdict ): extratext = extratextdict[name]
             xaxtitle = None
             if( xaxtitledict is not None and name in xaxtitledict ): xaxtitle = xaxtitledict[name]
             xlims = (-0.5,-1)
@@ -1182,7 +1190,7 @@ class HistStruct(object):
             # make the plot
             pu.plot_sets( histlist,
                         fig=fig,ax=axs[int(j/ncols),j%ncols],
-                        title=title, xaxtitle=xaxtitle, xlims=xlims, yaxtitle=yaxtitle,
+                        title=title, extratext=extratext, xaxtitle=xaxtitle, xlims=xlims, yaxtitle=yaxtitle,
                         colorlist=colorlist, labellist=labellist, transparencylist=transparencylist,
                         **kwargs )
         return fig,axs
@@ -1254,7 +1262,7 @@ class HistStruct(object):
     
     def plot_histograms_run( self, histnames=None, masknames=None, histograms=None, ncols=4, 
                             titledict=None, xaxtitledict=None, physicalxax=False, 
-                            yaxtitledict=None, **kwargs ):
+                            yaxtitledict=None, extratextdict=None, **kwargs ):
         ### plot a set of histograms in a HistStruct with a smooth color gradient.
         # typical use case: plot a single run.
         # note: only for 1D histograms!
@@ -1269,6 +1277,7 @@ class HistStruct(object):
         # - xaxtitledict: dict mapping histogram names to x-axis titles for the subplots (default: no x-axis title)
         # - yaxtitledict: dict mapping histogram names to y-axis titles for the subplots (default: no y-axis title)
         # - physicalxax: bool whether to use physical x-axis range or simply use bin number (default)
+        # - extratextdict: dict mapping histogram names to extra text on subplots (default: no extra text)
         # - kwargs: keyword arguments passed down to plot_utils.plot_hists_multi
         
         # check validity of requested histnames
@@ -1291,7 +1300,7 @@ class HistStruct(object):
         # make a plot of the 1D histograms
         if len(histnames1d)>0:
             fig1d,axs1d = self.plot_histograms_run_1d( histnames=histnames1d, masknames=masknames, 
-                            histograms=histograms, ncols=ncols,
+                            histograms=histograms, ncols=ncols, extratextdict=extratextdict,
                             titledict=titledict, xaxtitledict=xaxtitledict, physicalxax=physicalxax, 
                             yaxtitledict=yaxtitledict,
                             **kwargs )
@@ -1301,7 +1310,8 @@ class HistStruct(object):
 
 
     def plot_histograms_run_1d( self, histnames=None, masknames=None, histograms=None, ncols=4,
-                            titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, 
+                            titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None,
+                            extratextdict=None,
                             **kwargs ):
         ### plot the histograms in a histstruct, optionally after masking
         # internal helper function, use only via plot_histograms_run
@@ -1324,13 +1334,15 @@ class HistStruct(object):
             if physicalxax: xlims = self.histranges[name]
             yaxtitle = None
             if( yaxtitledict is not None and name in yaxtitledict ): yaxtitle = yaxtitledict[name]
+            extratext = None
+            if( extratextdict is not None and name in extratextdict ): extratext = extratextdict[name]
             # set the color
             colorlist = np.arange(len(hists))
             # make the plot
             pu.plot_hists_multi( hists,
                         fig=fig,ax=axs[int(j/ncols),j%ncols],
                         title=title, xaxtitle=xaxtitle, xlims=xlims, yaxtitle=yaxtitle,
-                        colorlist=colorlist,
+                        colorlist=colorlist, extratext=extratext,
                         **kwargs )
         return fig,axs
     
@@ -1341,7 +1353,8 @@ class HistStruct(object):
     def plot_ls( self, runnb, lsnb, histnames=None, histlabel=None, ncols=4,
                  recohist=None, recohistlabel='Reconstruction', 
                  refhists=None, refhistslabel='Reference histograms', refhiststransparency=None,
-                 titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs):
+                 titledict=None, extratextdict=None,
+                 xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs):
         ### plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction
         # input arguments:
         # - runnb: run number
@@ -1360,6 +1373,7 @@ class HistStruct(object):
         #            in case there is only one reference histogram, it must be reshaped into (1,nbins)
         # - refhistslabel: legend entry for the reference histograms
         # - titledict: dict mapping histogram names to titles for the subplots (default: title = histogram name)
+        # - extratextdict: dict mapping histogram names to extra text on subplots (default: no extra text)
         # - xaxtitledict: dict mapping histogram names to x-axis titles for the subplots (default: no x-axis title)
         # - yaxtitledict: dict mapping histogram names to y-axis titles for the subplots (default: no y-axis title)
         # - physicalxax: bool whether to use physical x-axis range or simply use bin number (default)
@@ -1409,7 +1423,8 @@ class HistStruct(object):
                                 recohist=recohist, recohistlabel=recohistlabel,
                                 refhists=refhists, refhistslabel=refhistslabel, 
                                 refhiststransparency=refhiststransparency,
-                                titledict=titledict, xaxtitledict=xaxtitledict, physicalxax=physicalxax, 
+                                titledict=titledict, extratextdict=extratextdict,
+                                xaxtitledict=xaxtitledict, physicalxax=physicalxax, 
                                 yaxtitledict=yaxtitledict, **kwargs )
 
         if len(histnames2d)>0:
@@ -1446,7 +1461,7 @@ class HistStruct(object):
     def plot_ls_1d( self, runnb, lsnb, histnames=None, histlabel=None, ncols=4,
                  recohist=None, recohistlabel='Reconstruction',
                  refhists=None, refhistslabel='Reference histograms', refhiststransparency=None,
-                 titledict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs):
+                 titledict=None, extratextdict=None, xaxtitledict=None, physicalxax=False, yaxtitledict=None, **kwargs):
         ### plot the histograms in a HistStruct for a given run/ls number versus their references and/or their reconstruction
         # internal helper function, use only via plot_ls
 
@@ -1507,6 +1522,8 @@ class HistStruct(object):
             # get the title and axes
             title = pu.make_text_latex_safe(name)
             if( titledict is not None and name in titledict ): title = titledict[name]
+            extratext = None
+            if( extratextdict is not None and name in extratextdict): extratext = extratextdict[name]
             xaxtitle = None
             if( xaxtitledict is not None and name in xaxtitledict ): xaxtitle = xaxtitledict[name]
             xlims = (-0.5,-1)
@@ -1516,7 +1533,7 @@ class HistStruct(object):
             # make the plot
             pu.plot_sets(histlist,
                   fig=fig,ax=axs[int(j/ncols),j%ncols],
-                  title=title, xaxtitle=xaxtitle, xlims=xlims, yaxtitle=yaxtitle,
+                  title=title, extratext=extratext, xaxtitle=xaxtitle, xlims=xlims, yaxtitle=yaxtitle,
                   colorlist=colorlist, labellist=labellist, transparencylist=transparencylist,
                   **kwargs)
         return fig,axs
@@ -1592,7 +1609,8 @@ class HistStruct(object):
         return fig,axs
     
     def plot_ls_score( self, modelname, runnb, lsnb, ncols=4,
-                       masknames=None, setnames=None, **kwargs ):
+                       masknames=None, setnames=None, 
+                       titledict=None, extratextdict=None, **kwargs ):
         ### plot the score of a given lumisection for each histogram type compared to reference scores
         # input arguments:
         # - modelname: name of the model for which to retrieve the score
@@ -1600,6 +1618,8 @@ class HistStruct(object):
         # - lsnb: lumisection number
         # - masknames: list of mask names for the reference scores
         # - setnames: list of set names for the reference scores
+        # - titledict: dict mapping histogram names to titles for the subplots (default: title = histogram name)
+        # - extratextdict: dict mapping histogram names to extra text on subplots (default: no extra text)
         # - kwargs: additional keyword arguments passed down to pu.plot_score_dist
         
         # find index that given run and ls number correspond to
@@ -1620,8 +1640,14 @@ class HistStruct(object):
             labels = np.zeros(nscores)
             scores = np.concatenate((scores, np.ones(int(nscores/15))*scorepoint[histname]))
             labels = np.concatenate((labels, np.ones(int(nscores/15))))
-            pu.plot_score_dist( scores, labels, 
-                                fig=fig,ax=axs[int(j/ncols),j%ncols],
+            # get the title and axes
+            title = pu.make_text_latex_safe(histname)
+            if( titledict is not None and histname in titledict ): title = titledict[histname]
+            extratext = None
+            if( extratextdict is not None and histname in extratextdict): extratext = extratextdict[histname]
+            pu.plot_score_dist( scores, labels,
+                                fig=fig, ax=axs[int(j/ncols),j%ncols],
+                                title=title, extratext=extratext,
                                 **kwargs )
         return fig,axs
     

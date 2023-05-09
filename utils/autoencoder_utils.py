@@ -264,7 +264,7 @@ def get_confusion_matrix(scores, labels, wp='maxauc', plotwp=True,
     #             or it can be a string in which case it will be used as the 'method' argument in get_wp!
     # - plotwp: only relevant if wp is a string (see above), in which case plotwp will be used as the 'doplot' argument in get_wp
     
-    if isinstance(wp,str): wp = get_wp(scores, labels, method=wp, doplot=plotwp)
+    if isinstance(wp,str): wp = get_wp(scores, labels, method=wp, doplot=plotwp)[0]
 
     nsig = np.sum(labels)
     nback = np.sum(1-labels)
@@ -344,23 +344,27 @@ def get_wp_maxauc(scores, labels, doplot=False):
     maxscore = sorted_scores[maxidx]
     maxauc = aucs[maxidx]
 
+    fig = None
+    ax = None
+    
     if doplot:
-        fig,ax,ax2 = plot_utils.plot_metric(sorted_scores, aucs, label='pseudo-AUC',
-                    sig_eff=effs, sig_label='signal efficiency',
-                    bck_eff=effb, bck_label='background efficiency',
-                    xaxtitle='working point',
-                    yaxlog=False, ymaxfactor=1.3, yaxtitle='pseudo-AUC')
-        ax.scatter( [maxscore], [maxauc], s=50, c='black', label='maximum' )
-        ax.legend(loc='upper left', framealpha=0.75, facecolor='white')
+        fig,ax,ax2 = plot_utils.plot_metric(sorted_scores, aucs, label='Pseudo-AUC',
+                    sig_eff=effs, sig_label='Anomaly efficiency', sig_color='r',
+                    bck_eff=effb, bck_label='Background efficiency', bck_color='g',
+                    legendsize=15,
+                    xaxtitle='Working point', xaxtitlesize=15,
+                    yaxlog=False, ymaxfactor=1.6,
+                    yaxtitle='Pseudo-AUC', yaxtitlesize=15)
+        ax.scatter( [maxscore], [maxauc], s=50, c='black', label='Maximum' )
+        ax.legend(loc='upper left', framealpha=0.7, facecolor='white', fontsize=15)
         auctext = '{:.3f}'.format(maxauc)
         wptext = '{:.3f}'.format(maxscore)
         if maxauc>0.99:
             auctext = '1 - '+'{:.3e}'.format(1-maxauc)
-        text = ax.text(0.97,0.8,'WP: {}, pseudo-AUC: {}'.format(wptext,auctext), 
+        text = ax.text(0.97,0.68,'WP: {}, pseudo-AUC: {}'.format(wptext,auctext), 
                         horizontalalignment='right', transform=ax.transAxes)
         text.set_bbox(dict(facecolor='white', edgecolor='black', alpha=0.75))
-        plt.show(block=False)
-    return maxscore
+    return (maxscore, maxauc, fig, ax)
 
 
 
