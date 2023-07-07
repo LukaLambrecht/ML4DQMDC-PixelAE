@@ -11,6 +11,11 @@
 import sys
 import os
 import argparse
+
+# Make the code work for both python 2 and 3
+# Use input from Python 3
+from six.moves import input
+
 sys.path.append('../src/')
 from tools import format_input_files, export_proxy
 sys.path.append('../../jobsubmission')
@@ -91,8 +96,7 @@ if __name__=='__main__':
 
   # ask for confirmation
   print('Found {} files to download into {}'.format(len(dasfiles),outputdir))
-  print('Proceed? (y/n)')
-  go = raw_input()
+  go = input('Proceed? (y/n) ')
   if go!='y': sys.exit()
 
   # make the commands

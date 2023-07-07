@@ -6,6 +6,10 @@ import sys
 import os
 import argparse
 
+# Make it work under both python 2 and 3
+# Use input from Python 3
+from six.moves import input
+
 if __name__=='__main__':
 
   # read arguments
@@ -29,8 +33,7 @@ if __name__=='__main__':
   for dataset in datasets: print('  - {}'.format(dataset))
 
   # check if need to continue
-  print('Continue to find number of lumisections for these datasets? (y/n)')
-  go = raw_input()
+  go = input('Continue to find number of lumisections for these datasets? (y/n) ')
   if not go=='y': sys.exit()
 
   # find number of lumisections for each dataset
