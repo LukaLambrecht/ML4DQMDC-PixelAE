@@ -13,6 +13,11 @@ import json
 import argparse
 from fnmatch import fnmatch
 import matplotlib.pyplot as plt
+
+# Make it work under both python 2 and 3
+# Use input from Python 3
+from six.moves import input
+
 sys.path.append('../src')
 from DQMIOReader import DQMIOReader
 import tools
@@ -186,8 +191,7 @@ if __name__=='__main__':
 
   # check number of selected histograms
   nplots = nmes*nlumis
-  print('{} plots will be made; continue with plotting? (y/n)'.format(nplots))
-  go = raw_input()
+  go = input('{} plots will be made; continue with plotting? (y/n) '.format(nplots))
   if go!='y': sys.exit()
 
   # make plots

@@ -8,6 +8,11 @@
 import sys
 import os
 import argparse
+
+# Make the code work for both python 2 and 3
+# Use input from Python 3
+from six.moves import input
+
 sys.path.append('../../jobsubmission')
 import condortools as ct
 sys.path.append('../src')
@@ -51,8 +56,7 @@ if __name__=='__main__':
   for d in datasetnames: print('  - {}'.format(d))
   
   # ask for confirmation to continue
-  print('Continue? (y/n)')
-  go = input()
+  go = input('Continue? (y/n) ')
   if not go=='y': sys.exit()
 
   # loop over datasets
