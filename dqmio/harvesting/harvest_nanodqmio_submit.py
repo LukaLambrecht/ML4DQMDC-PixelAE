@@ -91,7 +91,7 @@ if __name__=='__main__':
   if len(inputfiles)==1: inputfstr+=','
  
   # make the command
-  cmd = 'python {}'.format(harvester)
+  cmd = 'python3 {}'.format(harvester)
   cmd += ' --filemode {}'.format(filemode)
   cmd += ' --datasetname {}'.format(inputfstr)
   cmd += ' --redirector {}'.format(redirector)

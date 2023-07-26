@@ -42,6 +42,8 @@ if __name__=='__main__':
                            +' ignored if filemode is "local".')
   parser.add_argument('--maxfiles', default=None,
                       help='Maximum number of files to copy.')
+  parser.add_argument('--resubmit', default=False, action='store_true',
+                      help='Only try to copy files which are not yet in the output directory.')
   args = parser.parse_args()
   datasetname = args.datasetname
   redirector = args.redirector
@@ -50,6 +52,7 @@ if __name__=='__main__':
   proxy = args.proxy
   privateprod = args.privateprod
   maxfiles = int(args.maxfiles) if args.maxfiles is not None else None
+  resubmit = args.resubmit
 
   # make and execute the DAS client command
   dasfiles = format_input_files( datasetname,
@@ -62,9 +65,21 @@ if __name__=='__main__':
   # make output directory
   if outputdir=='auto':
     outputdir = datasetname.strip('/').replace('/','_')
-  if os.path.exists(outputdir):
-    raise Exception('ERROR: output directory {} already exists'.format(outputdir))
-  os.makedirs(outputdir)
+  if resubmit:
+    if not os.path.exists(outputdir):
+      raise Exception('ERROR: output directory {} does not exist'.format(outputdir)
+                       +' (required for --resubmit option)')
+    existingfiles = os.listdir(outputdir)
+    newdasfiles = []
+    for dasfile in dasfiles:
+      basename = dasfile.split('/')[-1]
+      if basename not in existingfiles:
+        newdasfiles.append(dasfile)
+    dasfiles = newdasfiles
+  else:
+    if os.path.exists(outputdir):
+      raise Exception('ERROR: output directory {} already exists'.format(outputdir))
+    os.makedirs(outputdir)
 
   # make the commands
   cmds = []
