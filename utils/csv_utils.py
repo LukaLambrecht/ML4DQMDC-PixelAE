@@ -24,8 +24,6 @@ import dataframe_utils as dfu
 importlib.reload(dfu)
 
 
-
-
 def get_data_dirs(year='2017', eras=[], dim=1):
     ### yield all data directories
     # note that the location of the data is hard-coded;

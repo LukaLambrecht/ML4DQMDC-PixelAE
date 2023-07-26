@@ -15,7 +15,11 @@ import sys
 import os
 import json
 from getpass import getpass
+
 import importlib
+# Make the code work for both python 2 and 3
+# Use input from Python 3
+from six.moves import input
 
 # local modules
 import omstools

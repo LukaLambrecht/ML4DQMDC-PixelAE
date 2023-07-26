@@ -11,6 +11,11 @@
 import sys
 import os
 import argparse
+
+# Make the code work for both python 2 and 3
+# Use input from Python 3
+from six.moves import input
+
 sys.path.append('../src/')
 from tools import format_input_files, export_proxy
 sys.path.append('../../jobsubmission')
@@ -22,6 +27,8 @@ if __name__=='__main__':
   parser = argparse.ArgumentParser(description='Copy dataset from DAS to local')
   parser.add_argument('--datasetname',
                       help='Full name of the dataset, as displayed on DAS')
+  parser.add_argument('--run', default=None,
+                      help='Run number (optional, to download files for a specific run only)')
   parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
                       help='Redirector to read remote files')
   parser.add_argument('--outputdir', default=os.path.abspath('.'),
@@ -42,21 +49,27 @@ if __name__=='__main__':
                            +' ignored if filemode is "local".')
   parser.add_argument('--maxfiles', default=None,
                       help='Maximum number of files to copy.')
+  parser.add_argument('--jobflavour', default='workday',
+                        help='Set the job flavour in lxplus'
+                             +' (see https://batchdocs.web.cern.ch/local/submit.html)')
   parser.add_argument('--resubmit', default=False, action='store_true',
                       help='Only try to copy files which are not yet in the output directory.')
   args = parser.parse_args()
   datasetname = args.datasetname
+  runnb = args.run
   redirector = args.redirector
   outputdir = args.outputdir
   runmode = args.runmode
   proxy = args.proxy
   privateprod = args.privateprod
   maxfiles = int(args.maxfiles) if args.maxfiles is not None else None
+  jobflavour = args.jobflavour
   resubmit = args.resubmit
 
   # make and execute the DAS client command
   dasfiles = format_input_files( datasetname,
                                  filemode='das',
+                                 runnb=runnb,
                                  privateprod=privateprod,
                                  redirector=redirector,
                                  istest=False,
@@ -81,6 +94,11 @@ if __name__=='__main__':
       raise Exception('ERROR: output directory {} already exists'.format(outputdir))
     os.makedirs(outputdir)
 
+  # ask for confirmation
+  print('Found {} files to download into {}'.format(len(dasfiles),outputdir))
+  go = input('Proceed? (y/n) ')
+  if go!='y': sys.exit()
+
   # make the commands
   cmds = []
   for dasfile in dasfiles:
@@ -91,6 +109,7 @@ if __name__=='__main__':
   if runmode=='local':
     for cmd in cmds: os.system(cmd)
   elif runmode=='condor':
-    ct.submitCommandsAsCondorCluster('cjob_copy_das_to_local_set', cmds, proxy=proxy)
+    ct.submitCommandsAsCondorCluster('cjob_copy_das_to_local_set', cmds, 
+      proxy=proxy, jobflavour=jobflavour)
   else:
     raise Exception('ERROR: run mode not recognized: "{}"'.format(runmode))

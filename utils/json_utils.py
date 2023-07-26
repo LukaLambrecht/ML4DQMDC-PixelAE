@@ -128,8 +128,12 @@ def isgolden(run, lumi):
     # ultralegacy reprocessing; from: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
     jsonloc2018 = os.path.join( getjsondir(), 'json_GOLDEN_2018.txt' )
     # legacy reprocessing; from: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/Legacy_2018/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt
-    return injson(run,lumi,jsonfile=jsonloc2017) + injson(run,lumi,jsonfile=jsonloc2018)
-
+    jsonloc2022 = os.path.join( getjsondir(), 'json_GOLDEN_2022.txt' )
+    # from: /eos/user/c/cmsdqm/www/CAF/certification/Collisions22/Cert_Collisions2022_355100_362760_Golden.json
+    isinjson = (injson(run,lumi,jsonfile=jsonloc2017)
+                + injson(run,lumi,jsonfile=jsonloc2018)
+                + injson(run,lumi,jsonfile=jsonloc2022))
+    return isinjson
 
 def isdcson(run, lumi):
     ### find if a run and lumi combination is in DCS-only json file
@@ -140,9 +144,12 @@ def isdcson(run, lumi):
     # from: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/DCSOnly/json_DCSONLY.txt
     jsonloc2018 = os.path.join( getjsondir(), 'json_DCSONLY_2018.txt' )
     # from: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/DCSOnly/json_DCSONLY.txt
-    return injson(run,lumi,jsonfile=jsonloc2017) + injson(run,lumi,jsonfile=jsonloc2018)
-
-
+    jsonloc2022 = os.path.join( getjsondir(), 'json_DCSONLY_2022.txt' )
+    # from: /eos/user/c/cmsdqm/www/CAF/certification/Collisions22/DCSOnly_JSONS/Cert_Collisions2022_352416_362760_eraABCDEFG_DCSOnly_TkPx.json
+    isinjson = (injson(run,lumi,jsonfile=jsonloc2017) 
+                + injson(run,lumi,jsonfile=jsonloc2018)
+                + injson(run,lumi,jsonfile=jsonloc2022))
+    return isinjson
 
 
 ### conversions with other useful formats

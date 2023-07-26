@@ -319,10 +319,12 @@ class DQMIOReader:
         # get all entries for the given lumisection and monitoring element name
         entries = [e for e in self.index.get(runlumi, []) if e.type == self.medict[name]]
         if len(entries)!=1:
-            raise IndexError("ERROR in DQMIOReader.getSingleMEForLumi:"
-                             +" requested to read data for lumisection {}".format(runlumi)
-                             +" and monitoring element {}".format(name)
-                             +" but {} entries were found, while expecting 1.".format(len(entries)))
+            msg = "ERROR in DQMIOReader.getSingleMEForLumi:"
+            msg += " requested to read data for lumisection {}".format(runlumi)
+            msg += " and monitoring element {}".format(name)
+            msg += " but {} entries were found, while expecting 1.".format(len(entries))
+            #raise IndexError(msg)
+            print(msg)
         
         # loop over all entries for this lumisection and monitoring element (should be only 1)
         for e in entries:
@@ -466,7 +468,9 @@ class DQMIOReader:
             raise Exception('ERROR in DQMIOReader.getSingleMEsToDataFrame:'
                             +' monitoring element type not recognized: {}'.format(metype))
         # loop over monitoring elements
+        print('Start conversion to dict...')
         for idx,me in enumerate(mes):
+            if( idx>0 and idx%10==0 ): print('  entry {} of {}'.format(idx,len(mes)))
             # extract the histogram
             if metype in [3,4,5]:
                 histo = np.zeros(nxbins+2, dtype=int)
@@ -491,5 +495,6 @@ class DQMIOReader:
             dfdict['Ymin'].append(ymin)
             dfdict['Ybins'].append(nybins)
         # make a dataframe
+        print('Start conversion to DataFrame...')
         df = pd.DataFrame(dfdict)
         return df

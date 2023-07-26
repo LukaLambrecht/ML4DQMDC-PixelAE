@@ -159,9 +159,11 @@ def plot_hists_from_df(df, histtype, nhists):
     val = get_hist_values(dfs)[0]
     plot_hists(val)
     
-def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1),
+def plot_hists_multi(histlist, fig=None, ax=None, figsize=None,
+                     colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1),
                      title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
-                     caxtitle=None, caxtitlesize=None, caxtitleoffset=None,
+                     caxtitle=None, caxtitlesize=None, caxtitleoffset=None, hidecaxis=False,
+                     extratext=None, extratextsize=None,
                      remove_underflow=False, remove_overflow=False,
                      ylims=None, ymaxfactor=None, legendsize=None, opaque_legend=False,
                      ticksize=None ):
@@ -170,7 +172,7 @@ def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], tr
     # - colorlist is a list or array containing numbers to be mapped to colors
     # - labellist is a list or array containing labels for in legend
     # output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it
-    if fig is None or ax is None: fig,ax = plt.subplots()
+    if fig is None or ax is None: fig,ax = plt.subplots(figsize=figsize)
     dolabel = True; docolor = True
     # make label list for legend
     if len(labellist)==0:
@@ -197,7 +199,7 @@ def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], tr
     for i,row in enumerate(histlist):
         if docolor: ax.step(xax,row,where='mid',color=cobject.to_rgba(colorlist[i]),label=labellist[i],alpha=transparency)
         else: ax.step(xax,row,where='mid',label=labellist[i],alpha=transparency)
-    if docolor: 
+    if( docolor and not hidecaxis ): 
         cbar = fig.colorbar(cobject, ax=ax)
         if caxtitleoffset is not None: cbar.ax.get_yaxis().labelpad = caxtitleoffset
         if caxtitle is not None: cbar.ax.set_ylabel(caxtitle, fontsize=caxtitlesize, rotation=270)
@@ -211,12 +213,15 @@ def plot_hists_multi(histlist, fig=None, ax=None, colorlist=[], labellist=[], tr
         if opaque_legend: make_legend_opaque(leg)
     if ticksize is not None: ax.tick_params(axis='both', labelsize=ticksize)
     if title is not None: ax.set_title(title, fontsize=titlesize)
+    if extratext is not None: 
+        add_text( ax, extratext, (0.95,0.6), fontsize=extratextsize, horizontalalignment='right' )
     if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)      
     return (fig,ax)
     
 def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[],
-             title=None, titlesize=None, 
+             title=None, titlesize=None,
+             extratext=None, extratextsize=None,
              xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1), 
              remove_underflow=False, remove_overflow=False,
              yaxtitle=None, yaxtitlesize=None, ylims=None, ymaxfactor=None, 
@@ -272,6 +277,8 @@ def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparen
         if opaque_legend: make_legend_opaque(leg)
     if ticksize is not None: ax.tick_params(axis='both', labelsize=ticksize)
     if title is not None: ax.set_title(title, fontsize=titlesize)
+    if extratext is not None: 
+        add_text( ax, extratext, (0.95,0.6), fontsize=extratextsize, horizontalalignment='right' )
     if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
     return (fig,ax)
@@ -329,9 +336,9 @@ def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None,
         
     # make color object
     if not hasnegative:
-      vmin = 1e-12
-      vmax = max(vmin*2,histmax)
-      my_norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax, clip=False)
+        vmin = 1e-12
+        vmax = max(vmin*2,histmax)
+        my_norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax, clip=False)
     else: 
         extremum = max(abs(histmax),abs(histmin))
         my_norm = mpl.colors.Normalize(vmin=-extremum,vmax=extremum,clip=False)
@@ -456,7 +463,13 @@ def plot_hists_2d_gif(hists, titles=None, xaxtitle=None, yaxtitle=None, duration
 # functions for plotting moments and distances in moment space #
 ################################################################
 
-def plot_moments(moments, ls, dims=(0,1), fig=None, ax=None, markersize=10):
+def plot_moments(moments, ls, dims=(0,1), 
+                 fig=None, ax=None, markersize=10,
+                 xaxtitle='auto', xaxtitlesize=12,
+                 yaxtitle='auto', yaxtitlesize=12,
+                 zaxtitle='auto', zaxtitlesize=12,
+                 caxtitle=None, caxtitlesize=12, caxtitleoffset=15,
+                 ticksize=None):
     ### plot the moments of a set of histograms
     # input arguments:
     # - moments: a numpy array of shape (nhists,nmoments)
@@ -466,16 +479,29 @@ def plot_moments(moments, ls, dims=(0,1), fig=None, ax=None, markersize=10):
     if len(dims)==2:
         if ax==None: ax = fig.add_subplot(111)
         scpl = ax.scatter(moments[:,dims[0]],moments[:,dims[1]],s=markersize,c=ls,cmap='jet')
-        plt.colorbar(scpl)
-        ax.set_xlabel('moment '+str(dims[0]+1))
-        ax.set_ylabel('moment '+str(dims[1]+1))
+        cbar = plt.colorbar(scpl)
+        if xaxtitle is not None:
+            if xaxtitle=='auto': xaxtitle = 'Moment '+str(dims[0]+1)
+            ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
+        if yaxtitle is not None:
+            if yaxtitle=='auto': yaxtitle = 'Moment '+str(dims[1]+1)
+            ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
+        if caxtitleoffset is not None: cbar.ax.get_yaxis().labelpad = caxtitleoffset
+        if caxtitle is not None: cbar.ax.set_ylabel(caxtitle, fontsize=caxtitlesize, rotation=270)
+        if ticksize is not None: ax.tick_params(axis='both', labelsize=ticksize)
     elif len(dims)==3:
         if ax==None: ax = fig.add_subplot(111, projection='3d')
         scpl = ax.scatter(moments[:,dims[0]],moments[:,dims[1]],moments[:,dims[2]],s=markersize,c=ls,cmap='jet')
         plt.colorbar(scpl)
-        ax.set_xlabel('moment '+str(dims[0]+1))
-        ax.set_ylabel('moment '+str(dims[1]+1))
-        ax.set_zlabel('moment '+str(dims[2]+1))
+        if xaxtitle is not None:
+            if xaxtitle=='auto': xaxtitle = 'Moment '+str(dims[0]+1)
+            ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
+        if yaxtitle is not None:
+            if yaxtitle=='auto': yaxtitle = 'Moment '+str(dims[1]+1)
+            ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
+        if zaxtitle is not None:
+            if zaxtitle=='auto': zaxtitle = 'Moment '+str(dims[2]+1)
+            ax.set_zlabel(zaxtitle, fontsize=zaxtitlesize)
     return (fig,ax)
 
 def plot_distance(dists, ls=None, rmlargest=0., doplot=True,
@@ -563,6 +589,7 @@ def plot_score_dist( scores, labels, fig=None, ax=None,
                         siglabel='Signal', sigcolor='g',
                         bcklabel='Background', bckcolor='r',
                         title=None, titlesize=12,
+                        extratext=None, extratextsize=12,
                         xaxtitle=None, xaxtitlesize=12, 
                         yaxtitle=None, yaxtitlesize=12,
                         legendsize=None, legendloc='best',
@@ -589,6 +616,8 @@ def plot_score_dist( scores, labels, fig=None, ax=None,
     ax.xaxis.get_offset_text().set_fontsize(ticksize)
     ax.yaxis.get_offset_text().set_fontsize(ticksize)
     if title is not None: ax.set_title(title, fontsize=titlesize)
+    if extratext is not None: 
+        add_text( ax, extratext, (0.95,0.6), fontsize=extratextsize, horizontalalignment='right' )
     if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
     ax.legend( loc=legendloc, fontsize=legendsize )
@@ -685,9 +714,11 @@ def plot_score_ls( thisscore, refscores, fig=None, ax=None,
 def plot_metric( wprange, metric, label=None, color=None,
                     sig_eff=None, sig_label=None, sig_color=None,
                     bck_eff=None, bck_label=None, bck_color=None,
+                    legendsize=None,
                     title=None,
-                    xaxtitle='working point',
-                    yaxlog=False, ymaxfactor=1.3, yaxtitle='metric' ):
+                    xaxtitle='working point', xaxtitlesize=None,
+                    yaxlog=False, ymaxfactor=1.3, 
+                    yaxtitle='metric', yaxtitlesize=None ):
     ### plot a metric based on signal and background efficiencies.
     # along with the metric, the actual signal and background efficiencies can be plotted as well.
     # input arguments:
@@ -720,17 +751,17 @@ def plot_metric( wprange, metric, label=None, color=None,
     ax.grid()
     ax2.plot( [wprange[0],wprange[1]], [1.,1.], color='black', linestyle='dashed')
     # set the legends
-    ax.legend(loc='upper left')
-    ax2.legend(loc='upper right')
+    ax.legend(loc='upper left', fontsize=legendsize)
+    ax2.legend(loc='upper right', fontsize=legendsize)
     # axis properties for first axes
     if yaxlog: ax.set_yscale('log')
     ymin,ymax = ax.get_ylim()
     ax.set_ylim( (ymin, ymax*ymaxfactor) )
     if title is not None: ax.set_title(title)
-    if xaxtitle is not None: ax.set_xlabel(xaxtitle)
-    if yaxtitle is not None: ax.set_ylabel(yaxtitle, color=color)
+    if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
+    if yaxtitle is not None: ax.set_ylabel(yaxtitle, color=color, fontsize=yaxtitlesize)
     # axis properties for second axes
-    ax2.set_ylabel('efficiency')
+    ax2.set_ylabel('Efficiency', fontsize=yaxtitlesize)
     ymin,ymax = ax2.get_ylim()
     ax2.set_ylim( (ymin, ymax*ymaxfactor) )
     return (fig,ax,ax2)

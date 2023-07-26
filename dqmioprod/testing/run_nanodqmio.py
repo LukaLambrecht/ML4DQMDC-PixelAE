@@ -23,9 +23,11 @@ if __name__=='__main__':
                       help='Name of cmsRun configuration file to create.')
   parser.add_argument('--docmsrun', default=False, action='store_true',
                       help='Whether or not to execute cmsRun on the created configuration file.')
-  parser.add_argument('--nevents', default=None,
+  parser.add_argument('--nevents', default=None, type=int,
                       help='Set number of events to process in cmsDriver command.'
                           +' If not specified, this argument is not added to cmsDriver.')
+  parser.add_argument('--skipevents', default=None, type=int,
+                      help='Skip the first events in a file. If not specified, start at first event.')
   parser.add_argument('--runmode', choices=['condor','local'], default='local',
                       help='Choose from "condor" or "local";'
                           +' in case of "condor", will submit job to condor cluster;'
@@ -42,6 +44,7 @@ if __name__=='__main__':
   conffile = args.conffile
   docmsrun = args.docmsrun
   nevents = args.nevents
+  skipevents = args.skipevents
   runmode = args.runmode
   cmssw = None if args.cmssw is None else os.path.abspath(args.cmssw)
   jobflavour = args.jobflavour
@@ -88,6 +91,9 @@ if __name__=='__main__':
   cmsdriverargs = newcmsdriverargs
   cmsdrivercmd = '--'.join(cmsdriverargs)
   if nevents is not None: cmsdrivercmd += ' --number {}'.format(nevents)
+  if skipevents is not None:
+    cmsdrivercmd += ' --customise_commands "process.source.skipEvents '
+    cmsdrivercmd += '= cms.untracked.uint32({})"'.format(skipevents)
   if not docmsrun: cmsdrivercmd += ' --no_exec'
 
   # add unconfigurable args to cmsDriver command

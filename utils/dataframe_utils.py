@@ -153,8 +153,8 @@ def get_highstat(df, entries_to_bins_ratio=100):
 def select_highstat(df, entries_to_bins_ratio=100):
     ### keep only lumisection in df with high statistics
     return select_runsls(df,get_highstat(df,entries_to_bins_ratio))
-
-
+    
+    
 # functions to obtain histograms in np array format
 
 def get_hist_values(df):

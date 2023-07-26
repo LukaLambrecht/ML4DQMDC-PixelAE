@@ -2,8 +2,10 @@
 
 # **Copy a file from DAS to a local area**  
 # 
-# This script copies a file from DAS to a local area.   
-# Note: check the file size first, not suitable for extremely large files.  
+# This script copies a single file from DAS to a local area.
+# Note: check the file size first, not suitable for extremely large files.
+# This script is essentially just a wrapper around the xrdcp command,
+# where the xrootd redirector is added automatically and with the option to run in a job. 
 # 
 # Run with `python copy_das_to_local_file.py -h` to get a list of available command line options.  
 
