@@ -1,0 +1,12 @@
+{
+  "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_1": "output_chargeInner_PXLayer_1.parquet",
+  "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_2": "output_chargeInner_PXLayer_2.parquet",
+  "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_3": "output_chargeInner_PXLayer_3.parquet",
+  "PixelPhase1/Tracks/PXBarrel/chargeInner_PXLayer_4": "output_chargeInner_PXLayer_4.parquet",
+  "PixelPhase1/Tracks/PXForward/charge_PXDisk_+1": "output_charge_PXDisk_+1.parquet",
+  "PixelPhase1/Tracks/PXForward/charge_PXDisk_+2": "output_charge_PXDisk_+2.parquet",
+  "PixelPhase1/Tracks/PXForward/charge_PXDisk_+3": "output_charge_PXDisk_+3.parquet",
+  "PixelPhase1/Tracks/PXForward/charge_PXDisk_-1": "output_charge_PXDisk_-1.parquet",
+  "PixelPhase1/Tracks/PXForward/charge_PXDisk_-2": "output_charge_PXDisk_-2.parquet",
+  "PixelPhase1/Tracks/PXForward/charge_PXDisk_-3": "output_charge_PXDisk_-3.parquet"
+}
