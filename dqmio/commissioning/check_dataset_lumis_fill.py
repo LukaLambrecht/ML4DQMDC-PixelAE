@@ -166,7 +166,11 @@ if __name__=='__main__':
   # get runs and lumisections from OMS
   era = args.datasetname.strip('/').split('/')[1].split('-')[0]
   print('Finding numbr of lumisections in era {} using OMS API...'.format(era))
-  runslsoms = get_lumis_oms(era)
+  runslsoms = []
+  try:
+    runslsoms = get_lumis_oms(era)
+  except:
+    print('ERROR: could not find lumisections with OMS API.')
 
   # write output
   res = {}

@@ -57,6 +57,6 @@ if __name__=='__main__':
   if args.runmode=='local':
     for cmd in cmds: os.system(cmd)
   elif args.runmode=='condor':
-    ct.submitCommandsAsCondorCluster('cjob_check_dataset_size', cmds,
+    ct.submitCommandsAsCondorCluster('cjob_check_dataset_lumis', cmds,
             home='auto', cmssw_version=args.cmssw,
             proxy=proxy, jobflavour=args.jobflavour)

@@ -25,28 +25,26 @@ if __name__=='__main__':
 
   # read arguments
   parser = argparse.ArgumentParser(description='Copy dataset from DAS to local')
-  parser.add_argument('--datasetname',
+  parser.add_argument('-d', '--datasetname',
                       help='Full name of the dataset, as displayed on DAS')
-  parser.add_argument('--run', default=None,
-                      help='Run number (optional, to download files for a specific run only)')
-  parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
+  parser.add_argument('-r', '--redirector', default='root://cms-xrd-global.cern.ch/',
                       help='Redirector to read remote files')
-  parser.add_argument('--outputdir', default=os.path.abspath('.'),
+  parser.add_argument('-o', '--outputdir', default=os.path.abspath('.'),
                       help='Local directory where to put the copied file;'
                            ' use "auto" to make a name based on datasetname')
-  parser.add_argument('--runmode', default='condor',
+  parser.add_argument('-m', '--runmode', default='condor',
                       help='Choose from "condor" or "local";'
                            +' in case of "condor", will submit job to condor cluster;'
                            +' in case of "local", will run interactively in the terminal.')
-  parser.add_argument('--proxy', default=os.path.abspath('x509up_u116295'),
+  parser.add_argument('-p', '--proxy', default=os.path.abspath('x509up_u116295'),
                       help='Set the location of a valid proxy created with'
                            +' "--voms-proxy-init --voms cms";'
-                           +' needed for DAS client;'
-                           +' ignored if filemode is "local".')
+                           +' needed for DAS client.')
+  parser.add_argument('--run', default=None,
+                      help='Run number (optional, to download files for a specific run only)')
   parser.add_argument('--privateprod', default=False, action='store_true',
                       help='Set to true if the DAS dataset is a private production'
-                           +' rather than central production (impacts the dasgoclient query);'
-                           +' ignored if filemode is "local".')
+                           +' rather than central production (impacts the dasgoclient query).')
   parser.add_argument('--maxfiles', default=None,
                       help='Maximum number of files to copy.')
   parser.add_argument('--jobflavour', default='workday',

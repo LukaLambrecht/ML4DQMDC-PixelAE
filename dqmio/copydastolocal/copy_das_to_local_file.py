@@ -20,17 +20,17 @@ if __name__=='__main__':
 
   # read arguments
   parser = argparse.ArgumentParser(description='Copy file from DAS to local')
-  parser.add_argument('--filename',
+  parser.add_argument('-f', '--filename',
                       help='Full path of the file to copy, as displayed on DAS')
-  parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
+  parser.add_argument('-r', '--redirector', default='root://cms-xrd-global.cern.ch/',
                       help='Redirector to read remote files')
-  parser.add_argument('--outputdir', default=os.path.abspath('.'),
+  parser.add_argument('-o', '--outputdir', default=os.path.abspath('.'),
                       help='Local directory where to put the copied file.')
-  parser.add_argument('--runmode', default='condor',
+  parser.add_argument('-m', '--runmode', default='condor',
                       help='Choose from "condor" or "local";'
                            +' in case of "condor", will submit job to condor cluster;'
                            +' in case of "local", will run interactively in the terminal.')
-  parser.add_argument('--proxy', default=os.path.abspath('x509up_u116295'),
+  parser.add_argument('-p', '--proxy', default=os.path.abspath('x509up_u116295'),
                       help='Set the location of a valid proxy created with'
                            +' "--voms-proxy-init --voms cms";'
                            +' needed for DAS client;'

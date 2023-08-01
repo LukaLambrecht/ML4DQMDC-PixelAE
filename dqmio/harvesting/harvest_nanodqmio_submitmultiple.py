@@ -23,41 +23,41 @@ if __name__=='__main__':
 
   # read arguments
   parser = argparse.ArgumentParser(description='Harvest nanoDQMIO to CSV')
-  parser.add_argument('--harvester', required=True,
+  parser.add_argument('-i', '--harvester', required=True,
                         help='Harvester to run, should be a valid python script'
                              +' similar in structure and command line args to'
                              +' e.g. harvest_nanodqmio_to_csv.py.')
-  parser.add_argument('--runmode', choices=['condor','local'], default='condor',
+  parser.add_argument('-r', '--runmode', choices=['condor','local'], default='condor',
                         help='Choose from "condor" or "local";'
                              +' in case of "condor", will submit job to condor cluster;'
                              +' in case of "local", will run interactively in the terminal.')
-  parser.add_argument('--filemode', choices=['das','local'], default='das',
+  parser.add_argument('-f', '--filemode', choices=['das','local'], default='das',
                         help='Choose from "das" or "local";'
                               +' in case of "das", will read all files'
                               +' belonging to the specified dataset from DAS;'
                               +' in case of "local", will read all files'
                               +' in the specified folder on the local filesystem.')
-  parser.add_argument('--datasetname', required=True,
+  parser.add_argument('-d', '--datasetname', required=True,
                         help='Name of the data set on DAS (or filemode "das"'
                              +' OR name of the folder holding input files (for filemode "local"'
                              +' OR comma-separated list of file names'
                              +' (on DAS or locally according to filemode)).'
                              +' Note: interpreted as list of file names if a comma is present,'
                              +' directory or dataset otherwise!')
-  parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
-                        help='Redirector used to access remote files'
-                             +' (ignored in filemode "local").')
-  parser.add_argument('--menames', required=True,
+  parser.add_argument('-m', '--menames', required=True,
                         help='Json file holding a dict with the name of the monitoring element to store'
                              +' mapped to their output files.')
-  parser.add_argument('--proxy', default=None,
+  parser.add_argument('-p', '--proxy', default=None,
                         help='Set the location of a valid proxy created with'
                              +' "--voms-proxy-init --voms cms";'
                              +' needed for DAS client;'
                              +' ignored if filemode is "local".')
-  parser.add_argument('--cmssw', default=None,
+  parser.add_argument('-c', '--cmssw', default=None,
                         help='Set the location of a CMSSW release;'
                              +' needed for remote file reading with xrootd.')
+  parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
+                        help='Redirector used to access remote files'
+                             +' (ignored in filemode "local").')
   parser.add_argument('--jobflavour', default='workday',
                         help='Set the job flavour in lxplus'
                              +' (see https://batchdocs.web.cern.ch/local/submit.html)')
