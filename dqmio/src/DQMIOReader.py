@@ -426,12 +426,14 @@ class DQMIOReader:
         p.close()
         return sum(result, [])
     
-    def getSingleMEsToDataFrame(self, name):
+    def getSingleMEsToDataFrame(self, name, verbose=False):
         ### return a pandas dataframe for a given monitoring element
         # note: the same naming convention is used as in the 2017/2018 csv input!
         
         # get the monitoring elements
-        mes = self.getSingleMEs(name)
+        callback = None
+        if verbose: callback='default'
+        mes = self.getSingleMEs(name, callback=callback)
         # initialize a dict with all info
         dfdict = dict()
         dfdict['fromrun'] = []
@@ -468,9 +470,10 @@ class DQMIOReader:
             raise Exception('ERROR in DQMIOReader.getSingleMEsToDataFrame:'
                             +' monitoring element type not recognized: {}'.format(metype))
         # loop over monitoring elements
-        print('Start conversion to dict...')
+        if verbose: print('Start conversion to dict...')
         for idx,me in enumerate(mes):
-            if( idx>0 and idx%10==0 ): print('  entry {} of {}'.format(idx,len(mes)))
+            if verbose:
+                if( idx>0 and idx%10==0 ): print('  entry {} of {}'.format(idx,len(mes)))
             # extract the histogram
             if metype in [3,4,5]:
                 histo = np.zeros(nxbins+2, dtype=int)
@@ -495,7 +498,7 @@ class DQMIOReader:
             dfdict['Ymin'].append(float(ymin))
             dfdict['Ybins'].append(int(nybins))
         # make a dataframe
-        print('Start conversion to DataFrame...')
+        if verbose: print('Start conversion to DataFrame...')
         df = pd.DataFrame(dfdict)
         print('Conversion finished, returning.')
         sys.stdout.flush()
