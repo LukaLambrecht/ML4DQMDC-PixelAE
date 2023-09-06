@@ -432,13 +432,14 @@ class HistStruct(object):
         for runnb in runnbs: json[str(runnb)] = [[-1]]
         self.add_json_mask( name, json )
       
-    def add_json_mask( self, name, jsondict ):
+    def add_json_mask( self, name, jsondict, invert=False ):
         ### add a mask corresponding to a json dict
         # input arguments:
         # - name: a name for the mask
         # - jsondict: a dictionary in typical json format (see the golden json file for inspiration)
         # all lumisections present in the jsondict will be masked True, the others False.
         mask = jsonu.injson( self.runnbs, self.lsnbs, jsondict=jsondict )
+        if invert: mask = ~mask
         self.add_mask( name, mask )
     
     def add_goldenjson_mask( self, name ):
