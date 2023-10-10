@@ -384,7 +384,6 @@ def getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10):
     from tensorflow import keras
     from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
     from tensorflow.keras.layers import Input, Dense
-    from keras.layers.advanced_activations import PReLU
     from tensorflow.keras.models import Model, Sequential, load_model
     from keras import backend as K
     
