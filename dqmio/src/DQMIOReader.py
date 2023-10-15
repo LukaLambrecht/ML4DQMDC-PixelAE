@@ -500,7 +500,7 @@ class DQMIOReader:
         # make a dataframe
         if verbose: print('Start conversion to DataFrame...')
         df = pd.DataFrame(dfdict)
-        print('Conversion finished, returning.')
+        if verbose: print('Conversion finished, returning.')
         sys.stdout.flush()
         sys.stderr.flush()
         return df

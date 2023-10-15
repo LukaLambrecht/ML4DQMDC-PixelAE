@@ -21,7 +21,8 @@ if __name__=='__main__':
                         help='Choose from "das" or "local"')
   parser.add_argument('--filename', required=True,
                         help='Full name of the file on DAS (for filemode "das")'
-                             +' OR path to the local file (for filemode "local")')
+                             +' OR path to the local file (for filemode "local")'
+                             +' OR path to a directory holding files (for filemode "local")')
   parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
                         help='Redirector used to access remote files'
                              +' (ignored in filemode "local").')
@@ -50,16 +51,23 @@ if __name__=='__main__':
   # export the proxy
   if( filemode=='das' and proxy is not None ): tools.export_proxy( proxy )
 
-  # format input file
+  # format input file(s)
+  filenames = []
   if filemode=='das':
     redirector = redirector.rstrip('/')+'/'
-    filename = redirector+filename
-  
+    filenames = [redirector+filename]
+  elif filemode=='local':
+    if filename.endswith('.root'):
+      filenames = [filename]
+    else:
+      filenames = ([os.path.join(filename,f) for f in os.listdir(filename)
+                     if f.endswith('.root')])
+      
   # make a DQMIOReader instance and initialize it with the file
   print('initializing DQMIOReader...')
   sys.stdout.flush()
   sys.stderr.flush()
-  reader = DQMIOReader(*[filename])
+  reader = DQMIOReader(*filenames)
   print('initialized DQMIOReader.')
 
   runsls = sorted(reader.listLumis())
