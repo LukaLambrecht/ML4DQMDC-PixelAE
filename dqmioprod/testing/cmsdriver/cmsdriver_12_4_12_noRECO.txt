@@ -1,0 +1,1 @@
+cmsDriver.py step2 --conditions 124X_dataRun3_v11 --data --datatier DQMIO --era Run3 --eventcontent DQM --process RECO --scenario pp --step RAW2DIGI,L1Reco,RECO,DQM --customise_commands='process.DQMStore.saveByLumi = cms.untracked.bool(True)' --procModifiers=dqmPerLSsaving --nStreams 4 --nThreads 8

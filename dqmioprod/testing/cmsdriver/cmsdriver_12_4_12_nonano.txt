@@ -1,0 +1,1 @@
+cmsDriver.py step2 --conditions 124X_dataRun3_v11 --data --datatier DQMIO --era Run3 --eventcontent DQM --process RECO --scenario pp --step RAW2DIGI,L1Reco,RECO,DQM --nStreams 1 --nThreads 1
