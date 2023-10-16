@@ -76,6 +76,11 @@ def add_cms_label( ax, pos=(0.1,0.9), extratext=None, **kwargs ):
     text = r'\textbf{CMS}'
     if extratext is not None: text += r' \textit{'+str(extratext)+r'}'
     add_text( ax, text, pos, **kwargs)
+    
+def add_data_label( ax, datalabel, pos=(0.9,0.9), **kwargs ):
+    ### add the data label, e.g. '2023 (13.6 TeV)', to a plot
+    # special case of add_text, for convenience
+    add_text( ax, datalabel, pos, horizontalalignment='right', **kwargs)
 
 def make_text_latex_safe( text ):
     ### make a string safe to process with matplotlib's latex parser in case no tex parsing is wanted
@@ -317,50 +322,57 @@ def plot_anomalous(histlist, ls, highlight=-1, hrange=-1):
 
 def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None,
                 xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
-                ticklabelsize=None, colorticklabelsize=None, extent=None, caxrange=None):
+                ticklabelsize=None, colorticklabelsize=None, extent=None, caxrange=None,
+                docolorbar=True, origin='lower'):
     ### plot a 2D histogram
     # - hist is a 2D numpy array of shape (nxbins, nybins)
     # notes:
-    # - if the histogram contains only nonnegative values, values below 1e-12 will not be plotted
+    # - if the histogram contains only nonnegative values, values below 1e-6 will not be plotted
     #   (i.e. they will be shown as white spots in the plot) to discriminate zero from small but nonzero
-    # - if the histogram contains negative values, the color axis will be symmetrized around zero
+    # - if the histogram contains negative values, the color axis will be symmetrized around zero.
+    # - the default behaviour of imshow() is to flip the axes w.r.t. numpy convention
+    #   (i.e. the first axis is the y-axis instead of the x-axis),
+    #   and to have the y-axis pointing downwards;
+    #   both effects are fixed by transposing the array and using the 'lower' origin keyword.
     if fig is None or ax is None: fig,ax = plt.subplots()
     
     # settings
     histmin = np.amin(hist)
     histmax = np.amax(hist)
-    hasnegative = histmin<-1e-12
+    hasnegative = histmin<-1e-6
     aspect_ratio = hist.shape[0]/hist.shape[1]
     aspect = 'equal'
-    if extent is not None: aspect = 'auto'
+    if extent is not None: aspect = 'auto'   
         
     # make color object
     if not hasnegative:
-        vmin = 1e-12
+        vmin = 1e-6
         vmax = max(vmin*2,histmax)
-        my_norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax, clip=False)
+        norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax, clip=False)
     else: 
         extremum = max(abs(histmax),abs(histmin))
-        my_norm = mpl.colors.Normalize(vmin=-extremum,vmax=extremum,clip=False)
+        norm = mpl.colors.Normalize(vmin=-extremum, vmax=extremum, clip=False)
     if caxrange is not None:
-        my_norm = mpl.colors.Normalize(vmin=caxrange[0],vmax=caxrange[1],clip=False)
-    my_cmap = copy(mpl.cm.get_cmap('jet'))
-    my_cmap.set_under('w')
-    cobject = mpl.cm.ScalarMappable(norm=my_norm, cmap=my_cmap)
+        norm = mpl.colors.Normalize(vmin=caxrange[0], vmax=caxrange[1], clip=False)
+    cmap = copy(mpl.cm.get_cmap('jet'))
+    cmap.set_under('w')
+    cobject = mpl.cm.ScalarMappable(norm=norm, cmap=cmap) # needed for colorbar
     cobject.set_array([]) # ad-hoc bug fix
     
     # make the plot
-    ax.imshow(hist, aspect=aspect, interpolation='none', norm=my_norm, cmap=my_cmap, extent=extent)
+    ax.imshow(hist.T, aspect=aspect, interpolation='none', norm=norm, cmap=cmap,
+              extent=extent, origin=origin)
     
     # add the colorbar
     # it is not straightforward to position it properly;
     # the 'magic values' are fraction=0.046 and pad=0.04, but have to be modified by aspect ratio;
     # for this, use the fact that imshow uses same scale for both axes, 
     # so can use array aspect ratio as proxy
-    fraction = 0.046; pad = 0.04
-    fraction *= aspect_ratio
-    pad *= aspect_ratio
-    cbar = fig.colorbar(cobject, ax=ax, fraction=fraction, pad=pad)
+    if docolorbar:
+        fraction = 0.046; pad = 0.04
+        fraction *= aspect_ratio
+        pad *= aspect_ratio
+        cbar = fig.colorbar(cobject, ax=ax, fraction=fraction, pad=pad)
     
     # add titles
     if ticklabelsize is not None: ax.tick_params(labelsize=ticklabelsize)
@@ -440,7 +452,19 @@ def plot_hists_2d(hists, ncols=4, axsize=5, title=None, titlesize=None,
     # return the figure and axes
     return (fig,axs)
 
-def plot_hists_2d_gif(hists, titles=None, xaxtitle=None, yaxtitle=None, duration=0.3, figname='temp_gif.gif'):
+def plot_hists_2d_gif( hists, 
+                       titles=None, xaxtitle=None, yaxtitle=None,
+                       duration=300, figname='temp_gif.gif',
+                       mode='imageio'):
+    # manage backend
+    if mode=='imageio':
+        try: import imageio
+        except: raise Exception('ERROR: could not import imageio')
+    elif mode=='pillow':
+        try: from PIL import Image
+        except: raise Exception('ERROR: could not import PIL')
+    else: raise Exception('ERROR: mode {} not recognized'.format(mode))
+    # make individual images
     nhists = len(hists)
     filenames = []
     for i in range(nhists):
@@ -449,12 +473,22 @@ def plot_hists_2d_gif(hists, titles=None, xaxtitle=None, yaxtitle=None, duration
         fig,_ = plot_hist_2d(hists[i], title=title, xaxtitle=xaxtitle, yaxtitle=yaxtitle)
         filename = 'temp_gif_file_{}.png'.format(i)
         filenames.append(filename)
-        fig.savefig(filename)
+        fig.savefig(filename, facecolor='white', transparent=False)
         plt.close()
-    with imageio.get_writer(figname, mode='I', duration=duration) as writer:
-        for filename in filenames:
-            image = imageio.imread(filename)
-            writer.append_data(image)
+    # convert to gif
+    if mode=='imageio':
+        # first approach with imageio
+        with imageio.get_writer(figname, mode='I', duration=duration, loop=0) as writer:
+            for filename in filenames:
+                image = imageio.imread(filename)
+                writer.append_data(image)
+    elif mode=='pillow':
+        # second approach with Pillow
+        frames = [Image.open(filename) for filename in filenames]
+        frame_one = frames[0]
+        frame_one.save(figname, format="GIF", append_images=frames,
+                   save_all=True, duration=duration, loop=0)
+    # remove individual images
     for filename in filenames:
         os.remove(filename)
         
