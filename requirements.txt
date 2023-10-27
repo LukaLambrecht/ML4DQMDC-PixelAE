@@ -1,0 +1,7 @@
+imageio # (Optional) Image-to-GIF conversion
+matplotlib # Plot generation
+numpy
+pandas
+requests
+six # Python2 and Python3 compatibility
+tensorflow # Machine learning
