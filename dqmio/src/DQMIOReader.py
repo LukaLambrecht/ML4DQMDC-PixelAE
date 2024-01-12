@@ -28,7 +28,13 @@ import numpy as np
 #import root_numpy
 # disable temporary since not available on SWAN, for now just define manual conversion function from root to numpy array
 # note: root_numpy provides an efficient interface between ROOT and numpy
-import pandas as pd
+
+pandas_import_error = None
+try:
+    import pandas as pd
+except ImportError as e:
+    pandas_import_error = e
+    pd = None
 # note: only used for conversion into dataframe
 
 
@@ -432,7 +438,10 @@ class DQMIOReader:
     def getSingleMEsToDataFrame(self, name, verbose=False):
         ### return a pandas dataframe for a given monitoring element
         # note: the same naming convention is used as in the 2017/2018 csv input!
-        
+
+        if not pd:
+            raise pandas_import_error
+
         # get the monitoring elements
         callback = None
         if verbose: callback='default'
