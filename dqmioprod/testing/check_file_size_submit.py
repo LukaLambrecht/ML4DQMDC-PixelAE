@@ -77,7 +77,7 @@ if __name__=='__main__':
   cmds.append( 'cd {}'.format(cmssw) )
   cmds.append( 'cmsenv' )
   cmds.append( 'cd {}'.format(cwd) )
-  pcmd = 'python check_file_size.py'
+  pcmd = 'python3 check_file_size.py'
   argstoremove = ['runmode', 'jobflavour']
   for arg in vars(args):
     if( arg in argstoremove ): continue

@@ -65,7 +65,7 @@ if __name__=='__main__':
   # format input file
   if args.filemode=='das':
     redirector = args.redirector.rstrip('/')+'/'
-    filename = redirector+args.filename
+    args.filename = redirector+args.filename
 
   # make temporary dir
   tempdir = 'temp'
@@ -78,7 +78,7 @@ if __name__=='__main__':
   print('initializing DQMIOReader...')
   sys.stdout.flush()
   sys.stderr.flush()
-  reader = DQMIOReader(*[filename])
+  reader = DQMIOReader(*[args.filename])
 
   # filter run and lumisection number
   print('filtering lumisections...')

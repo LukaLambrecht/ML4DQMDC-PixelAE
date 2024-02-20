@@ -378,7 +378,7 @@ class OMSQuery(object):
             return response
         else:
             return requests.get(url, verify=verify, cookies=self.cookies, proxies=self.proxies)
- 
+        
 class OMSAPIOAuth(object):
     """ OMS API token store and manager """
 
@@ -442,8 +442,8 @@ class OMSAPIOAuth(object):
 
         self.token_json = json.loads(ret.content)
         self.token_headers = {'Authorization':'Bearer ' + self.token_json["access_token"]}
-
- 
+        
+        
 class OMSAPI(object):
     """ Base OMS API client """
 

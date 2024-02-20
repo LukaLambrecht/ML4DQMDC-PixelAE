@@ -29,7 +29,9 @@ import os
 import fnmatch
 
 # local modules
-from omsapi import OMSAPI
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+try: from omsapi.omsapi import OMSAPI
+except: from omsapi import OMSAPI
 from urls import API_URL, API_VERSION, API_AUDIENCE
 from clientid import API_CLIENT_ID, API_CLIENT_SECRET
 sys.path.append(os.path.abspath('../utils/notebook_utils'))
@@ -126,12 +128,23 @@ def get_oms_data( omsapi, api_endpoint, runnb=None, fillnb=None, extrafilters=[]
         print('ERROR in get_oms_data: could not convert response to json, returning raw response instead.')
         return response
 
+def get_oms_response_attributes( omsresponse ):
+    ### small helper function to retrieve which attributes are available in a response
+    # input arguments:
+    # - omsresponse: the json-like object returned by get_oms_data
+    if not 'data' in omsresponse.keys():
+        msg = 'ERROR: unexpected response format:\n{}'.format(omsresponse)
+        raise Exception(msg)
+    return omsresponse['data'][0]['attributes'].keys()
 
 def get_oms_response_attribute( omsresponse, attribute ):
     ### small helper function to retrieve a list of values for a single attribute
     # input arguments:
     # - omsresponse: the json-like object returned by get_oms_data
     # - attribute: name of one of the attributes present in omsresponse
+    if not 'data' in omsresponse.keys():
+        msg = 'ERROR: unexpected response format:\n{}'.format(omsresponse)
+        raise Exception(msg)
     return [omsresponse['data'][i]['attributes'][attribute] for i in range(len(omsresponse['data']))]
 
 def filter_oms_response( omsresponse, key, value ):

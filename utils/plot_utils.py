@@ -98,7 +98,7 @@ def make_text_latex_safe( text ):
 def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1),
               title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
               ymaxfactor=None, legendsize=None, opaque_legend=False, ticksize=None,
-              bkgcolor=None, bkgcmap='spring', bkgrange=None, bkgtitle=None):
+              bkgcolor=None, bkgcmap='spring', bkgcolorbar=False, bkgrange=None, bkgtitle=None):
     ### plot some histograms (in histlist) in one figure using specified colors and/or labels
     # - histlist is a list of 1D arrays containing the histograms (or a 2D array of shape (nhistograms,nbins))
     # - colorlist is a list or array containing colors (in string format), of length nhistograms
@@ -136,11 +136,14 @@ def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transpar
               cmap=bkgcmap, alpha=0.1,
               vmin=bkgrange[0], vmax=bkgrange[1])
         # add a color bar
-        norm = mpl.colors.Normalize(vmin=bkgrange[0], vmax=bkgrange[1])
-        cobject = mpl.cm.ScalarMappable(norm=norm, cmap=bkgcmap)
-        cobject.set_array([]) # ad-hoc bug fix
-        cbar = fig.colorbar(cobject, ax=ax, alpha=0.1)
-        if bkgtitle is not None: cbar.ax.set_ylabel(bkgtitle, rotation=270, labelpad=20.)
+        if bkgcolorbar:
+            norm = mpl.colors.Normalize(vmin=bkgrange[0], vmax=bkgrange[1])
+            cobject = mpl.cm.ScalarMappable(norm=norm, cmap=bkgcmap)
+            cobject.set_array([]) # ad-hoc bug fix
+            cbar = fig.colorbar(cobject, ax=ax, alpha=0.1)
+            if bkgtitle is not None:
+                cbar.ax.set_ylabel(bkgtitle, fontsize=yaxtitlesize,
+                                   rotation=270, labelpad=20.)
     if ymaxfactor is not None:
         ymin,ymax = ax.get_ylim()
         ax.set_ylim( (ymin, ymax*ymaxfactor) )
@@ -322,7 +325,7 @@ def plot_anomalous(histlist, ls, highlight=-1, hrange=-1):
 
 def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None,
                 xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
-                ticklabelsize=None, colorticklabelsize=None, extent=None, caxrange=None,
+                ticklabelsize=None, colorticklabelsize=None, extent=None, aspect=None, caxrange=None,
                 docolorbar=True, origin='lower'):
     ### plot a 2D histogram
     # - hist is a 2D numpy array of shape (nxbins, nybins)
@@ -341,7 +344,7 @@ def plot_hist_2d(hist, fig=None, ax=None, title=None, titlesize=None,
     histmax = np.amax(hist)
     hasnegative = histmin<-1e-6
     aspect_ratio = hist.shape[0]/hist.shape[1]
-    aspect = 'equal'
+    if aspect is None: aspect = 'equal'
     if extent is not None: aspect = 'auto'   
         
     # make color object
