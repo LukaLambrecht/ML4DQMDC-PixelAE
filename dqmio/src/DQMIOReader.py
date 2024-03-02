@@ -5,12 +5,9 @@
 
 ### imports
 
+## Python standard library
+
 import sys
-import ROOT
-import numpy as np
-#import root_numpy
-# disable temporary since not available on SWAN, for now just define manual conversion function from root to numpy array
-# note: root_numpy provides an efficient interface between ROOT and numpy
 from fnmatch import fnmatch 
 # note: fnmatch provides support for unix shell-style wildcards, which are not the same as regular expressions in python
 from collections import namedtuple
@@ -21,10 +18,16 @@ from collections import defaultdict
 from multiprocessing.pool import ThreadPool
 # note: ThreadPool is used for parallel processing, calling the same function on parallel inputs 
 #       and collecting the results in a list
-
 from timeit import default_timer
 # note: only used for callback method to print the progress of getSingleMes
 
+## third-party
+
+import ROOT
+import numpy as np
+#import root_numpy
+# disable temporary since not available on SWAN, for now just define manual conversion function from root to numpy array
+# note: root_numpy provides an efficient interface between ROOT and numpy
 import pandas as pd
 # note: only used for conversion into dataframe
 
