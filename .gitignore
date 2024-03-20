@@ -26,3 +26,8 @@ data
 # ignore documentation for tutorials as it is big
 # (contains notebook output and figures)
 docs/tutorials
+
+# ignore virtual environment directories
+/venv/
+/venv_*/
+/venv-*/
