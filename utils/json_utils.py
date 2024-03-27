@@ -102,7 +102,7 @@ def injson( run, lumi, jsonfile=None, jsondict=None ):
     # check for all run/lumi combinations if they are in the json object
     for i,(r,l) in enumerate(zip(run,lumi)):
         if injson_single( r, l, jsondict ): res[i]=1
-    res = res.astype(np.bool)
+    res = res.astype(bool)
     if len(res)==1: res = res[0]
     return res
 
