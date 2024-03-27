@@ -411,7 +411,7 @@ class HistStruct(object):
         if(np.amax(indices)>=len(self.lsnbs)):
             raise Exception('ERROR in HistStruct.add_index_mask: largest index is {}'.format(np.amax(indices))
                            +' but there are only {} lumisections in the HistStruct'.format(len(self.lsnbs)))
-        mask = np.zeros(len(self.lsnbs), dtype=np.bool)
+        mask = np.zeros(len(self.lsnbs), dtype=bool)
         mask[indices] = True
         self.add_mask( name, mask)
         
