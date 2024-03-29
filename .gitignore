@@ -4,6 +4,9 @@ omsapi/clientid.py
 # ignore all .pyc files
 **.pyc
 
+# ignore cached info
+**.cache
+
 # ignore notebook version files
 **.sys.v#*
 
