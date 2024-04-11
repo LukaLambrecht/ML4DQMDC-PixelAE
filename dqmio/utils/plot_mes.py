@@ -93,35 +93,28 @@ if __name__=='__main__':
 
   # read arguments
   parser = argparse.ArgumentParser(description='Plot available monitoring elements')
-  parser.add_argument('--filemode', choices=['das','local'], default='das',
-                        help='Choose from "das" or "local"')
-  parser.add_argument('--filename', required=True,
-                        help='Full name of the file on DAS (for filemode "das")'
-                             +' OR path to the local file (for filemode "local")')
+  parser.add_argument('-d', '--datasetname', required=True,
+                        help='Full name of a file on DAS, or full name of a dataset on DAS,'
+                             +' or path to the local file, or path to a local directory.')
+  parser.add_argument('-r', '--redirector', default='root://cms-xrd-global.cern.ch/',
+                        help='Redirector used to access remote files (ignored for local files).')
+  parser.add_argument('-p', '--proxy', default=None,
+                        help='Set the location of a valid proxy (needed for DAS client, ignored for local files).')
+  parser.add_argument('-o', '--outputdir', default=None,
+                       help='Directory where to store the figures'
+                            +' (default: show each figure but do not save)')
   parser.add_argument('--run', default=None,
                         help='Run number for which to make the plot (default: first in file).'
                             +' Use "all" to make a plot for all available runs in the file.')
   parser.add_argument('--ls', default=None,
                         help='Lumisection number for which to make the plot (default: first in file).'
                             +' Use "all" to make a plot for all available lumisections in the file.')
-  parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
-                        help='Redirector used to access remote files'
-                             +' (ignored in filemode "local").')
-  parser.add_argument('--proxy', default=None,
-                        help='Set the location of a valid proxy created with'
-                             +' "--voms-proxy-init --voms cms";'
-                             +' needed for DAS client;'
-                             +' ignored if filemode is "local".')
   parser.add_argument('--searchkey', default=None,
                        help='Provide a search key to filter the results;'
                             +' only results matching the searchkey will be plotted;'
                             +' may contain unix-style wildcards.')
-  parser.add_argument('--outputdir', default=None,
-                       help='Directory where to store the figures'
-                            +' (default: show each figure but do not save)')
   args = parser.parse_args()
-  filemode = args.filemode
-  filename = args.filename
+  datasetname = args.datasetname
   run = args.run
   ls = args.ls
   redirector = args.redirector
@@ -135,25 +128,28 @@ if __name__=='__main__':
     print('  - {}: {}'.format(arg,getattr(args,arg)))
 
   # export the proxy
-  if( filemode=='das' and proxy is not None ): tools.export_proxy( proxy )
+  if( not os.path.exists(datasetname) and proxy is not None ):
+    print('Exporting proxy...')
+    tools.export_proxy( proxy )
 
-  # format input file
-  if filemode=='das':
-    redirector = redirector.rstrip('/')+'/'
-    filename = redirector+filename
-
+  # find files
+  print('Retrieving files...')
+  filenames = tools.format_input_files(
+                datasetname,
+                redirector=redirector) 
+ 
   # make output dir
   if( outputdir is not None and not os.path.exists(outputdir) ): 
     os.makedirs(outputdir)
   
   # make a DQMIOReader instance and initialize it with the file
-  print('initializing DQMIOReader...')
+  print('Initializing DQMIOReader...')
   sys.stdout.flush()
   sys.stderr.flush()
-  reader = DQMIOReader(*[filename])
+  reader = DQMIOReader(*filenames)
 
   # filter histogram names
-  print('filtering ME names...')
+  print('Filtering ME names...')
   menames = reader.listMEs()
   if searchkey is not None:
     res = []
@@ -165,7 +161,7 @@ if __name__=='__main__':
   if nmes==0: raise Exception('ERROR: list of ME names to plot is empty.')
 
   # filter run and lumisection number
-  print('filtering lumisections...')
+  print('Filtering lumisections...')
   runsls = sorted(reader.listLumis()[:])
   if run is None:
     runsls = [el for el in runsls if el[0]==runsls[0][0]]
@@ -186,7 +182,7 @@ if __name__=='__main__':
     except:
       raise Exception('ERROR: unrecognized value for --ls: {}'.format(ls))
   nlumis = len(runsls)
-  print('number of selected lumisections: {}'.format(nlumis))
+  print('Number of selected lumisections: {}'.format(nlumis))
   if nlumis==0: raise Exception('ERROR: list of lumisections to plot is empty.')
 
   # check number of selected histograms
@@ -207,5 +203,6 @@ if __name__=='__main__':
         if counter==nplots-1: block=True 
         plt.show(block=block)
       else:
-        figname = mename.replace('/','_').replace(' ','_')+'.png'
+        figname = mename.replace('/','_').replace(' ','_')
+        figname += '_run{}_ls{}.png'.format(runls[0], runls[1])
         fig.savefig(os.path.join(outputdir,figname))

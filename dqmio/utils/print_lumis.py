@@ -17,27 +17,19 @@ if __name__=='__main__':
 
   # read arguments
   parser = argparse.ArgumentParser(description='Print available lumisections')
-  parser.add_argument('--filemode', choices=['das','local'], default='das',
-                        help='Choose from "das" or "local"')
-  parser.add_argument('--filename', required=True,
-                        help='Full name of the file on DAS (for filemode "das")'
-                             +' OR path to the local file (for filemode "local")'
-                             +' OR path to a directory holding files (for filemode "local")')
-  parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
-                        help='Redirector used to access remote files'
-                             +' (ignored in filemode "local").')
-  parser.add_argument('--proxy', default=None,
-                        help='Set the location of a valid proxy created with'
-                             +' "--voms-proxy-init --voms cms";'
-                             +' needed for DAS client;'
-                             +' ignored if filemode is "local".')
+  parser.add_argument('-d', '--datasetname', required=True,
+                        help='Full name of a file on DAS, or full name of a dataset on DAS,'
+                             +' or path to the local file, or path to a local directory.')
+  parser.add_argument('-r', '--redirector', default='root://cms-xrd-global.cern.ch/',
+                        help='Redirector used to access remote files (ignored for local files).')
+  parser.add_argument('-p', '--proxy', default=None,
+                        help='Set the location of a valid proxy (needed for DAS client, ignored for local files).')
   parser.add_argument('--runonly', default=False, action='store_true',
                         help='Print run numbers only, not lumisection numbers.')
   parser.add_argument('--runnb', default=None,
                        help='Print lumisections only for the specified run number.')
   args = parser.parse_args()
-  filemode = args.filemode
-  filename = args.filename
+  datasetname = args.datasetname
   redirector = args.redirector
   proxy = None if args.proxy is None else os.path.abspath(args.proxy)
   runonly = args.runonly
@@ -49,34 +41,30 @@ if __name__=='__main__':
     print('  - {}: {}'.format(arg,getattr(args,arg)))
 
   # export the proxy
-  if( filemode=='das' and proxy is not None ): tools.export_proxy( proxy )
+  if( not os.path.exists(datasetname) and proxy is not None ):
+    print('Exporting proxy...')
+    tools.export_proxy( proxy )
 
-  # format input file(s)
-  filenames = []
-  if filemode=='das':
-    redirector = redirector.rstrip('/')+'/'
-    filenames = [redirector+filename]
-  elif filemode=='local':
-    if filename.endswith('.root'):
-      filenames = [filename]
-    else:
-      filenames = ([os.path.join(filename,f) for f in os.listdir(filename)
-                     if f.endswith('.root')])
-      
-  # make a DQMIOReader instance and initialize it with the file
-  print('initializing DQMIOReader...')
+  # find files
+  print('Retrieving files...')
+  filenames = tools.format_input_files(
+                datasetname,
+                redirector=redirector)
+
+  # make a DQMIOReader instance and initialize it with the files
+  print('Initializing DQMIOReader...')
   sys.stdout.flush()
   sys.stderr.flush()
   reader = DQMIOReader(*filenames)
-  print('initialized DQMIOReader.')
+  print('Initialized DQMIOReader.')
 
   runsls = sorted(reader.listLumis())
   if runonly:
     runs = set([runls[0] for runls in runsls])
-    print('Available runs ({})'.format(len(runs)))
+    print('Available runs ({}):'.format(len(runs)))
     for run in runs: print('- {}'.format(run))
   else:
     if runnb is not None:
       runsls = [(runls[0],runls[1]) for runls in runsls if runls[0]==runnb]
-    print('Available lumisections: ({})'.format(len(runsls)))
+    print('Available lumisections ({}):'.format(len(runsls)))
     for runls in runsls: print('- Run {}, LS {}'.format(runls[0],runls[1]))

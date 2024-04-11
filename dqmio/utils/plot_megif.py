@@ -26,31 +26,25 @@ if __name__=='__main__':
 
   # read arguments
   parser = argparse.ArgumentParser(description='Make a gif')
-  parser.add_argument('--filemode', choices=['das','local'], default='das',
-                        help='Choose from "das" or "local"')
-  parser.add_argument('--filename', required=True,
-                        help='Full name of the file on DAS (for filemode "das")'
-                             +' OR path to the local file (for filemode "local")')
-  parser.add_argument('--mename', required=True,
+  parser.add_argument('-d', '--datasetname', required=True,
+                        help='Full name of a file on DAS, or full name of a dataset on DAS,'
+                             +' or path to the local file, or path to a local directory.')
+  parser.add_argument('-m', '--mename', required=True,
                         help='Name of the monitoring element for which to make a gif.')
-  parser.add_argument('--run', required=True, type=int,
+  parser.add_argument('-r', '--run', required=True, type=int,
                         help='Run number for which to make the gif.')
   parser.add_argument('--firstls', default=1, type=int,
                         help='Lumisection number for which to start the gif (default: 1).')
   parser.add_argument('--lastls', default=-1, type=int,
-                        help='Lumisection number for which to end the gif (default: end of run)')
+                        help='Lumisection number for which to end the gif (default: end of run).')
   parser.add_argument('--duration', default=0.3, type=float,
                         help='Duration in seconds of a single frame.')
   parser.add_argument('--keeptempdir', default=False, action='store_true',
                         help='Do not remove temporary directory with pngs.')
   parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
-                        help='Redirector used to access remote files'
-                             +' (ignored in filemode "local").')
+                        help='Redirector used to access remote files (ignored for local files).')
   parser.add_argument('--proxy', default=None,
-                        help='Set the location of a valid proxy created with'
-                             +' "--voms-proxy-init --voms cms";'
-                             +' needed for DAS client;'
-                             +' ignored if filemode is "local".')
+                        help='Set the location of a valid proxy (needed for DAS client, ignored for local files).')
   args = parser.parse_args()
   proxy = None if args.proxy is None else os.path.abspath(args.proxy)
 
@@ -60,13 +54,16 @@ if __name__=='__main__':
     print('  - {}: {}'.format(arg,getattr(args,arg)))
 
   # export the proxy
-  if( args.filemode=='das' and proxy is not None ): tools.export_proxy( proxy )
+  if( not os.path.exists(args.datasetname) and proxy is not None ):
+    print('Exporting proxy...')
+    tools.export_proxy( proxy )
 
-  # format input file
-  if args.filemode=='das':
-    redirector = args.redirector.rstrip('/')+'/'
-    args.filename = redirector+args.filename
-
+  # find files
+  print('Retrieving files...')
+  filenames = tools.format_input_files(
+                args.datasetname,
+                redirector=args.redirector)
+ 
   # make temporary dir
   tempdir = 'temp'
   if( os.path.exists(tempdir) ):
@@ -75,25 +72,25 @@ if __name__=='__main__':
   os.makedirs(tempdir)
   
   # make a DQMIOReader instance and initialize it with the file
-  print('initializing DQMIOReader...')
+  print('Initializing DQMIOReader...')
   sys.stdout.flush()
   sys.stderr.flush()
-  reader = DQMIOReader(*[args.filename])
+  reader = DQMIOReader(*filenames)
 
   # filter run and lumisection number
-  print('filtering lumisections...')
+  print('Filtering lumisections...')
   runsls = sorted(reader.listLumis()[:])
   runsls = [el for el in runsls if el[0]==args.run]
   runsls = [el for el in runsls if el[1]>=args.firstls]
   if args.lastls>0: runsls = [el for el in runsls if el[1]<=args.lastls]
   nlumis = len(runsls)
-  print('number of selected lumisections: {}'.format(nlumis))
+  print('Number of selected lumisections: {}'.format(nlumis))
   if nlumis==0: raise Exception('ERROR: list of lumisections to plot is empty.')
 
   # make plots
   fignames = []
   for i,runls in enumerate(runsls):
-    print('Making plot {}/{}...'.format(i+1,len(runsls)))
+    print('Making plot {}/{}...'.format(i+1,len(runsls)), end='\r')
     me = reader.getSingleMEForLumi(runls, args.mename)
     fig,ax = makeplot(me)
     if fig is None: continue
@@ -105,7 +102,7 @@ if __name__=='__main__':
   # make a gif
   with imageio.get_writer('output_gif.gif', mode='I', duration=args.duration) as writer:
     for figname in fignames:
-      image = imageio.imread(figname)
+      image = imageio.v2.imread(figname)
       writer.append_data(image)
 
   # remove temporary directory

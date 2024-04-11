@@ -16,12 +16,10 @@ if __name__=='__main__':
 
   # read arguments
   parser = argparse.ArgumentParser(description='Print files in dataset')
-  parser.add_argument('--datasetname', required=True,
-                        help='Name of the data set on DAS)')
-  parser.add_argument('--proxy', default=None,
-                        help='Set the location of a valid proxy created with'
-                             +' "--voms-proxy-init --voms cms";'
-                             +' needed for DAS client;')
+  parser.add_argument('-d', '--datasetname', required=True,
+                        help='Name of the dataset on DAS.')
+  parser.add_argument('-p', '--proxy', default=None,
+                        help='Set the location of a valid proxy (needed for DAS client, ignored for local files).')
   args = parser.parse_args()
   datasetname = args.datasetname
   proxy = None if args.proxy is None else os.path.abspath(args.proxy)
@@ -32,12 +30,10 @@ if __name__=='__main__':
     print('  - {}: {}'.format(arg,getattr(args,arg)))
 
   # export the proxy
-  if proxy is not None: tools.export_proxy( proxy )
+  if( not os.path.exists(datasetname) and proxy is not None ):
+    print('Exporting proxy...')
+    tools.export_proxy( proxy )
 
   # make a list of input files
-  print('running DAS client to find files in dataset {}...'.format(datasetname))
-  dascmd = "dasgoclient -query 'file dataset={}' --limit 0".format(datasetname)
-  dasstdout = os.popen(dascmd).read()
-  dasfiles = [el.strip(' \t') for el in dasstdout.strip('\n').split('\n')]
-  print('DAS client ready; found following files ({}):'.format(len(dasfiles)))
-  for f in dasfiles: print('  - {}'.format(f))
+  print('Retrieving files...')
+  filenames = tools.format_input_files(datasetname)

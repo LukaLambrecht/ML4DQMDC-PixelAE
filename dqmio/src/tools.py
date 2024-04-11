@@ -7,77 +7,123 @@ import os
 
 
 def format_input_files( datasetname,
-                        filemode='das',
+                        location=None,
                         runnb=None,
                         privateprod=False,
                         redirector='root://cms-xrd-global.cern.ch/',
                         istest=False,
-                        maxfiles=None ):
+                        maxfiles=None,
+                        verbose=True ):
   ### get a list of input files from a dataset name
   # input arguments:
-  # - datasetname: name of the data set on DAS (for filemode 'das')
-  #   OR name of the folder holding input files (for filemode 'local')
-  #   OR str containing a comma-separated list of file names (on DAS or locally according to filemode))
-  #   (note: interpreted as list of file names if a comma is present, directory or dataset otherwise!)
-  # - filemode: choose from 'das' or 'local';
-  #   in case of 'das', will read all files belonging to the specified dataset from DAS;
-  #   in case of 'local', will read all files in the specified folder on the local filesystem.)
-  # - runnb: select only files for the given run number (ignored in filemode 'local')
-  # - privateprod: whether the dataset on DAS was privately produced (ignored in filemode 'local')
-  # - redirector: redirector used to access remote files (ignored in filemode 'local'))
-  # - istest: return only first file (for testing)
-  # - maxfiles: return only specified number of first files
+  # - datasetname: can be one of the following:
+  #   - name of a dataset on DAS
+  #   - name of a single file on DAS
+  #     (warning: no check is done to verify that the file actually exists on DAS)
+  #   - name of a locally accessible directory with root files
+  #   - name of a locally accessible single root file
+  #   - string containing a comma-separated list of files, directories or datasets
+  #     (either locally accessible or on DAS).
+  # - location: choose from 'das', 'local' or None, with the following behaviour:
+  #   - 'das': use a DAS query to find the files in a dataset on DAS,
+  #            and prefix the retrieved file names using the specified redirector.
+  #   - 'local': get all root files in the specified folder on the local filesystem.
+  #   - None: choose automatically between 'das' and 'local' via a simple os.path.exists check.
+  # - runnb: select only files for the given run number (ignored for local files).
+  # - privateprod: whether the dataset on DAS was privately produced (ignored for local files).
+  # - redirector: redirector used to prefix remote files (ignored for local files).
+  # - istest: return only first file (for testing).
+  # - maxfiles: return only specified number of first files.
+  # - verbose: print information.
+  # output:
+  #   a list of correctly formatted file names
+  # note: the output is always a list, even if the input was just a single file.
   # note: the DAS client requires a valid proxy to run,
-  #       set it before calling this function with set_proxy() (see below)
+  #       set it before calling this function with export_proxy()
 
-  # check if a directory is provided or a list of filenames
-  runfilesearch = True
-  if ',' in datasetname: runfilesearch = False
+  # strip spurious characters from dataset name
+  datasetname = datasetname.strip(' \t\n,;')
 
-  # parse the provided redirector
-  redirector = redirector.rstrip('/')+'/'
+  # check if the specified dataset is actually a list
+  # and if so, run recursively on each element in the list
+  if ',' in datasetname:
+    datasetnames = datasetname.split(',')
+    filenames = []
+    for name in datasetnames:
+      filenames += format_input_files(name,
+                      location=location,
+                      runnb=runnb,
+                      privateprod=privateprod,
+                      redirector=redirector,
+                      istest=istest,
+                      maxfiles=maxfiles,
+                      verbose=verbose)
+    return filenames
+  
+  # determine whether dataset is locally accessible or not
+  if location is None:
+    if os.path.exists(datasetname):
+      location = 'local'
+      if verbose: print('Dataset {} was found locally.'.format(datasetname))
+    else:
+      location = 'das'
+      if verbose: print('Dataset {} was not found locally, will use DAS.'.format(datasetname))
 
-  # make a list of input files
-  if runfilesearch:
-    # make a list of input files based on provided directory or dataset name,
-    # details depend on the chosen filemode
-    if filemode=='das':
-      # make and execute the DAS client command
+  # handle the case of a single file (either locally or on DAS)
+  if datasetname.endswith('.root'):
+    if location=='das':
+      redirector = redirector.rstrip('/')+'/'
+      filenames = [redirector+datasetname]
+    elif location=='local':
+      filenames = [datasetname]
+    return filenames
+
+  # make a list of input files based on provided directory or dataset name
+  if location=='das':
+      # make the DAS client command
       dasquery = 'file dataset={}'.format(datasetname)
       if privateprod: dasquery += ' instance=prod/phys03'
       if runnb is not None: dasquery += ' run={}'.format(runnb)
-      print('running DAS client with following query: {}...'.format(dasquery))
+      if verbose: print('Running DAS client with following query: {}...'.format(dasquery))
       dascmd = "dasgoclient -query '{}' --limit 0".format(dasquery)
-      dasstdout = os.popen(dascmd).read()
-      dasfiles = sorted([el.strip(' \t') for el in dasstdout.strip('\n').split('\n')])
-      print('DAS client ready; found following files ({}):'.format(len(dasfiles)))
-      for f in dasfiles: print('  - {}'.format(f))
-      inputfiles = [redirector+f for f in dasfiles]
-    elif filemode=='local':
-      # read all root files in the given directory
-      inputfiles = ([os.path.join(datasetname,f) for f in os.listdir(datasetname)
-                     if f[-5:]=='.root'])
+      # run the DAS client command
+      dasstdout = os.popen(dascmd).read().strip(' \t\n')
+      # check for DAS errors
+      if 'X509_USER_PROXY' in dasstdout:
+        msg = 'ERROR: DAS returned a proxy error:\n'+dasstdout
+        raise Exception(msg)
+      # format the files
+      dasfiles = sorted([el.strip(' \t') for el in dasstdout.split('\n')])
+      # do printouts
+      if verbose:
+        print('DAS client ready; found following files ({}):'.format(len(dasfiles)))
+        for f in dasfiles: print('  - {}'.format(f))
+      # prefix files with redirector
+      filenames = [redirector+f for f in dasfiles]
+  elif location=='local':
+    # read all root files in the given directory
+    filenames = ([os.path.join(datasetname,f) for f in os.listdir(datasetname) if f.endswith('.root')])
+    if verbose:
+      print('Found following local files ({}):'.format(len(filenames)))
+      for f in filenames: print('  - {}'.format(f))
   else:
-    # parse the provided comma-separated list into a list
-    inputfiles = [el for el in datasetname.split(',') if len(el)!=0]
-    if( filemode=='das' and redirector is not None ):
-      for i,inputfile in enumerate(inputfiles):
-        # check if the file name has a redirector already
-        if 'root://cms-xrd' in inputfile: continue
-        # add the redirector
-        inputfiles[i] = redirector+inputfile
+    raise Exception('ERROR: location "{}" not recognized'.format(location))
 
-  # check number of input files
-  if len(inputfiles)==0:
-    raise Exception('ERROR: list of input files is empty.')
+  # check number of retrieved files
+  if len(filenames)==0:
+    print('WARNING (in format_input_files): no files found, returning empty list.')
+    return filenames
+
+  # limit number of files to return
   if istest:
-    print('WARNING: running in test mode, only one file will be processed.')
-    inputfiles = [inputfiles[0]]
-  if( maxfiles is not None and maxfiles>0 and maxfiles<len(inputfiles) ):
-    print('WARNING: returning only {} out of {} files.'.format(maxfiles,len(inputfiles)))
-    inputfiles = inputfiles[:maxfiles]
+    print('WARNING (in format_input_files): running in test mode, only one file will be returned.')
+    filenames = [filenames[0]]
+  if( maxfiles is not None and maxfiles>0 and maxfiles<len(filenames) ):
+    print('WARNING: returning only {} out of {} files.'.format(maxfiles, len(filenames)))
+    filenames = filenames[:maxfiles]
 
-  return inputfiles
+  # return the result
+  return filenames
 
 
 def export_proxy( proxy ):

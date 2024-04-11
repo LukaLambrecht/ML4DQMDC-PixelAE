@@ -2,7 +2,7 @@
 
 # **Find out how runs are distributed over files in a dataset**  
 # 
-# Run with `python find_runs_in_dataset.py -h` for a list of available options.  
+# Run with `python3 find_runs_in_dataset.py -h` for a list of available options.  
 
 ### imports
 import sys
@@ -17,21 +17,13 @@ if __name__=='__main__':
 
   # read arguments
   parser = argparse.ArgumentParser(description='Find which files contain which runs')
-  parser.add_argument('--filemode', choices=['das','local'], default='das',
-                        help='Choose from "das" or "local"')
-  parser.add_argument('--datasetname', required=True,
-                        help='Name of the dataset on DAS (for filemode "das")'
-                             +' OR path to a local directory (for filemode "local")')
-  parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
-                        help='Redirector used to access remote files'
-                             +' (ignored in filemode "local").')
-  parser.add_argument('--proxy', default=None,
-                        help='Set the location of a valid proxy created with'
-                             +' "--voms-proxy-init --voms cms";'
-                             +' needed for DAS client;'
-                             +' ignored if filemode is "local".')
+  parser.add_argument('-d', '--datasetname', required=True,
+                        help='Name of the dataset on DAS or path to a local directory.')
+  parser.add_argument('-r', '--redirector', default='root://cms-xrd-global.cern.ch/',
+                        help='XRD redirector used to access remote files (ignored for local files).')
+  parser.add_argument('-p', '--proxy', default=None,
+                        help='Set the location of a valid proxy (needed for DAS client, ignored for local files).')
   args = parser.parse_args()
-  filemode = args.filemode
   datasetname = args.datasetname
   redirector = args.redirector
   proxy = None if args.proxy is None else os.path.abspath(args.proxy)
@@ -42,13 +34,15 @@ if __name__=='__main__':
     print('  - {}: {}'.format(arg,getattr(args,arg)))
 
   # export the proxy
-  if( filemode=='das' and proxy is not None ): tools.export_proxy( proxy )
+  if( not os.path.exists(datasetname) and proxy is not None ):
+    print('Exporting proxy...')
+    tools.export_proxy( proxy )
 
   # get the input files
+  print('Retrieving files...')
   filenames = tools.format_input_files(
-    datasetname, filemode=filemode,
-    privateprod=False, redirector=redirector,
-    istest=False, maxfiles=None )
+    datasetname,
+    redirector=redirector)
   filenames = sorted(filenames)
 
   # initialize the output dicts

@@ -18,19 +18,15 @@ if __name__=='__main__':
 
   # read arguments
   parser = argparse.ArgumentParser(description='Print available monitoring elements')
-  parser.add_argument('--filemode', choices=['das','local'], default='das',
-                        help='Choose from "das" or "local"')
-  parser.add_argument('--filename', required=True,
-                        help='Full name of the file on DAS (for filemode "das")'
-                             +' OR path to the local file (for filemode "local")')
-  parser.add_argument('--redirector', default='root://cms-xrd-global.cern.ch/',
-                        help='Redirector used to access remote files'
-                             +' (ignored in filemode "local").')
-  parser.add_argument('--proxy', default=None,
-                        help='Set the location of a valid proxy created with'
-                             +' "--voms-proxy-init --voms cms";'
-                             +' needed for DAS client;'
-                             +' ignored if filemode is "local".')
+  parser.add_argument('-d', '--datasetname', required=True,
+                        help='Full name of a file on DAS, or full name of a dataset on DAS,'
+                             +' or path to the local file, or path to a local directory.')
+  parser.add_argument('-r', '--redirector', default='root://cms-xrd-global.cern.ch/',
+                        help='Redirector used to access remote files (ignored for local files).')
+  parser.add_argument('-p', '--proxy', default=None,
+                        help='Set the location of a valid proxy (needed for DAS client, ignored for local files).')
+  parser.add_argument('-o', '--outputfile', default=None,
+                       help='File to write output to (default: print on screen).')
   parser.add_argument('--searchkey', default=None,
                        help='Provide a search key to filter the results;'
                             +' only results matching the searchkey will be shown;'
@@ -38,11 +34,8 @@ if __name__=='__main__':
   parser.add_argument('--number_only', default=False, action='store_true',
                        help='Print number of monitoring elements only;'
                             +' not a full list of their names.')
-  parser.add_argument('--outputfile', default=None,
-                       help='File to write output to (default: print on screen).')
   args = parser.parse_args()
-  filemode = args.filemode
-  filename = args.filename
+  datasetname = args.datasetname
   redirector = args.redirector
   searchkey = args.searchkey
   proxy = None if args.proxy is None else os.path.abspath(args.proxy)
@@ -55,18 +48,21 @@ if __name__=='__main__':
     print('  - {}: {}'.format(arg,getattr(args,arg)))
 
   # export the proxy
-  if( filemode=='das' and proxy is not None ): tools.export_proxy( proxy )
+  if( not os.path.exists(datasetname) and proxy is not None ):
+    print('Exporting proxy...')
+    tools.export_proxy( proxy )
 
-  # format input file
-  if filemode=='das':
-    redirector = redirector.rstrip('/')+'/'
-    filename = redirector+filename
-  
-  # make a DQMIOReader instance and initialize it with the file
+  # find files
+  print('Retrieving files...')
+  filenames = tools.format_input_files(
+                datasetname,
+                redirector=redirector)
+
+  # make a DQMIOReader instance and initialize it with the files
   print('initializing DQMIOReader...')
   sys.stdout.flush()
   sys.stderr.flush()
-  reader = DQMIOReader(*[filename])
+  reader = DQMIOReader(*filenames)
   print('initialized DQMIOReader with following properties')
   print('number of lumisections: {}'.format(len(reader.listLumis())))
   menames = reader.listMEs()
@@ -80,7 +76,7 @@ if __name__=='__main__':
     menames = sorted(menames)
 
   # write output
-  header = 'number of monitoring elements per lumisection: {}'.format(len(menames))
+  header = 'Number of monitoring elements per lumisection: {}'.format(len(menames))
   if outputfile is None:
     print(header)
     if not number_only:
