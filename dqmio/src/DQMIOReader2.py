@@ -13,7 +13,11 @@
 #   Uproot does not seem to be able to read histograms stored inside trees...
 #   See also the comment in this script (which also does not work):
 #   https://github.com/cms-sw/cmssw/blob/master/DQMServices/
-#   Components/scripts/dqmdumpme.py
+#   Components/scripts/dqmdumpme.py.
+#   This seems to be a bigger issue discussed here:
+#   https://github.com/scikit-hep/uproot5/issues/38
+#   and also here:
+#   https://github.com/scikit-hep/uproot5/issues/1190
 
 
 ### imports
@@ -122,15 +126,15 @@ class DQMIOReader:
                                +' unrecognized keyword argument "{}"'.format(key))
   
         # do the initialization
-        print('DQMIOReader.__init__: opening {} files...'.format(len(files)))
+        print('DQMIOReader: opening {} files...'.format(len(files)))
         sys.stdout.flush()
         sys.stderr.flush()
         self.rootfiles = [uproot.open(f) for f in files]
-        print('all files opened, now making index')
+        print('All files opened, now making index...')
         sys.stdout.flush()
         sys.stderr.flush()
         self.readIndex( sort=sortindex )
-        print('index made, now making list of monitoring elements')
+        print('Index made, now making list of monitoring elements...')
         sys.stdout.flush()
         sys.stderr.flush()
         self.makeMEList( sort=sortmes )
@@ -150,8 +154,6 @@ class DQMIOReader:
             firstidxs = indices['FirstIndex'].array()
             lastidxs = indices['LastIndex'].array()
             for run, lumi, metype, firstidx, lastidx in zip(runs, lumis, metypes, firstidxs, lastidxs):
-                print(run)
-                print(lumi)
                 e = IndexEntry(run, lumi, metype, f, firstidx, lastidx)
                 self.index[(run, lumi)].append(e)
         p = ThreadPool(self.nthreads)
@@ -187,7 +189,9 @@ class DQMIOReader:
             # read the correct tree from the file corresponding to this type of monitoring element
             metree = indexentry.file[DQMIOReader.getMEType(indexentry.type)]
             menames = metree['FullName'].array()
-            for mename in menames[indexentry.firstidx:indexentry.lastidx+1]:
+            start = int(indexentry.firstidx)
+            stop = int(indexentry.lastidx+1)
+            for mename in menames[start:stop]:
                 self.medict[mename] = indexentry.type
                 self.melist.append(mename)
         if sort: self.sortMEList()
@@ -241,11 +245,18 @@ class DQMIOReader:
             print(metree)
             menames = metree['FullName'].array()
             # loop over names
-            for idx in list(range(indexentry.firstidx,indexentry.lastidx+1)):
+            start = int(indexentry.firstidx)
+            stop = int(indexentry.lastidx+1)
+            for idx in list(range(start, stop)):
                 mename = menames[idx]
                 if not check_interesting(mename): continue
-                #value = metree['Value'].lazyarray()
-                value = metree['Value'].array()
+                # extract the monitoring element data
+                branch = metree['Value']
+                print(branch)
+                print(branch.debug(0))
+                value = metree['Value'].array(library='np')
+                # --> error here...
+                # make a MonitorElement object
                 me = MonitorElement(runlumi[0], runlumi[1], mename, e.type, value)
                 result.append(me)
         return result
@@ -297,7 +308,7 @@ class DQMIOReader:
                              +" but {} entries were found, while expecting 1.".format(len(entries)))
         
         entry = entries[0]
-        mes = e.file[DQMIOReader.getMEType(e.type)]
+        mes = entry.file[DQMIOReader.getMEType(entry.type)]
         menames = mes['FullName'].array()
 
         def searchkey(fullname):
@@ -307,7 +318,7 @@ class DQMIOReader:
             metree.GetEntry(idx)
             return searchkey(str(metree.FullName))
                 
-        pos = binsearch(getentry, searchkey(name), e.firstidx, e.lastidx+1)
+        pos = binsearch(getentry, searchkey(name), entry.firstidx, entry.lastidx+1)
         metree.GetEntry(pos, 1) # read full row
         if str(metree.FullName) != name:
             return None

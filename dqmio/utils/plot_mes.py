@@ -150,12 +150,7 @@ if __name__=='__main__':
 
   # filter histogram names
   print('Filtering ME names...')
-  menames = reader.listMEs()
-  if searchkey is not None:
-    res = []
-    for mename in menames:
-      if fnmatch(mename,searchkey): res.append(mename)
-    menames = res
+  menames = reader.listMEs(namepatterns=searchkey)
   nmes = len(menames)
   print('number of selected ME names: {}'.format(nmes))
   if nmes==0: raise Exception('ERROR: list of ME names to plot is empty.')

@@ -65,12 +65,7 @@ if __name__=='__main__':
   reader = DQMIOReader(*filenames)
   print('initialized DQMIOReader with following properties')
   print('number of lumisections: {}'.format(len(reader.listLumis())))
-  menames = reader.listMEs()
-  if searchkey is not None:
-    res = []
-    for mename in menames:
-      if fnmatch(mename,searchkey): res.append(mename)
-    menames = res
+  menames = reader.listMEs(namepatterns=searchkey)
   sorting_threshold = 1000
   if len(menames)<sorting_threshold: 
     menames = sorted(menames)

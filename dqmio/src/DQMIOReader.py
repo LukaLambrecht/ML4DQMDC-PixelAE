@@ -1,6 +1,11 @@
 # **Class for reading (nano)DQMIO files and extracting histograms**  
 # 
 # Originally copied from here: https://github.com/cms-DQM/ML4DQM-DC_SharedTools/blob/master/dqmio/moredqmiodata.ipynb
+# Note: this code relies on ROOT via the PyROOT bindings;
+#       attempts to remove the ROOT dependency by using uproot are unsuccessful so far,
+#       as DQMIO files seem to have a particular feature not covered by uproot,
+#       see here: https://github.com/scikit-hep/uproot5/issues/38
+#       and also here: https://github.com/scikit-hep/uproot5/issues/1190
 
 
 ### imports
@@ -9,12 +14,13 @@
 
 import sys
 from fnmatch import fnmatch 
-# note: fnmatch provides support for unix shell-style wildcards, which are not the same as regular expressions in python
+# note: fnmatch provides support for unix shell-style wildcards,
+#       which are not the same as regular expressions in python
 from collections import namedtuple
 # note: a namedtuple is a pseudo-class consisting of a tuple with named fields
 from collections import defaultdict
-# note: a defaultdict is like a regular python dictionary but providing default values for missing keys 
-#       instead of throwing execptions
+# note: a defaultdict is like a regular python dictionary,
+#       but providing default values for missing keys instead of throwing execptions
 from multiprocessing.pool import ThreadPool
 # note: ThreadPool is used for parallel processing, calling the same function on parallel inputs 
 #       and collecting the results in a list
@@ -25,9 +31,6 @@ from timeit import default_timer
 
 import ROOT
 import numpy as np
-#import root_numpy
-# disable temporary since not available on SWAN, for now just define manual conversion function from root to numpy array
-# note: root_numpy provides an efficient interface between ROOT and numpy
 
 pandas_import_error = None
 try:
@@ -35,7 +38,8 @@ try:
 except ImportError as e:
     pandas_import_error = e
     pd = None
-# note: only used for conversion into dataframe
+# note: only used for conversion into dataframe,
+#       now turned into an optional import
 
 
 ### static definitions
@@ -53,39 +57,9 @@ MonitorElement = namedtuple('MonitorElement', ['run', 'lumi', 'name', 'type', 'd
 # an instance of MonitorElement represents one monitor element, with all associated information:
 # - the run and lumisection number
 # - the full name of the monitoring element
-# - the type (e.g. TH1F, TH2F, etc., see function getMEType below for all allowed types)
+# - the type (e.g. TH1F, TH2F, etc., see function getMETreeName below for all allowed types)
 # - the actual data
 
-def extractdatafromROOT(x, hist2array=False):
-    ### extract ROOT-type data into useful formats, depending on the data type
-    # input arguments:
-    # - x: a ROOT object
-    # - hist2array: boolean whether to convert ROOT histograms to numpy arrays
-    #               (default: keep as ROOT histogram objects)
-    #               note: option True is not yet supported (need to fix root_numpy import in SWAN)
-    
-    # first check for clear-cut data types such as ROOT strings, python ints and floats
-    if isinstance(x, ROOT.string):
-        if sys.version_info[0]<3: return unicode(x.data())
-        else: return str(x.data())
-    if isinstance(x, int): return x
-    if isinstance(x, float): return x
-    # additional check for python long, which is only defined in python 2!
-    # (gives error in python 3, so need to check version explicitly)
-    if sys.version_info[0]<3:
-        if isinstance(x, long): return x
-    # at this point, if the function reaches to this stage,
-    # the type of x is probably some kind of ROOT histogram
-    # (more exceptions to be added above when encountered).
-    if hist2array:
-        raise NotImplementedError('ERROR in DQMIOReader.extractdatafromROOT:'
-                                  +' option hist2array is not yet supported.')
-        #return root_numpy.hist2array(x)
-    else: return x.Clone()
-    # throw error if the function did not return in any of the above cases
-    raise Exception('ERROR in DQMIOReader.extractdatafromROOT:'
-                    +' type {} not recognized.'.format(type(x)))
-    
 
 ### DQMIOReader definition
 
@@ -93,18 +67,64 @@ class DQMIOReader:
     ### class for reading (nano)DQMIO input files and extracting histograms
     # class attributes:
     # - rootfiles: a list of root files (DQMIO format), opened in read mode
-    # - index: defaultdict matching tuples of the form (run number, lumisection number) to lists of IndexEntries.
+    # - index: dict matching tuples of the form (run number, lumisection number) to lists of IndexEntries.
     #          for each key of the form (run number, lumisection number), the value is a list of a few IndexEntries,
     #          one for each monitoring element type (so 12 at maximum).
-    #          and empty list is returned from the dict if a given (run number, lumisection number) is not present.
     # - indexlist: separate list of index keys for sortability in python2.
     # - medict: dict containing all available monitor element names matched to their type.
     # - melist: separate list of medict keys for sortabiltiy in python2.
     # - nthreads: number of threads for multithreaded processing.
+
+
+    ### static helper function definitions
+
+    @staticmethod
+    def extractDataFromROOT(x):
+        ### extract ROOT-type data into useful formats, depending on the data type
+        # input arguments:
+        # - x: a ROOT object
+
+        # first check for clear-cut data types such as ROOT strings, python ints and floats
+        if isinstance(x, ROOT.string):
+            if sys.version_info[0]<3: return unicode(x.data())
+            else: return str(x.data())
+        if isinstance(x, int): return x
+        if isinstance(x, float): return x
+        # additional check for python long, which is only defined in python 2!
+        # (gives error in python 3, so need to check version explicitly)
+        if sys.version_info[0]<3:
+            if isinstance(x, long): return x
+        # at this point, if the function reaches to this stage,
+        # the type of x is probably some kind of ROOT histogram
+        # (more exceptions to be added above when encountered).
+        else: return x.Clone()
+        # throw error if the function did not return in any of the above cases
+        raise Exception('ERROR in DQMIOReader.extractDataFromROOT:'
+                        +' type {} not recognized.'.format(type(x)))
+
+    @staticmethod
+    def keepMEName(mename, namepatterns):
+        if isinstance(namepatterns, str): namepatterns = [namepatterns]
+        for namepattern in namepatterns:
+            if fnmatch(mename, namepattern): return True
+        return False
+
+    @staticmethod
+    def filterMENames(oglist, namepatterns):
+        ### filter a list of monitoring element names
+        # input arguments:
+        # - oglist: original list of names
+        # - namepatterns: string (may contain unix-style wildcards) of pattern to keep,
+        #   or a list of such strings.
+        res = []
+        if isinstance(namepatterns, str): namepatterns = [namepatterns]
+        for mename in oglist:
+            if DQMIOReader.keepMEName(mename, namepatterns): res.append(mename)
+        return res    
     
-    @staticmethod # (needed in python 2, not in python 3)
-    def getMEType(metype):
-        ### convert integer monitoring element type to string representation
+    @staticmethod
+    def getMETreeName(metype):
+        ### convert integer monitoring element type to the name of the corresponding Tree.
         # note: the string representation must correspond to the directory structure in a DQMIO file!
         # note: this is a static function and does not require an instance to be called
         treenames = { 
@@ -121,44 +141,71 @@ class DQMIOReader:
           10: "TProfiles",
           11: "TProfile2Ds",
         }
+        if metype not in treenames.keys():
+            msg = 'ERROR: provided metype {} not recognized;'
+            msg += ' options are {}.'.format(treenames)
+            raise Exception(msg)
         return treenames[metype]
-    
-    def __init__(self, *files, **kwargs):
+
+    @staticmethod
+    def showcount(ncurrent, ntot):
+        ### default callback method showing the progress of getSingleMEs
+        # input arguments:
+        # - ncurrent: current number of instance being processed
+        # - ntot: total number of instances to process
+        global start, lasttime, lastcount
+        try:
+            assert(lastcount < ncurrent)
+            # this fails if things are not initialized (e.g. in the first call)
+            # or the ctr was reset.
+        except:
+            # (re-)initialize
+            start = default_timer()
+            lasttime = default_timer()
+            lastcount = 0
+        tottime = default_timer() - start
+        deltatime = default_timer() - lasttime
+        lasttime = default_timer()
+        deltacount = ncurrent - lastcount
+        lastcount = ncurrent
+        msg = "Processed {} out of {} lumis in {:.2f} s ({:.2f}%, {:.2f}/s, avg {:.2f}/s)".format(
+               ncurrent, ntot, tottime, 100.0*ncurrent/ntot, deltacount/deltatime, ncurrent/tottime)
+        print(msg)
+        sys.stdout.flush()
+        sys.stderr.flush()
+  
+ 
+    ### initializer and auxiliary functions
+ 
+    def __init__(self, *files, sortindex=False, sortmes=False, nthreads=1,
+                 verbose=True):
         ### initializer
         # open the passed in files and read their index data.
         # input arguments:
-        # - files: a filename (or multiple filenames) to open
-        #          if stored locally, the filenames should contain the full path.
-        #          if stored on the grid, prefix the file path with "root://cms-xrd-global.cern.ch/".
-        # - kwargs: may contain:
-        #   -- sortindex: bool (default False) whether or not to sort the index 
-        #                 (by run and lumisection number in ascending order).
-        #   -- sortmes: bool (default False) whether or not to sort the ME names
-        #               (alphabetically)
-        #   -- nthreads: int (default 4) for number of threads
+        # - files: one or multiple file names to open.
+        #   if stored locally, the filenames should contain the full path.
+        #   if stored on the grid, prefix the file path with "root://cms-xrd-global.cern.ch/"
+        #   (see https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookXrootdService).
+        # - sortindex: bool whether or not to sort the index 
+        #   (by run and lumisection number in ascending order).
+        # - sortmes: bool whether or not to sort the ME names (alphabetically).
+        # - nthreads: int for number of threads to use.
+        #   (more threads will run faster, but might lead to instabilities in some cases).
+        # - verbose: bool whether to do printouts.
 
-        # check arguments
-        sortindex = False
-        sortmes = False
-        self.nthreads = 4
-        for key,val in kwargs.items():
-            if( key=='sortindex' and val ): sortindex = True
-            elif( key=='sortmes' and val ): sortmes = True
-            elif( key=='nthreads' ): self.nthreads = int(val)
-            else:
-                raise Exception('ERROR in DQMIOReader.__init__:'
-                               +' unrecognized keyword argument "{}"'.format(key))
-  
+        # set nthreads argument as attribute
+        self.nthreads = int(nthreads)
+
         # do the initialization
-        print('DQMIOReader.__init__: opening {} files...'.format(len(files)))
+        if verbose: print('Initializing a DQMIOReader with {} files...'.format(len(files)))
         sys.stdout.flush()
         sys.stderr.flush()
         self.rootfiles = [ROOT.TFile.Open(f) for f in files]
-        print('all files opened, now making index')
+        if verbose: print('Making index...')
         sys.stdout.flush()
         sys.stderr.flush()
         self.readIndex( sort=sortindex )
-        print('index made, now making list of monitoring elements')
+        if verbose: print('Making list of monitoring elements...')
         sys.stdout.flush()
         sys.stderr.flush()
         self.makeMEList( sort=sortmes )
@@ -214,78 +261,157 @@ class DQMIOReader:
         # note: for internal use in initializer only, do not call.
         # note: this function reads one lumisection and assumes all lumisection contains the same monitoring elements!
         runlumi = self.indexlist[0]
-        mes = self.getMEsForLumi(runlumi, "*")
-        self.medict = dict()
-        self.melist = [] # separate list of ME names for sortability
-        for me in mes:
-            self.medict[me.name] = me.type
-            self.melist.append(me.name)
+        self.medict = self.getMENamesForLumi(runlumi)
+        self.melist = list(self.medict.keys()) # separate list of ME names for sortability
         if sort: self.sortMEList()
 
     def sortMEList(self):
         ### sort the list of MEs alphabetically
         self.melist = sorted(self.melist)   
+
+
+    ### callable member functions
  
-    def listMEs(self):
+    def listMEs(self, namepatterns=None):
         ### returns a list with the names of the monitoring elements available per lumisection.
         # warning: copying the list is avoided to for speed and memory;
         #          only meant for reading; if you want to modify the result, make a copy first!
-        return self.melist
+        # input arguments:
+        # - namepatterns: a strings (can contain unix-style wildcards) for filtering the results,
+        #   or a list of such strings.
+        if namepatterns is None: return self.melist
+        if isinstance(namepatterns, str): namepatterns = [namepatterns]
+        return DQMIOReader.filterMENames(self.melist, namepatterns)
     
     def listLumis(self):
         ### returns a list of (run number, lumisection number) pairs for the lumis available in the files.
         # warning: copying the list is avoided to for speed and memory;
         #          only meant for reading; if you want to modify the result, make a copy first!
         return self.indexlist
-    
-    def getMEsForLumi(self, runlumi, *namepatterns):
-        ### get selected monitoring elements for a given lumisection
+
+    def getEntries(self, runlumis=None, namepatterns=None, expect=None):
+        ### get entries for provided lumisections and/or monitoring element names
         # input arguments:
-        # - runlumi: a tuple of the form (run number, lumisection number)
-        # - namepatterns: a wildcard pattern (or multiple) to select monitoring elements
-        # returns:
-        # a list of named tuples of type MonitorElement
+        # - runlumis: lumisection specifier.
+        #   can be None (to use all available lumisections),
+        #   a tuple of the form (run number, lumisection number),
+        #   or a list of such tuples.
+        # - namepatterns: monitoring element name specifier.
+        #   can be None (to use all available monitoring elments),
+        #   a string (can contain unix-style wildcards),
+        #   or a list of such strings.
+        # - expect: if specified, should be the expected number of entries
+        #   (for raising an Exception if a different number is found).
+        # note: mostly for internal use, not recommended to be called.
         
-        def check_interesting(mename):
-            ### check if a monitoring element name matches required selections
-            # note: for internal use in getMEsForLumi only, do not call!
-            for pattern in namepatterns:
-                if fnmatch(mename,pattern):
-                    return True
-                return False
- 
-        # get the data for the requested lumisection
-        entries = self.index.get(runlumi, None)
-        if entries is None: 
-            raise IndexError("ERROR in DQMIOReader.getMEsForLumi:"
-                             +" requested to read data for lumisection {},".format(runlumi)
-                             +" but no data was found for this lumisection in the current DQMIOReader.")
-        
-        # loop over all entries for this lumisection;
-        # this corresponds to looping over all types of monitoring elements
-        # (see the documentation of IndexEntry for more info).
-        result = []
-        for e in entries:
+        # format runlumis and check validity
+        if isinstance(runlumis, tuple): runlumis = [runlumis]
+        if runlumis is not None:
+            for runlumi in runlumis:
+                if runlumi not in self.indexlist:
+                    msg = "ERROR in DQMIOReader.getEntries:"
+                    msg += " requested lumisection {}".format(runlumi)
+                    msg += " not found in list of available lumisections."
+                    raise Exception(msg)
+
+        # format name patterns, check validity and expand wildcards
+        names = None
+        if isinstance(namepatterns, str): namepatterns = [namepatterns]
+        if namepatterns is not None:
+            names = []
+            for namepattern in namepatterns:
+                # in case of wildcards: expand
+                # todo: this part could potentially be sped up by grouping
+                #       the names with wildcards first and making a single listMEs call,
+                #       rather than making a separate call for each pattern.
+                if( '*' in namepattern or '?' in namepattern ):
+                    thisnames = self.listMEs(namepatterns=[namepattern])
+                    names += thisnames
+                # else: check validity
+                else:
+                    if namepattern not in self.melist:
+                        msg = "ERROR in DQMIOReader.getEntries:"
+                        msg += " requested monitoring element {}".format(name)
+                        msg += " not found in list of available monitoring elements."
+                        raise Exception(msg)
+                    names.append(namepattern)
+
+        # find all monitoring element types that should be kept
+        metypes = None
+        if names is not None:
+            metypes = [self.medict[name] for name in names]
+            metypes = list(set(metypes))
+
+        # find all entries for requested lumisections and monitoring element types
+        entries = []
+        if runlumis is None: runlumis = self.listLumis()
+        for runlumi in runlumis:
+            thisentries = self.index[runlumi]
+            if metypes is not None: thisentries = [e for e in thisentries if e.type in metypes]
+            for entry in thisentries: entries.append(entry)
+
+        # check if number of found entries matches expectation
+        if( expect is not None and len(entries)!=expect ):
+            msg = "ERROR in DQMIOReader.getEntries:"
+            msg += " requested to read data for lumisections {}".format(runlumis)
+            msg += " and monitoring elements {}".format(names)
+            msg += " but {} entries were found,".format(len(entries))
+            msg += " while expecting {}.".format(expect)
+            raise Exception(msg)
+
+        # return the resulting entries
+        return entries
+
+    def loopEntries(self, entries):
+        ### utility function to loop over entries
+        # note: for internal use only, do not call.
+        for entry in entries:
             # read the correct tree from the file corresponding to this type of monitoring element
-            metree = getattr(e.file, DQMIOReader.getMEType(e.type))
+            metree = getattr(entry.file, DQMIOReader.getMETreeName(entry.type))
             metree.GetEntry(0)
             # disable all branches except "FullName"
             metree.SetBranchStatus("*",0)
             metree.SetBranchStatus("FullName",1)
-            # release GIL in long operations. Disable if it causes trouble.
-            #metree.GetEntry._threaded = True
             # loop over entries for this tree
-            for x in range(e.firstidx, e.lastidx+1):
-                metree.GetEntry(x)
-                # extract the monitoring element name and check if it is needed
+            for idx in range(entry.firstidx, entry.lastidx+1):
+                metree.GetEntry(idx)
+                # extract the monitoring element name and yield
                 mename = str(metree.FullName)
-                if not check_interesting(mename): continue
-                metree.GetEntry(x, 1)
-                value = metree.Value
-                value = extractdatafromROOT(value)
-                me = MonitorElement(runlumi[0], runlumi[1], mename, e.type, value)
-                result.append(me)
-        return result
+                yield (entry, metree, idx, mename)
+
+    def getMENamesForLumi(self, runlumi, namepatterns=None):
+        ### get the names (and types) of available monitoring elements for a given lumisection
+        # input arguments:
+        # - runlumi: a tuple of the form (run number, lumisection number)
+        # - namepatterns: a string (can contain unix-style wildcards) to filter monitoring element names,
+        #   or a list of such strings.
+        # returns:
+        # - a dict matching monitoring element names to their types
+        # note: mostly for internal usage (i.e. initializing the medict and melist);
+        #       after initialization of the DQMIOReader, it is much faster to simply call listMEs()
+        #       instead of re-reading the monitoring element names from scratch.
+        # note: this function is much faster than reading the actual histogram data
+        #       and then keeping only their names.
+        
+        # get all entries for the requested lumisection
+        entries = self.getEntries(runlumis=[runlumi], namepatterns=namepatterns)
+
+        # loop over entries and filter monitoring elements
+        medict = {}
+        for entry, metree, idx, mename in self.loopEntries(entries):
+            if( namepatterns is not None and not DQMIOReader.keepMEName(mename, namepatterns) ): continue
+            medict[mename] = entry.type
+        return medict
+
+    def getMEsForLumi(self, runlumi, namepatterns=None):
+        ### get selected monitoring elements for a given lumisection
+        # input arguments:
+        # - runlumi: a tuple of the form (run number, lumisection number)
+        # - namepatternss: a string (may contain unix-style wildcards) to select monitoring elements,
+        #   or a list of such strings.
+        # returns:
+        # - a list of named tuples of type MonitorElement
+        return self.getMEs(runlumis=runlumi, namepatterns=namepatterns)
 
     def getSingleMEForLumi(self, runlumi, name):
         ### get selected monitoring element for a given lumisection
@@ -293,8 +419,9 @@ class DQMIOReader:
         # - runlumi: a tuple of the form (run number, lumisection number)
         # - name: the name of a monitoring element to extract
         # returns:
-        # a named tuple of type MonitorElement
-        # note: this can be much faster than getMEsForLumi when only few MEs are read per lumi.
+        # - a single named tuple of type MonitorElement
+        # note: alternatively, one could use getMEsForLumi with namepatterns = name
+        #       as optional argument, but this dedicated implementation can be much faster.
         
         def binsearch(a, key, lower, upper):
             ### binary search algorithm
@@ -304,7 +431,7 @@ class DQMIOReader:
             # - key: an instance of the same type of object as returned by a
             # - lower, upper: lower and upper integers to perform the search
             # returns:
-            # the integer res where a(res)==key
+            # - the integer res where a(res)==key
             # note: what happens if no such res exists?
             n = upper - lower
             if n <= 1: return lower
@@ -320,30 +447,23 @@ class DQMIOReader:
             # - key: an instance of the same type of object as returned by a
             # - lower, upper: lower and upper integers to perform the search
             # returns:
-            # the integer res where a(res)==key, or 0 if no such res exists.
+            # - the integer res where a(res)==key, or 0 if no such res exists.
             for k in range(lower, upper):
                 if a(k) == key: return k
             return 0
         
         # get all entries for the given lumisection and monitoring element name
-        entries = [e for e in self.index.get(runlumi, []) if e.type == self.medict[name]]
-        if len(entries)!=1:
-            msg = "ERROR in DQMIOReader.getSingleMEForLumi:"
-            msg += " requested to read data for lumisection {}".format(runlumi)
-            msg += " and monitoring element {}".format(name)
-            msg += " but {} entries were found, while expecting 1.".format(len(entries))
-            #raise IndexError(msg)
-            print(msg)
+        # (if everything goes well, this should be only one entry)
+        entries = self.getEntries(runlumis=[runlumi], namepatterns=[name], expect=1)
         
-        # loop over all entries for this lumisection and monitoring element (should be only 1)
-        for e in entries:
+        # loop over all entries for this lumisection and monitoring element
+        # (should be only one however, see check above)
+        for entry in entries:
             # read the tree and disable all branches except "FullName"
-            metree = getattr(e.file, DQMIOReader.getMEType(e.type))
+            metree = getattr(entry.file, DQMIOReader.getMETreeName(entry.type))
             metree.GetEntry(0)
             metree.SetBranchStatus("*",0)
             metree.SetBranchStatus("FullName",1)
-            # release GIL in long operations. Disable if it causes trouble.
-            #metree.GetEntry._threaded = True
             
             def searchkey(fullname):
                 # split into dir and name, since that is how the DQMStore orders things.
@@ -351,70 +471,79 @@ class DQMIOReader:
             def getentry(idx):
                 metree.GetEntry(idx)
                 return searchkey(str(metree.FullName))
-                
-            pos = binsearch(getentry, searchkey(name), e.firstidx, e.lastidx+1)
-            metree.GetEntry(pos, 1) # read full row
+            
+            # find the entry index of the requested monitoring element
+            pos = binsearch(getentry, searchkey(name), entry.firstidx, entry.lastidx+1)
+            # read the correct entry with all branches activated
+            metree.GetEntry(pos, 1)
+            # extra check if entry was correctly found
             if str(metree.FullName) != name:
-                return None
+                msg = 'ERROR in getSingleMEForLumi: could not find correc position'
+                msg += ' for monitoring element {}'.format(name)
+                raise Exception(msg)
             value = metree.Value
-            value = extractdatafromROOT(value)
-            return MonitorElement(runlumi[0], runlumi[1], name, e.type, value)
+            value = DQMIOReader.extractDataFromROOT(value)
+            return MonitorElement(runlumi[0], runlumi[1], name, entry.type, value)
         
-    def getMEs(self, *namepatterns):
-        ### read monitoring elements matching the given wildcard patterns from all lumis.
+    def getMEs(self, runlumis=None, namepatterns=None):
+        ### read monitoring elements matching the given wildcard pattern from all lumis.
         # input arguments:
-        # - namepatterns: a wildcard patterns (or multiple) to select monitoring elements
+        # - runlumis: a tuple of the form (run number, lumisection number),
+        #   or a list of such tuples;
+        #   if None, all available lumisections will be used.
+        # - namepatterns: a string (may contain unix-style wildcards) to select monitoring elements,
+        #   or a list of such strings;
+        #   if None, all available monitoring elements will be used.
         # returns:
-        # a list of named tuples of type MonitorElement
-        return sum((self.getMEsForLumi(lumi, *namepatterns) for lumi in self.listLumis()), [])
-        # (note: sum is list concat here)
+        # - a list of named tuples of type MonitorElement
+
+        # get all entries for the requested lumisections
+        entries = self.getEntries(runlumis=runlumis, namepatterns=namepatterns)
+
+        # loop over entries and filter monitoring elements
+        mes = []
+        for entry, metree, idx, mename in self.loopEntries(entries):
+            if( namepatterns is not None and not DQMIOReader.keepMEName(mename, namepatterns) ): continue
+            # reload the entry with all branches activated
+            metree.GetEntry(idx, 1)
+            # read the actual histogram data
+            value = metree.Value
+            value = DQMIOReader.extractDataFromROOT(value)
+            # make the MonitorElement and append to output array
+            me = MonitorElement(entry.run, entry.lumi, mename, entry.type, value)
+            mes.append(me)
+        return mes
  
-    @staticmethod
-    def showcount(ncurrent, ntot):
-        ### default callback method showing the progress of getSingleMEs
-        # input arguments:
-        # - ncurrent: current number of instance being processed
-        # - ntot: total number of instances to process
-        global start, lasttime, lastcount
-        try:
-            assert(lastcount < ncurrent)
-            # this fails if things are not initialized (e.g. in the first call)
-            # or the ctr was reset.
-        except:
-            # (re-)initialize
-            start = default_timer()
-            lasttime = default_timer()
-            lastcount = 0
-        tottime = default_timer() - start
-        deltatime = default_timer() - lasttime
-        lasttime = default_timer()
-        deltacount = ncurrent - lastcount
-        lastcount = ncurrent
-        msg = "Processed {} out of {} lumis in {:.2f} s ({:.2f}%, {:.2f}/s, avg {:.2f}/s)".format(
-               ncurrent, ntot, tottime, 100.0*ncurrent/ntot, deltacount/deltatime, ncurrent/tottime)
-        print(msg)
-        sys.stdout.flush()
-        sys.stderr.flush()
-    
-    def getSingleMEs(self, name, callback='default'):
+    def getSingleMEs(self, name, runlumis=None, callback='default'):
         ### read a single monitoring element with the given name from all lumis.
         # input arguments:
         # - name: the name of a monitoring element to extract
+        # - runlumis: a tuple of the form (run number, lumisection number),
+        #   or a list of such tuples;
+        #   if None, all available lumisections will be used.
         # - callback: can be used for progress printing.
         #             can be None (no callback), a custom function, or 'default',
         #             in which case the default callback showcount will be called.
         # returns:
         # a list of named tuples of type MonitorElement
         # note: this can be much faster than getMEs when only few MEs are read per lumi.
-        files = defaultdict(list)
-        ctr = [0]
+
+        # format runlumis
+        if runlumis is None: runlumis = self.listLumis()
+        if isinstance(runlumis, tuple): runlumis = [runlumis]
+
         # make a dict storing which lumisections are stored in which file
-        for lumi in self.listLumis():
-            files[self.index[lumi][0].file.GetName()].append(lumi)
+        files = defaultdict(list)
+        for runlumi in runlumis:
+            files[self.index[runlumi][0].file.GetName()].append(runlumi)
+
         # set the callback function as an instancde attribute
         self.callback = callback
         if self.callback=='default': self.callback = DQMIOReader.showcount
-                             
+
+        # initialize a counter
+        ctr = [0]
+
         def readlumi(lumi):
             ### read a single lumisection
             # note: for internal use in getSingleMEs only, do not call.
@@ -422,7 +551,7 @@ class DQMIOReader:
             if self.callback is not None:
                 ctr[0] += 1
                 if ctr[0] % 10 == 0:
-                    self.callback(ctr[0], len(self.listLumis()))
+                    self.callback(ctr[0], len(runlumis))
             return l
                              
         def readfile(f):
@@ -435,17 +564,17 @@ class DQMIOReader:
         p.close()
         return sum(result, [])
     
-    def getSingleMEsToDataFrame(self, name, verbose=False):
+    def getSingleMEsToDataFrame(self, name, runlumis=None, verbose=False):
         ### return a pandas dataframe for a given monitoring element
         # note: the same naming convention is used as in the 2017/2018 csv input!
 
-        if not pd:
-            raise pandas_import_error
+        if not pd: raise pandas_import_error
 
         # get the monitoring elements
         callback = None
         if verbose: callback='default'
-        mes = self.getSingleMEs(name, callback=callback)
+        mes = self.getSingleMEs(name, runlumis=runlumis, callback=callback)
+
         # initialize a dict with all info
         dfdict = dict()
         dfdict['fromrun'] = []
