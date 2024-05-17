@@ -46,7 +46,9 @@ if __name__=='__main__':
                       help='Set to true if the DAS dataset is a private production'
                            +' rather than central production (impacts the dasgoclient query).')
   parser.add_argument('--maxfiles', default=None,
-                      help='Maximum number of files to copy.')
+                      help='Maximum number of files to copy (default: all files in dataset).')
+  parser.add_argument('--filesperjob', type=int, default=1,
+                      help='Number of files to copy per job (default: 1)')
   parser.add_argument('--jobflavour', default='workday',
                         help='Set the job flavour in lxplus'
                              +' (see https://batchdocs.web.cern.ch/local/submit.html)')
@@ -61,12 +63,13 @@ if __name__=='__main__':
   proxy = args.proxy
   privateprod = args.privateprod
   maxfiles = int(args.maxfiles) if args.maxfiles is not None else None
+  filesperjob = args.filesperjob
   jobflavour = args.jobflavour
   resubmit = args.resubmit
 
   # make and execute the DAS client command
   dasfiles = format_input_files( datasetname,
-                                 filemode='das',
+                                 location='das',
                                  runnb=runnb,
                                  privateprod=privateprod,
                                  redirector=redirector,
@@ -74,34 +77,49 @@ if __name__=='__main__':
                                  maxfiles=maxfiles )
 
   # make output directory
-  if outputdir=='auto':
-    outputdir = datasetname.strip('/').replace('/','_')
-  if resubmit:
+  if outputdir=='auto': outputdir = datasetname.strip('/').replace('/','_')
+  if not resubmit:
+    if os.path.exists(outputdir):
+      raise Exception('ERROR: output directory {} already exists'.format(outputdir))
+    os.makedirs(outputdir)
+  else:
     if not os.path.exists(outputdir):
       raise Exception('ERROR: output directory {} does not exist'.format(outputdir)
                        +' (required for --resubmit option)')
+
+  # handle case of resubmission
+  if resubmit:
     existingfiles = os.listdir(outputdir)
     newdasfiles = []
     for dasfile in dasfiles:
       basename = dasfile.split('/')[-1]
       if basename not in existingfiles:
         newdasfiles.append(dasfile)
+    print('Found {} out of {} files already present.'.format(len(existingfiles),len(dasfiles)))
+    print('Will submit remaining {} files.'.format(len(newdasfiles)))
     dasfiles = newdasfiles
-  else:
-    if os.path.exists(outputdir):
-      raise Exception('ERROR: output directory {} already exists'.format(outputdir))
-    os.makedirs(outputdir)
 
+  # group the files
+  groupeddasfiles = []
+  idx = 0
+  while idx<len(dasfiles):
+    groupeddasfiles.append( dasfiles[idx:idx+filesperjob] )
+    idx += filesperjob
+  
   # ask for confirmation
-  print('Found {} files to download into {}'.format(len(dasfiles),outputdir))
+  print('Found {} files to download into {}.'.format(len(dasfiles),outputdir))
+  print('Will submit {} jobs.'.format(len(groupeddasfiles)))
   go = input('Proceed? (y/n) ')
   if go!='y': sys.exit()
 
   # make the commands
   cmds = []
-  for dasfile in dasfiles:
-    cmd = 'xrdcp {} {}'.format(dasfile,outputdir)
-    cmds.append(cmd)
+  for idx,dasfilegroup in enumerate(groupeddasfiles):
+    script = 'cjob_copy_das_to_local_set_temp{}.sh'.format(idx)
+    with open(script, 'w') as f:
+      for dasfile in dasfilegroup:
+        f.write('xrdcp {} {}\n'.format(dasfile,outputdir))
+    cmds.append('bash {}'.format(script))
 
   # submit the jobs
   if runmode=='local':
