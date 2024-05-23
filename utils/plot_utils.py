@@ -461,7 +461,8 @@ def plot_hists_2d(hists, ncols=4, axsize=5, title=None, titlesize=None,
 def plot_hists_2d_gif( hists, 
                        titles=None, xaxtitle=None, yaxtitle=None,
                        duration=300, figname='temp_gif.gif',
-                       mode='imageio'):
+                       mode='imageio',
+                       **kwargs ):
     # manage backend
     if mode=='imageio':
         try: import imageio
@@ -476,7 +477,7 @@ def plot_hists_2d_gif( hists,
     for i in range(nhists):
         title = None
         if titles is not None: title = titles[i]
-        fig,_ = plot_hist_2d(hists[i], title=title, xaxtitle=xaxtitle, yaxtitle=yaxtitle)
+        fig,_ = plot_hist_2d(hists[i], title=title, xaxtitle=xaxtitle, yaxtitle=yaxtitle, **kwargs)
         filename = 'temp_gif_file_{}.png'.format(i)
         filenames.append(filename)
         fig.savefig(filename, facecolor='white', transparent=False)
