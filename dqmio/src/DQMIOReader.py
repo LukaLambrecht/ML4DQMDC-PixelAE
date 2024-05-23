@@ -142,7 +142,7 @@ class DQMIOReader:
           11: "TProfile2Ds",
         }
         if metype not in treenames.keys():
-            msg = 'ERROR: provided metype {} not recognized;'
+            msg = 'ERROR: provided metype {} not recognized;'.format(metype)
             msg += ' options are {}.'.format(treenames)
             raise Exception(msg)
         return treenames[metype]
@@ -228,10 +228,21 @@ class DQMIOReader:
                 # note: apparently idxtree contains one "entry" per run, lumisection and type;
                 #       that is: all monitoring elements of the same type (e.g. TH1F) and for the same lumisection
                 #       are in the same "entry"; this is what FirstIndex and LastIndex are for (see below).
+                run, lumi, metype = idxtree.Run, idxtree.Lumi, idxtree.Type
                 # note: apparently idxtree.Lumi gives 0 for per-run monitoring elements,
                 #       but for now we ignore those and only read per-ls monitoring elements.
-                run, lumi, metype = idxtree.Run, idxtree.Lumi, idxtree.Type
                 if lumi == 0: continue
+                # note: the type should usually be an integer between 0 and 11
+                #       (see getMETreeName), but in rare cases, type 1000 is observed;
+                #       not clear what it is exactly, but skip it for now.
+                #       also automatically skip other cases where the type is not recognized.
+                try:
+                    treename = DQMIOReader.getMETreeName(metype)
+                except:
+                    msg = 'WARNING: found index entry of type {}'.format(metype)
+                    msg += ' which is not recognized; will skip this index entry.'
+                    #print(msg)
+                    continue
                 firstidx, lastidx = idxtree.FirstIndex, idxtree.LastIndex
                 e = IndexEntry(run, lumi, metype, f, firstidx, lastidx)
                 self.index[(run, lumi)].append(e)
@@ -255,11 +266,32 @@ class DQMIOReader:
         #       if you want to get the runs/lumisections in an ordered way,
         #       loop over indexlist, not index.keys()!
         self.indexlist = sorted(self.indexlist)
+
+    def printIndex(self):
+        ### print index diagnostics
+        # note: mostly for debugging purposes
+        # note: basically same structure as readIndex,
+        #       but print more info and do not store results
+        def printfileidx(f):
+            idxtree = getattr(f, "Indices")
+            print('Reading "Indices" tree of file {}'.format(f.GetName()))
+            print('Found {} index entries:'.format(idxtree.GetEntries()))
+            for i in range(idxtree.GetEntries()):
+                idxtree.GetEntry(i)
+                print('  - Run {}, lumi {}, type {}, first index {}, last index {}'.format(
+                      idxtree.Run, idxtree.Lumi, idxtree.Type, idxtree.FirstIndex, idxtree.LastIndex))
+        for f in self.rootfiles: printfileidx(f)
                 
     def makeMEList(self, sort=False):
         ### make a cached list for monitoring elements
         # note: for internal use in initializer only, do not call.
         # note: this function reads one lumisection and assumes all lumisection contains the same monitoring elements!
+        self.medict = {}
+        self.melist = []
+        if len(self.indexlist)==0:
+            msg = 'WARNING: current index has 0 entries, cannot make list of monitoring elements.'
+            print(msg)
+            return
         runlumi = self.indexlist[0]
         self.medict = self.getMENamesForLumi(runlumi)
         self.melist = list(self.medict.keys()) # separate list of ME names for sortability
