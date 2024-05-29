@@ -179,7 +179,11 @@ class HistStruct(object):
     # functions for adding histograms #
     ###################################
         
-    def add_dataframe( self, df, cropslices=None, rebinningfactor=None, 
+    def add_dataframe( self, df, 
+                        runcolumn='run', lumicolumn='lumi', menamecolumn='mename',
+                        datacolumn='data', xbinscolumn='xbins', ybinscolumn='ybins',
+                        entriescolumn='entries',
+                        cropslices=None, rebinningfactor=None, 
                         smoothinghalfwindow=None, smoothingweights=None,
                         averagewindow=None, averageweights=None,
                         donormalize=True ):
@@ -206,20 +210,24 @@ class HistStruct(object):
         #   one can also apply the preprocessing at a later stage using the preprocess() function
         #   with the same arguments.
         
-        histnames = dfu.get_histnames(df)
+        histnames = dfu.get_menames(df, menamecolumn=menamecolumn)
         # loop over all names in the dataframe
         for histname in histnames:
             if histname in self.histnames:
                 raise Exception('ERROR in HistStruct.add_dataframe: dataframe contains histogram name {}'.format(histname)
                                +' but this is already present in the current HistStruct.')
-            thisdf = dfu.select_histnames( df, [histname] )
+            thisdf = dfu.select_menames( df, [histname], menamecolumn=menamecolumn )
             # determine statistics (must be done before normalizing)
-            nentries = np.array(thisdf['entries'])
+            nentries = np.array(thisdf[entriescolumn])
             # get physical xmin and xmax
-            xmin = thisdf.at[0, 'Xmin']
-            xmax = thisdf.at[0, 'Xmax']
+            xmin = thisdf.at[0, 'xmin']
+            xmax = thisdf.at[0, 'xmax']
             # prepare the data
-            (hists_all,runnbs_all,lsnbs_all) = hu.preparedatafromdf(thisdf,returnrunls=True,
+            (hists_all,runnbs_all,lsnbs_all) = hu.preparedatafromdf(thisdf,
+                                                runcolumn=runcolumn,
+                                                lumicolumn=lumicolumn,
+                                                datacolumn=datacolumn,
+                                                returnrunls=True,
                                                 cropslices=cropslices,
                                                 rebinningfactor=rebinningfactor,
                                                 smoothinghalfwindow=smoothinghalfwindow,

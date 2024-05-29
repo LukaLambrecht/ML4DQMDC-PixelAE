@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# **Class for loading histograms from disk into a pandas dataframe.**  
+# **Class for loading monitoring elements (MEs) from disk into a pandas dataframe.**  
 # 
-# Typically, the input consists of a single file per histogram type,  
-# prepared from the nanoDQMIO format (accessed via DAS) and converted into another file format.  
+# Typically, the input consists of a single file per ME type,  
+# prepared from the (nano)DQMIO format (accessed via DAS) and converted into another file format.  
 # see the tools in the 'dqmio' folder for more info on preparing the input files.  
 # Currently supported input file formats:  
 # 
 # - csv  
 # - parquet  
+#
+# UPDATE: this class now also supports parquet files obtained with the DIALS API  
+# (see https://github.com/cms-DQM/dials-py)
 # 
 # Example usage:  
 # ```  
@@ -22,18 +25,18 @@
 # (deprecated approach for run-II data, before nanoDQMIO in run-III).  
 # In this case, the needed input consists of:  
 # 
-# - a set of histogram names to load  
+# - a set of ME names to load  
 # - a specification in terms of eras or years  
 # 
 # Example usage:  
 # ```
 # from DataLoader import DataLoader  
 # dl = DataLoader()  
-# csvfiles = dl.get_default_csv_files( year=<year>, dim=<histogram dimension> )  
-# df = dl.get_dataframe_from_files( csvfiles, histnames=<histogram names> )  
+# csvfiles = dl.get_default_csv_files( year=<year>, dim=<ME dimension> )  
+# df = dl.get_dataframe_from_files( csvfiles, menames=<ME names> )  
 # ```
 # 
-# The output consists of a pandas dataframe containing the requested histograms.  
+# The output consists of a pandas dataframe containing the requested MEs.  
 
 
 ### imports
@@ -47,9 +50,7 @@ import importlib
 # local modules
 sys.path.append('../utils')
 import csv_utils as csvu
-import dataframe_utils as dfu
 importlib.reload(csvu)
-importlib.reload(dfu)
 
 
 class DataLoader(object):
@@ -94,8 +95,8 @@ class DataLoader(object):
                                +' should be picked from {}'.format(self.valideras[year]))
                 
     def check_dim( self, dim ):
-        ### check if a histogram dimension is valid
-        # (note: only 1D and 2D histograms are supported for now)
+        ### check if a monitoring element dimension is valid
+        # (note: only 1D and 2D monitoring elements are supported for now)
         # (note: internal helper function, no need to call)
         if( dim not in self.validdims ):
             raise Exception('ERROR in DataLoader.check_dim:'
@@ -124,8 +125,8 @@ class DataLoader(object):
         # input arguments:
         # - year: data-taking year, should be '2017' or '2018' so far (default: 2017)
         # - eras: list of valid eras for the given data-taking year (default: all eras)
-        # - dim: dimension of requested histograms (1 or 2)
-        #   note: need to provide the dimension at this stage since the files for 1D and 2D histograms
+        # - dim: dimension of requested MEs (1 or 2)
+        #   note: need to provide the dimension at this stage since the files for 1D and 2D MEs
         #         are stored in different directories.
         # returns:
         # a list of directories containing the legacy csv files with the requested data.
@@ -193,13 +194,15 @@ class DataLoader(object):
     
     ### functions for reading single files
     
-    def get_dataframe_from_file( self, dfile, histnames=[], sort=True, verbose=True ):
-        ### load histograms from a given file into a dataframe
+    def get_dataframe_from_file( self, dfile, menames=[], sort=True, verbose=True,
+        runcolumn='fromrun', lumicolumn='fromlumi', menamecolumn='hname',
+        renamecolumns=None ):
+        ### load MEs from a given file into a dataframe
         # input arguments:
         # - dfile: file containing the data.
         #   currently supported formats: csv, parquet.
-        # - histnames: list of histogram names to keep
-        #   (default: keep all histograms present in the input file).
+        # - menames: list of ME names to keep
+        #   (default: keep all MEs present in the input file).
         # - sort: whether to sort the dataframe by run and lumisection number
         #   (note: requires keys 'fromrun' and 'fromlumi' to be present in the dataframe).
         # - verbose: whether to print info messages.
@@ -226,36 +229,79 @@ class DataLoader(object):
                            +' the file extension is {}'.format(ext),
                            +' which is currently not supported (must be .csv or .parquet).')
         # do selection if requested
-        if len(histnames)>0:
+        if len(menames)>0:
             if verbose:
                 msg = 'INFO in DataLoader.get_dataframe_from_file:'
-                msg += ' selecting histograms {}...'.format(histnames)
+                msg += ' selecting monitoring elements {}...'.format(menames)
                 print(msg)
-            df = dfu.select_histnames(df, histnames)
+            df = df[df[menamecolumn].isin(menames)]
+            df.reset_index(drop=True, inplace=True)
         # do sorting if requested
         if sort:
             if verbose:
                 msg = 'INFO in DataLoader.get_dataframe_from_file:'
                 msg += ' sorting the dataframe...'
                 print(msg)
-            df.sort_values(by=['fromrun','fromlumi'],inplace=True)
-            df.reset_index(drop=True,inplace=True)
+            df.sort_values(by=[runcolumn, lumicolumn], inplace=True)
+            df.reset_index(drop=True, inplace=True)
+        # rename columns if requested
+        if renamecolumns is not None:
+            if verbose:
+                msg = 'INFO in DataLoader.get_dataframe_from_file:'
+                msg += ' renaming colums...'
+                print(msg)
+            df.rename(mapper=renamecolumns, axis='columns', inplace=True)
         # do some more printouts if requested
         if verbose:
             msg = 'INFO in DataLoader.get_dataframe_from_file:'
             msg += ' loaded a dataframe with {} rows and {} columns.'.format(len(df), len(df.columns))
             print(msg)
         return df
+
+    def get_dataframe_from_legacy_file( self, dfile, **kwargs ):
+        renamecolumns = {
+          'fromrun': 'run',
+          'fromlumi': 'lumi',
+          'hname': 'mename',
+          'Xmin': 'xmin',
+          'Xmax': 'xmax',
+          'Xbins': 'xbins',
+          'Ymin': 'ymin',
+          'Ymax': 'ymax',
+          'Ybins': 'ybins',
+          'histo': 'data'
+        }
+        return self.get_dataframe_from_file(dfile, **kwargs, 
+                 runcolumn='fromrun', lumicolumn='fromlumi', menamecolumn='hname',
+                 renamecolumns=renamecolumns)
+
+    def get_dataframe_from_dials_file( self, dfile, **kwargs ):
+        renamecolumns = {
+          'run_number': 'run',
+          'ls_number': 'lumi',
+          'me': 'mename',
+          'x_min': 'xmin',
+          'x_max': 'xmax',
+          'x_bin': 'xbins',
+          'y_min': 'ymin',
+          'y_max': 'ymax',
+          'y_bin': 'ybins',
+        }
+        return self.get_dataframe_from_file(dfile, **kwargs, 
+                 runcolumn='run_number', lumicolumn='ls_number', menamecolumn='me',
+                 renamecolumns=renamecolumns)
     
     ### functions for reading multiple files
     
-    def get_dataframe_from_files( self, dfiles, histnames=[], sort=True, verbose=True ):
-        ### load histograms from a given set of files into a single dataframe
+    def get_dataframe_from_files( self, dfiles, menames=[], sort=True, verbose=True,
+        runcolumn='fromrun', lumicolumn='fromlumi', menamecolumn='hname',
+        renamecolumns=None ):
+        ### load MEs from a given set of files into a single dataframe
         # input arguments:
         # - dfiles: list of files containing the data.
         #   currently supported formats: csv, parquet.
-        # - histnames: list of histogram names to keep
-        #   (default: keep all histograms present in the input file).
+        # - menames: list of ME names to keep
+        #   (default: keep all MEs present in the input file).
         # - sort: whether to sort the dataframe by run and lumisection number
         #   (note: requires keys 'fromrun' and 'fromlumi' to be present in the dataframe).
         # - verbose: whether to print info messages.
@@ -281,7 +327,8 @@ class DataLoader(object):
                 msg += ' now processing file {} of {}...'.format(i+1, len(dfiles))
                 print(msg)
             # read dataframe for this file
-            df = self.get_dataframe_from_file( dfile, histnames=histnames, sort=False, verbose=verbose )
+            df = self.get_dataframe_from_file( dfile, menames=menames, sort=False, verbose=verbose,
+                   runcolumn=runcolumn, lumicolumn=lumicolumn, menamecolumn=menamecolumn )
             dflist.append(df)
         # concatenate
         if verbose:
@@ -295,8 +342,15 @@ class DataLoader(object):
                 msg = 'INFO in DataLoader.get_dataframe_from_files:'
                 msg += ' sorting the dataframe...'
                 print(msg)
-            df.sort_values(by=['fromrun','fromlumi'],inplace=True)
+            df.sort_values(by=[runcolumn,lumicolumn],inplace=True)
             df.reset_index(drop=True,inplace=True)
+        # rename columns if requested
+        if renamecolumns is not None:
+            if verbose:
+                msg = 'INFO in DataLoader.get_dataframe_from_file:'
+                msg += ' renaming colums...'
+                print(msg)
+            df.rename(mapper=renamecolumns, axis='columns', inplace=True)
         # do some more printouts if requested
         if verbose:
             msg = 'INFO in DataLoader.get_dataframe_from_files:'
@@ -304,6 +358,39 @@ class DataLoader(object):
             msg += ' with {} rows and {} columns.'.format(len(df), len(df.columns))
             print(msg)
         return df
+
+    def get_dataframe_from_legacy_files( self, dfiles, **kwargs ):
+        renamecolumns = {
+          'fromrun': 'run',
+          'fromlumi': 'lumi',
+          'hname': 'mename',
+          'Xmin': 'xmin',
+          'Xmax': 'xmax',
+          'Xbins': 'xbins',
+          'Ymin': 'ymin',
+          'Ymax': 'ymax',
+          'Ybins': 'ybins',
+          'histo': 'data'
+        }
+        return self.get_dataframe_from_files(dfiles, **kwargs,
+                 runcolumn='fromrun', lumicolumn='fromlumi', menamecolumn='hname',
+                 renamecolumns=renamecolumns)
+
+    def get_dataframe_from_dials_files( self, dfiles, **kwargs ):
+        renamecolumns = {
+          'run_number': 'run',
+          'ls_number': 'lumi',
+          'me': 'mename',
+          'x_min': 'xmin',
+          'x_max': 'xmax',
+          'x_bin': 'xbins',
+          'y_min': 'ymin',
+          'y_max': 'ymax',
+          'y_bin': 'ybins',
+        }
+        return self.get_dataframe_from_files(dfiles, **kwargs,
+                 runcolumn='run_number', lumicolumn='ls_number', menamecolumn='me',
+                 renamecolumns=renamecolumns)
         
     ### functions for writing a dataframe to a file
     

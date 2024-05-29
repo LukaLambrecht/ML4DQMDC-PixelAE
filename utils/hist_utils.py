@@ -439,7 +439,11 @@ def preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None,
                                        title = 'histogram examples' )
     return hist
 
-def preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=None, 
+def preparedatafromdf(df, 
+        runcolumn='run',
+        lumicolumn='lumi',
+        datacolumn='data',
+        returnrunls=False, cropslices=None, rebinningfactor=None, 
         smoothinghalfwindow=None, smoothingweights=None,
         averagewindow=None, averageweights=None,
         donormalize=False, doplot=False):
@@ -458,7 +462,8 @@ def preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=No
     # - doplot: if True, some example plots are made showing the histograms
 
     # preprocessing of the data: rebinning and normalizing
-    (hist,runnbs,lsnbs) = dataframe_utils.get_hist_values(df)
+    (hist,runnbs,lsnbs) = dataframe_utils.get_hist_values(df, runcolumn=runcolumn,
+                            lumicolumn=lumicolumn, datacolumn=datacolumn)
     if cropslices is not None:  hist = crophists(hist,cropslices)
     if rebinningfactor is not None: hist = rebinhists(hist,rebinningfactor)
     if smoothinghalfwindow is not None: hist = smoothhists(hist,
@@ -488,7 +493,9 @@ def preparedatafromdf(df, returnrunls=False, cropslices=None, rebinningfactor=No
     if returnrunls: return (hist,runnbs,lsnbs)
     else: return hist
 
-def preparedatafromcsv(dataname, returnrunls=False, cropslices=None, rebinningfactor=None, 
+def preparedatafromcsv(dataname,
+        runcolumn='run', lumicolumn='lumi', datacolumn='data',
+        returnrunls=False, cropslices=None, rebinningfactor=None, 
         smoothinghalfwindow=None, smoothingweights=None,
         averagewindow=None, averageweights=None,
         donormalize=True, doplot=False):
@@ -508,7 +515,9 @@ def preparedatafromcsv(dataname, returnrunls=False, cropslices=None, rebinningfa
     # read data
     df = csv_utils.read_csv(dataname)
     # prepare data from df
-    return preparedatafromdf(df, returnrunls=returnrunls, cropslices=cropslices, 
+    return preparedatafromdf(df, runcolumn=runcolumn,
+            lumicolumn=lumicolumn, datacolumn=datacolumn,
+            returnrunls=returnrunls, cropslices=cropslices, 
             rebinningfactor=rebinningfactor, 
             smoothinghalfwindow=smoothinghalfwindow,
             smoothingweights=smoothingweights,

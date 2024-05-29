@@ -119,23 +119,28 @@ def getjsondir():
         jsondir = os.path.join(jsondir,'ML4DQM-DC/jsons')
     return jsondir
 
-def isgolden(run, lumi):
+def isgolden(run, lumi, year=None):
     ### find if a run and lumi combination is in the golden json file
     # input arguments:
     # - run and lumi: either integers or (equally long) arrays of integers
     
     jsonloc2017 = os.path.join( getjsondir(), 'json_GOLDEN_2017.txt' ) 
-    # ultralegacy reprocessing; from: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
+    # legacy reprocessing; from: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt
     jsonloc2018 = os.path.join( getjsondir(), 'json_GOLDEN_2018.txt' )
     # legacy reprocessing; from: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/Legacy_2018/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt
     jsonloc2022 = os.path.join( getjsondir(), 'json_GOLDEN_2022.txt' )
     # from: /eos/user/c/cmsdqm/www/CAF/certification/Collisions22/Cert_Collisions2022_355100_362760_Golden.json
-    isinjson = (injson(run,lumi,jsonfile=jsonloc2017)
-                + injson(run,lumi,jsonfile=jsonloc2018)
-                + injson(run,lumi,jsonfile=jsonloc2022))
-    return isinjson
+    jsonloc2024 = 'ERROR: golden json for 2024 not yet defined.'
+    if year=='2017': return injson(run,lumi,jsonfile=jsonloc2017)
+    elif year=='2018': return injson(run,lumi,jsonfile=jsonloc2018)
+    elif year=='2022': return injson(run,lumi,jsonfile=jsonloc2022)
+    elif year=='2024': return injson(run,lumi,jsonfile=jsonloc2024)
+    else: return (injson(run,lumi,jsonfile=jsonloc2017)
+                  + injson(run,lumi,jsonfile=jsonloc2018)
+                  + injson(run,lumi,jsonfile=jsonloc2022)
+                  + injson(run,lumi,jsonfile=jsonloc2024))
 
-def isdcson(run, lumi):
+def isdcson(run, lumi, year=None):
     ### find if a run and lumi combination is in DCS-only json file
     # input arguments:
     # - run and lumi: either integers or (equally long) arrays of integers
@@ -146,10 +151,17 @@ def isdcson(run, lumi):
     # from: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/DCSOnly/json_DCSONLY.txt
     jsonloc2022 = os.path.join( getjsondir(), 'json_DCSONLY_2022.txt' )
     # from: /eos/user/c/cmsdqm/www/CAF/certification/Collisions22/DCSOnly_JSONS/Cert_Collisions2022_352416_362760_eraABCDEFG_DCSOnly_TkPx.json
-    isinjson = (injson(run,lumi,jsonfile=jsonloc2017) 
-                + injson(run,lumi,jsonfile=jsonloc2018)
-                + injson(run,lumi,jsonfile=jsonloc2022))
-    return isinjson
+    jsonloc2024 = os.path.join( getjsondir(), 'json_DCSONLY_2024.txt' )
+    # from: /eos/user/c/cmsdqm/www/CAF/certification/Collisions24/DCSOnly_JSONS/dailyDCSOnlyJSON/Collisions24_13p6TeV_378981_381309_DCSOnly_TkPx.json
+    # to be updated as 2024 data taking progresses
+    if year=='2017': return injson(run,lumi,jsonfile=jsonloc2017)
+    elif year=='2018': return injson(run,lumi,jsonfile=jsonloc2018)
+    elif year=='2022': return injson(run,lumi,jsonfile=jsonloc2022)
+    elif year=='2024': return injson(run,lumi,jsonfile=jsonloc2024)
+    else: return (injson(run,lumi,jsonfile=jsonloc2017) 
+                  + injson(run,lumi,jsonfile=jsonloc2018)
+                  + injson(run,lumi,jsonfile=jsonloc2022)
+                  + injson(run,lumi,jsonfile=jsonloc2024))
 
 
 ### conversions with other useful formats
