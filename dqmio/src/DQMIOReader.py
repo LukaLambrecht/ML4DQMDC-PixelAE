@@ -177,8 +177,19 @@ class DQMIOReader:
  
     ### initializer and auxiliary functions
  
-    def __init__(self, *files, sortindex=False, sortmes=False, nthreads=1,
-                 verbose=True):
+    def __init__(self,
+        *files,
+        dummy=True,
+        sortindex=False,
+        sortmes=False,
+        nthreads=1,
+        verbose=True ):
+
+        # note: the syntax above does not work in python2, only in python3...
+        #       might change this later on, but the best is probably to get rid of *files
+        #       and just make it a regular list argument;
+        #       this implies a change in syntax for all calling code though...
+
         ### initializer
         # open the passed in files and read their index data.
         # input arguments:
