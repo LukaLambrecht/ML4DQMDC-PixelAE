@@ -171,7 +171,8 @@ def plot_hists_multi(histlist, fig=None, ax=None, figsize=None,
                      colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1),
                      title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
                      caxtitle=None, caxtitlesize=None, caxtitleoffset=None, hidecaxis=False,
-                     extratext=None, extratextsize=None,
+                     extratext=None, extratextsize=None, extratextloc=(0.7,0.6),
+                     extratextha='left', extratextva='bottom',
                      remove_underflow=False, remove_overflow=False,
                      ylims=None, ymaxfactor=None, legendsize=None, opaque_legend=False,
                      ticksize=None ):
@@ -222,14 +223,15 @@ def plot_hists_multi(histlist, fig=None, ax=None, figsize=None,
     if ticksize is not None: ax.tick_params(axis='both', labelsize=ticksize)
     if title is not None: ax.set_title(title, fontsize=titlesize)
     if extratext is not None: 
-        add_text( ax, extratext, (0.95,0.6), fontsize=extratextsize, horizontalalignment='right' )
+        add_text( ax, extratext, extratextloc, fontsize=extratextsize, ha=extratextha, va=extratextva )
     if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)      
     return (fig,ax)
     
 def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[],
              title=None, titlesize=None,
-             extratext=None, extratextsize=None,
+             extratext=None, extratextsize=None, extratextloc=(0.7,0.6),
+             extratextha='left', extratextva='bottom',
              xaxtitle=None, xaxtitlesize=None, xlims=(-0.5,-1), 
              remove_underflow=False, remove_overflow=False,
              yaxtitle=None, yaxtitlesize=None, ylims=None, ymaxfactor=None, 
@@ -286,7 +288,7 @@ def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparen
     if ticksize is not None: ax.tick_params(axis='both', labelsize=ticksize)
     if title is not None: ax.set_title(title, fontsize=titlesize)
     if extratext is not None: 
-        add_text( ax, extratext, (0.95,0.6), fontsize=extratextsize, horizontalalignment='right' )
+        add_text( ax, extratext, extratextloc, fontsize=extratextsize, ha=extratextha, va=extratextva )
     if xaxtitle is not None: ax.set_xlabel(xaxtitle, fontsize=xaxtitlesize)
     if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)
     return (fig,ax)
@@ -626,7 +628,7 @@ def plot_mse(mse, rmlargest=0., doplot=True,
 ###########################################################
 
 def plot_score_dist( scores, labels, fig=None, ax=None,
-                        nbins=20, normalize=False,
+                        nbins=20, normalize=False, normalizesignal=False,
                         siglabel='Signal', sigcolor='g',
                         bcklabel='Background', bckcolor='r',
                         title=None, titlesize=12,
@@ -637,17 +639,23 @@ def plot_score_dist( scores, labels, fig=None, ax=None,
                         ticksize=None,
                         doshow=True):
     ### make a plot showing the distributions of the output scores for signal and background
+    
+    # define binning between min and max
     minscore = np.min(scores)
     maxscore = np.max(scores)
     scorebins = np.linspace(minscore,maxscore,num=nbins+1)
     scoreax = (scorebins[1:] + scorebins[:-1])/2
+    # split in signal and background
     sigscores = scores[np.where(labels==1)]
     bkgscores = scores[np.where(labels==0)]
+    # make histograms
     sighist = np.histogram(sigscores,bins=scorebins)[0]
     bckhist = np.histogram(bkgscores,bins=scorebins)[0]
     if normalize:
-        sighist = sighist/np.sum(sighist)
-        bckhist = bckhist/np.sum(bckhist)
+        if np.sum(sighist)!=0: sighist = sighist/np.sum(sighist)
+        if np.sum(bckhist)!=0: bckhist = bckhist/np.sum(bckhist)
+    if normalizesignal:
+        if np.amax(sighist)!=0: sighist *= np.amax(bckhist)/np.amax(sighist)
     if( fig is None or ax is None): (fig,ax) = plt.subplots()
     ax.step(scoreax,bckhist,color=bckcolor,label=bcklabel,where='mid')
     ax.step(scoreax,sighist,color=sigcolor,label=siglabel,where='mid')

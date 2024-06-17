@@ -622,6 +622,25 @@ class HistStruct(object):
         if histname is None: return res
         return res[histname]
     
+    def get_scores_for_runsls( self, modelname, runsls, histname=None, masknames=None ):
+        ### similar to get_scores, but return scores for specified lumisections
+        # input arguments:
+        # - modelname: name of the model for which to retrieve the global score
+        # - runsls: dict in the same format as e.g. the golden json, e.g. {"380235": [[1,10], [15,20]]}
+        # - histname: name of the histogram type for which to retrieve the score. 
+        #   if None, return a dict matching histnames to arrays of scores
+        # - masknames: list of names of masks (that come on top of the run/lumisection mask)
+        #   (default: no masking, return full array)
+        # note: the run and lumisection numbers are returned as well
+        mask = jsonu.injson( self.runnbs, self.lsnbs, jsondict=runsls )
+        if masknames is not None: mask = ((mask) & (self.get_combined_mask(masknames)))
+        scores = self.get_scores(modelname, histname=histname)
+        if histname is None:
+            for histname in self.histnames:
+                scores[histname] = scores[histname][mask]
+        else: scores = scores[mask]
+        return (self.runnbs[mask][:], self.lsnbs[mask][:], scores)
+    
     def get_scores_array( self, modelname, setnames=None, masknames=None ):
         ### similar to get_scores, but with different return type:
         # np array of shape (nhistograms, nhistogramtypes)
@@ -631,50 +650,6 @@ class HistStruct(object):
             scores_array.append(scores[histname])
         scores_array = np.transpose(np.array(scores_array))
         return scores_array
-    
-    def get_extscores( self, extname, histname=None ):
-        ### get the array of scores for a given histogram type in a given extra set.
-        # DEPRECATED, DO NOT USE ANYMORE
-        # input arguments:
-        # - extname: name of the extra set (see also add_exthistograms)
-        # - histname: name of the histogram type for which to retrieve the score. 
-        #   if None, return a dict matching histnames to arrays of scores
-        # notes:
-        # - this method takes the scores from the HistStruct.extscores attribute;
-        #   make sure to have evaluated the classifiers before calling this method,
-        #   else an exception will be thrown.
-        raise Exception('ERROR: HistStruct.get_extscores is deprecated!')
-        '''if not extname in self.exthistograms.keys():
-            raise Exception('ERROR in HistStruct.get_extscores: requested to retrieve scores for set {}'.format(extname)
-                           +' but this is not present in the current HistStruct.')
-        histnames = self.histnames[:]
-        if histname is not None:
-            # check if histname is valid
-            if histname not in self.exthistograms[extname].keys():
-                raise Exception('ERROR in HistStruct.get_extscores: requested histogram name {}'.format(histname)
-                               +' but this is not present in the extra set with name {}.'.format(extname))
-            if histname not in self.extscores[extname].keys():
-                raise Exception('ERROR in HistStruct.get_extscores: requested histogram name {}'.format(histname)
-                               +' in extra set with name {}'.format(extname)
-                               +' but the scores for this histogram type were not yet initialized.')
-            histnames = [histname]
-        res = {}
-        for hname in histnames:
-            res[hname] = self.extscores[extname][hname]
-        if histname is None: return res
-        return res[histname]'''
-    
-    def get_extscores_array( self, extname ):
-        ### similar to get_extscores, but with different return type:
-        # np array of shape (nhistograms, nhistogramtypes)
-        # DEPRECATED, DO NOT USE ANYMORE
-        raise Exception('ERROR: HistStruct.get_extscores_array is deprecated!')
-        '''scores = self.get_extscores( extname )
-        scores_array = []
-        for histname in self.histnames:
-            scores_array.append(scores[histname])
-        scores_array = np.transpose(np.array(scores_array))
-        return scores_array'''
     
     def get_scores_ls( self, modelname, runnb, lsnb, histnames=None ):
         ### get the scores for a given run/lumisection number and for given histogram names
@@ -716,6 +691,19 @@ class HistStruct(object):
             mask = self.get_combined_mask(masknames)
             scores = scores[mask]
         return scores
+    
+    def get_globalscores_for_runsls( self, modelname, runsls, masknames=None ):
+        ### get the array of global scores for specific lumisections
+        # input arguments:
+        # - modelname: name of the model for which to retrieve the global score
+        # - runsls: dict in the same format as e.g. the golden json, e.g. {"380235": [[1,10], [15,20]]}
+        # - masknames: list of names of masks (that come on top of the run/lumisection mask)
+        #   (default: no masking, return full array)
+        # note: the run and lumisection numbers are returned as well
+        mask = jsonu.injson( self.runnbs, self.lsnbs, jsondict=runsls )
+        if masknames is not None: mask = ((mask) & (self.get_combined_mask(masknames)))
+        scores = self.get_globalscores(modelname)
+        return (self.runnbs[mask][:], self.lsnbs[mask][:], scores[mask][:])
     
     def get_globalscores_jsonformat( self, modelname=None ):
         ### make a json format listing all lumisections in this histstruct
