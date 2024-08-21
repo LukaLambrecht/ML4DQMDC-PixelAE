@@ -381,10 +381,9 @@ def getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10):
     
     import math
     import tensorflow as tf
-    from tensorflow import keras
-    from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
-    from tensorflow.keras.layers import Input, Dense
-    from tensorflow.keras.models import Model, Sequential, load_model
+    from keras.callbacks import ModelCheckpoint, EarlyStopping
+    from keras.layers import Input, Dense
+    from keras.models import Model, Sequential, load_model
     from keras import backend as K
     
     if len(act)==0: act = ['tanh']*len(arch)

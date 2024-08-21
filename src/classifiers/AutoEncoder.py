@@ -15,8 +15,8 @@
 import os
 import sys
 import numpy as np
-import tensorflow
-from tensorflow.keras.models import load_model
+from keras import Model
+from keras.models import load_model
 import importlib
 
 # local modules
@@ -52,7 +52,7 @@ class AutoEncoder(HistogramClassifier):
             raise Exception('ERROR in AutoEncoder.__init__: model and modelpath cannot both be specified.')
         # case 1: model is specified directly:
         if( model is not None ):
-            if not isinstance( model, tensorflow.keras.Model ):
+            if not isinstance( model, Model ):
                 raise Exception('ERROR in AutoEncoder.init: model has type {}'.format(type(model))
                                +' while a tensorflow model is expected.')
             self.model = model
