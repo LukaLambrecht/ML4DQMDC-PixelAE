@@ -158,8 +158,11 @@ def get_hist_values(df, datacolumn='data', xbinscolumn='xbins', ybinscolumn='ybi
         warn("get_hist_values: Input dataframe contains no records", UserWarning, stacklevel=2)
         return (None, np.empty((0,), dtype=int), np.empty((0,), dtype=int))
 
+    # Index of the first row in the input DataFrame
+    i0 = df.index[0]
+
     # check for corruption of data types (observed once after merging several csv files)
-    if isinstance( df.at[0,xbinscolumn], str ):
+    if isinstance( df.at[i0, xbinscolumn], str ):
         raise Exception('ERROR in dataframe_utils.py / get_hist_values:'
                 +' the "{}" entry in the dataframe is of type str,'.format(xbinscolumn)
                 +' while a numpy int is expected; check for file corruption.')
@@ -167,27 +170,27 @@ def get_hist_values(df, datacolumn='data', xbinscolumn='xbins', ybinscolumn='ybi
     # check data type of data field
     # (string in csv files, numpy array in parquet files)
     # case of string
-    if isinstance( df.at[0,datacolumn], str ):
+    if isinstance( df.at[i0, datacolumn], str ):
         # check dimension
         dim = 1
         if ybinscolumn in df.keys():
-            if int(df.at[0,ybinscolumn])>1: dim=2
+            if int(df.at[i0, ybinscolumn])>1: dim=2
         # initializations
-        nxbins = int(df.at[0,xbinscolumn])+2 # +2 for under- and overflow bins
+        nxbins = int(df.at[i0, xbinscolumn])+2 # +2 for under- and overflow bins
         vals = np.zeros((len(df),nxbins))
         if dim==2:
-            nybins = int(df.at[0,ybinscolumn])+2
+            nybins = int(df.at[i0, ybinscolumn])+2
             vals = np.zeros((len(df),nybins,nxbins))
         ls = np.zeros(len(df))
         runs = np.zeros(len(df))
         # loop over all entries
-        for i in range(len(df)):
+        for i in range(i0, i0 + len(df)):
             try:
                 # default encoding (with comma separation)
-                jsonstr = json.loads(df.at[i,datacolumn])
+                jsonstr = json.loads(df.at[i0, datacolumn])
             except:
                 # alternative encoding (with space separation)
-                jsonstr = json.loads(df.at[i,datacolumn].replace(' ', ','))
+                jsonstr = json.loads(df.at[i0, datacolumn].replace(' ', ','))
             hist = np.array(jsonstr)
             if dim==2: hist = hist.reshape((nybins,nxbins))
             vals[i,:] = hist
@@ -195,7 +198,7 @@ def get_hist_values(df, datacolumn='data', xbinscolumn='xbins', ybinscolumn='ybi
             runs[i] = int(df.at[i,runcolumn])
     
     # case of numpy array
-    if isinstance( df.at[0,datacolumn], np.ndarray ):
+    if isinstance( df.at[i0, datacolumn], np.ndarray ):
         vals = np.vstack(df[datacolumn].values)
         ls = df[lumicolumn].values
         runs = df[runcolumn].values
