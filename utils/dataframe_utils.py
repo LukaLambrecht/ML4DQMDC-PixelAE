@@ -212,17 +212,18 @@ def get_hist_values(df, datacolumn='data', xbinscolumn='xbins', ybinscolumn='ybi
         ls = np.zeros(len(df))
         runs = np.zeros(len(df))
         # loop over all entries
-        for i in range(i0, i0 + len(df)):
+        for ii in range(len(df.index)):
+            i = df.index[ii]
             jsonstr = json.loads(preprocess(df.at[i, datacolumn]))
             if has_overflow:
-                vals[i, :][:] = jsonstr
+                vals[ii, :][:] = jsonstr
             else:
                 if dim == 2:
-                    vals[i, 1:-1, 1:-1][:] = jsonstr
+                    vals[ii, 1:-1, 1:-1][:] = jsonstr
                 else:
-                    vals[i, 1:-1] = jsonstr
-            ls[i] = int(df.at[i,lumicolumn])
-            runs[i] = int(df.at[i,runcolumn])
+                    vals[ii, 1:-1] = jsonstr
+            ls[ii] = int(df.at[i,lumicolumn])
+            runs[ii] = int(df.at[i,runcolumn])
     
     # case of numpy array
     if isinstance( df.at[i0, datacolumn], np.ndarray ):
