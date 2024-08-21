@@ -147,7 +147,7 @@ def get_hist_values(df, datacolumn='data', xbinscolumn='xbins', ybinscolumn='ybi
     #       update: 'ybins' is also present for 1D histograms, but has value 1!
     # output:
     # a tuple containing the following elements:
-    # - np array of shape (nhists,nbins) (for 1D) or (nhists,nybins,nxbins) (for 2D)
+    # - np array of shape (nhists,nbins) (for 1D) or (nhists,nybins,nxbins) (for 2D), with underflow and overflow bins
     # - np array of run numbers of length nhists
     # - np array of lumisection numbers of length nhists
     # warning: no check is done to assure that all histograms are of the same type!
