@@ -16,6 +16,7 @@ import pandas as pd
 import numpy as np
 import json
 import importlib
+from warnings import warn
 
 # local modules
 import json_utils
@@ -151,7 +152,12 @@ def get_hist_values(df, datacolumn='data', xbinscolumn='xbins', ybinscolumn='ybi
     # - np array of run numbers of length nhists
     # - np array of lumisection numbers of length nhists
     # warning: no check is done to assure that all histograms are of the same type!
-    
+
+    # check if the input dataset is of no records
+    if not len(df):
+        warn("get_hist_values: Input dataframe contains no records", UserWarning, stacklevel=2)
+        return (None, np.empty((0,), dtype=int), np.empty((0,), dtype=int))
+
     # check for corruption of data types (observed once after merging several csv files)
     if isinstance( df.at[0,xbinscolumn], str ):
         raise Exception('ERROR in dataframe_utils.py / get_hist_values:'
