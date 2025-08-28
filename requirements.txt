@@ -1,7 +1,8 @@
 imageio # (Optional) Image-to-GIF conversion
+keras
 matplotlib # Plot generation
 numpy
 pandas
 requests
 six # Python2 and Python3 compatibility
-tensorflow # Machine learning
+tensorflow # (Optional) Keras backend, replaceable with other backends
