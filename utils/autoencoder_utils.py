@@ -15,7 +15,6 @@ import math
 
 # external modules
 import numpy as np
-import tensorflow as tf
 import keras
 
 from keras.callbacks import ModelCheckpoint, EarlyStopping
@@ -52,7 +51,11 @@ def mseTop10(y_true, y_pred):
     # - mean squared error between y_true and y_pred,
     #   where only the 10 bins with largest squared error are taken into account.
     #   if y_true and y_pred are 2D arrays, this function returns 1D array (mseTop10 for each histogram)
-    top_values, _ = tf.nn.top_k(ops.square(y_pred - y_true), k=10, sorted=True)
+    if keras.__version__.startswith("2."):
+        top_k = K.tf.math.top_k
+    else:
+        top_k = ops.top_k
+    top_values, _ = top_k(ops.square(y_pred - y_true), k=10, sorted=True)
     mean=ops.mean(top_values, axis=-1)
     return mean
 
