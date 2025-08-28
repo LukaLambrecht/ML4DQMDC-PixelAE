@@ -11,10 +11,17 @@
 
 ### imports
 
+import math
+
 # external modules
 import numpy as np
 import tensorflow as tf
 import keras
+
+from keras.callbacks import ModelCheckpoint, EarlyStopping
+from keras.layers import Input, Dense
+from keras.models import Model, Sequential, load_model
+from keras import backend as K
 
 # keras math operation module
 if keras.__version__.startswith("2."):
@@ -386,13 +393,6 @@ def getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10):
     # - act: list of activations per layer (default: tanh)
     # - opt: optimizer to use (default: adam)
     # - loss: loss function to use (defualt: mseTop10)
-    
-    import math
-    import tensorflow as tf
-    from keras.callbacks import ModelCheckpoint, EarlyStopping
-    from keras.layers import Input, Dense
-    from keras.models import Model, Sequential, load_model
-    from keras import backend as K
     
     if len(act)==0: act = ['tanh']*len(arch)
     layers = []
