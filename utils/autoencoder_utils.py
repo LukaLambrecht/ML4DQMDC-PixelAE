@@ -18,6 +18,7 @@ import numpy as np
 import keras
 
 from keras.callbacks import ModelCheckpoint, EarlyStopping
+from keras.initializers import GlorotUniform
 from keras.layers import Input, Dense
 from keras.models import Model, Sequential, load_model
 from keras import backend as K
@@ -388,7 +389,7 @@ def get_wp_maxauc(scores, labels, doplot=False):
 
 ### getting a keras model ready for training with minimal user inputs
 
-def getautoencoder(input_size,arch,act=None,opt='adam',loss=mseTop10):
+def getautoencoder(input_size,arch,act=None,opt='adam',loss=mseTop10,seed=None):
     ### get a trainable autoencoder model
     # input args:
     # - input_size: size of vector that autoencoder will operate on
@@ -396,18 +397,32 @@ def getautoencoder(input_size,arch,act=None,opt='adam',loss=mseTop10):
     # - act: list of activations per layer (default: tanh)
     # - opt: optimizer to use (default: adam)
     # - loss: loss function to use (defualt: mseTop10)
+    # - seed: random number generator seed (default: None)
     
     nlayers_hidden = len(arch)
     if act is None or not len(act):
         act = ['tanh'] * nlayers_hidden
     layers = []
     # first layer manually to set input_dim
-    layers.append(Dense(arch[0],activation=act[0],input_dim=input_size))
+    layers.append(Dense(
+        arch[0],
+        activation=act[0],
+        input_dim=input_size,
+        kernel_initializer=GlorotUniform(seed),
+    ))
     # rest of layers in a loop
     for nnodes,activation in zip(arch[1:],act[1:nlayers_hidden]):
-        layers.append(Dense(nnodes,activation=activation))
+        layers.append(Dense(
+            nnodes,
+            activation=activation,
+            kernel_initializer=GlorotUniform(seed),
+        ))
     # last layer is decoder
-    layers.append(Dense(input_size,activation=act[nlayers_hidden] if len(act) > nlayers_hidden else 'tanh'))
+    layers.append(Dense(
+        input_size,
+        activation=act[nlayers_hidden] if len(act) > nlayers_hidden else 'tanh',
+        kernel_initializer=GlorotUniform(seed),
+    ))
     autoencoder = Sequential()
     for i,l in enumerate(layers):
         #l.name = 'layer_'+str(i)
