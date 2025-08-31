@@ -421,7 +421,8 @@ def preprocess_hists(hists,
         cropslices=None, rebinningfactor=None,
         smoothinghalfwindow=None, smoothingweights=None,
         averagewindow=None, averageweights=None,
-        donormalize=False, doplot=False):
+        donormalize=False, norm=None,
+        doplot=False):
     ### preprocess and optionally plot the histograms
     # input arguments:
     # - cropslices: list of slices (one per dimension) by which to crop the historams
@@ -431,6 +432,7 @@ def preprocess_hists(hists,
     # - smoothinghalfwindow: int or tuple (for 1D/2D histograms) used for smoothing the histograms
     # - smoothingweights: 1D or 2D array (for 1D/2D histograms) with weights for smoothing
     # - donormalize: boolean whether to normalize the data
+    # - norm: the normalization strategy
     # - doplot: if True, some example plots are made showing the histograms
 
     # preprocessing of the data: rebinning and normalizing
@@ -464,7 +466,8 @@ def preparedatafromnpy(dataname,
         cropslices=None, rebinningfactor=None,
         smoothinghalfwindow=None, smoothingweights=None,
         averagewindow=None, averageweights=None,
-        donormalize=False, doplot=False):
+        donormalize=False, norm=None,
+        doplot=False):
     ### read a .npy file and output the histograms
     # input arguments:
     # - see e.g. preprocess_hists
@@ -481,6 +484,7 @@ def preparedatafromnpy(dataname,
         averagewindow=averagewindow,
         averageweights=averageweights,
         donormalize=donormalize,
+        norm=norm,
         doplot=doplot)
 
 def preparedatafromdf(df,
@@ -491,7 +495,8 @@ def preparedatafromdf(df,
         cropslices=None, rebinningfactor=None,
         smoothinghalfwindow=None, smoothingweights=None,
         averagewindow=None, averageweights=None,
-        donormalize=False, doplot=False):
+        donormalize=False, norm=None,
+        doplot=False):
     ### prepare the data contained in a dataframe in the form of a numpy array
     # input arguments:
     # - returnrunls: boolean whether to return a tuple of
@@ -510,6 +515,7 @@ def preparedatafromdf(df,
         averagewindow=averagewindow,
         averageweights=averageweights,
         donormalize=donormalize,
+        norm=norm,
         doplot=doplot)
 
     return (hists, runnbs, lsnbs) if returnrunls else hists
@@ -519,7 +525,8 @@ def preparedatafromcsv(dataname,
         returnrunls=False, cropslices=None, rebinningfactor=None,
         smoothinghalfwindow=None, smoothingweights=None,
         averagewindow=None, averageweights=None,
-        donormalize=True, doplot=False):
+        donormalize=True, norm=None,
+        doplot=False):
     ### prepare the data contained in a dataframe csv file in the form of a numpy array
     # input arguments:
     # - returnrunls: boolean whether to return a tuple of (histograms, run numbers, lumisection numbers).
@@ -544,4 +551,6 @@ def preparedatafromcsv(dataname,
             smoothingweights=smoothingweights,
             averagewindow=averagewindow,
             averageweights=averageweights,
-            donormalize=donormalize,doplot=doplot)
+            donormalize=donormalize,
+            norm=norm,
+            doplot=doplot)
