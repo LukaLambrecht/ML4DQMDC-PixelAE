@@ -401,60 +401,16 @@ def histmoments(bins, counts, orders):
 
 ### higher level function for automatic preprocessing of data
 
-def preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None, 
-        smoothinghalfwindow=None, smoothingweights=None,
-        averagewindow=None, averageweights=None,
-        donormalize=True, doplot=False):
-    ### read a .npy file and output the histograms
-    # input arguments: 
-    # - see e.g. preparedatafromdf
-    # notes: 
-    # - not yet tested for 2D histograms, but is expected to work...
-    
-    hist = np.load(dataname,allow_pickle=False)
-    # preprocessing of the data: rebinning and normalizing
-    if cropslices is not None:  hist = crophists(hist,cropslices)
-    if rebinningfactor is not None: hist = rebinhists(hist,rebinningfactor)
-    if smoothinghalfwindow is not None: hist = smoothhists(hist,
-                                            halfwindow=smoothinghalfwindow,
-                                            weights=smoothingweights)
-    if averagewindow is not None: hists = running_average_hists(hists,
-                                                     window=averagewindow,
-                                                     weights=averageweights)
-    if donormalize: hist = normalizehists(hist)
-        
-    if not doplot:
-        return hist
-    
-    # plot some examples
-    nplot = min(8,len(hist))
-    flatindex = np.linspace(0,len(hist),num=len(hist),endpoint=False)
-    randint = np.random.choice(flatindex,size=nplot,replace=False).astype(int)
-    if len(hist.shape)==2:
-        _,_ = plot_utils.plot_hists( hist[randint], colorlist='b',
-                                    title = 'histogram examples',
-                                    xaxtitle = 'bin number' )
-    if len(hist.shape)==3:
-        _,_ = plot_utils.plot_hists_2d( hist[randint], ncols=4, 
-                                       title = 'histogram examples' )
-    return hist
-
-def preparedatafromdf(df, 
-        runcolumn='run',
-        lumicolumn='lumi',
-        datacolumn='data',
-        returnrunls=False, cropslices=None, rebinningfactor=None, 
+def preprocess_hists(hists,
+        cropslices=None, rebinningfactor=None,
         smoothinghalfwindow=None, smoothingweights=None,
         averagewindow=None, averageweights=None,
         donormalize=False, doplot=False):
-    ### prepare the data contained in a dataframe in the form of a numpy array
+    ### preprocess and optionally plot the histograms
     # input arguments:
-    # - returnrunls: boolean whether to return a tuple of 
-    #   (histograms, run numbers, lumisection numbers).
-    #   (default: return only histograms)
-    # - cropslices: list of slices (one per dimension) by which to crop the historams 
+    # - cropslices: list of slices (one per dimension) by which to crop the historams
     #   (default: no cropping)
-    # - rebinningfactor: an integer (or tuple of integers for 2D histograms) 
+    # - rebinningfactor: an integer (or tuple of integers for 2D histograms)
     #   to downsample/rebin the histograms (default: no rebinning)
     # - smoothinghalfwindow: int or tuple (for 1D/2D histograms) used for smoothing the histograms
     # - smoothingweights: 1D or 2D array (for 1D/2D histograms) with weights for smoothing
@@ -462,40 +418,89 @@ def preparedatafromdf(df,
     # - doplot: if True, some example plots are made showing the histograms
 
     # preprocessing of the data: rebinning and normalizing
-    (hist,runnbs,lsnbs) = dataframe_utils.get_hist_values(df, runcolumn=runcolumn,
-                            lumicolumn=lumicolumn, datacolumn=datacolumn)
-    if cropslices is not None:  hist = crophists(hist,cropslices)
-    if rebinningfactor is not None: hist = rebinhists(hist,rebinningfactor)
-    if smoothinghalfwindow is not None: hist = smoothhists(hist,
+    if cropslices is not None:  hists = crophists(hists,cropslices)
+    if rebinningfactor is not None: hists = rebinhists(hists,rebinningfactor)
+    if smoothinghalfwindow is not None: hists = smoothhists(hists,
                                             halfwindow=smoothinghalfwindow,
                                             weights=smoothingweights)
     if averagewindow is not None: hists = running_average_hists(hists,
                                                      window=averagewindow,
                                                      weights=averageweights)
-    if donormalize: hist = normalizehists(hist)
-        
+    if donormalize: hists = normalizehists(hists)
+
     if not doplot:
-        if returnrunls: return (hist,runnbs,lsnbs) 
-        else: return hist
-    
+        return hists
+
     # plot some examples
-    nplot = min(8,len(hist))
-    flatindex = np.linspace(0,len(hist),num=len(hist),endpoint=False)
+    nplot = min(8,len(hists))
+    flatindex = np.linspace(0,len(hists),num=len(hists),endpoint=False)
     randint = np.random.choice(flatindex,size=nplot,replace=False).astype(int)
-    if len(hist.shape)==2:
-        _,_ = plot_utils.plot_hists( hist[randint], colorlist='b',
+    if len(hists.shape)==2:
+        _,_ = plot_utils.plot_hists( hists[randint], colorlist='b',
                                     title = 'histogram examples',
                                     xaxtitle = 'bin number' )
-    if len(hist.shape)==3:
-        _,_ = plot_utils.plot_hists_2d( hist[randint], ncols=4, 
+    if len(hists.shape)==3:
+        _,_ = plot_utils.plot_hists_2d( hists[randint], ncols=4,
                                        title = 'histogram examples' )
-        
-    if returnrunls: return (hist,runnbs,lsnbs)
-    else: return hist
+    return hists
+
+def preparedatafromnpy(dataname,
+        cropslices=None, rebinningfactor=None,
+        smoothinghalfwindow=None, smoothingweights=None,
+        averagewindow=None, averageweights=None,
+        donormalize=False, doplot=False):
+    ### read a .npy file and output the histograms
+    # input arguments:
+    # - see e.g. preprocess_hists
+    # notes:
+    # - not yet tested for 2D histograms, but is expected to work...
+
+    hists = np.load(dataname,allow_pickle=False)
+    return preprocess_hists(
+        hists,
+        cropslices=cropslices,
+        rebinningfactor=rebinningfactor,
+        smoothinghalfwindow=smoothinghalfwindow,
+        smoothingweights=smoothingweights,
+        averagewindow=averagewindow,
+        averageweights=averageweights,
+        donormalize=donormalize,
+        doplot=doplot)
+
+def preparedatafromdf(df,
+        runcolumn='run',
+        lumicolumn='lumi',
+        datacolumn='data',
+        returnrunls=False,
+        cropslices=None, rebinningfactor=None,
+        smoothinghalfwindow=None, smoothingweights=None,
+        averagewindow=None, averageweights=None,
+        donormalize=False, doplot=False):
+    ### prepare the data contained in a dataframe in the form of a numpy array
+    # input arguments:
+    # - returnrunls: boolean whether to return a tuple of
+    #   (histograms, run numbers, lumisection numbers).
+    #   (default: return only histograms)
+    # - others: see preprocess_hists()
+
+    (hists,runnbs,lsnbs) = dataframe_utils.get_hist_values(df, runcolumn=runcolumn,
+                            lumicolumn=lumicolumn, datacolumn=datacolumn)
+    hists = preprocess_hists(
+        hists,
+        cropslices=cropslices,
+        rebinningfactor=rebinningfactor,
+        smoothinghalfwindow=smoothinghalfwindow,
+        smoothingweights=smoothingweights,
+        averagewindow=averagewindow,
+        averageweights=averageweights,
+        donormalize=donormalize,
+        doplot=doplot)
+
+    return (hists, runnbs, lsnbs) if returnrunls else hists
 
 def preparedatafromcsv(dataname,
         runcolumn='run', lumicolumn='lumi', datacolumn='data',
-        returnrunls=False, cropslices=None, rebinningfactor=None, 
+        returnrunls=False, cropslices=None, rebinningfactor=None,
         smoothinghalfwindow=None, smoothingweights=None,
         averagewindow=None, averageweights=None,
         donormalize=True, doplot=False):
@@ -503,9 +508,9 @@ def preparedatafromcsv(dataname,
     # input arguments:
     # - returnrunls: boolean whether to return a tuple of (histograms, run numbers, lumisection numbers).
     #   (default: return only histograms)
-    # - cropslices: list of slices (one per dimension) by which to crop the historams 
+    # - cropslices: list of slices (one per dimension) by which to crop the historams
     #   (default: no cropping)
-    # - rebinningfactor: an integer (or tuple of integers for 2D histograms) 
+    # - rebinningfactor: an integer (or tuple of integers for 2D histograms)
     #   to downsample/rebin the histograms (default: no rebinning)
     # - smoothinghalfwindow: int or tuple (for 1D/2D histograms) used for smoothing the histograms
     # - smoothingweights: 1D or 2D array (for 1D/2D histograms) with weights for smoothing
@@ -517,8 +522,8 @@ def preparedatafromcsv(dataname,
     # prepare data from df
     return preparedatafromdf(df, runcolumn=runcolumn,
             lumicolumn=lumicolumn, datacolumn=datacolumn,
-            returnrunls=returnrunls, cropslices=cropslices, 
-            rebinningfactor=rebinningfactor, 
+            returnrunls=returnrunls, cropslices=cropslices,
+            rebinningfactor=rebinningfactor,
             smoothinghalfwindow=smoothinghalfwindow,
             smoothingweights=smoothingweights,
             averagewindow=averagewindow,
