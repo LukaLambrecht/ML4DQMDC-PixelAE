@@ -147,26 +147,42 @@ def get_rebinningfactor_from_str(factstr):
 
 ### normalization
 
-def normalizehists(hists):
+def normalizehists(hists, norm=None):
     ### perform normalization on a set of histograms
-    # note: 
-    # - for 1D histograms, the sum of bin contents is set equal one for each histogram
-    # - for 2D histograms, the bin contents are scaled so the maximum is 1 for each histogram
-    # - maybe later make more flexible by adding normalization stragy as argument...
     # input arguments:
     # - hists: a numpy array of shape (nhistograms,nbins) for 1D or (nhistograms,nybins,nxbins) for 2D
+    # - norm: Normalization strategy.
+    #   Supported normalization strategy includes:
+    #     - "l1": hist' = hist / np.sum(np.abs(hist))
+    #     - "l2": hist' = hist / np.sqrt(np.sum(hist ** 2))
+    #     - "max": hist' = hist / np.max(np.abs(hist))
+    #   When norm is None, use "li" for 1D histograms and "max" for 2D histograms or higher.
     # returns:
     # - a numpy array containing the same histograms as input but normalized
-    if len(hists.shape)==2: return normalize(hists, norm='l1', axis=1)
-    elif len(hists.shape)==3:
-        normhists = []
-        for i in range(len(hists)):
-            hmax = hists[i].max()
-            if hmax==0: hmax = 1
-            normhists.append( hists[i]/hmax )
-        return np.array(normhists)
+
+    assert len(hists.shape) >= 2
+
+    # For backward compatibility
+    if norm is None:
+        if len(hists.shape) == 2: # 1D hists
+            norm = "l1"
+        else: # 2D hists or above
+            norm = "max"
+
+    bins_axis = tuple(range(1, len(hists.shape)))
+    # Don't normalize zero-hists
+    arr_norm = np.array(np.all(np.isclose(hists, 0.), axis=bins_axis), np.float64)
+    if norm == "l1":
+        arr_norm += np.sum(np.abs(hists), axis=bins_axis)
+    elif norm == "l2":
+        arr_norm += np.sqrt(np.sum(hists ** 2, axis=bins_axis))
+    elif norm == "max":
+        arr_norm += np.max(np.abs(hists), axis=bins_axis)
     else:
-        raise Exception('ERROR in hist_utils.py / normalizehists: histograms have invalid input shape: {}'.format(hists.shape))
+        raise ValueError('hist_utils.normalizehists: Unsupported normalization strategy: {}. Expect one of ("l1", "l2", "max").'.format(norm))
+
+    norm_shape = [len(hists)] + [1] * (len(hists.shape) - 1)
+    return hists / arr_norm.reshape(norm_shape)
 
 
 ### averaging a collection of histograms (e.g. for template definition)
