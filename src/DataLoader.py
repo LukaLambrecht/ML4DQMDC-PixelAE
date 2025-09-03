@@ -113,7 +113,7 @@ class DataLoader(object):
                             +' make sure DataLoader is run from a place where it has access to /eos,'
                             +' or specify explicitly the input directories on your filesystem where to search for input.')
                 
-    def get_default_data_dirs( self, year='2017', eras=[], dim=1 ):
+    def get_default_data_dirs( self, year='2017', eras=None, dim=1 ):
         ### get the default data directories for the data for this project
         # (note: only relevant for legacy csv approach)
         # (note: internal helper function, no need to call)
@@ -130,6 +130,8 @@ class DataLoader(object):
         #         are stored in different directories.
         # returns:
         # a list of directories containing the legacy csv files with the requested data.
+        if eras is None:
+            eras = [ ]
         self.check_year( year )
         self.check_eras( eras, year )
         self.check_dim( dim )
@@ -179,7 +181,7 @@ class DataLoader(object):
                 filelist.append(f)
         return filelist
     
-    def get_default_csv_files( self, year='2017', eras=[], dim=1, sort=True ):
+    def get_default_csv_files( self, year='2017', eras=None, dim=1, sort=True ):
         ### read the csv files from the default directories with input data for this project
         # (note: only relevant for legacy csv approach)
         # note: default directories are on the /eos file system.
@@ -189,12 +191,14 @@ class DataLoader(object):
         # - sort: see get_csv_files_in_dir!
         # returns:
         # a list of csv files with the data corresponding to the provided year, eras and dimension.
+        if eras is None:
+            eras = [ ]
         datadirs = self.get_default_data_dirs( year=year, eras=eras, dim=dim )
         return self.get_csv_files_in_dirs( datadirs )
     
     ### functions for reading single files
     
-    def get_dataframe_from_file( self, dfile, menames=[], sort=True, verbose=True,
+    def get_dataframe_from_file( self, dfile, menames=None, sort=True, verbose=True,
         runcolumn='fromrun', lumicolumn='fromlumi', menamecolumn='hname',
         renamecolumns=None ):
         ### load MEs from a given file into a dataframe
@@ -229,7 +233,7 @@ class DataLoader(object):
                            +' the file extension is {}'.format(ext),
                            +' which is currently not supported (must be .csv or .parquet).')
         # do selection if requested
-        if len(menames)>0:
+        if menames is not None and len(menames):
             if verbose:
                 msg = 'INFO in DataLoader.get_dataframe_from_file:'
                 msg += ' selecting monitoring elements {}...'.format(menames)
@@ -293,7 +297,7 @@ class DataLoader(object):
     
     ### functions for reading multiple files
     
-    def get_dataframe_from_files( self, dfiles, menames=[], sort=True, verbose=True,
+    def get_dataframe_from_files( self, dfiles, menames=None, sort=True, verbose=True,
         runcolumn='fromrun', lumicolumn='fromlumi', menamecolumn='hname',
         renamecolumns=None ):
         ### load MEs from a given set of files into a single dataframe
