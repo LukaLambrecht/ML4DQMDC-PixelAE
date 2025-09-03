@@ -1080,7 +1080,7 @@ class HistStruct(object):
     #########################################
 
     def plot_histograms( self, histnames=None, masknames=None, histograms=None, ncols=4,
-                            colorlist=[], labellist=[], transparencylist=[], 
+                            colorlist=None, labellist=None, transparencylist=None,
                             titledict=None, extratextdict=None, xaxtitledict=None, physicalxax=False, 
                             yaxtitledict=None, **kwargs ):
         ### plot the histograms in a HistStruct, optionally after masking
@@ -1152,7 +1152,7 @@ class HistStruct(object):
 
 
     def plot_histograms_1d( self, histnames=None, masknames=None, histograms=None, ncols=4,
-                            colorlist=[], labellist=[], transparencylist=[],
+                            colorlist=None, labellist=None, transparencylist=None,
                             titledict=None, extratextdict=None,
                             xaxtitledict=None, physicalxax=False, yaxtitledict=None, 
                             **kwargs ):
@@ -1194,7 +1194,7 @@ class HistStruct(object):
 
 
     def plot_histograms_2d( self, histnames=None, masknames=None, histograms=None,
-                            labellist=[], titledict=None, xaxtitledict=None, yaxtitledict=None,
+                            labellist=None, titledict=None, xaxtitledict=None, yaxtitledict=None,
                             **kwargs ):
         ### plot the histograms in a histstruct, optionally after masking
         # internal helper function, use only via plot_histograms
