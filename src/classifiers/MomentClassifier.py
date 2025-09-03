@@ -22,9 +22,11 @@ from hist_utils import histmoments
         
 class MomentClassifier(HistogramClassifier):
     
-    def __init__( self, orders=[1] ):
+    def __init__( self, orders=None ):
         super( MomentClassifier,self ).__init__()
         # initializations
+        if orders is None:
+            orders = [1]
         self.orders = orders
         self.moment_means = [None]*len(orders)
         self.moment_stds = [None]*len(orders)
