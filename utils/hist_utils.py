@@ -418,7 +418,7 @@ def preparedatafromnpy(dataname, cropslices=None, rebinningfactor=None,
     if smoothinghalfwindow is not None: hist = smoothhists(hist,
                                             halfwindow=smoothinghalfwindow,
                                             weights=smoothingweights)
-    if averagewindow is not None: hists = hu.running_average_hists(hists,
+    if averagewindow is not None: hists = running_average_hists(hists,
                                                      window=averagewindow,
                                                      weights=averageweights)
     if donormalize: hist = normalizehists(hist)
@@ -469,7 +469,7 @@ def preparedatafromdf(df,
     if smoothinghalfwindow is not None: hist = smoothhists(hist,
                                             halfwindow=smoothinghalfwindow,
                                             weights=smoothingweights)
-    if averagewindow is not None: hists = hu.running_average_hists(hists,
+    if averagewindow is not None: hists = running_average_hists(hists,
                                                      window=averagewindow,
                                                      weights=averageweights)
     if donormalize: hist = normalizehists(hist)
