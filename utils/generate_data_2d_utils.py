@@ -17,7 +17,7 @@ import plot_utils as pu
 
 ### help functions
 
-def goodnoise_nd(shape, fstd=None, kmaxscale=0.25, ncomponents=3):
+def goodnoise_nd(shape, fstd=None, kmaxscale=0.25, ncomponents=3, rng=None):
     ### generate one sample of 'good' noise consisting of fourier components
     # generalization of goodnoise (see generate_data_utils) to arbitrary number of dimensions
     # input args:
@@ -30,6 +30,7 @@ def goodnoise_nd(shape, fstd=None, kmaxscale=0.25, ncomponents=3):
     #   note: can be a tuple with same length as shape, to scale differently in different dimensions.
     # - ncomponents: number of random sines to add per dimension
     #   note: can be a tuple with same length as shape, to use a different number of components in different dimensions.
+    # - rng: a numpy.random.Generator instance.
     # output: 
     # - numpy array of shape detailed by shape argument containing the noise
     
@@ -44,6 +45,8 @@ def goodnoise_nd(shape, fstd=None, kmaxscale=0.25, ncomponents=3):
     # parse ncomponents argument
     if( isinstance(ncomponents,float) or isinstance(ncomponents,int) ):
         ncomponents = tuple([ncomponents]*len(shape))
+    if rng is None:
+        rng = np.random.default_rng()
     # initialize noise array
     noise = np.zeros(shape)
     # loop over axes
@@ -53,11 +56,11 @@ def goodnoise_nd(shape, fstd=None, kmaxscale=0.25, ncomponents=3):
         ncomps = ncomponents[i]
         # get uniformly sampled wavenumbers in range (0,kmax)
         kmax = np.pi*kmaxscale[i]
-        k = np.random.uniform(low=0,high=1,size=ncomps)*kmax
+        k = rng.uniform(low=0,high=1,size=ncomps)*kmax
         # get uniformly sampled phases in range (0,2pi)
-        phase = np.random.uniform(low=0,high=1,size=ncomps)*2*np.pi
+        phase = rng.uniform(low=0,high=1,size=ncomps)*2*np.pi
         # get uniformly sampled amplitudes in range (0,2/ncomps) (i.e. mean total amplitude = 1)
-        amplitude = np.random.uniform(low=0,high=1,size=ncomps)*2/ncomps
+        amplitude = rng.uniform(low=0,high=1,size=ncomps)*2/ncomps
         for j in range(ncomps): thiscomp += amplitude[j]*np.sin(k[j]*ax + phase[j])
         # expand this component to all dimensions
         reps = list(shape)
@@ -71,7 +74,7 @@ def goodnoise_nd(shape, fstd=None, kmaxscale=0.25, ncomponents=3):
     return noise
 
 
-def whitenoise_nd(shape, fstd=None):
+def whitenoise_nd(shape, fstd=None, rng=None):
     ### generate one sample of white noise (standard normally distributed, uncorrelated between bins)
     # generalization of whitenoise (see generate_data_utils) to arbitrary number of dimensions
     # input args:
@@ -80,22 +83,28 @@ def whitenoise_nd(shape, fstd=None):
     # - fstd: an array of shape given by shape argument, 
     #   used for scaling of the amplitude of the noise bin-by-bin
     #   (default: no scaling).
+    # - rng: a numpy.random.Generator instance.
     # output: 
     # - numpy array of shape detailed by shape argument containing the noise
-    noise = np.random.normal(size=shape)
+    if rng is None:
+        rng = np.random.default_rng()
+    noise = rng.normal(size=shape)
     if fstd is not None: noise = np.multiply(noise,fstd)
     return noise
 
 
-def random_lico_nd(hists):
+def random_lico_nd(hists, rng=None):
     ### generate one linear combination of histograms with random coefficients in (0,1) summing to 1.
     # generalization of random_lico (see generate_data_utils) to arbitrary number of dimensions.
     # input args: 
     # - numpy array of shape (nhists,<arbitrary number of additional dimensions>)
+    # - rng: a numpy.random.Generator instance.
     # output:
     # - numpy array of shape (<same dimensions as input>), containing the new histogram
+    if rng is None:
+        rng = np.random.default_rng()
     nhists = hists.shape[0]
-    coeffs = np.random.uniform(low=0.,high=1.,size=nhists)
+    coeffs = rng.uniform(low=0.,high=1.,size=nhists)
     coeffs = coeffs/np.sum(coeffs)
     for i in range(len(hists.shape[1:])): coeffs = np.expand_dims(coeffs,-1)
     res = np.sum(hists*coeffs,axis=0)
@@ -105,7 +114,7 @@ def random_lico_nd(hists):
 ### resampling functions
 
 def fourier_noise_nd(hists, outfilename=None, doplot=False, ntarget=None, nresamples=1, nonnegative=True, 
-                     stdfactor=15., kmaxscale=0.25, ncomponents=3):
+                     stdfactor=15., kmaxscale=0.25, ncomponents=3, rng=None):
     ### apply fourier noise on random histograms with simple flat amplitude scaling.
     # generalization of fourier_noise (see generate_data_utils) to arbitrary number of dimensions.
     # input args: 
@@ -118,8 +127,11 @@ def fourier_noise_nd(hists, outfilename=None, doplot=False, ntarget=None, nresam
     # - nonnegative: boolean whether to set all bins to minimum zero after applying noise
     # - stdfactor: factor to scale magnitude of noise (larger factor = smaller noise)
     # - kmaxscale and ncomponents: see goodnoise_nd
+    # - rng: a numpy.random.Generator instance.
     
     # initializations
+    if rng is None:
+        rng = rng.default_rng()
     nhists = hists.shape[0]
     histshape = hists.shape[1:]
     if ntarget is not None:
@@ -131,7 +143,8 @@ def fourier_noise_nd(hists, outfilename=None, doplot=False, ntarget=None, nresam
     for i in range(nhists):
         for j in range(nresamples):
             noise = goodnoise_nd(histshape, fstd=hists[i]/stdfactor,
-                                    kmaxscale=kmaxscale, ncomponents=ncomponents)
+                                    kmaxscale=kmaxscale, ncomponents=ncomponents,
+                                    rng=rng)
             reshists[nresamples*i+j] = hists[i] + noise
     if nonnegative:
         reshists = np.where(reshists>0,reshists,0)
@@ -139,7 +152,7 @@ def fourier_noise_nd(hists, outfilename=None, doplot=False, ntarget=None, nresam
     # plot examples if requested
     if doplot: 
         nplot = min(3,nhists)
-        randinds = np.random.choice(range(nhists), size=nplot, replace=False)
+        randinds = rng.choice(range(nhists), size=nplot, replace=False)
         for counter,seedidx in enumerate(randinds):
             extidx = nresamples*seedidx
             seedhist = hists[seedidx]
@@ -150,7 +163,7 @@ def fourier_noise_nd(hists, outfilename=None, doplot=False, ntarget=None, nresam
             plt.show(block=False)
 
     # shuffle the output set
-    np.random.shuffle(reshists)
+    rng.shuffle(reshists)
     
     # store results if requested
     if( outfilename is not None and len(outfilename)>0 ):
@@ -160,7 +173,7 @@ def fourier_noise_nd(hists, outfilename=None, doplot=False, ntarget=None, nresam
     return reshists
 
 
-def white_noise_nd(hists, doplot=False, ntarget=None, nresamples=1, nonnegative=True, stdfactor=15.):
+def white_noise_nd(hists, doplot=False, ntarget=None, nresamples=1, nonnegative=True, stdfactor=15., rng=None):
     ### apply white noise to the histograms in hists.
     # generalization of white_noise (see generate_data_utils) to arbitrary number of dimensions.
     # input args:
@@ -171,8 +184,11 @@ def white_noise_nd(hists, doplot=False, ntarget=None, nresamples=1, nonnegative=
     #   (note: ignored if ntarget is not None)
     # - nonnegative: boolean whether to set all bins to minimum zero after applying noise
     # - stdfactor: scaling factor of white noise amplitude (higher factor = smaller noise)
+    # - rng: a numpy.random.Generator instance.
 
     # initializations
+    if rng is None:
+        rng = np.random.default_rng()
     nhists = hists.shape[0]
     histshape = hists.shape[1:]
     if ntarget is not None:
@@ -183,7 +199,7 @@ def white_noise_nd(hists, doplot=False, ntarget=None, nresamples=1, nonnegative=
     # generate the data
     for i in range(nhists):
         for j in range(nresamples):
-            reshists[nresamples*i+j] = hists[i] + whitenoise_nd(histshape,fstd=hists[i]/stdfactor)
+            reshists[nresamples*i+j] = hists[i] + whitenoise_nd(histshape,fstd=hists[i]/stdfactor, rng=rng)
         
     if nonnegative:
         reshists = np.where(reshists>0,reshists,0)
@@ -191,7 +207,7 @@ def white_noise_nd(hists, doplot=False, ntarget=None, nresamples=1, nonnegative=
     # plot examples if requested
     if doplot:
         nplot = min(3,nhists)
-        randinds = np.random.choice(range(nhists), size=nplot, replace=False)
+        randinds = rng.choice(range(nhists), size=nplot, replace=False)
         for counter,seedidx in enumerate(randinds):
             extidx = nresamples*seedidx
             seedhist = hists[seedidx]
@@ -202,12 +218,12 @@ def white_noise_nd(hists, doplot=False, ntarget=None, nresamples=1, nonnegative=
             plt.show(block=False)
 
     # shuffle the output set
-    np.random.shuffle(reshists)
+    rng.shuffle(reshists)
 
     return reshists
 
 
-def resample_lico_nd(hists, doplot=False, ntarget=None, nonnegative=True):
+def resample_lico_nd(hists, doplot=False, ntarget=None, nonnegative=True, rng=None):
     ### take random linear combinations of input histograms
     # generalization of fourier_noise (see generate_data_utils) to arbitrary number of dimensions.
     # input args: 
@@ -217,8 +233,11 @@ def resample_lico_nd(hists, doplot=False, ntarget=None, nonnegative=True):
     # - nonnegative: boolean whether to set all bins to minimum zero after applying noise
     #   note: coefficients in linear combination are always nonnegative, 
     #         so this setting is superfluous is input histograms are all nonnegative
+    # - rng: a numpy.random.Generator instance.
     
     # initializations
+    if rng is None:
+        rng = np.random.default_rng()
     nhists = hists.shape[0]
     histshape = hists.shape[1:]
     if ntarget is None:
@@ -228,7 +247,7 @@ def resample_lico_nd(hists, doplot=False, ntarget=None, nonnegative=True):
 
     # generate the data
     for i in range(ntarget):
-        reshists[i] = random_lico_nd( hists )
+        reshists[i] = random_lico_nd(hists, rng=rng)
         
     if nonnegative:
         reshists = np.where(reshists>0,reshists,0)
@@ -236,8 +255,8 @@ def resample_lico_nd(hists, doplot=False, ntarget=None, nonnegative=True):
     # plot examples if requested
     if doplot:
         nplot = min(3,nhists)
-        randseedinds = np.random.choice(range(nhists), size=nplot, replace=False)
-        randextinds = np.random.choice(range(len(reshists)), size=nplot, replace=False)
+        randseedinds = rng.choice(range(nhists), size=nplot, replace=False)
+        randextinds = rng.choice(range(len(reshists)), size=nplot, replace=False)
         pu.plot_hists_2d([hists[i] for i in randseedinds], ncols=nplot,
                             title='Examples of original histograms')
         pu.plot_hists_2d([reshists[i] for i in randextinds], ncols=nplot,
