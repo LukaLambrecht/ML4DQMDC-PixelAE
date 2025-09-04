@@ -94,8 +94,8 @@ def make_text_latex_safe( text ):
 ########################################
 # functions for plotting 1D histograms #
 ########################################
-      
-def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1),
+
+def plot_hists(histlist, fig=None, ax=None, colorlist=None, labellist=None, transparency=1, xlims=(-0.5,-1),
               title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
               ymaxfactor=None, legendsize=None, opaque_legend=False, ticksize=None,
               bkgcolor=None, bkgcmap='spring', bkgcolorbar=False, bkgrange=None, bkgtitle=None):
@@ -114,12 +114,12 @@ def plot_hists(histlist, fig=None, ax=None, colorlist=[], labellist=[], transpar
     # output: tuple of figure and axis objects, that can be used to further tune the look of the figure or save it
     if fig is None or ax is None: fig,ax = plt.subplots()
     dolabel = True; docolor = True
-    if len(labellist)==0:
+    if labellist is None or not len(labellist):
         labellist = ['']*len(histlist)
         dolabel = False
     if isinstance(colorlist,str):
         colorlist = [colorlist]*len(histlist)
-    if len(colorlist)==0:
+    if colorlist is None or not len(colorlist):
         docolor = False
     if xlims[1]<xlims[0]: xlims = (-0.5,len(histlist[0])-0.5)
     xax = np.linspace(xlims[0],xlims[1],num=len(histlist[0]))
@@ -168,7 +168,7 @@ def plot_hists_from_df(df, histtype, nhists):
     plot_hists(val)
     
 def plot_hists_multi(histlist, fig=None, ax=None, figsize=None,
-                     colorlist=[], labellist=[], transparency=1, xlims=(-0.5,-1),
+                     colorlist=None, labellist=None, transparency=1, xlims=(-0.5,-1),
                      title=None, titlesize=None, xaxtitle=None, xaxtitlesize=None, yaxtitle=None, yaxtitlesize=None,
                      caxtitle=None, caxtitlesize=None, caxtitleoffset=None, hidecaxis=False,
                      extratext=None, extratextsize=None, extratextloc=(0.7,0.6),
@@ -184,11 +184,11 @@ def plot_hists_multi(histlist, fig=None, ax=None, figsize=None,
     if fig is None or ax is None: fig,ax = plt.subplots(figsize=figsize)
     dolabel = True; docolor = True
     # make label list for legend
-    if len(labellist)==0:
+    if labellist is None or not len(labellist):
         labellist = ['']*len(histlist)
         dolabel = False
     # make color list
-    if len(colorlist)==0:
+    if colorlist is None or not len(colorlist):
         docolor = False
     # make x-axis
     nbins = len(histlist[0])
@@ -228,7 +228,7 @@ def plot_hists_multi(histlist, fig=None, ax=None, figsize=None,
     if yaxtitle is not None: ax.set_ylabel(yaxtitle, fontsize=yaxtitlesize)      
     return (fig,ax)
     
-def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparencylist=[],
+def plot_sets(setlist, fig=None, ax=None, colorlist=None, labellist=None, transparencylist=None,
              title=None, titlesize=None,
              extratext=None, extratextsize=None, extratextloc=(0.7,0.6),
              extratextha='left', extratextva='bottom',
@@ -250,15 +250,15 @@ def plot_sets(setlist, fig=None, ax=None, colorlist=[], labellist=[], transparen
                     +' this is currently not supported for plotting')
     # parse arguments
     dolabel = True
-    if len(labellist)==0:
+    if labellist is None or not len(labellist):
         labellist = ['']*len(setlist)
         dolabel = False
-    if len(colorlist)==0:
+    if colorlist is None or len(colorlist):
         colorlist = ['red','blue','green','orange']
         if len(setlist)>4:
             raise Exception('ERROR in plot_utils.py / plot_sets: '
                     +'please specify the colors if you plot more than four sets.')
-    if len(transparencylist)==0:
+    if transparencylist is None or not len(transparencylist):
         transparencylist = [1.]*len(setlist)
     # make x axis
     nbins = len(setlist[0][0])

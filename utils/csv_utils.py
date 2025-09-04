@@ -24,7 +24,7 @@ import dataframe_utils as dfu
 importlib.reload(dfu)
 
 
-def get_data_dirs(year='2017', eras=[], dim=1):
+def get_data_dirs(year='2017', eras=None, dim=1):
     ### yield all data directories
     # note that the location of the data is hard-coded;
     # this function might break for newer or later reprocessings of the data.
@@ -32,8 +32,8 @@ def get_data_dirs(year='2017', eras=[], dim=1):
     # - era is a list containing a selection of era names
     #   (default empty list = all eras)
     # - dim is either 1 or 2 (for 1D or 2D plots)
-    if(year=='2017' and len(eras)==0): eras = ['B','C','D','E','F']
-    if(year=='2018' and len(eras)==0): eras = ['A','B','C','D']
+    if(year=='2017' and not eras): eras = ['B','C','D','E','F']
+    if(year=='2018' and not eras): eras = ['A','B','C','D']
     basedir = '/eos/project/c/cmsml4dc/ML_2020/UL'+year+'_Data/'
     for era in eras:
         eradir = basedir+'DF'+year+era+'_'+str(dim)+'D_Complete'
@@ -84,7 +84,7 @@ def write_csv(dataframe, csvfilename):
     #             use DataLoader.write_dataframe_to_file instead.
     dataframe.to_csv(csvfilename)
 
-def read_and_merge_csv(csv_files, histnames=[], runnbs=[]):
+def read_and_merge_csv(csv_files, histnames=None, runnbs=None):
     ### read and merge list of csv files into a single df
     # csv_files is a list of paths to files to merge into a df
     # histnames is a list of the types of histograms to keep (default: all)
@@ -97,9 +97,9 @@ def read_and_merge_csv(csv_files, histnames=[], runnbs=[]):
     for i,f in enumerate(csv_files):
         print('  - now processing file {} of {}...'.format(i+1,len(csv_files)))
         dffile = read_csv(f)
-        if len(histnames)>0: 
+        if histnames is not None and len(histnames):
             dffile = dfu.select_histnames(dffile,histnames)
-        if len(runnbs)>0:
+        if runnbs is not None and len(runnbs):
             dffile = dfu.select_runs(dffile,runnbs)
         dflist.append(dffile)
     df = pd.concat(dflist,ignore_index=True)
@@ -109,7 +109,7 @@ def read_and_merge_csv(csv_files, histnames=[], runnbs=[]):
     return df
 
 
-def write_skimmed_csv(histnames, year, eras=['all'], dim=1):
+def write_skimmed_csv(histnames, year, eras=None, dim=1):
     ### read all available data for a given year/era and make a file per histogram type
     # DEPRECATED, this function might be removed in the future;
     #             see tutorial read_and_write_data.ipynb for equivalent functionality.
@@ -122,7 +122,10 @@ def write_skimmed_csv(histnames, year, eras=['all'], dim=1):
     # output:
     # - one csv file per year/era and per histogram type
     # note: this function can take quite a while to run!
-    
+
+    if eras is None:
+        eras = ['all']
+
     for era in eras:
         thiseras = [era]
         erasuffix = era

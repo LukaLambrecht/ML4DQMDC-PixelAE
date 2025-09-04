@@ -388,7 +388,7 @@ def get_wp_maxauc(scores, labels, doplot=False):
 
 ### getting a keras model ready for training with minimal user inputs
 
-def getautoencoder(input_size,arch,act=[],opt='adam',loss=mseTop10):
+def getautoencoder(input_size,arch,act=None,opt='adam',loss=mseTop10):
     ### get a trainable autoencoder model
     # input args:
     # - input_size: size of vector that autoencoder will operate on
