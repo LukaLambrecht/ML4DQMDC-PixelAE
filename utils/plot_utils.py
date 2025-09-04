@@ -694,8 +694,8 @@ def plot_score_dist_multi( scores, labels=None, colors=None, fig=None, ax=None,
     if colors is None:
         colors = ['b']*len(scores)
     # make the x-axis
-    minscore = min( *[np.amin(score_array) for score_array in scores] )
-    maxscore = max( *[np.amax(score_array) for score_array in scores] )
+    minscore = min( np.amin(score_array) for score_array in scores )
+    maxscore = max( np.amax(score_array) for score_array in scores )
     scorebins = np.linspace(minscore,maxscore,num=nbins+1)
     scoreax = (scorebins[1:] + scorebins[:-1])/2
     # make the histograms

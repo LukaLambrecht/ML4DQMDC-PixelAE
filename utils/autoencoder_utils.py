@@ -11,11 +11,25 @@
 
 ### imports
 
+import math
+
 # external modules
 import numpy as np
-import tensorflow as tf
+import keras
+
+from keras.callbacks import ModelCheckpoint, EarlyStopping
+from keras.layers import Input, Dense
+from keras.models import Model, Sequential, load_model
 from keras import backend as K
-import seaborn as sn
+
+# keras math operation module
+if keras.__version__.startswith("2."):
+    from keras import backend as ops
+else:
+    # Since Keras 3, mathematical operation functions are moved under keras.ops.
+    from keras import ops
+
+# import seaborn as sn
 import pandas as pd
 import matplotlib.pyplot as plt
 import importlib
@@ -37,8 +51,12 @@ def mseTop10(y_true, y_pred):
     # - mean squared error between y_true and y_pred,
     #   where only the 10 bins with largest squared error are taken into account.
     #   if y_true and y_pred are 2D arrays, this function returns 1D array (mseTop10 for each histogram)
-    top_values, _ = tf.nn.top_k(K.square(y_pred - y_true), k=10, sorted=True)
-    mean=K.mean(top_values, axis=-1)
+    if keras.__version__.startswith("2."):
+        top_k = K.tf.math.top_k
+    else:
+        top_k = ops.top_k
+    top_values, _ = top_k(ops.square(y_pred - y_true), k=10, sorted=True)
+    mean=ops.mean(top_values, axis=-1)
     return mean
 
 def mseTop10Raw(y_true, y_pred):
@@ -79,8 +97,8 @@ def chiSquared(y_true, y_pred):
     # output:
     # - relative mean squared error between y_true and y_pred,
     #   if y_true and y_pred are 2D arrays, this function returns 1D array (chiSquared for each histogram)
-    normdiffsq = np.divide(K.square(y_pred - y_true),y_true)
-    chi2 = K.sum(normdiffsq,axis=-1)
+    normdiffsq = np.divide(ops.square(y_pred - y_true),y_true)
+    chi2 = ops.sum(normdiffsq,axis=-1)
     return chi2
 
 def chiSquaredTopNRaw(y_true, y_pred, n=10):
@@ -305,7 +323,7 @@ def get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp=None):
     
     # get mse
     mse = mseTop10Raw(hists, predicted_hists)
-    get_confusion_matrix(mse, labels, wp=msewp)
+    return get_confusion_matrix(mse, labels, wp=msewp)
 
 
 
@@ -379,16 +397,7 @@ def getautoencoder(input_size,arch,act=None,opt='adam',loss=mseTop10):
     # - opt: optimizer to use (default: adam)
     # - loss: loss function to use (defualt: mseTop10)
     
-    import math
-    import tensorflow as tf
-    from tensorflow import keras
-    from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
-    from tensorflow.keras.layers import Input, Dense
-    from tensorflow.keras.models import Model, Sequential, load_model
-    from keras import backend as K
-    
-    if act is None or not len(act):
-        act = ['tanh'] * len(arch)
+    if len(act)==0: act = ['tanh']*len(arch)
     layers = []
     # first layer manually to set input_dim
     layers.append(Dense(arch[0],activation=act[0],input_dim=input_size))
