@@ -397,15 +397,17 @@ def getautoencoder(input_size,arch,act=None,opt='adam',loss=mseTop10):
     # - opt: optimizer to use (default: adam)
     # - loss: loss function to use (defualt: mseTop10)
     
-    if len(act)==0: act = ['tanh']*len(arch)
+    nlayers_hidden = len(arch)
+    if act is None or not len(act):
+        act = ['tanh'] * nlayers_hidden
     layers = []
     # first layer manually to set input_dim
     layers.append(Dense(arch[0],activation=act[0],input_dim=input_size))
     # rest of layers in a loop
-    for nnodes,activation in zip(arch[1:],act[1:]):
+    for nnodes,activation in zip(arch[1:],act[1:nlayers_hidden]):
         layers.append(Dense(nnodes,activation=activation))
     # last layer is decoder
-    layers.append(Dense(input_size,activation='tanh'))
+    layers.append(Dense(input_size,activation=act[nlayers_hidden] if len(act) > nlayers_hidden else 'tanh'))
     autoencoder = Sequential()
     for i,l in enumerate(layers):
         #l.name = 'layer_'+str(i)
