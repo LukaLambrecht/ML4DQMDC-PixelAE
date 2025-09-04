@@ -323,7 +323,7 @@ def get_confusion_matrix_from_hists(hists, labels, predicted_hists, msewp=None):
     
     # get mse
     mse = mseTop10Raw(hists, predicted_hists)
-    get_confusion_matrix(mse, labels, wp=msewp)
+    return get_confusion_matrix(mse, labels, wp=msewp)
 
 
 
